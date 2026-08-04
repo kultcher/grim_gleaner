@@ -1,0 +1,12 @@
+templateName,database/templates/lootrandomizer.tpl,
+Class,LootRandomizer,
+conversionInType,Physical,
+conversionOutType,Lightning,
+conversionPercentage,35.000000,
+itemClassification,Magical,
+levelRequirement,50,
+lootRandomizerJitter,10.000000,
+lootRandomizerName,tagPrefixAO007,
+offensiveLightningMax,42.000000,
+offensiveLightningMin,6.000000,
+
