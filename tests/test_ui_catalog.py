@@ -1,0 +1,39 @@
+from gd_affix_relevance.ui.catalog import DAMAGE_TAB, PROFILE_TABS, all_stat_definitions
+
+
+def test_catalog_ids_are_unique_and_default_packages_exist() -> None:
+    package_ids = [
+        package.package_id for tab in PROFILE_TABS for package in tab.packages
+    ]
+    stat_ids = [definition.stat_id for definition in all_stat_definitions()]
+
+    assert len(package_ids) == len(set(package_ids))
+    assert len(stat_ids) == len(set(stat_ids))
+    assert all(any(package.default_expanded for package in tab.packages) for tab in PROFILE_TABS)
+
+
+def test_damage_base_owns_resistance_reduction_and_conversions_are_directional() -> None:
+    base = DAMAGE_TAB.packages[0]
+    base_ids = {definition.stat_id for definition in base.stats}
+    conversion_ids = {
+        definition.stat_id
+        for package in DAMAGE_TAB.packages[1:]
+        for definition in package.stats
+        if definition.stat_id.startswith("damage_conversion_to_")
+    }
+
+    assert "target_resistance_reduction_flat" in base_ids
+    assert "target_resistance_reduction_percent" in base_ids
+    assert "damage_conversion" not in base_ids
+    assert conversion_ids == {
+        "damage_conversion_to_acid",
+        "damage_conversion_to_aether",
+        "damage_conversion_to_chaos",
+        "damage_conversion_to_cold",
+        "damage_conversion_to_elemental",
+        "damage_conversion_to_fire",
+        "damage_conversion_to_lightning",
+        "damage_conversion_to_physical",
+        "damage_conversion_to_pierce",
+        "damage_conversion_to_vitality",
+    }

@@ -1,0 +1,5 @@
+templateName,database/templates/skill_attackradiuslightning.tpl,
+Class,Skill_AttackRadiusLightning,
+skillBaseDescription,tagItemSkillB025Desc,
+skillDisplayName,tagItemSkillB025Name,
+

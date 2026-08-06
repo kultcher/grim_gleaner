@@ -1,0 +1,5 @@
+templateName,database/templates/skill_modifier.tpl,
+Class,Skill_Modifier,
+skillBaseDescription,tagClass06SkillDescription04B,
+skillDisplayName,tagClass06SkillName04B,
+
