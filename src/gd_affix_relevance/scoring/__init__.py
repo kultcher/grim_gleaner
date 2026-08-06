@@ -1,17 +1,27 @@
 """Explainable affix-relevance scoring."""
 
-from gd_affix_relevance.scoring.mock_scorer import (
-    MOCK_BUILD_PROFILES,
-    MockBuildProfile,
-    MockRelevanceScore,
-    format_ranked_affix_report,
-    score_semantic_properties,
+from gd_affix_relevance.scoring.catalog_scorer import (
+    RankedAffixVariant,
+    RelevanceScore,
+    affix_common_stat_ids,
+    format_ranked_catalog_report,
+    rank_affix_catalog,
+    score_affix_common_properties,
+    score_affix_variant,
+    score_semantic_stat_ids,
+    semantic_stat_id,
+    variant_semantic_stat_ids,
 )
 
 __all__ = [
-    "MOCK_BUILD_PROFILES",
-    "MockBuildProfile",
-    "MockRelevanceScore",
-    "format_ranked_affix_report",
-    "score_semantic_properties",
+    "RankedAffixVariant",
+    "RelevanceScore",
+    "affix_common_stat_ids",
+    "format_ranked_catalog_report",
+    "rank_affix_catalog",
+    "score_affix_common_properties",
+    "score_affix_variant",
+    "score_semantic_stat_ids",
+    "semantic_stat_id",
+    "variant_semantic_stat_ids",
 ]

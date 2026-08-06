@@ -41,6 +41,7 @@ class AffixSampleCandidate:
     level_requirements: tuple[int, ...] = ()
     stat_layout_count: int = 1
     semantic_properties: tuple[str, ...] = ()
+    semantic_components: tuple[tuple[str, str, str], ...] = ()
 
 
 @dataclass(slots=True)
@@ -94,11 +95,12 @@ def build_sample_candidates(
         for source_path in _relevant_item_paths(items_root):
             logical_path = _logical_path(source_path.relative_to(source_root))
             record = parse_dbr_file(source_path)
-            edges.setdefault(logical_path, set())
+            record_edges: set[str] = set()
             for raw_field in record.fields:
                 reference = _referenced_item_dbr(raw_field.value)
                 if reference is not None:
-                    edges[logical_path].add(reference)
+                    record_edges.add(reference)
+            edges[logical_path] = record_edges
             if supported_affix_kind(record) is not None:
                 affix_records[logical_path] = (source_name, record)
 
@@ -177,7 +179,7 @@ def build_sample_candidates(
             )
         chosen_groups = random.Random(actual_seed).sample(pool, count)
 
-    resolver = _RecordResolver(root, source_names)
+    resolver = RecordResolver(root, source_names)
     candidates: list[AffixSampleCandidate] = []
     for group in chosen_groups:
         stat_lines = normalize_record_stat_lines(
@@ -204,6 +206,7 @@ def build_sample_candidates(
                 semantic_properties=_semantic_properties(
                     group.semantic_fingerprint
                 ),
+                semantic_components=group.semantic_fingerprint,
             )
         )
     return SampleBuildResult(
@@ -282,7 +285,7 @@ def normalize_record_stat_lines(
     record: RawDbrRecord,
     *,
     preferred_source: str,
-    resolver: _RecordResolver,
+    resolver: RecordResolver,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> tuple[str, ...]:
     """Turn active raw fields into number-free player-facing stat lines."""
@@ -446,7 +449,7 @@ def _display_damage_type(raw_damage_type: str) -> str:
 def _format_skill_bonus(
     components: list[tuple[FieldMappingProposal, str]],
     preferred_source: str,
-    resolver: _RecordResolver,
+    resolver: RecordResolver,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> str:
     reference = next(
@@ -462,7 +465,7 @@ def _format_skill_bonus(
 def _format_granted_skill(
     components: list[tuple[FieldMappingProposal, str]],
     preferred_source: str,
-    resolver: _RecordResolver,
+    resolver: RecordResolver,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> str:
     reference = next(
@@ -478,7 +481,7 @@ def _format_granted_skill(
 def _format_pet_bonus(
     components: list[tuple[FieldMappingProposal, str]],
     preferred_source: str,
-    resolver: _RecordResolver,
+    resolver: RecordResolver,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> tuple[str, ...]:
     reference = next((value for _, value in components), "")
@@ -495,7 +498,7 @@ def _format_pet_bonus(
     return tuple(f"Bonus to All Pets: {line}" for line in nested)
 
 
-class _RecordResolver:
+class RecordResolver:
     def __init__(self, data_root: Path, source_names: tuple[str, ...]) -> None:
         self.data_root = Path(data_root)
         self.source_names = source_names

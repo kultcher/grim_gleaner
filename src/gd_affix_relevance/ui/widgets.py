@@ -204,6 +204,14 @@ class PackageAccordion(QFrame):
         self.body.setVisible(expanded)
         self._refresh_header()
 
+    def refresh_from_profile(self) -> None:
+        """Refresh every row after the backing profile is replaced in place."""
+
+        for stat_id, row in self.rows.items():
+            row.weight_control.set_value(self._weight_for(stat_id), emit=False)
+        self.set_expanded(self.is_pinned)
+        self._refresh_header()
+
     def _header_clicked(self, checked: bool) -> None:
         self.set_expanded(checked)
 

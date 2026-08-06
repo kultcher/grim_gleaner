@@ -43,6 +43,50 @@ QLineEdit#profileName {
     padding: 7px 9px;
 }
 QLineEdit#profileName:focus { border-color: #d4a843; }
+QPushButton#profileAction {
+    background: #292e37;
+    border: 1px solid #3a414d;
+    border-radius: 5px;
+    padding: 7px 13px;
+}
+QPushButton#profileAction:hover { background: #39404c; }
+QLabel#profileFileStatus { color: #8f96a3; padding-left: 93px; }
+QTableWidget#topMatchesTable {
+    background: #181b20;
+    alternate-background-color: #1e2229;
+    border: 1px solid #303540;
+    gridline-color: #303540;
+    selection-background-color: #3a4454;
+}
+QHeaderView::section {
+    background: #252a32;
+    color: #eef0f4;
+    border: 0;
+    border-right: 1px solid #343a46;
+    padding: 7px;
+}
+QPlainTextEdit#matchDetails, QSpinBox#matchLimit {
+    background: #20242b;
+    border: 1px solid #343a46;
+    border-radius: 5px;
+    padding: 6px;
+}
+QLineEdit#outputPath, QPlainTextEdit#outputPreview {
+    background: #20242b;
+    border: 1px solid #343a46;
+    border-radius: 5px;
+    padding: 7px;
+}
+QPushButton#primaryAction {
+    background: #8f6b24;
+    border: 1px solid #c59a3c;
+    border-radius: 5px;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 9px 16px;
+}
+QPushButton#primaryAction:hover { background: #a77d2a; }
+QPushButton#primaryAction:disabled { background: #343434; color: #777777; }
 QTabWidget#profileTabs::pane {
     border: 1px solid #303540;
     border-radius: 7px;

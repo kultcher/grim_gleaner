@@ -92,6 +92,7 @@ def test_build_candidates_uses_live_loot_path_and_groups_leveled_variants(
     assert candidate.display_name == "Corrosive"
     assert candidate.gear_slot == "Ring"
     assert candidate.stat_lines == ("+[x]% Acid Damage",)
+    assert candidate.semantic_components
     assert candidate.variant_count == 2
     assert candidate.level_requirements == (5,)
 
@@ -103,3 +104,42 @@ def test_build_candidates_uses_live_loot_path_and_groups_leveled_variants(
     )
     assert first.seed == 42
     assert first.candidates == second.candidates
+
+
+def test_newer_item_record_replaces_older_reachability_edges(tmp_path: Path) -> None:
+    base = tmp_path / "base"
+    expansion = tmp_path / "gdx1"
+    affix_root = base / "records/items/lootaffixes/prefix"
+    _write_dbr(
+        affix_root / "acid.dbr",
+        [
+            ("Class", "LootRandomizer"),
+            ("itemClassification", "Magical"),
+            ("lootRandomizerName", "tagTestAcid"),
+            ("offensivePoisonModifier", "25.000000"),
+        ],
+    )
+    _write_dbr(
+        affix_root / "prefixtables/prefix_ring.dbr",
+        [("randomizerName1", "records/items/lootaffixes/prefix/acid.dbr")],
+    )
+    loot_relative = Path("records/items/loottables/gearaccessories/lt_ring.dbr")
+    _write_dbr(
+        base / loot_relative,
+        [
+            (
+                "prefixTableName1",
+                "records/items/lootaffixes/prefix/prefixtables/prefix_ring.dbr",
+            )
+        ],
+    )
+    _write_dbr(expansion / loot_relative, [("Class", "LootTable")])
+    localization = parse_localization_text("tagTestAcid=Corrosive\n")
+
+    result = build_sample_candidates(
+        tmp_path,
+        localization,
+        source_names=("base", "gdx1"),
+    )
+
+    assert result.candidates == ()

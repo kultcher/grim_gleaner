@@ -1,0 +1,117 @@
+from gd_affix_relevance.catalog import (
+    AffixCatalog,
+    AffixDefinition,
+    AffixProperty,
+    AffixVariantDefinition,
+)
+from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.scoring import (
+    affix_common_stat_ids,
+    rank_affix_catalog,
+    score_affix_variant,
+    semantic_stat_id,
+)
+
+
+def _variant(*property_ids: str, slot: str = "Ring") -> AffixVariantDefinition:
+    return AffixVariantDefinition(
+        gear_slot=slot,
+        level_requirements=(5,),
+        properties=tuple(
+            AffixProperty(property_id, property_id, {})
+            for property_id in property_ids
+        ),
+        stat_lines=tuple(property_id for property_id in property_ids),
+        representative_source="base:records/items/example.dbr",
+        source_record_count=1,
+        stat_layout_count=1,
+    )
+
+
+def _affix(
+    affix_id: str,
+    name: str,
+    variant: AffixVariantDefinition,
+) -> AffixDefinition:
+    return AffixDefinition(
+        affix_id=affix_id,
+        localization_tag=f"tag{name}",
+        display_name=name,
+        kind="prefix",
+        variants=(variant,),
+    )
+
+
+def test_catalog_scorer_uses_editable_profile_stat_ids_directly() -> None:
+    variant = _variant(
+        "flat_bleeding_damage",
+        "bleeding_damage_percent",
+        "health",
+        "fire_resistance",
+    )
+    profile = BuildProfile(
+        "Bleed",
+        {
+            "flat_bleeding_damage": 4,
+            "bleeding_damage_percent": 4,
+            "health": 2,
+        },
+    )
+
+    score = score_affix_variant(variant, profile)
+
+    assert score.weighted_match == 10
+    assert score.matched_count == 3
+    assert score.total_category_count == 4
+    assert score.coverage_ratio == 0.75
+    assert score.grade == "S"
+    assert score.marker == "[S3]"
+
+
+def test_conversion_property_maps_its_destination_to_profile_id() -> None:
+    property_ = AffixProperty(
+        "damage_conversion",
+        "damage_conversion:1",
+        {
+            "source_damage_type": "physical",
+            "destination_damage_type": "life",
+        },
+    )
+
+    assert semantic_stat_id(property_) == "damage_conversion_to_vitality"
+
+
+def test_catalog_ranking_orders_variants_and_applies_limit() -> None:
+    profile = BuildProfile("Health", {"health": 4, "movement_speed": 1})
+    catalog = AffixCatalog(
+        (
+            _affix("prefix:slow", "Slow", _variant("movement_speed")),
+            _affix("prefix:tough", "Tough", _variant("health")),
+            _affix(
+                "prefix:healthy",
+                "Healthy",
+                _variant("health", "movement_speed"),
+            ),
+        )
+    )
+
+    matches = rank_affix_catalog(catalog, profile, limit=2)
+
+    assert [match.affix.display_name for match in matches] == ["Healthy", "Tough"]
+    assert matches[0].score.weighted_match == 5
+    assert matches[1].score.weighted_match == 4
+
+
+def test_affix_common_stats_exclude_tier_or_slot_specific_additions() -> None:
+    affix = AffixDefinition(
+        affix_id="prefix:leveled",
+        localization_tag="tagLeveled",
+        display_name="Leveled",
+        kind="prefix",
+        variants=(
+            _variant("health", "offensive_ability"),
+            _variant("health", "attack_speed"),
+        ),
+    )
+
+    assert affix_common_stat_ids(affix) == ("health",)

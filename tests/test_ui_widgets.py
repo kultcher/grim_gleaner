@@ -5,6 +5,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
+from gd_affix_relevance.catalog import AffixCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.ui.catalog import PackageDefinition, stat
 from gd_affix_relevance.ui.main_window import MainWindow
@@ -56,11 +57,12 @@ def test_optional_accordion_is_pinned_by_nonzero_data() -> None:
 
 def test_main_window_reserves_top_matches_navigation() -> None:
     _application()
-    window = MainWindow()
+    window = MainWindow(catalog=AffixCatalog(()))
 
-    assert window.navigation.count() == 2
+    assert window.navigation.count() == 3
     assert window.navigation.item(0).text() == "Build Profile"
     assert window.navigation.item(1).text() == "Top Matches"
+    assert window.navigation.item(2).text() == "Generate Output"
     assert window.profile_editor.tabs.count() == 6
     assert window.profile_editor.tabs.tabText(4) == "Pets"
     assert window.profile_editor.tabs.tabText(5) == "Skills"

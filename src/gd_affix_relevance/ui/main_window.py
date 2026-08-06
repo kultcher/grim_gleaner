@@ -2,20 +2,23 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QHBoxLayout,
-    QLabel,
     QListWidget,
     QListWidgetItem,
     QMainWindow,
     QStackedWidget,
-    QVBoxLayout,
     QWidget,
 )
 
+from gd_affix_relevance.catalog import AffixCatalog, CatalogBundle
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.profile_editor import ProfileEditor
+from gd_affix_relevance.ui.top_matches import TopMatchesPage
 
 
 class MainWindow(QMainWindow):
@@ -23,6 +26,8 @@ class MainWindow(QMainWindow):
         self,
         profile: BuildProfile | None = None,
         parent: QWidget | None = None,
+        *,
+        catalog: AffixCatalog | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Grim Gleaner")
@@ -50,15 +55,35 @@ class MainWindow(QMainWindow):
         self.pages.addWidget(self.profile_editor)
         self._add_navigation_item("Build Profile", "Set the stats this build values")
 
-        self.top_matches_page = self._placeholder_page(
-            "Top Matches",
-            "This view is reserved for ranking every reachable affix against the "
-            "current profile and surfacing the strongest matches.",
+        catalog_status = ""
+        if catalog is None:
+            catalog, catalog_status = _load_development_catalog()
+        self.top_matches_page = TopMatchesPage(
+            catalog,
+            self.profile_editor.profile,
+            catalog_status=catalog_status,
+            parent=self.pages,
         )
         self.pages.addWidget(self.top_matches_page)
-        self._add_navigation_item("Top Matches", "Affix benchmark view — coming later")
+        self._add_navigation_item("Top Matches", "Rank affixes against this profile")
 
-        self.navigation.currentRowChanged.connect(self.pages.setCurrentIndex)
+        source_root, output_root = _development_output_paths()
+        self.generate_output_page = GenerateOutputPage(
+            catalog,
+            self.profile_editor.profile,
+            source_root=source_root,
+            output_root=output_root,
+            catalog_status=catalog_status,
+            parent=self.pages,
+        )
+        self.pages.addWidget(self.generate_output_page)
+        self._add_navigation_item(
+            "Generate Output",
+            "Create a graded Rainbow text_en staging folder",
+        )
+
+        self.profile_editor.profile_changed.connect(self.top_matches_page.refresh)
+        self.navigation.currentRowChanged.connect(self._navigation_changed)
         self.navigation.setCurrentRow(0)
         self.setCentralWidget(central)
 
@@ -67,16 +92,38 @@ class MainWindow(QMainWindow):
         item.setToolTip(tooltip)
         self.navigation.addItem(item)
 
-    def _placeholder_page(self, title: str, message: str) -> QWidget:
-        page = QWidget(self.pages)
-        layout = QVBoxLayout(page)
-        layout.setContentsMargins(40, 36, 40, 36)
-        title_label = QLabel(title, page)
-        title_label.setObjectName("pageTitle")
-        layout.addWidget(title_label)
-        message_label = QLabel(message, page)
-        message_label.setObjectName("pageHint")
-        message_label.setWordWrap(True)
-        layout.addWidget(message_label)
-        layout.addStretch()
-        return page
+    def _navigation_changed(self, index: int) -> None:
+        self.pages.setCurrentIndex(index)
+        if index == 1:
+            self.top_matches_page.refresh()
+
+
+def _load_development_catalog() -> tuple[AffixCatalog | None, str]:
+    roots = (
+        Path.cwd() / "artifacts" / "catalog",
+        Path(__file__).resolve().parents[3] / "artifacts" / "catalog",
+    )
+    failures: list[str] = []
+    for root in dict.fromkeys(roots):
+        if not (root / "manifest.json").is_file():
+            continue
+        try:
+            bundle = CatalogBundle.load(root)
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            failures.append(f"{root}: {error}")
+            continue
+        return bundle.affixes, f"Catalog: {root}"
+    if failures:
+        return None, "Could not load the compiled catalog: " + "; ".join(failures)
+    return None, "Compile a development catalog under artifacts/catalog to rank affixes."
+
+
+def _development_output_paths() -> tuple[Path, Path]:
+    project_root = Path(__file__).resolve().parents[3]
+    source_candidates = (
+        Path.cwd() / "artifacts" / "text_en",
+        project_root / "artifacts" / "text_en",
+    )
+    source = next((path for path in source_candidates if path.is_dir()), source_candidates[0])
+    output = project_root / "artifacts" / "generated" / "text_en"
+    return source, output

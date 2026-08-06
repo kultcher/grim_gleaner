@@ -1,4 +1,4 @@
-"""Small explainable scoring model for early end-to-end validation."""
+"""Legacy pre-catalog scorer retained for historical comparison tests."""
 
 from __future__ import annotations
 

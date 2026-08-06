@@ -8,6 +8,8 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from gd_affix_relevance.catalog import CatalogBundle
+from gd_affix_relevance.catalog.compiler import compile_catalog_bundle
 from gd_affix_relevance.domain import LocalizationEntry
 from gd_affix_relevance.importers.localization_parser import (
     load_localization_directory,
@@ -20,14 +22,19 @@ from gd_affix_relevance.normalization.sample_report import (
     build_sample_candidates,
     format_sample_report,
 )
+from gd_affix_relevance.normalization.item_audit import (
+    build_item_audit,
+    format_item_audit_report,
+)
 from gd_affix_relevance.normalization.affix_reachability import (
     build_affix_reference_statuses,
     write_affix_reference_report,
 )
-from gd_affix_relevance.scoring.mock_scorer import (
-    MOCK_BUILD_PROFILES,
-    format_ranked_affix_report,
-    rank_key_for_profile,
+from gd_affix_relevance.profile_store import load_profile
+from gd_affix_relevance.output import generate_rainbow_output
+from gd_affix_relevance.scoring import (
+    format_ranked_catalog_report,
+    rank_affix_catalog,
 )
 
 
@@ -84,17 +91,60 @@ def build_parser() -> argparse.ArgumentParser:
 
     rank = subparsers.add_parser(
         "rank",
-        help="grade all reachable affix variants and show the top matches",
+        help="rank compiled affix variants against a saved build profile",
     )
-    rank.add_argument("--data-root", type=Path, required=True)
-    _add_localization_arguments(rank)
-    rank.add_argument(
-        "--profile",
-        choices=tuple(MOCK_BUILD_PROFILES),
-        default="bleed-melee",
-    )
+    rank.add_argument("--catalog-root", type=Path, required=True)
+    rank.add_argument("--profile-file", type=Path, required=True)
     rank.add_argument("--limit", type=_positive_int, default=20)
     rank.add_argument("--output", type=Path)
+
+    catalog = subparsers.add_parser(
+        "compile-catalog",
+        help="compile extracted data into the versioned runtime catalog",
+    )
+    catalog.add_argument("--data-root", type=Path, required=True)
+    catalog.add_argument(
+        "--localization-root",
+        type=Path,
+        action="append",
+        required=True,
+        help=(
+            "official Text_EN directory; repeat from newest expansion to "
+            "base game"
+        ),
+    )
+    catalog.add_argument("--output-dir", type=Path, required=True)
+    catalog.add_argument("--game-version", default="unknown")
+
+    generate = subparsers.add_parser(
+        "generate-output",
+        help="clone Rainbow text files and add profile-grade affix markers",
+    )
+    generate.add_argument("--catalog-root", type=Path, required=True)
+    generate.add_argument("--profile-file", type=Path, required=True)
+    generate.add_argument("--source-root", type=Path, required=True)
+    generate.add_argument("--output-dir", type=Path, required=True)
+
+    item_audit = subparsers.add_parser(
+        "audit-items",
+        help="audit fixed item stats and MI skill modifiers in one gear directory",
+    )
+    item_audit.add_argument("--data-root", type=Path, required=True)
+    item_audit.add_argument("--source", default="base")
+    item_audit.add_argument("--item-directory", default="gearhead")
+    item_audit.add_argument(
+        "--localization-root",
+        type=Path,
+        action="append",
+        default=[],
+        help="localization directory; repeat in preferred resolution order",
+    )
+    item_audit.add_argument(
+        "--catalog-root",
+        type=Path,
+        help="optional compiled affix catalog used to identify new property IDs",
+    )
+    item_audit.add_argument("--output", type=Path)
     return parser
 
 
@@ -150,19 +200,99 @@ def main(argv: Sequence[str] | None = None) -> int:
         sys.stdout.write(report)
         return 0
     if args.command == "rank":
-        localization_entries = _load_all_localization_entries(args)
-        profile = MOCK_BUILD_PROFILES[args.profile]
-        result = build_sample_candidates(
+        bundle = CatalogBundle.load(args.catalog_root)
+        profile = load_profile(args.profile_file)
+        matches = rank_affix_catalog(
+            bundle.affixes,
+            profile,
+            limit=args.limit,
+        )
+        candidate_pool_size = sum(
+            len(affix.variants) for affix in bundle.affixes.affixes
+        )
+        report = format_ranked_catalog_report(
+            matches,
+            profile=profile,
+            candidate_pool_size=candidate_pool_size,
+        )
+        if args.output is not None:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(report, encoding="utf-8")
+        sys.stdout.write(report)
+        return 0
+    if args.command == "compile-catalog":
+        localization_entries: tuple[LocalizationEntry, ...] = ()
+        for localization_root in args.localization_root:
+            localization_entries += load_localization_directory(localization_root)
+        result = compile_catalog_bundle(
             args.data_root,
             localization_entries,
-            count=args.limit,
-            rank_key=rank_key_for_profile(profile),
+            args.output_dir,
+            game_version=args.game_version,
         )
-        report = format_ranked_affix_report(
-            result.candidates,
-            profile=profile,
-            candidate_pool_size=result.candidate_pool_size,
+        print(
+            json.dumps(
+                {
+                    "affixes": result.affix_count,
+                    "affix_variants": result.affix_variant_count,
+                    "skills": result.skill_count,
+                    "strings": result.string_count,
+                    "unresolved_skill_names": result.unresolved_skill_name_count,
+                    "unresolved_affix_records": (
+                        result.unresolved_affix_record_count
+                    ),
+                    "output_dir": str(result.output_dir),
+                },
+                indent=2,
+            )
         )
+        return 0
+    if args.command == "generate-output":
+        bundle = CatalogBundle.load(args.catalog_root)
+        profile = load_profile(args.profile_file)
+        result = generate_rainbow_output(
+            args.source_root,
+            args.output_dir,
+            bundle.affixes,
+            profile,
+        )
+        print(
+            json.dumps(
+                {
+                    "profile": profile.name,
+                    "files_written": result.files_written,
+                    "affix_tags_scored": result.affix_tags_scored,
+                    "affix_tags_found": result.affix_tags_found,
+                    "annotated_lines": result.annotated_lines,
+                    "missing_affix_tag_count": len(result.missing_affix_tags),
+                    "missing_affix_tags": result.missing_affix_tags,
+                    "output_dir": str(result.output_root),
+                },
+                indent=2,
+            )
+        )
+        return 0
+    if args.command == "audit-items":
+        localization_entries: tuple[LocalizationEntry, ...] = ()
+        for localization_root in args.localization_root:
+            localization_entries += load_localization_directory(localization_root)
+        affix_property_ids: set[str] = set()
+        if args.catalog_root is not None:
+            bundle = CatalogBundle.load(args.catalog_root)
+            affix_property_ids = {
+                property_.property_id
+                for affix in bundle.affixes.affixes
+                for variant in affix.variants
+                for property_ in variant.properties
+            }
+        result = build_item_audit(
+            args.data_root,
+            localization_entries,
+            source_name=args.source,
+            item_directory=args.item_directory,
+            affix_property_ids=affix_property_ids,
+        )
+        report = format_item_audit_report(result)
         if args.output is not None:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(report, encoding="utf-8")
