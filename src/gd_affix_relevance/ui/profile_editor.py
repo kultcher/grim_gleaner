@@ -19,10 +19,12 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from gd_affix_relevance.catalog import SkillCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.profile_store import load_profile, save_profile
 from gd_affix_relevance.ui.catalog import PROFILE_TABS, TabDefinition
 from gd_affix_relevance.ui.widgets import PackageAccordion
+from gd_affix_relevance.ui.skills_editor import SkillsEditor
 
 
 class ProfileEditor(QWidget):
@@ -32,6 +34,8 @@ class ProfileEditor(QWidget):
         self,
         profile: BuildProfile | None = None,
         parent: QWidget | None = None,
+        *,
+        skills: SkillCatalog | None = None,
     ) -> None:
         super().__init__(parent)
         self.profile = profile or BuildProfile()
@@ -92,21 +96,11 @@ class ProfileEditor(QWidget):
         self.tabs.setObjectName("profileTabs")
         for definition in PROFILE_TABS:
             self.tabs.addTab(self._build_tab(definition), definition.label)
-        self.tabs.addTab(
-            self._placeholder(
-                "Pets",
-                "Pet bonus records will be expanded into selectable pet stats in a later pass.",
-            ),
-            "Pets",
+        self.skills_editor = SkillsEditor(
+            self.profile, skills or SkillCatalog(()), self
         )
-        self.tabs.addTab(
-            self._placeholder(
-                "Skills",
-                "Class, individual-skill, and granted-skill selection is reserved for a "
-                "dedicated editor.",
-            ),
-            "Skills",
-        )
+        self.skills_editor.changed.connect(self._skills_changed)
+        self.tabs.addTab(self.skills_editor, "Skills")
         layout.addWidget(self.tabs, 1)
 
     def _build_tab(self, definition: TabDefinition) -> QScrollArea:
@@ -154,6 +148,10 @@ class ProfileEditor(QWidget):
         self._mark_unsaved()
         self.profile_changed.emit()
 
+    def _skills_changed(self) -> None:
+        self._mark_unsaved()
+        self.profile_changed.emit()
+
     def save_to_path(self, path: Path) -> Path:
         """Save the active profile, primarily for UI actions and tests."""
 
@@ -171,12 +169,17 @@ class ProfileEditor(QWidget):
         self.profile.weights.clear()
         for stat_id, weight in loaded.weights.items():
             self.profile.set_weight(stat_id, weight)
+        self.profile.masteries = loaded.masteries
+        self.profile.skill_weights.clear()
+        for skill_id, weight in loaded.skill_weights.items():
+            self.profile.set_skill_weight(skill_id, weight)
 
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
         del blocker
         for accordion in self.accordions.values():
             accordion.refresh_from_profile()
+        self.skills_editor.refresh_from_profile()
 
         self.current_profile_path = Path(path)
         self.file_status.setText(f"Loaded: {self.current_profile_path.name}")

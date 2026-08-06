@@ -9,6 +9,11 @@ from pathlib import Path
 from typing import Any
 
 from gd_affix_relevance.catalog.models import CATALOG_SCHEMA_VERSION
+from gd_affix_relevance.catalog.item_compiler import (
+    ITEM_FAMILIES,
+    ITEM_SCOPE,
+    compile_item_payloads,
+)
 from gd_affix_relevance.domain import LocalizationEntry
 from gd_affix_relevance.importers.dbr_parser import parse_dbr_file
 from gd_affix_relevance.importers.localization_parser import (
@@ -20,6 +25,7 @@ from gd_affix_relevance.normalization.sample_report import (
     AffixSampleCandidate,
     RecordResolver,
     build_sample_candidates,
+    record_semantic_fingerprint,
 )
 
 AFFIX_SCOPE = "structurally_reachable_magic_and_rare"
@@ -35,6 +41,9 @@ class CatalogCompileResult:
     string_count: int
     unresolved_skill_name_count: int
     unresolved_affix_record_count: int
+    item_counts: dict[str, int]
+    item_variant_count: int
+    unresolved_item_record_count: int
 
 
 def compile_catalog_bundle(
@@ -83,9 +92,19 @@ def compile_catalog_bundle(
     affix_variant_count = sum(
         len(affix["variants"]) for affix in affix_payloads
     )
+    item_payloads, item_variant_count, unresolved_item_names = (
+        compile_item_payloads(
+            root,
+            source_names,
+            exact_names,
+            folded_names,
+            strings,
+        )
+    )
 
     destination.mkdir(parents=True, exist_ok=True)
-    files = ("affixes.json", "skills.json", "strings.en.json")
+    item_files = tuple(f"{family}.json" for family in ITEM_FAMILIES)
+    files = ("affixes.json", "skills.json", "strings.en.json", *item_files)
     _write_json(
         destination / "strings.en.json",
         {
@@ -104,12 +123,24 @@ def compile_catalog_bundle(
         destination / "affixes.json",
         {"schema_version": CATALOG_SCHEMA_VERSION, "affixes": affix_payloads},
     )
+    for family in ITEM_FAMILIES:
+        _write_json(
+            destination / f"{family}.json",
+            {"schema_version": CATALOG_SCHEMA_VERSION, "items": item_payloads[family]},
+        )
+    item_counts = {
+        family: len(item_payloads[family]) for family in ITEM_FAMILIES
+    }
     counts = {
         "affixes": len(affix_payloads),
         "affix_variants": affix_variant_count,
         "skills": len(skill_payloads),
         "strings": len(strings),
         "unresolved_skill_names": unresolved_skill_names,
+        "items": sum(item_counts.values()),
+        "item_variants": item_variant_count,
+        "unresolved_item_records": unresolved_item_names,
+        **item_counts,
     }
     _write_json(
         destination / "manifest.json",
@@ -122,6 +153,7 @@ def compile_catalog_bundle(
             "counts": counts,
             "affix_scope": AFFIX_SCOPE,
             "skill_scope": SKILL_SCOPE,
+            "item_scope": ITEM_SCOPE,
         },
     )
     return CatalogCompileResult(
@@ -132,6 +164,9 @@ def compile_catalog_bundle(
         string_count=len(strings),
         unresolved_skill_name_count=unresolved_skill_names,
         unresolved_affix_record_count=sample_result.unresolved_name_records_skipped,
+        item_counts=item_counts,
+        item_variant_count=item_variant_count,
+        unresolved_item_record_count=unresolved_item_names,
     )
 
 
@@ -152,7 +187,7 @@ def _compile_skills(
             logical_path = _logical_record_path(path.relative_to(source_root))
             overlaid_paths[logical_path] = (source_name, path)
 
-    skills: list[dict[str, Any]] = []
+    prepared: list[tuple[str, str, Any, str, str, str, str]] = []
     unresolved = 0
     for logical_path, (source_name, path) in sorted(overlaid_paths.items()):
         category = _skill_category(logical_path)
@@ -176,6 +211,36 @@ def _compile_skills(
             strings[name_tag] = display_name
         else:
             unresolved += 1
+        prepared.append(
+            (
+                logical_path,
+                source_name,
+                record,
+                category,
+                name_tag,
+                display_name,
+                name_resolution,
+            )
+        )
+
+    mastery_names = {
+        _mastery_id(logical_path): display_name
+        for logical_path, _, _, category, _, display_name, _ in prepared
+        if category == "player"
+        and Path(logical_path).stem.startswith("_classtraining")
+        and display_name
+    }
+    skills: list[dict[str, Any]] = []
+    for (
+        logical_path,
+        source_name,
+        record,
+        category,
+        name_tag,
+        display_name,
+        name_resolution,
+    ) in prepared:
+        mastery_id = _mastery_id(logical_path)
         skills.append(
             {
                 "skill_id": logical_path,
@@ -187,6 +252,15 @@ def _compile_skills(
                 "description_tag": (
                     record.first_value("skillBaseDescription") or ""
                 ).strip(),
+                "mastery_id": mastery_id,
+                "mastery_name": mastery_names.get(mastery_id, ""),
+                "mastery_level_required": _integer_value(
+                    record.first_value("skillMasteryLevelRequired")
+                ),
+                "max_level": _integer_value(record.first_value("skillMaxLevel")),
+                "is_mastery": Path(logical_path).stem.startswith(
+                    "_classtraining"
+                ),
             }
         )
     return skills, unresolved
@@ -253,6 +327,11 @@ def _variant_payload(
                     preferred_source,
                     localization_lookup,
                 )
+    if "pet_bonus" in components:
+        pet_components = _pet_bonus_components(candidate, resolver)
+        if pet_components:
+            del components["pet_bonus"]
+            components.update(pet_components)
     properties = [
         {
             "property_id": _property_id(property_key),
@@ -270,6 +349,39 @@ def _variant_payload(
         "source_record_count": candidate.variant_count,
         "stat_layout_count": candidate.stat_layout_count,
     }
+
+
+def _pet_bonus_components(
+    candidate: AffixSampleCandidate,
+    resolver: RecordResolver,
+) -> dict[str, dict[str, str]]:
+    """Expand an affix's referenced pet package into scoreable pet stats."""
+
+    preferred_source, record_path = candidate.representative_source.split(
+        ":", 1
+    )
+    resolved_affix = resolver.resolve(record_path, preferred_source)
+    if resolved_affix is None:
+        return {}
+    affix_source, affix_record = resolved_affix
+    pet_reference = (affix_record.first_value("petBonusName") or "").strip()
+    resolved_pet = resolver.resolve(pet_reference, affix_source)
+    if resolved_pet is None:
+        return {}
+    _, pet_record = resolved_pet
+
+    components: dict[str, dict[str, str]] = {}
+    for property_key, role, value in record_semantic_fingerprint(pet_record):
+        if property_key.startswith("unmapped:"):
+            continue
+        pet_property_key = f"pet_{property_key}"
+        attributes = components.setdefault(
+            pet_property_key,
+            {"record_reference": pet_reference.lower().replace("\\", "/")},
+        )
+        if value:
+            attributes[role] = value
+    return components
 
 
 def _property_id(property_key: str) -> str:
@@ -294,6 +406,24 @@ def _skill_category(logical_path: str) -> str | None:
     if branch.startswith("playerclass"):
         return "player"
     return "item_granted"
+
+
+def _mastery_id(logical_path: str) -> str:
+    return next(
+        (
+            part
+            for part in logical_path.split("/")
+            if part.startswith("playerclass")
+        ),
+        "",
+    )
+
+
+def _integer_value(value: str | None) -> int:
+    try:
+        return int(float(value or "0"))
+    except ValueError:
+        return 0
 
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:

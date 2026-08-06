@@ -8,7 +8,8 @@ from typing import Any
 
 from gd_affix_relevance.domain import BuildProfile
 
-PROFILE_FILE_SCHEMA_VERSION = 1
+PROFILE_FILE_SCHEMA_VERSION = 2
+SUPPORTED_PROFILE_FILE_SCHEMA_VERSIONS = frozenset({1, 2})
 
 
 class ProfileFormatError(ValueError):
@@ -52,7 +53,7 @@ def load_profile(path: Path) -> BuildProfile:
     if (
         isinstance(schema_version, bool)
         or not isinstance(schema_version, int)
-        or schema_version != PROFILE_FILE_SCHEMA_VERSION
+        or schema_version not in SUPPORTED_PROFILE_FILE_SCHEMA_VERSIONS
     ):
         raise ProfileFormatError(
             f"Unsupported profile schema version: {schema_version!r}"

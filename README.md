@@ -1,8 +1,11 @@
 # Grim Gleaner
 
-Grim Gleaner analyzes extracted Grim Dawn magic and rare affixes and proposes
-build-relevance annotations for their localization tags. It does not estimate
-whether an item is an upgrade.
+Grim Gleaner analyzes Grim Dawn item properties and proposes build-relevance
+annotations for their localization tags. Its first scoring catalog covers magic
+and rare affixes; its compiled item data also covers base items, Monster
+Infrequents, epics, legendaries, components, augments, relics, runes, and
+consumables. It does not currently score those item catalogs or estimate whether
+an item is an upgrade.
 
 ## Development setup
 
@@ -27,19 +30,28 @@ until redistribution terms and the release packaging policy are settled.
 ```
 
 The current UI provides the data-driven profile editor with 0–4 star weights,
-discoverable package accordions, and placeholder Pets and Skills tabs. Its Top
-Matches view ranks the compiled affix catalog against the active profile and
-shows the facts behind each result. Build profiles can be saved to and loaded
-from user-selected JSON files. The Generate Output page creates a complete,
-graded Rainbow `text_en` staging folder for manual installation.
+discoverable package accordions, three pet-stat packages, and a two-mastery
+Skills editor. Its Top Matches view ranks the compiled affix catalog against
+the active profile and shows the facts behind each result. Build profiles can
+be saved to and loaded from user-selected JSON files. The Generate Output page
+creates a complete, graded Rainbow `text_en` staging folder for manual
+installation.
 
-Profile files are versioned, human-readable JSON. Only nonzero weights are
-stored; omitted stats load as weight 0. For example:
+Profile files are versioned, human-readable JSON. Ordinary stats with weight 0
+are omitted, while selected build-relevant skills are retained even at weight 0
+so adding a skill and weighting it remain separate choices. For example:
 
 ```json
 {
+  "masteries": [
+    "playerclass06",
+    "playerclass04"
+  ],
   "name": "Bleed Werewolf",
-  "schema_version": 1,
+  "schema_version": 2,
+  "skill_weights": {
+    "records/skills/playerclass06/savagery1.dbr": 4
+  },
   "weights": {
     "bleeding_damage_percent": 4,
     "health": 2
@@ -146,7 +158,9 @@ metadata are retained outside the gameplay-gap count.
 The command loads the same editable JSON profile used by the UI, grades every
 compiled tag/gear-slot/stat-layout variant, then prints only the requested
 highest-ranked variants with their matched categories, coverage, full stat
-list, and source record.
+list, and source record. Direct bonuses to a selected mastery skill use that
+skill's profile weight. Skill-modifier effects remain cataloged but are not yet
+part of scoring.
 
 This is deliberately a category-presence relevance grade. It ignores numeric
 roll magnitude and does not estimate whether an item is an upgrade.
@@ -161,10 +175,17 @@ roll magnitude and does not estimate whether an item is an upgrade.
   --output-dir artifacts\generated\lightning\text_en
 ```
 
-The source must be a complete Rainbow `text_en` folder: Grim Dawn displays
-`Tag not found` for omitted entries once an override file is present. The
-generator copies every source file, changes only exact catalog affix tags, and
-never writes to the source or live game directory.
+The source must contain complete `tags*_items.txt` files: Grim Dawn displays
+`Tag not found` for omitted entries once an override file is present. During
+development these can be the extracted official English files or complete
+Rainbow files. The generator copies every source file, changes only exact
+catalog tags, and never writes to the source or live game directory.
+
+Official files provide a self-contained, uncolored baseline for optional
+release output. Rainbow is supported as an alternate source for users who want
+to retain its existing colors, but it is not required by catalog compilation or
+name resolution. Unannotated equipment, containers, breakables, doors, and
+other labels are preserved verbatim from whichever complete source is selected.
 
 Markers use `(S6)`, where the letter is the relevance grade and the number is
 the matched profile-stat count. `(S*5)` means variant layouts differ and the
@@ -189,10 +210,26 @@ the first definition wins. The compiler applies DBR sources in the opposite
 direction (base through the newest expansion), so newer records replace older
 records at the same logical path.
 
-The deterministic bundle contains all structurally reachable magic/rare affix
-variants plus named player/mastery, pet, and item-granted skill DBRs. Monster,
-quest, devotion, default, and template branches are excluded. Only the English
-name strings those records require are retained. The application can load these
-small JSON files without requiring end users to extract game archives. See
+The deterministic schema-version-2 bundle contains all structurally reachable
+magic/rare affix variants; named player/mastery, pet, and item-granted skill
+DBRs; and split item catalogs for equipment, components, augments, relics,
+runes, and consumables. Equipment includes common/magical bases, Monster
+Infrequents, rares, crafted and faction gear, epics, legendaries, awakened
+variants, and equippable quest-record exceptions. Enemy-only gear and transmute
+proxies are excluded.
+
+Concrete item variants retain normalized fixed stats, levels, applicable slots,
+set names, granted or consumable-effect skills, component completion references,
+and MI/rune skill modifiers. Only the English strings required by compiled
+records are retained. The application can load these JSON files without
+requiring end users to extract game archives. See
 [`docs/catalog-schema.md`](docs/catalog-schema.md) for scope and extension
 points.
+
+The item-catalog compiler needs only `records/items` plus the
+player, pet, and item-granted definitions it follows into `records/skills`.
+Complete official localization files are separate compilation inputs used to
+resolve names and seed safe optional `tags*_items.txt` output. World-data DBRs
+outside those branches are not required unless Grim Gleaner later begins
+interpreting or annotating doors, map interactables, or quest objects rather
+than simply preserving their localization entries.

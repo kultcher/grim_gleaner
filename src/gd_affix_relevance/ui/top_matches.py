@@ -17,9 +17,13 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gd_affix_relevance.catalog import AffixCatalog
+from gd_affix_relevance.catalog import AffixCatalog, SkillCatalog
 from gd_affix_relevance.domain import BuildProfile
-from gd_affix_relevance.scoring import RankedAffixVariant, rank_affix_catalog
+from gd_affix_relevance.scoring import (
+    RankedAffixVariant,
+    profile_weight_for_semantic_id,
+    rank_affix_catalog,
+)
 from gd_affix_relevance.ui.catalog import all_stat_definitions
 
 STAT_LABELS = {
@@ -34,12 +38,18 @@ class TopMatchesPage(QWidget):
         profile: BuildProfile,
         *,
         catalog_status: str = "",
+        skills: SkillCatalog | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
         self.catalog = catalog
         self.profile = profile
         self.catalog_status = catalog_status
+        self.skill_labels = {
+            skill.skill_id: skill.display_name
+            for skill in (skills or SkillCatalog(())).skills
+            if skill.display_name
+        }
         self.matches: tuple[RankedAffixVariant, ...] = ()
 
         layout = QVBoxLayout(self)
@@ -108,7 +118,9 @@ class TopMatchesPage(QWidget):
                 or "No compiled affix catalog is available for ranking."
             )
             return
-        if not self.profile.weights:
+        if not self.profile.weights and not any(
+            weight > 0 for weight in self.profile.skill_weights.values()
+        ):
             self.status.setText(
                 "Set at least one nonzero build-profile weight to rank affixes."
             )
@@ -129,7 +141,7 @@ class TopMatchesPage(QWidget):
         for row, match in enumerate(self.matches):
             score = match.score
             matched = ", ".join(
-                STAT_LABELS.get(stat_id, stat_id)
+                self._label_for(stat_id)
                 for stat_id in score.matched_stat_ids
             )
             values = (
@@ -164,8 +176,8 @@ class TopMatchesPage(QWidget):
     def _show_details(self, match: RankedAffixVariant) -> None:
         score = match.score
         matched_lines = [
-            f"- {STAT_LABELS.get(stat_id, stat_id)}: "
-            f"weight {self.profile.weight_for(stat_id)}"
+            f"- {self._label_for(stat_id)}: "
+            f"weight {profile_weight_for_semantic_id(self.profile, stat_id)}"
             for stat_id in score.matched_stat_ids
         ]
         lines = [
@@ -203,3 +215,10 @@ class TopMatchesPage(QWidget):
             ]
         )
         self.details.setPlainText("\n".join(lines))
+
+    def _label_for(self, stat_id: str) -> str:
+        prefix = "skill_bonus:"
+        if stat_id.startswith(prefix):
+            skill_id = stat_id[len(prefix) :]
+            return f"+Ranks to {self.skill_labels.get(skill_id, skill_id)}"
+        return STAT_LABELS.get(stat_id, stat_id)

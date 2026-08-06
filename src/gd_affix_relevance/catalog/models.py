@@ -7,7 +7,16 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATALOG_SCHEMA_VERSION = 1
+CATALOG_SCHEMA_VERSION = 2
+
+ITEM_CATALOG_FILES = (
+    "equipment.json",
+    "components.json",
+    "augments.json",
+    "relics.json",
+    "runes.json",
+    "consumables.json",
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -20,6 +29,7 @@ class CatalogManifest:
     counts: dict[str, int]
     affix_scope: str
     skill_scope: str
+    item_scope: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,6 +50,11 @@ class SkillDefinition:
     display_name: str
     name_resolution: str
     description_tag: str
+    mastery_id: str
+    mastery_name: str
+    mastery_level_required: int
+    max_level: int
+    is_mastery: bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,11 +101,92 @@ class AffixCatalog:
 
 
 @dataclass(frozen=True, slots=True)
+class ItemProperty:
+    property_id: str
+    property_key: str
+    attributes: dict[str, str]
+
+
+@dataclass(frozen=True, slots=True)
+class ItemSkillModifier:
+    modified_skill_reference: str
+    modified_skill_name: str
+    modifier_reference: str
+    properties: tuple[ItemProperty, ...]
+    stat_lines: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ItemVariantDefinition:
+    source: str
+    record_path: str
+    category: str
+    rarity: str
+    item_class: str
+    gear_slot: str
+    item_level: int
+    level_requirement: int
+    applicable_slots: tuple[str, ...]
+    set_reference: str
+    set_name: str
+    granted_skill_reference: str
+    granted_skill_name: str
+    effect_skill_reference: str
+    effect_skill_name: str
+    effect_properties: tuple[ItemProperty, ...]
+    effect_stat_lines: tuple[str, ...]
+    completion_bonus_reference: str
+    properties: tuple[ItemProperty, ...]
+    stat_lines: tuple[str, ...]
+    skill_modifiers: tuple[ItemSkillModifier, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ItemDefinition:
+    item_id: str
+    family: str
+    localization_tag: str
+    display_name: str
+    name_resolution: str
+    description_tag: str
+    description: str
+    variants: tuple[ItemVariantDefinition, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class ItemCatalog:
+    equipment: tuple[ItemDefinition, ...]
+    components: tuple[ItemDefinition, ...]
+    augments: tuple[ItemDefinition, ...]
+    relics: tuple[ItemDefinition, ...]
+    runes: tuple[ItemDefinition, ...]
+    consumables: tuple[ItemDefinition, ...]
+
+    def all_items(self) -> tuple[ItemDefinition, ...]:
+        return tuple(
+            item
+            for family in (
+                self.equipment,
+                self.components,
+                self.augments,
+                self.relics,
+                self.runes,
+                self.consumables,
+            )
+            for item in family
+        )
+
+    def by_id(self) -> dict[str, ItemDefinition]:
+        return {item.item_id: item for item in self.all_items()}
+
+
+@dataclass(frozen=True, slots=True)
 class CatalogBundle:
     manifest: CatalogManifest
     strings: StringCatalog
     skills: SkillCatalog
     affixes: AffixCatalog
+    items: ItemCatalog
 
     @classmethod
     def load(cls, root: Path) -> CatalogBundle:
@@ -111,6 +207,7 @@ class CatalogBundle:
             skill_scope=manifest_payload.get(
                 "skill_scope", "all_named_skill_records"
             ),
+            item_scope=manifest_payload.get("item_scope", "none"),
         )
 
         strings_payload = _load_json(catalog_root / "strings.en.json")
@@ -121,6 +218,13 @@ class CatalogBundle:
             ("skills.json", skills_payload),
             ("affixes.json", affixes_payload),
         ):
+            _require_schema(payload, filename)
+
+        item_payloads = {
+            filename: _load_json(catalog_root / filename)
+            for filename in ITEM_CATALOG_FILES
+        }
+        for filename, payload in item_payloads.items():
             _require_schema(payload, filename)
 
         strings = StringCatalog(
@@ -136,7 +240,14 @@ class CatalogBundle:
         affixes = AffixCatalog(
             tuple(_affix_from_dict(payload) for payload in affixes_payload["affixes"])
         )
-        bundle = cls(manifest, strings, skills, affixes)
+        item_families = {
+            filename.removesuffix(".json"): tuple(
+                _item_from_dict(payload) for payload in item_payloads[filename]["items"]
+            )
+            for filename in ITEM_CATALOG_FILES
+        }
+        items = ItemCatalog(**item_families)
+        bundle = cls(manifest, strings, skills, affixes, items)
         bundle.validate()
         return bundle
 
@@ -149,6 +260,24 @@ class CatalogBundle:
             raise ValueError("skill count does not match manifest")
         if len(self.strings.strings) != self.manifest.counts.get("strings"):
             raise ValueError("string count does not match manifest")
+        for family_name in (
+            "equipment",
+            "components",
+            "augments",
+            "relics",
+            "runes",
+            "consumables",
+        ):
+            actual = len(getattr(self.items, family_name))
+            if actual != self.manifest.counts.get(family_name):
+                raise ValueError(f"{family_name} count does not match manifest")
+        if len(self.items.all_items()) != self.manifest.counts.get("items"):
+            raise ValueError("item count does not match manifest")
+        item_variant_count = sum(
+            len(item.variants) for item in self.items.all_items()
+        )
+        if item_variant_count != self.manifest.counts.get("item_variants"):
+            raise ValueError("item variant count does not match manifest")
         affix_variant_count = sum(
             len(affix.variants) for affix in self.affixes.affixes
         )
@@ -158,6 +287,8 @@ class CatalogBundle:
             raise ValueError("duplicate affix IDs in catalog")
         if len(self.skills.by_id()) != len(self.skills.skills):
             raise ValueError("duplicate skill IDs in catalog")
+        if len(self.items.by_id()) != len(self.items.all_items()):
+            raise ValueError("duplicate item IDs in catalog")
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -184,6 +315,11 @@ def _skill_from_dict(payload: dict[str, Any]) -> SkillDefinition:
         display_name=payload["display_name"],
         name_resolution=payload.get("name_resolution", "localized"),
         description_tag=payload.get("description_tag", ""),
+        mastery_id=payload.get("mastery_id", ""),
+        mastery_name=payload.get("mastery_name", ""),
+        mastery_level_required=int(payload.get("mastery_level_required", 0)),
+        max_level=int(payload.get("max_level", 0)),
+        is_mastery=bool(payload.get("is_mastery", False)),
     )
 
 
@@ -216,4 +352,72 @@ def _affix_from_dict(payload: dict[str, Any]) -> AffixDefinition:
         display_name=payload["display_name"],
         kind=payload["kind"],
         variants=tuple(_variant_from_dict(variant) for variant in payload["variants"]),
+    )
+
+
+def _item_property_from_dict(payload: dict[str, Any]) -> ItemProperty:
+    return ItemProperty(
+        property_id=payload["property_id"],
+        property_key=payload["property_key"],
+        attributes={str(key): str(value) for key, value in payload["attributes"].items()},
+    )
+
+
+def _item_skill_modifier_from_dict(payload: dict[str, Any]) -> ItemSkillModifier:
+    return ItemSkillModifier(
+        modified_skill_reference=payload["modified_skill_reference"],
+        modified_skill_name=payload["modified_skill_name"],
+        modifier_reference=payload["modifier_reference"],
+        properties=tuple(
+            _item_property_from_dict(item) for item in payload["properties"]
+        ),
+        stat_lines=tuple(payload["stat_lines"]),
+    )
+
+
+def _item_variant_from_dict(payload: dict[str, Any]) -> ItemVariantDefinition:
+    return ItemVariantDefinition(
+        source=payload["source"],
+        record_path=payload["record_path"],
+        category=payload["category"],
+        rarity=payload["rarity"],
+        item_class=payload["item_class"],
+        gear_slot=payload["gear_slot"],
+        item_level=payload["item_level"],
+        level_requirement=payload["level_requirement"],
+        applicable_slots=tuple(payload["applicable_slots"]),
+        set_reference=payload["set_reference"],
+        set_name=payload["set_name"],
+        granted_skill_reference=payload["granted_skill_reference"],
+        granted_skill_name=payload["granted_skill_name"],
+        effect_skill_reference=payload["effect_skill_reference"],
+        effect_skill_name=payload["effect_skill_name"],
+        effect_properties=tuple(
+            _item_property_from_dict(item) for item in payload["effect_properties"]
+        ),
+        effect_stat_lines=tuple(payload["effect_stat_lines"]),
+        completion_bonus_reference=payload["completion_bonus_reference"],
+        properties=tuple(
+            _item_property_from_dict(item) for item in payload["properties"]
+        ),
+        stat_lines=tuple(payload["stat_lines"]),
+        skill_modifiers=tuple(
+            _item_skill_modifier_from_dict(item)
+            for item in payload["skill_modifiers"]
+        ),
+    )
+
+
+def _item_from_dict(payload: dict[str, Any]) -> ItemDefinition:
+    return ItemDefinition(
+        item_id=payload["item_id"],
+        family=payload["family"],
+        localization_tag=payload["localization_tag"],
+        display_name=payload["display_name"],
+        name_resolution=payload["name_resolution"],
+        description_tag=payload["description_tag"],
+        description=payload["description"],
+        variants=tuple(
+            _item_variant_from_dict(variant) for variant in payload["variants"]
+        ),
     )

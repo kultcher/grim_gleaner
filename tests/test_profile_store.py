@@ -29,7 +29,9 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
     payload = json.loads(destination.read_text(encoding="utf-8"))
     assert payload == {
         "schema_version": PROFILE_FILE_SCHEMA_VERSION,
+        "masteries": ["", ""],
         "name": "Bleed Werewolf",
+        "skill_weights": {},
         "weights": {
             "bleeding_damage_percent": 4,
             "health": 2,
@@ -69,3 +71,25 @@ def test_profile_file_reports_malformed_json(tmp_path: Path) -> None:
 
     with pytest.raises(ProfileFormatError, match="Could not read profile"):
         load_profile(source)
+
+
+def test_profile_loader_migrates_schema_one_with_empty_skill_state(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "legacy.json"
+    source.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "name": "Legacy",
+                "weights": {"health": 2},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    profile = load_profile(source)
+
+    assert profile.masteries == ("", "")
+    assert profile.skill_weights == {}
+    assert profile.weights == {"health": 2}

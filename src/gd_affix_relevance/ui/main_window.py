@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gd_affix_relevance.catalog import AffixCatalog, CatalogBundle
+from gd_affix_relevance.catalog import AffixCatalog, CatalogBundle, SkillCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.profile_editor import ProfileEditor
@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
         parent: QWidget | None = None,
         *,
         catalog: AffixCatalog | None = None,
+        skills: SkillCatalog | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Grim Gleaner")
@@ -51,17 +52,26 @@ class MainWindow(QMainWindow):
         self.pages = QStackedWidget(central)
         layout.addWidget(self.pages, 1)
 
-        self.profile_editor = ProfileEditor(profile, self.pages)
+        catalog_status = ""
+        if catalog is None and skills is None:
+            bundle, catalog_status = _load_development_catalog()
+            if bundle is not None:
+                catalog = bundle.affixes
+                skills = bundle.skills
+        catalog = catalog or AffixCatalog(())
+        skills = skills or SkillCatalog(())
+
+        self.profile_editor = ProfileEditor(
+            profile, self.pages, skills=skills
+        )
         self.pages.addWidget(self.profile_editor)
         self._add_navigation_item("Build Profile", "Set the stats this build values")
 
-        catalog_status = ""
-        if catalog is None:
-            catalog, catalog_status = _load_development_catalog()
         self.top_matches_page = TopMatchesPage(
             catalog,
             self.profile_editor.profile,
             catalog_status=catalog_status,
+            skills=skills,
             parent=self.pages,
         )
         self.pages.addWidget(self.top_matches_page)
@@ -98,7 +108,7 @@ class MainWindow(QMainWindow):
             self.top_matches_page.refresh()
 
 
-def _load_development_catalog() -> tuple[AffixCatalog | None, str]:
+def _load_development_catalog() -> tuple[CatalogBundle | None, str]:
     roots = (
         Path.cwd() / "artifacts" / "catalog",
         Path(__file__).resolve().parents[3] / "artifacts" / "catalog",
@@ -112,7 +122,7 @@ def _load_development_catalog() -> tuple[AffixCatalog | None, str]:
         except (OSError, ValueError, KeyError, TypeError) as error:
             failures.append(f"{root}: {error}")
             continue
-        return bundle.affixes, f"Catalog: {root}"
+        return bundle, f"Catalog: {root}"
     if failures:
         return None, "Could not load the compiled catalog: " + "; ".join(failures)
     return None, "Compile a development catalog under artifacts/catalog to rank affixes."

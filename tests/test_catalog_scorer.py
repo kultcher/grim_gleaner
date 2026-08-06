@@ -115,3 +115,28 @@ def test_affix_common_stats_exclude_tier_or_slot_specific_additions() -> None:
     )
 
     assert affix_common_stat_ids(affix) == ("health",)
+
+
+def test_catalog_scorer_matches_exact_selected_skill_bonus_reference() -> None:
+    skill_id = "records/skills/playerclass01/cadence1.dbr"
+    property_ = AffixProperty(
+        "skill_bonus",
+        "skill_bonus:1",
+        {"skill_reference": skill_id},
+    )
+    variant = AffixVariantDefinition(
+        gear_slot="Head",
+        level_requirements=(20,),
+        properties=(property_,),
+        stat_lines=("+[x] to Cadence",),
+        representative_source="base:records/items/example.dbr",
+        source_record_count=1,
+        stat_layout_count=1,
+    )
+    profile = BuildProfile(skill_weights={skill_id: 4})
+
+    score = score_affix_variant(variant, profile)
+
+    assert score.weighted_match == 4
+    assert score.matched_count == 1
+    assert score.matched_stat_ids == (f"skill_bonus:{skill_id}",)

@@ -158,7 +158,21 @@ fire/cold/lightning/pierce/bleed/vitality/aether/chaos/physical
 - Ranged Weapon Cunning Requirement Reduction — 6
 
 ## PET TAB
-- Pet Bonuses (Unexpanded Reference) — 216
+
+### DAMAGE PACKAGE (DEFAULT)
+- Pet Total Damage (+%)
+- Pet Offensive Ability (+%)
+- Pet Critical Damage
+- Pet Attack Speed
+
+### DEFENSES PACKAGE (DEFAULT)
+- Pet Health (+%)
+- Pet Defensive Ability (+%)
+- Pet Elemental, Aether, Bleeding, Chaos, Physical, Pierce, and Vitality Resistances
+- Pet Stun, Freeze, and Slow Resistances
+
+### UTILITY / OTHER PACKAGE (DEFAULT)
+- Pet Total Speed
 
 ## SKILL TAB (this one will need a lot of customization so we'll give it it's own tab)
 - Skill Bonus (All Skills in a Class) — 0
@@ -172,4 +186,3 @@ fire/cold/lightning/pierce/bleed/vitality/aether/chaos/physical
 - Enemy Health Reduction — 4
 - Energy Burn (+%) — 4
 - Increased Light Radius — 12
-

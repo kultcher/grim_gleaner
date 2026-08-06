@@ -106,6 +106,51 @@ QFrame#packageAccordion {
     border-radius: 7px;
     background: #1b1e24;
 }
+QFrame#masteryPanel {
+    background: #1b1e24;
+    border: 1px solid #303640;
+    border-radius: 7px;
+}
+QLabel#masteryTitle, QLabel#skillSectionTitle {
+    color: #eef0f4;
+    font-weight: 600;
+}
+QComboBox#masterySelector {
+    background: #242932;
+    border: 1px solid #3a414d;
+    border-radius: 5px;
+    padding: 6px 9px;
+}
+QComboBox#masterySelector::drop-down { border: 0; width: 24px; }
+QComboBox#masterySelector QAbstractItemView {
+    background: #20242b;
+    border: 1px solid #3a414d;
+    selection-background-color: #3a4454;
+}
+QListWidget#masterySkillList {
+    background: #181b20;
+    border: 1px solid #303540;
+    border-radius: 5px;
+    outline: 0;
+}
+QListWidget#masterySkillList::item { padding: 5px 7px; }
+QListWidget#masterySkillList::item:selected {
+    background: #3a4454;
+    color: #ffffff;
+}
+QPushButton#skillAdd, QPushButton#skillRemove {
+    background: #292e37;
+    border: 1px solid #3a414d;
+    border-radius: 5px;
+    padding: 6px 11px;
+}
+QPushButton#skillAdd:hover, QPushButton#skillRemove:hover { background: #39404c; }
+QPushButton#skillAdd:disabled { color: #626873; background: #202329; }
+QFrame#skillWeightRow {
+    background: #20242b;
+    border: 1px solid #303640;
+    border-radius: 5px;
+}
 QPushButton#packageHeader {
     background: #252a32;
     border: 0;

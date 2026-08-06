@@ -1,4 +1,9 @@
-from gd_affix_relevance.ui.catalog import DAMAGE_TAB, PROFILE_TABS, all_stat_definitions
+from gd_affix_relevance.ui.catalog import (
+    DAMAGE_TAB,
+    PETS_TAB,
+    PROFILE_TABS,
+    all_stat_definitions,
+)
 
 
 def test_catalog_ids_are_unique_and_default_packages_exist() -> None:
@@ -36,4 +41,36 @@ def test_damage_base_owns_resistance_reduction_and_conversions_are_directional()
         "damage_conversion_to_physical",
         "damage_conversion_to_pierce",
         "damage_conversion_to_vitality",
+    }
+
+
+def test_pet_tab_surfaces_every_current_affix_pet_stat_by_default() -> None:
+    assert [package.label for package in PETS_TAB.packages] == [
+        "Damage",
+        "Defenses",
+        "Utility / Other",
+    ]
+    assert all(package.default_expanded for package in PETS_TAB.packages)
+    assert {
+        definition.stat_id
+        for package in PETS_TAB.packages
+        for definition in package.stats
+    } == {
+        "pet_total_damage_percent",
+        "pet_offensive_ability_percent",
+        "pet_critical_damage",
+        "pet_attack_speed",
+        "pet_health_percent",
+        "pet_defensive_ability_percent",
+        "pet_elemental_resistance",
+        "pet_aether_resistance",
+        "pet_bleeding_resistance",
+        "pet_chaos_resistance",
+        "pet_physical_resistance",
+        "pet_pierce_resistance",
+        "pet_vitality_resistance",
+        "pet_stun_resistance",
+        "pet_freeze_resistance",
+        "pet_slow_resistance",
+        "pet_total_speed",
     }

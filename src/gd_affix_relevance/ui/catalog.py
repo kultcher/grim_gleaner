@@ -393,7 +393,63 @@ ADVANCED_TAB = TabDefinition(
 )
 
 
-PROFILE_TABS = (DAMAGE_TAB, DEFENSES_TAB, CORE_TAB, ADVANCED_TAB)
+PETS_TAB = TabDefinition(
+    "pets",
+    "Pets",
+    (
+        PackageDefinition(
+            "pets_damage",
+            "Damage",
+            tuple(
+                stat(stat_id, label)
+                for stat_id, label in (
+                    ("pet_total_damage_percent", "Pet Total Damage (+%)"),
+                    (
+                        "pet_offensive_ability_percent",
+                        "Pet Offensive Ability (+%)",
+                    ),
+                    ("pet_critical_damage", "Pet Critical Damage"),
+                    ("pet_attack_speed", "Pet Attack Speed"),
+                )
+            ),
+            default_expanded=True,
+        ),
+        PackageDefinition(
+            "pets_defenses",
+            "Defenses",
+            tuple(
+                stat(stat_id, label)
+                for stat_id, label in (
+                    ("pet_health_percent", "Pet Health (+%)"),
+                    (
+                        "pet_defensive_ability_percent",
+                        "Pet Defensive Ability (+%)",
+                    ),
+                    ("pet_elemental_resistance", "Pet Elemental Resistance"),
+                    ("pet_aether_resistance", "Pet Aether Resistance"),
+                    ("pet_bleeding_resistance", "Pet Bleeding Resistance"),
+                    ("pet_chaos_resistance", "Pet Chaos Resistance"),
+                    ("pet_physical_resistance", "Pet Physical Resistance"),
+                    ("pet_pierce_resistance", "Pet Pierce Resistance"),
+                    ("pet_vitality_resistance", "Pet Vitality Resistance"),
+                    ("pet_stun_resistance", "Pet Stun Resistance"),
+                    ("pet_freeze_resistance", "Pet Freeze Resistance"),
+                    ("pet_slow_resistance", "Pet Slow Resistance"),
+                )
+            ),
+            default_expanded=True,
+        ),
+        PackageDefinition(
+            "pets_utility",
+            "Utility / Other",
+            (stat("pet_total_speed", "Pet Total Speed"),),
+            default_expanded=True,
+        ),
+    ),
+)
+
+
+PROFILE_TABS = (DAMAGE_TAB, DEFENSES_TAB, CORE_TAB, ADVANCED_TAB, PETS_TAB)
 
 
 def all_stat_definitions() -> tuple[StatDefinition, ...]:

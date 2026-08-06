@@ -126,7 +126,7 @@ def build_sample_candidates(
             continue
 
         display_name = plain_display_name(localization_entry.value)
-        semantic_fingerprint = _record_semantic_fingerprint(record)
+        semantic_fingerprint = record_semantic_fingerprint(record)
         kind = supported_affix_kind(record) or ""
         key = (localization_tag, kind, gear_slot, semantic_fingerprint)
         group = grouped.setdefault(
@@ -553,7 +553,9 @@ class RecordResolver:
             resolved_source, record = resolved
             display_tag = record.first_value("skillDisplayName")
             if display_tag:
-                entry = localization_lookup.get(display_tag)
+                entry = localization_lookup.get(display_tag) or localization_lookup.get(
+                    display_tag.casefold()
+                )
                 if entry is not None:
                     return plain_display_name(entry.value)
                 return f"[{display_tag}]"
@@ -603,7 +605,7 @@ def _relevant_item_paths(items_root: Path) -> tuple[Path, ...]:
     return tuple(sorted(paths))
 
 
-def _record_semantic_fingerprint(
+def record_semantic_fingerprint(
     record: RawDbrRecord,
 ) -> tuple[tuple[str, str, str], ...]:
     """Fingerprint stat presence before expensive reference humanization."""

@@ -100,11 +100,20 @@ def score_semantic_stat_ids(
 ) -> RelevanceScore:
     matched = tuple(
         sorted(
-            (stat_id for stat_id in stat_ids if profile.weight_for(stat_id) > 0),
-            key=lambda stat_id: (-profile.weight_for(stat_id), stat_id),
+            (
+                stat_id
+                for stat_id in stat_ids
+                if profile_weight_for_semantic_id(profile, stat_id) > 0
+            ),
+            key=lambda stat_id: (
+                -profile_weight_for_semantic_id(profile, stat_id),
+                stat_id,
+            ),
         )
     )
-    weighted_match = sum(profile.weight_for(stat_id) for stat_id in matched)
+    weighted_match = sum(
+        profile_weight_for_semantic_id(profile, stat_id) for stat_id in matched
+    )
     matched_count = len(matched)
     total_category_count = len(stat_ids)
     coverage_ratio = (
@@ -171,7 +180,7 @@ def format_ranked_catalog_report(
         score = match.score
         matched = "; ".join(
             f"{label_lookup.get(stat_id, _humanize(stat_id))} "
-            f"({profile.weight_for(stat_id)})"
+            f"({profile_weight_for_semantic_id(profile, stat_id)})"
             for stat_id in score.matched_stat_ids
         )
         lines.extend(
@@ -196,6 +205,17 @@ def format_ranked_catalog_report(
             ]
         )
     return "\n".join(lines) + "\n"
+
+
+def profile_weight_for_semantic_id(
+    profile: BuildProfile, semantic_stat_id: str
+) -> int:
+    """Read ordinary stat weights or exact selected-skill weights."""
+
+    prefix = "skill_bonus:"
+    if semantic_stat_id.startswith(prefix):
+        return profile.skill_weight_for(semantic_stat_id[len(prefix) :])
+    return profile.weight_for(semantic_stat_id)
 
 
 def _grade_for_weighted_match(weighted_match: int) -> str:

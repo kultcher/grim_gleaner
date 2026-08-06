@@ -66,4 +66,13 @@ def test_main_window_reserves_top_matches_navigation() -> None:
     assert window.profile_editor.tabs.count() == 6
     assert window.profile_editor.tabs.tabText(4) == "Pets"
     assert window.profile_editor.tabs.tabText(5) == "Skills"
+    assert {
+        "pets_damage",
+        "pets_defenses",
+        "pets_utility",
+    } <= window.profile_editor.accordions.keys()
+    assert all(
+        window.profile_editor.accordions[package_id].is_pinned
+        for package_id in ("pets_damage", "pets_defenses", "pets_utility")
+    )
     assert window.focusPolicy() == Qt.FocusPolicy.NoFocus

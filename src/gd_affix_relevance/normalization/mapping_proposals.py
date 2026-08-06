@@ -544,17 +544,21 @@ def propose_field_mapping(raw_field: str) -> FieldMappingProposal | None:
             notes="Referenced pet-bonus record requires a separate normalization pass.",
         )
 
-    conversion_roles = {
-        "conversionInType": "source_damage_type",
-        "conversionOutType": "destination_damage_type",
-        "conversionPercentage": "percent",
-    }
-    if role := conversion_roles.get(raw_field):
+    if match := re.fullmatch(
+        r"conversion(InType|OutType|Percentage)(\d*)", raw_field
+    ):
+        role = {
+            "InType": "source_damage_type",
+            "OutType": "destination_damage_type",
+            "Percentage": "percent",
+        }[match.group(1)]
+        index = match.group(2) or "1"
         return _proposal(
             raw_field,
             "damage_conversion",
             "Damage Conversion",
             role,
+            bundle_key=f"damage_conversion:{index}",
             confidence="confirmed",
         )
 
@@ -580,6 +584,28 @@ def propose_field_mapping(raw_field: str) -> FieldMappingProposal | None:
         )
 
     exact_rules = {
+        "augmentAllLevel": ("all_skills_bonus", "All Skills", "skill_level"),
+        "blockRecoveryTime": (
+            "base_shield_recovery_time",
+            "Base Shield Recovery Time",
+            "seconds",
+        ),
+        "characterBaseAttackSpeed": (
+            "base_attack_speed",
+            "Base Weapon Attack Speed",
+            "value",
+        ),
+        "defensiveAllMaxResist": (
+            "maximum_all_resistance",
+            "Maximum All Resistances",
+            "percent",
+        ),
+        "defensiveBlock": ("base_shield_block_amount", "Base Shield Block", "flat"),
+        "defensiveBlockChance": (
+            "base_shield_block_chance",
+            "Base Shield Block Chance",
+            "percent",
+        ),
         "defensiveBlockAmountModifier": (
             "shield_block_amount_percent",
             "Shield Block Amount",
@@ -598,6 +624,16 @@ def propose_field_mapping(raw_field: str) -> FieldMappingProposal | None:
             "Attack Damage Converted to Health",
             "percent",
         ),
+        "offensivePierceRatioMin": (
+            "armor_piercing_percent",
+            "Armor Piercing",
+            "percent",
+        ),
+        "defensivePercentReflectionResistance": (
+            "reflected_damage_reduction",
+            "Reflected Damage Reduction",
+            "percent",
+        ),
         "offensiveStunModifier": ("stun_duration", "Stun Duration", "percent"),
         "offensiveTotalDamageModifier": ("total_damage_percent", "Total Damage", "percent"),
         "retaliationTotalDamageModifier": (
@@ -608,6 +644,45 @@ def propose_field_mapping(raw_field: str) -> FieldMappingProposal | None:
     }
     if rule := exact_rules.get(raw_field):
         return _proposal(raw_field, *rule)
+
+    max_resistance_tokens = {
+        "Aether": ("aether", "Aether"),
+        "Bleeding": ("bleeding", "Bleeding"),
+        "Chaos": ("chaos", "Chaos"),
+        "Cold": ("cold", "Cold"),
+        "Elemental": ("elemental", "Elemental"),
+        "Fire": ("fire", "Fire"),
+        "Life": ("vitality", "Vitality"),
+        "Lightning": ("lightning", "Lightning"),
+        "Physical": ("physical", "Physical"),
+        "Pierce": ("pierce", "Pierce"),
+        "Poison": ("poison_acid", "Poison & Acid"),
+    }
+    if match := re.fullmatch(
+        r"defensive(" + "|".join(max_resistance_tokens) + r")MaxResist",
+        raw_field,
+    ):
+        resistance_id, resistance_label = max_resistance_tokens[match.group(1)]
+        return _proposal(
+            raw_field,
+            f"maximum_{resistance_id}_resistance",
+            f"Maximum {resistance_label} Resistance",
+            "percent",
+        )
+
+    if match := re.fullmatch(
+        r"offensiveBase(" + "|".join(DAMAGE_TOKENS) + r")(Min|Max)",
+        raw_field,
+    ):
+        damage_id, damage_label = DAMAGE_TOKENS[match.group(1)]
+        return _proposal(
+            raw_field,
+            f"flat_{damage_id}_damage",
+            f"{damage_label} Damage",
+            "damage_min" if match.group(2) == "Min" else "damage_max",
+            bundle_key=f"flat_{damage_id}_damage:base_weapon",
+            component_requirement="core" if match.group(2) == "Min" else "optional",
+        )
 
     if match := re.fullmatch(
         r"offensive("

@@ -26,6 +26,10 @@ from gd_affix_relevance.normalization.item_audit import (
     build_item_audit,
     format_item_audit_report,
 )
+from gd_affix_relevance.normalization.item_tag_audit import (
+    build_item_tag_audit,
+    write_item_tag_audit,
+)
 from gd_affix_relevance.normalization.affix_reachability import (
     build_affix_reference_statuses,
     write_affix_reference_report,
@@ -145,6 +149,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional compiled affix catalog used to identify new property IDs",
     )
     item_audit.add_argument("--output", type=Path)
+
+    item_tags = subparsers.add_parser(
+        "audit-item-tags",
+        help="classify complete item-localization files and trace DBR consumers",
+    )
+    item_tags.add_argument("--data-root", type=Path, required=True)
+    item_tags.add_argument(
+        "--definition-source",
+        action="append",
+        choices=("base", "gdx1", "gdx2", "gdx3"),
+        required=True,
+    )
+    item_tags.add_argument(
+        "--scan-source",
+        action="append",
+        choices=("base", "gdx1", "gdx2", "gdx3"),
+        help="DBR source to scan; defaults to all available sources",
+    )
+    item_tags.add_argument(
+        "--comparison-root",
+        type=Path,
+        help="optional directory containing complete files to compare by tag key",
+    )
+    item_tags.add_argument("--output-dir", type=Path, required=True)
     return parser
 
 
@@ -241,6 +269,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "unresolved_affix_records": (
                         result.unresolved_affix_record_count
                     ),
+                    "items": result.item_counts,
+                    "item_variants": result.item_variant_count,
+                    "skipped_unresolved_item_records": (
+                        result.unresolved_item_record_count
+                    ),
                     "output_dir": str(result.output_dir),
                 },
                 indent=2,
@@ -297,6 +330,34 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(report, encoding="utf-8")
         sys.stdout.write(report)
+        return 0
+    if args.command == "audit-item-tags":
+        result = build_item_tag_audit(
+            args.data_root,
+            definition_sources=tuple(args.definition_source),
+            scan_sources=tuple(
+                args.scan_source or ("base", "gdx1", "gdx2", "gdx3")
+            ),
+            comparison_root=args.comparison_root,
+        )
+        write_item_tag_audit(result, args.output_dir)
+        print(
+            json.dumps(
+                {
+                    "localization_definitions": len(result.entries),
+                    "unique_tags": len(result.unique_tags),
+                    "dbr_referenced_unique_tags": len(
+                        result.referenced_unique_tags
+                    ),
+                    "unreferenced_unique_tags": len(
+                        result.unique_tags - result.referenced_unique_tags
+                    ),
+                    "dbr_files_scanned": result.dbr_files_scanned,
+                    "output_dir": str(args.output_dir),
+                },
+                indent=2,
+            )
+        )
         return 0
     return 2
 

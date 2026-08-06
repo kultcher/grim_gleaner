@@ -265,3 +265,23 @@ def test_metadata_is_ignored_and_unknown_field_remains_unmapped() -> None:
     assert metadata is not None
     assert metadata.status == "ignored"
     assert propose_field_mapping("futureUnknownStat") is None
+
+
+def test_item_only_base_damage_numbered_conversions_and_max_resists_map() -> None:
+    base_min = propose_field_mapping("offensiveBaseFireMin")
+    base_max = propose_field_mapping("offensiveBaseFireMax")
+    conversion_source = propose_field_mapping("conversionInType2")
+    conversion_percent = propose_field_mapping("conversionPercentage2")
+    maximum_resistance = propose_field_mapping("defensiveFireMaxResist")
+
+    assert base_min is not None and base_max is not None
+    assert base_min.property_id == base_max.property_id == "flat_fire_damage"
+    assert base_min.bundle_key == base_max.bundle_key == (
+        "flat_fire_damage:base_weapon"
+    )
+    assert conversion_source is not None and conversion_percent is not None
+    assert conversion_source.bundle_key == conversion_percent.bundle_key == (
+        "damage_conversion:2"
+    )
+    assert maximum_resistance is not None
+    assert maximum_resistance.property_id == "maximum_fire_resistance"
