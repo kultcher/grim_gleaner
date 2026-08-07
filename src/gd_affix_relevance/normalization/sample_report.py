@@ -23,9 +23,30 @@ from gd_affix_relevance.normalization.mapping_proposals import (
     FieldMappingProposal,
     propose_field_mapping,
 )
+from gd_affix_relevance.slots import (
+    ARMOR_SLOTS,
+    SLOT_AMULET,
+    SLOT_CHEST,
+    SLOT_FEET,
+    SLOT_HANDS,
+    SLOT_HEAD,
+    SLOT_LABELS,
+    SLOT_LEGS,
+    SLOT_MEDAL,
+    SLOT_OFF_HAND,
+    SLOT_RING,
+    SLOT_SHIELD,
+    SLOT_SHOULDERS,
+    SLOT_WAIST,
+    SLOT_WEAPON_1H_CASTER,
+    SLOT_WEAPON_1H_MELEE,
+    SLOT_WEAPON_1H_RANGED,
+    SLOT_WEAPON_2H_MELEE,
+    SLOT_WEAPON_2H_RANGED,
+    slot_sort_key,
+)
 
 DEFAULT_DATA_SOURCES = ("base", "gdx1", "gdx2", "gdx3")
-ARMOR_SLOTS = frozenset({"Head", "Shoulders", "Chest", "Hands", "Legs", "Feet"})
 PLACEHOLDER_PATTERN = re.compile(r"\{([^{}]+)\}")
 
 
@@ -42,6 +63,7 @@ class AffixSampleCandidate:
     stat_layout_count: int = 1
     semantic_properties: tuple[str, ...] = ()
     semantic_components: tuple[tuple[str, str, str], ...] = ()
+    applicable_slots: tuple[str, ...] = ()
 
 
 @dataclass(slots=True)
@@ -50,6 +72,7 @@ class _CandidateGroup:
     localization_tag: str
     affix_kind: str
     gear_slot: str
+    applicable_slots: tuple[str, ...]
     semantic_fingerprint: tuple[tuple[str, str, str], ...]
     preferred_source: str
     representative_record: RawDbrRecord
@@ -120,7 +143,10 @@ def build_sample_candidates(
             unresolved_name_records_skipped += 1
             continue
 
-        gear_slot = format_gear_slots(slots_by_record[logical_path])
+        applicable_slots = tuple(
+            sorted(slots_by_record[logical_path], key=slot_sort_key)
+        )
+        gear_slot = format_gear_slots(set(applicable_slots))
         if not gear_slot:
             unknown_slot_records_skipped += 1
             continue
@@ -136,6 +162,7 @@ def build_sample_candidates(
                 localization_tag=localization_tag,
                 affix_kind=kind,
                 gear_slot=gear_slot,
+                applicable_slots=applicable_slots,
                 semantic_fingerprint=semantic_fingerprint,
                 preferred_source=source_name,
                 representative_record=record,
@@ -207,6 +234,7 @@ def build_sample_candidates(
                     group.semantic_fingerprint
                 ),
                 semantic_components=group.semantic_fingerprint,
+                applicable_slots=group.applicable_slots,
             )
         )
     return SampleBuildResult(
@@ -344,33 +372,40 @@ def format_gear_slots(slots: set[str] | frozenset[str]) -> str:
 
     remaining = set(slots)
     labels: list[str] = []
-    if ARMOR_SLOTS <= remaining:
+    armor_slots = set(ARMOR_SLOTS)
+    all_weapon_slots = {
+        SLOT_WEAPON_1H_MELEE,
+        SLOT_WEAPON_2H_MELEE,
+        SLOT_WEAPON_1H_CASTER,
+        SLOT_WEAPON_1H_RANGED,
+        SLOT_WEAPON_2H_RANGED,
+    }
+    one_handed_slots = {
+        SLOT_WEAPON_1H_MELEE,
+        SLOT_WEAPON_1H_CASTER,
+        SLOT_WEAPON_1H_RANGED,
+    }
+    two_handed_slots = {SLOT_WEAPON_2H_MELEE, SLOT_WEAPON_2H_RANGED}
+    if armor_slots <= remaining:
         labels.append("All armor")
-        remaining -= ARMOR_SLOTS
-    if {"Ring", "Amulet"} <= remaining:
+        remaining -= armor_slots
+    if {SLOT_RING, SLOT_AMULET} <= remaining:
         labels.append("Rings, Amulets")
-        remaining -= {"Ring", "Amulet"}
-    if {"One-handed weapons", "Two-handed weapons"} <= remaining:
+        remaining -= {SLOT_RING, SLOT_AMULET}
+    if all_weapon_slots <= remaining:
         labels.append("All weapons")
-        remaining -= {"One-handed weapons", "Two-handed weapons"}
-    preferred_order = [
-        "Head",
-        "Shoulders",
-        "Chest",
-        "Hands",
-        "Legs",
-        "Feet",
-        "Waist",
-        "Medal",
-        "Ring",
-        "Amulet",
-        "Shields",
-        "Off-hands",
-        "One-handed weapons",
-        "Two-handed weapons",
-    ]
-    labels.extend(slot for slot in preferred_order if slot in remaining)
-    labels.extend(sorted(remaining - set(preferred_order)))
+        remaining -= all_weapon_slots
+    else:
+        if one_handed_slots <= remaining:
+            labels.append("All one-handed weapons")
+            remaining -= one_handed_slots
+        if two_handed_slots <= remaining:
+            labels.append("All two-handed weapons")
+            remaining -= two_handed_slots
+    labels.extend(
+        SLOT_LABELS.get(slot, slot)
+        for slot in sorted(remaining, key=slot_sort_key)
+    )
     return "; ".join(labels)
 
 
@@ -683,31 +718,39 @@ def _slots_from_loottable_path(logical_path: str) -> set[str]:
     filename = Path(relative).stem.lower()
     top_directory = relative.split("/", maxsplit=1)[0]
     fixed_directories = {
-        "gearhead": "Head",
-        "gearshoulders": "Shoulders",
-        "geartorso": "Chest",
-        "gearhands": "Hands",
-        "gearlegs": "Legs",
-        "gearfeet": "Feet",
+        "gearhead": SLOT_HEAD,
+        "gearshoulders": SLOT_SHOULDERS,
+        "geartorso": SLOT_CHEST,
+        "gearhands": SLOT_HANDS,
+        "gearlegs": SLOT_LEGS,
+        "gearfeet": SLOT_FEET,
     }
     if top_directory in fixed_directories:
         return {fixed_directories[top_directory]}
     if top_directory == "gearaccessories":
         if "necklace" in filename:
-            return {"Amulet"}
+            return {SLOT_AMULET}
         if "ring" in filename:
-            return {"Ring"}
+            return {SLOT_RING}
         if "medal" in filename:
-            return {"Medal"}
+            return {SLOT_MEDAL}
         if "waist" in filename:
-            return {"Waist"}
+            return {SLOT_WAIST}
     if top_directory in {"weapons", "damagetables"} or "damagetables/" in relative:
+        if "shield+focus" in filename:
+            return set()
         if "focus" in filename:
-            return {"Off-hands"}
+            return {SLOT_OFF_HAND}
         if "shield" in filename:
-            return {"Shields"}
-        if "2h" in filename or "melee2h" in filename:
-            return {"Two-handed weapons"}
+            return {SLOT_SHIELD}
+        if "caster" in filename:
+            return {SLOT_WEAPON_1H_CASTER}
+        if "gun2h" in filename or "ranged2h" in filename:
+            return {SLOT_WEAPON_2H_RANGED}
+        if "gun1h" in filename or "ranged1h" in filename:
+            return {SLOT_WEAPON_1H_RANGED}
+        if "melee2h" in filename:
+            return {SLOT_WEAPON_2H_MELEE}
         if "1h" in filename:
-            return {"One-handed weapons"}
+            return {SLOT_WEAPON_1H_MELEE}
     return set()

@@ -11,6 +11,7 @@ from gd_affix_relevance.catalog import (
     AffixVariantDefinition,
 )
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.slots import slot_ids_from_legacy_label
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,6 +42,13 @@ class RankedAffixVariant:
     variant: AffixVariantDefinition
     semantic_stat_ids: tuple[str, ...]
     score: RelevanceScore
+    has_level_variations: bool = False
+
+    @property
+    def marker(self) -> str:
+        if self.has_level_variations:
+            return f"[{self.score.grade}!{self.score.matched_count}]"
+        return self.score.marker
 
 
 def semantic_stat_id(property_: AffixProperty) -> str:
@@ -163,6 +171,65 @@ def rank_affix_catalog(
     return tuple(ranked if limit is None else ranked[:limit])
 
 
+def rank_affixes_for_slot(
+    catalog: AffixCatalog,
+    profile: BuildProfile,
+    *,
+    slot_id: str,
+    kind: str,
+    limit: int = 5,
+) -> tuple[RankedAffixVariant, ...]:
+    """Rank one highest-level layout per affix for an atomic slot."""
+
+    if limit < 1:
+        raise ValueError("limit must be at least 1")
+    ranked: list[RankedAffixVariant] = []
+    for affix in catalog.affixes:
+        if affix.kind != kind:
+            continue
+        variants = tuple(
+            variant
+            for variant in affix.variants
+            if slot_id in _variant_slot_ids(variant)
+        )
+        if not variants:
+            continue
+        layouts = {variant_semantic_stat_ids(variant) for variant in variants}
+        selected = max(
+            variants,
+            key=lambda variant: (
+                max(variant.level_requirements, default=0),
+                score_affix_variant(variant, profile).rank_key,
+                len(variant.properties),
+                variant.representative_source,
+            ),
+        )
+        semantic_ids = variant_semantic_stat_ids(selected)
+        score = score_semantic_stat_ids(semantic_ids, profile)
+        if score.weighted_match == 0:
+            continue
+        ranked.append(
+            RankedAffixVariant(
+                affix=affix,
+                variant=selected,
+                semantic_stat_ids=semantic_ids,
+                score=score,
+                has_level_variations=len(layouts) > 1,
+            )
+        )
+    ranked.sort(
+        key=lambda match: (
+            -match.score.weighted_match,
+            -match.score.matched_count,
+            -match.score.coverage_ratio,
+            -max(match.variant.level_requirements, default=0),
+            match.affix.display_name.casefold(),
+            match.affix.localization_tag.casefold(),
+        )
+    )
+    return tuple(ranked[:limit])
+
+
 def format_ranked_catalog_report(
     matches: tuple[RankedAffixVariant, ...],
     *,
@@ -186,7 +253,7 @@ def format_ranked_catalog_report(
         lines.extend(
             [
                 "",
-                f"{index}. {score.marker} {match.affix.display_name}",
+                f"{index}. {match.marker} {match.affix.display_name}",
                 f"   Type: {match.affix.kind.title()}",
                 f"   Gear slot: {match.variant.gear_slot}",
                 f"   Weighted match: {score.weighted_match}",
@@ -234,3 +301,9 @@ def _grade_for_weighted_match(weighted_match: int) -> str:
 
 def _humanize(stat_id: str) -> str:
     return stat_id.replace("_", " ").title()
+
+
+def _variant_slot_ids(variant: AffixVariantDefinition) -> tuple[str, ...]:
+    return variant.applicable_slots or slot_ids_from_legacy_label(
+        variant.gear_slot
+    )

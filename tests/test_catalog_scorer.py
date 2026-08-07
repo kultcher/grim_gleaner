@@ -8,9 +8,11 @@ from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.scoring import (
     affix_common_stat_ids,
     rank_affix_catalog,
+    rank_affixes_for_slot,
     score_affix_variant,
     semantic_stat_id,
 )
+from gd_affix_relevance.slots import SLOT_RING
 
 
 def _variant(*property_ids: str, slot: str = "Ring") -> AffixVariantDefinition:
@@ -140,3 +142,49 @@ def test_catalog_scorer_matches_exact_selected_skill_bonus_reference() -> None:
     assert score.weighted_match == 4
     assert score.matched_count == 1
     assert score.matched_stat_ids == (f"skill_bonus:{skill_id}",)
+
+
+def test_slot_ranking_uses_highest_level_layout_and_marks_variations() -> None:
+    low = AffixVariantDefinition(
+        gear_slot="Ring",
+        level_requirements=(5,),
+        properties=(AffixProperty("health", "health", {}),),
+        stat_lines=("+[x] Health",),
+        representative_source="base:records/items/low.dbr",
+        source_record_count=1,
+        stat_layout_count=2,
+        applicable_slots=(SLOT_RING,),
+    )
+    high = AffixVariantDefinition(
+        gear_slot="Ring",
+        level_requirements=(82,),
+        properties=(
+            AffixProperty("health", "health", {}),
+            AffixProperty("offensive_ability", "offensive_ability", {}),
+        ),
+        stat_lines=("+[x] Health", "+[x] Offensive Ability"),
+        representative_source="base:records/items/high.dbr",
+        source_record_count=1,
+        stat_layout_count=2,
+        applicable_slots=(SLOT_RING,),
+    )
+    affix = AffixDefinition(
+        affix_id="prefix:leveled-ring",
+        localization_tag="tagLeveledRing",
+        display_name="Leveled",
+        kind="prefix",
+        variants=(low, high),
+    )
+    profile = BuildProfile(weights={"health": 2, "offensive_ability": 3})
+
+    matches = rank_affixes_for_slot(
+        AffixCatalog((affix,)),
+        profile,
+        slot_id=SLOT_RING,
+        kind="prefix",
+    )
+
+    assert len(matches) == 1
+    assert matches[0].variant is high
+    assert matches[0].has_level_variations
+    assert matches[0].marker == "[B!2]"

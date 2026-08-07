@@ -74,6 +74,8 @@ records. Affixes group by kind and localization tag, while each distinct gear
 slot and semantic layout remains a separate variant. A variant preserves:
 
 - all level requirements observed for that exact layout;
+- structured atomic applicability, including melee, caster, and ranged weapon
+  families rather than a display string alone;
 - semantic property IDs and distinguishing attributes;
 - number-free player-facing stat lines;
 - representative source path and source-record count;
@@ -81,7 +83,8 @@ slot and semantic layout remains a separate variant. A variant preserves:
 
 ## Item catalog
 
-Schema version 2 adds one logical `ItemCatalog` stored in six files. Splitting
+Schema version 2 added one logical `ItemCatalog` stored in six files. Schema
+version 3 adds structured atomic applicability to affix variants. Splitting
 the files keeps large equipment data separate from smaller attachment and
 consumable families without forcing callers to manage six unrelated models:
 

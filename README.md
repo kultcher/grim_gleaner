@@ -32,10 +32,10 @@ until redistribution terms and the release packaging policy are settled.
 The current UI provides the data-driven profile editor with 0–4 star weights,
 discoverable package accordions, three pet-stat packages, and a two-mastery
 Skills editor. Its Top Matches view ranks the compiled affix catalog against
-the active profile and shows the facts behind each result. Build profiles can
-be saved to and loaded from user-selected JSON files. The Generate Output page
-creates a complete, graded Rainbow `text_en` staging folder for manual
-installation.
+the active profile in separate prefix and suffix tables for every atomic gear
+slot. Build profiles can be saved to and loaded from user-selected JSON files.
+The Generate Output page creates a complete, graded Rainbow `text_en` staging
+folder for manual installation.
 
 Profile files are versioned, human-readable JSON. Ordinary stats with weight 0
 are omitted, while selected build-relevant skills are retained even at weight 0
@@ -210,7 +210,7 @@ the first definition wins. The compiler applies DBR sources in the opposite
 direction (base through the newest expansion), so newer records replace older
 records at the same logical path.
 
-The deterministic schema-version-2 bundle contains all structurally reachable
+The deterministic schema-version-3 bundle contains all structurally reachable
 magic/rare affix variants; named player/mastery, pet, and item-granted skill
 DBRs; and split item catalogs for equipment, components, augments, relics,
 runes, and consumables. Equipment includes common/magical bases, Monster

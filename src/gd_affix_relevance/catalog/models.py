@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATALOG_SCHEMA_VERSION = 2
+CATALOG_SCHEMA_VERSION = 3
 
 ITEM_CATALOG_FILES = (
     "equipment.json",
@@ -81,6 +81,7 @@ class AffixVariantDefinition:
     representative_source: str
     source_record_count: int
     stat_layout_count: int
+    applicable_slots: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -342,6 +343,7 @@ def _variant_from_dict(payload: dict[str, Any]) -> AffixVariantDefinition:
         representative_source=payload["representative_source"],
         source_record_count=payload["source_record_count"],
         stat_layout_count=payload["stat_layout_count"],
+        applicable_slots=tuple(payload.get("applicable_slots", ())),
     )
 
 

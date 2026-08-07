@@ -342,6 +342,7 @@ def _variant_payload(
     ]
     return {
         "gear_slot": candidate.gear_slot,
+        "applicable_slots": list(candidate.applicable_slots),
         "level_requirements": list(candidate.level_requirements),
         "properties": properties,
         "stat_lines": list(candidate.stat_lines),

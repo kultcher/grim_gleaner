@@ -13,6 +13,15 @@ from gd_affix_relevance.catalog import (
     SkillDefinition,
 )
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.slots import (
+    SLOT_LABELS,
+    SLOT_RING,
+    SLOT_WEAPON_1H_CASTER,
+    SLOT_WEAPON_1H_MELEE,
+    SLOT_WEAPON_1H_RANGED,
+    SLOT_WEAPON_2H_MELEE,
+    SLOT_WEAPON_2H_RANGED,
+)
 from gd_affix_relevance.ui.main_window import MainWindow
 
 
@@ -20,42 +29,62 @@ def _application() -> QApplication:
     return QApplication.instance() or QApplication([])
 
 
-def _affix(affix_id: str, name: str, stat_id: str) -> AffixDefinition:
+def _affix(
+    affix_id: str,
+    name: str,
+    stat_id: str,
+    *,
+    kind: str = "prefix",
+    slot_id: str = SLOT_RING,
+) -> AffixDefinition:
     return AffixDefinition(
         affix_id=affix_id,
         localization_tag=f"tag{name}",
         display_name=name,
-        kind="prefix",
+        kind=kind,
         variants=(
             AffixVariantDefinition(
-                gear_slot="Ring",
+                gear_slot=SLOT_LABELS[slot_id],
                 level_requirements=(5,),
                 properties=(AffixProperty(stat_id, stat_id, {}),),
                 stat_lines=(f"+[x] {name} stat",),
                 representative_source=f"base:{affix_id}.dbr",
                 source_record_count=1,
                 stat_layout_count=1,
+                applicable_slots=(slot_id,),
             ),
         ),
     )
 
 
-def test_top_matches_tracks_active_editor_profile() -> None:
+def test_slot_tables_separate_prefixes_and_suffixes_and_track_profile() -> None:
     _application()
     profile = BuildProfile("Testing", {"health": 4})
     catalog = AffixCatalog(
         (
             _affix("prefix:swift", "Swift", "movement_speed"),
             _affix("prefix:tough", "Tough", "health"),
+            _affix(
+                "suffix:fortitude",
+                "of Fortitude",
+                "health",
+                kind="suffix",
+            ),
         )
     )
     window = MainWindow(profile, catalog=catalog)
     window.show()
 
     page = window.top_matches_page
-    assert page.table.rowCount() == 2
-    assert page.table.item(0, 1).text() == "Tough"
-    assert page.table.item(0, 0).text() == "[B1]"
+    prefix_table = page.tables[(SLOT_RING, "prefix")]
+    suffix_table = page.tables[(SLOT_RING, "suffix")]
+    assert prefix_table.item(0, 1).text() == "Tough"
+    assert suffix_table.item(0, 1).text() == "of Fortitude"
+    assert prefix_table.item(0, 0).text() == "[B1]"
+    assert [
+        prefix_table.horizontalHeaderItem(column).text()
+        for column in range(prefix_table.columnCount())
+    ] == ["Grade", "Affix", "Score", "Coverage"]
     assert "All affix stats" in page.details.toPlainText()
 
     window.profile_editor.accordions["core_health"].rows[
@@ -65,22 +94,28 @@ def test_top_matches_tracks_active_editor_profile() -> None:
         "movement_speed"
     ].weight_control.set_value(4)
 
-    assert page.table.item(0, 1).text() == "Swift"
-    assert "Movement Speed" in page.table.item(0, 4).text()
+    assert prefix_table.item(0, 1).text() == "Swift"
+    assert suffix_table.rowCount() == 0
+    assert "Movement Speed" in page.details.toPlainText()
 
 
-def test_top_matches_prompts_for_a_weighted_profile() -> None:
+def test_slot_tables_prompt_for_a_weighted_profile() -> None:
     _application()
     window = MainWindow(BuildProfile(), catalog=AffixCatalog(()))
 
-    assert window.top_matches_page.table.rowCount() == 0
+    assert all(table.rowCount() == 0 for table in window.top_matches_page.tables.values())
     assert "Set at least one" in window.top_matches_page.status.text()
 
 
-def test_top_matches_uses_selected_skill_weight_and_display_name() -> None:
+def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
     _application()
     skill_id = "records/skills/playerclass01/cadence1.dbr"
     profile = BuildProfile(skill_weights={skill_id: 4})
+    property_ = AffixProperty(
+        "skill_bonus",
+        "skill_bonus:1",
+        {"skill_reference": skill_id},
+    )
     affix = AffixDefinition(
         affix_id="prefix:cadence",
         localization_tag="tagCadence",
@@ -88,19 +123,14 @@ def test_top_matches_uses_selected_skill_weight_and_display_name() -> None:
         kind="prefix",
         variants=(
             AffixVariantDefinition(
-                gear_slot="Head",
+                gear_slot="Ring",
                 level_requirements=(20,),
-                properties=(
-                    AffixProperty(
-                        "skill_bonus",
-                        "skill_bonus:1",
-                        {"skill_reference": skill_id},
-                    ),
-                ),
+                properties=(property_,),
                 stat_lines=("+[x] to Cadence",),
                 representative_source="base:records/items/example.dbr",
                 source_record_count=1,
                 stat_layout_count=1,
+                applicable_slots=(SLOT_RING,),
             ),
         ),
     )
@@ -125,8 +155,30 @@ def test_top_matches_uses_selected_skill_weight_and_display_name() -> None:
 
     window = MainWindow(profile, catalog=AffixCatalog((affix,)), skills=skills)
 
+    table = window.top_matches_page.tables[(SLOT_RING, "prefix")]
+    assert table.rowCount() == 1
+    assert table.item(0, 0).text() == "[B1]"
+    assert "+Ranks to Cadence: weight 4" in (
+        window.top_matches_page.details.toPlainText()
+    )
+
+
+def test_weapon_filters_compose_handedness_and_weapon_style() -> None:
+    _application()
+    window = MainWindow(
+        BuildProfile(weights={"health": 4}),
+        catalog=AffixCatalog(()),
+    )
+    window.show()
     page = window.top_matches_page
-    assert page.table.rowCount() == 1
-    assert page.table.item(0, 0).text() == "[B1]"
-    assert page.table.item(0, 4).text() == "+Ranks to Cadence"
-    assert "+Ranks to Cadence: weight 4" in page.details.toPlainText()
+
+    page.slot_filters["one_handed"].setChecked(False)
+    assert page.slot_rows[SLOT_WEAPON_1H_MELEE].isHidden()
+    assert page.slot_rows[SLOT_WEAPON_1H_CASTER].isHidden()
+    assert page.slot_rows[SLOT_WEAPON_1H_RANGED].isHidden()
+    assert not page.slot_rows[SLOT_WEAPON_2H_MELEE].isHidden()
+    assert not page.slot_rows[SLOT_WEAPON_2H_RANGED].isHidden()
+
+    page.slot_filters["melee"].setChecked(False)
+    assert page.slot_rows[SLOT_WEAPON_2H_MELEE].isHidden()
+    assert not page.slot_rows[SLOT_WEAPON_2H_RANGED].isHidden()

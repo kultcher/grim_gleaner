@@ -51,13 +51,30 @@ QPushButton#profileAction {
 }
 QPushButton#profileAction:hover { background: #39404c; }
 QLabel#profileFileStatus { color: #8f96a3; padding-left: 93px; }
-QTableWidget#topMatchesTable {
+QTableWidget#topMatchesTable, QTableWidget#affixSlotTable {
     background: #181b20;
     alternate-background-color: #1e2229;
     border: 1px solid #303540;
     gridline-color: #303540;
     selection-background-color: #3a4454;
 }
+QFrame#slotFilterBar, QFrame#affixSlotRow {
+    background: #1b1e24;
+    border: 1px solid #303640;
+    border-radius: 6px;
+}
+QLabel#affixCategoryTitle {
+    color: #d4a843;
+    font-size: 13pt;
+    font-weight: 650;
+    padding: 8px 2px 2px 2px;
+}
+QLabel#affixSlotName, QLabel#affixTableTitle {
+    color: #eef0f4;
+    font-weight: 600;
+}
+QCheckBox { spacing: 5px; }
+QCheckBox::indicator { width: 15px; height: 15px; }
 QHeaderView::section {
     background: #252a32;
     color: #eef0f4;

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from gd_affix_relevance.catalog import CatalogBundle, compile_catalog_bundle
 from gd_affix_relevance.importers.localization_parser import parse_localization_text
+from gd_affix_relevance.slots import SLOT_RING
 
 
 def _write_dbr(path: Path, fields: list[tuple[str, str]]) -> None:
@@ -164,6 +165,7 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
     assert "records/skills/base_template skills/named_template.dbr" not in skills
     assert bundle.affixes.affixes[0].display_name == "Corrosive"
     assert bundle.affixes.affixes[0].variants[0].gear_slot == "Ring"
+    assert bundle.affixes.affixes[0].variants[0].applicable_slots == (SLOT_RING,)
     skill_properties = [
         property_
         for property_ in bundle.affixes.affixes[0].variants[0].properties

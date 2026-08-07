@@ -9,6 +9,11 @@ from gd_affix_relevance.normalization.sample_report import (
     format_gear_slots,
 )
 from gd_affix_relevance.normalization.mapping_proposals import propose_field_mapping
+from gd_affix_relevance.slots import (
+    ARMOR_SLOTS,
+    SLOT_AMULET,
+    SLOT_RING,
+)
 
 
 def _write_dbr(path: Path, fields: list[tuple[str, str]]) -> None:
@@ -26,10 +31,8 @@ def test_template_abstraction_reuses_placeholders() -> None:
 
 
 def test_gear_slot_formatting_compresses_common_groups() -> None:
-    assert format_gear_slots({"Ring", "Amulet"}) == "Rings, Amulets"
-    assert format_gear_slots(
-        {"Head", "Shoulders", "Chest", "Hands", "Legs", "Feet"}
-    ) == "All armor"
+    assert format_gear_slots({SLOT_RING, SLOT_AMULET}) == "Rings, Amulets"
+    assert format_gear_slots(set(ARMOR_SLOTS)) == "All armor"
 
 
 def test_generic_dot_keeps_duration_and_conversion_uses_player_name() -> None:
@@ -91,6 +94,7 @@ def test_build_candidates_uses_live_loot_path_and_groups_leveled_variants(
     candidate = result.candidates[0]
     assert candidate.display_name == "Corrosive"
     assert candidate.gear_slot == "Ring"
+    assert candidate.applicable_slots == (SLOT_RING,)
     assert candidate.stat_lines == ("+[x]% Acid Damage",)
     assert candidate.semantic_components
     assert candidate.variant_count == 2

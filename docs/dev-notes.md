@@ -1,4 +1,7 @@
 - start considering distribution concerns
+- for "build support": important to also classify slot diversity
+- "resistance hunt" mode
+- resistance-focus mode for add-ons view
 
 UI:
 - add "new" button for new profiles

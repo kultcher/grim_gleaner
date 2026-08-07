@@ -96,11 +96,23 @@ The top-level Top Matches page uses the compiled `AffixCatalog` and the active
 `BuildProfile`. During development it looks for `artifacts/catalog`; the scorer
 itself receives an `AffixCatalog` directly and does not depend on that path.
 
-Each compiled gear-slot/stat-layout variant is scored independently. The table
-shows its grade marker, affix name and type, slot, matched profile stats,
-weighted match, and category coverage. Selecting a row shows the full number-
-free stat list, level-layout information, localization tag, and representative
-record. Changing a profile weight or loading a profile reranks the table.
+Affixes are grouped by atomic gear slot. Each slot row contains an independent
+top-five prefix table and top-five suffix table; matched profile stats remain in
+the shared detail pane instead of consuming table width. Broadly applicable
+affixes may correctly appear in several slot rows.
+
+The upper pane has composable, default-on filters for 1H, 2H, melee, caster,
+ranged, shield, and off-hand rows. These are presentation filters for now. A
+later `Weapon Type(s)` profile setting can reuse the same stable slot IDs when
+loadout choice needs to affect Uniques, Add-ons, and Build Support globally.
+
+Within each affix/type/slot combination, the highest-level stat layout is shown
+and lower tiers are deduplicated. `!` in a grade marker means the affix has
+different stat categories at lower level tiers. This best-case UI convention is
+separate from `*`, which remains the conservative multi-layout marker used by
+generated in-game annotations. Selecting a row shows matched stats, the full
+number-free stat list, level information, localization tag, and representative
+record. Changing a profile weight or loading a profile reranks every table.
 
 ## Generate Output staging view
 
