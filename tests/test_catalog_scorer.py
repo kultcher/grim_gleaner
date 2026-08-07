@@ -88,6 +88,16 @@ def test_conversion_property_maps_its_destination_to_profile_id() -> None:
     assert semantic_stat_id(property_) == "damage_conversion_to_vitality"
 
 
+def test_item_base_weapon_damage_maps_separately_from_flat_damage() -> None:
+    property_ = AffixProperty(
+        "flat_lightning_damage",
+        "flat_lightning_damage:base_weapon",
+        {"damage_min": "100", "damage_max": "120"},
+    )
+
+    assert semantic_stat_id(property_) == "base_weapon_damage_as_lightning"
+
+
 def test_nonlinear_score_softly_penalizes_low_item_coverage() -> None:
     stat_ids = (
         "defensive_ability",

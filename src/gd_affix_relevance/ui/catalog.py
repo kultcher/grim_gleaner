@@ -34,6 +34,13 @@ def conversion_stat(destination: str, label: str) -> StatDefinition:
     return stat(f"damage_conversion_to_{destination}", f"Damage Converted to {label}")
 
 
+def base_weapon_damage_stat(damage_type: str, label: str) -> StatDefinition:
+    return stat(
+        f"base_weapon_damage_as_{damage_type}",
+        f"Base Weapon Damage as {label}",
+    )
+
+
 DAMAGE_TAB = TabDefinition(
     "damage",
     "Damage",
@@ -61,6 +68,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_elemental_damage", "Elemental Damage (Flat)"),
                 stat("elemental_damage_percent", "Elemental Damage (+%)"),
+                base_weapon_damage_stat("elemental", "Elemental"),
                 conversion_stat("elemental", "Elemental"),
             ),
         ),
@@ -70,6 +78,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_acid_damage", "Acid Damage (Flat)"),
                 stat("acid_damage_percent", "Acid Damage (+%)"),
+                base_weapon_damage_stat("acid", "Acid"),
                 stat("flat_poison_damage", "Poison Damage (Flat DoT)"),
                 stat("poison_damage_percent", "Poison Damage (+% DoT)"),
                 conversion_stat("acid", "Acid"),
@@ -81,6 +90,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_aether_damage", "Aether Damage (Flat)"),
                 stat("aether_damage_percent", "Aether Damage (+%)"),
+                base_weapon_damage_stat("aether", "Aether"),
                 conversion_stat("aether", "Aether"),
             ),
         ),
@@ -98,6 +108,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_fire_damage", "Fire Damage (Flat)"),
                 stat("fire_damage_percent", "Fire Damage (+%)"),
+                base_weapon_damage_stat("fire", "Fire"),
                 stat("flat_burn_damage", "Burn Damage (Flat DoT)"),
                 stat("burn_damage_percent", "Burn Damage (+% DoT)"),
                 conversion_stat("fire", "Fire"),
@@ -109,6 +120,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_chaos_damage", "Chaos Damage (Flat)"),
                 stat("chaos_damage_percent", "Chaos Damage (+%)"),
+                base_weapon_damage_stat("chaos", "Chaos"),
                 conversion_stat("chaos", "Chaos"),
             ),
         ),
@@ -118,6 +130,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_cold_damage", "Cold Damage (Flat)"),
                 stat("cold_damage_percent", "Cold Damage (+%)"),
+                base_weapon_damage_stat("cold", "Cold"),
                 stat("flat_frostburn_damage", "Frostburn Damage (Flat DoT)"),
                 stat("frostburn_damage_percent", "Frostburn Damage (+% DoT)"),
                 conversion_stat("cold", "Cold"),
@@ -129,6 +142,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_lightning_damage", "Lightning Damage (Flat)"),
                 stat("lightning_damage_percent", "Lightning Damage (+%)"),
+                base_weapon_damage_stat("lightning", "Lightning"),
                 stat("flat_electrocute_damage", "Electrocute Damage (Flat DoT)"),
                 stat("electrocute_damage_percent", "Electrocute Damage (+% DoT)"),
                 conversion_stat("lightning", "Lightning"),
@@ -140,6 +154,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_physical_damage", "Physical Damage (Flat)"),
                 stat("physical_damage_percent", "Physical Damage (+%)"),
+                base_weapon_damage_stat("physical", "Physical"),
                 stat("flat_internal_trauma_damage", "Internal Trauma (Flat DoT)"),
                 stat("internal_trauma_damage_percent", "Internal Trauma (+% DoT)"),
                 conversion_stat("physical", "Physical"),
@@ -151,6 +166,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_pierce_damage", "Pierce Damage (Flat)"),
                 stat("pierce_damage_percent", "Pierce Damage (+%)"),
+                base_weapon_damage_stat("pierce", "Pierce"),
                 conversion_stat("pierce", "Pierce"),
             ),
         ),
@@ -160,6 +176,7 @@ DAMAGE_TAB = TabDefinition(
             (
                 stat("flat_vitality_damage", "Vitality Damage (Flat)"),
                 stat("vitality_damage_percent", "Vitality Damage (+%)"),
+                base_weapon_damage_stat("vitality", "Vitality"),
                 stat("flat_vitality_decay_damage", "Vitality Decay (Flat DoT)"),
                 stat("vitality_decay_damage_percent", "Vitality Decay (+% DoT)"),
                 conversion_stat("vitality", "Vitality"),

@@ -29,6 +29,8 @@ from gd_affix_relevance.ui.skills_editor import SkillsEditor
 
 class ProfileEditor(QWidget):
     profile_changed = Signal()
+    profile_path_changed = Signal(object)
+    view_matches_requested = Signal()
 
     def __init__(
         self,
@@ -36,11 +38,14 @@ class ProfileEditor(QWidget):
         parent: QWidget | None = None,
         *,
         skills: SkillCatalog | None = None,
+        profile_path: Path | None = None,
+        startup_notice: str = "",
     ) -> None:
         super().__init__(parent)
         self.profile = profile or BuildProfile()
         self.accordions: dict[str, PackageAccordion] = {}
-        self.current_profile_path: Path | None = None
+        self.current_profile_path = Path(profile_path) if profile_path else None
+        self.is_dirty = False
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(24, 20, 24, 20)
@@ -67,6 +72,11 @@ class ProfileEditor(QWidget):
         self.name_edit.setObjectName("profileName")
         self.name_edit.textChanged.connect(self._name_changed)
         name_row.addWidget(self.name_edit, 1)
+        self.new_button = QPushButton("New Profile", self)
+        self.new_button.setObjectName("profileAction")
+        self.new_button.setToolTip("Start a blank build profile")
+        self.new_button.clicked.connect(self.new_profile)
+        name_row.addWidget(self.new_button)
         self.load_button = QPushButton("Load...", self)
         self.load_button.setObjectName("profileAction")
         self.load_button.setToolTip("Load build profile from a JSON file")
@@ -79,10 +89,18 @@ class ProfileEditor(QWidget):
         name_row.addWidget(self.save_button)
         layout.addLayout(name_row)
 
-        self.file_status = QLabel("Not saved", self)
+        initial_status = (
+            f"Loaded: {self.current_profile_path.name}"
+            if self.current_profile_path is not None
+            else startup_notice or "Not saved"
+        )
+        self.file_status = QLabel(initial_status, self)
         self.file_status.setObjectName("profileFileStatus")
+        if self.current_profile_path is not None:
+            self.file_status.setToolTip(str(self.current_profile_path))
         layout.addWidget(self.file_status)
 
+        hint_row = QHBoxLayout()
         hint = QLabel(
             "All packages remain visible. Optional packages start collapsed and stay "
             "open whenever they contain a nonzero weight.",
@@ -90,7 +108,12 @@ class ProfileEditor(QWidget):
         )
         hint.setObjectName("pageHint")
         hint.setWordWrap(True)
-        layout.addWidget(hint)
+        hint_row.addWidget(hint, 1)
+        self.view_matches_button = QPushButton("View Matches", self)
+        self.view_matches_button.setObjectName("primaryAction")
+        self.view_matches_button.clicked.connect(self.view_matches_requested)
+        hint_row.addWidget(self.view_matches_button)
+        layout.addLayout(hint_row)
 
         self.tabs = QTabWidget(self)
         self.tabs.setObjectName("profileTabs")
@@ -157,8 +180,10 @@ class ProfileEditor(QWidget):
 
         destination = save_profile(self.profile, path)
         self.current_profile_path = destination
+        self.is_dirty = False
         self.file_status.setText(f"Saved: {destination.name}")
         self.file_status.setToolTip(str(destination))
+        self.profile_path_changed.emit(destination)
         return destination
 
     def load_from_path(self, path: Path) -> BuildProfile:
@@ -182,12 +207,64 @@ class ProfileEditor(QWidget):
         self.skills_editor.refresh_from_profile()
 
         self.current_profile_path = Path(path)
+        self.is_dirty = False
         self.file_status.setText(f"Loaded: {self.current_profile_path.name}")
         self.file_status.setToolTip(str(self.current_profile_path))
+        self.profile_path_changed.emit(self.current_profile_path)
         self.profile_changed.emit()
         return self.profile
 
-    def _choose_profile_to_save(self) -> None:
+    def new_profile(self) -> bool:
+        """Reset every profile field after resolving unsaved changes."""
+
+        if self.is_dirty:
+            action = self._prompt_unsaved_action()
+            if action == QMessageBox.StandardButton.Cancel:
+                return False
+            if action == QMessageBox.StandardButton.Save and not self._save_before_reset():
+                return False
+
+        baseline = BuildProfile()
+        self.profile.name = baseline.name
+        self.profile.weights.clear()
+        self.profile.masteries = baseline.masteries
+        self.profile.skill_weights.clear()
+        blocker = QSignalBlocker(self.name_edit)
+        self.name_edit.setText(self.profile.name)
+        del blocker
+        for accordion in self.accordions.values():
+            accordion.refresh_from_profile()
+        self.skills_editor.refresh_from_profile()
+        self.current_profile_path = None
+        self.is_dirty = False
+        self.file_status.setText("New profile — not saved")
+        self.file_status.setToolTip("")
+        self.profile_path_changed.emit(None)
+        self.profile_changed.emit()
+        return True
+
+    def _prompt_unsaved_action(self) -> QMessageBox.StandardButton:
+        return QMessageBox.warning(
+            self,
+            "Unsaved Profile",
+            "Save changes to the current profile before starting a new one?",
+            QMessageBox.StandardButton.Save
+            | QMessageBox.StandardButton.Discard
+            | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Save,
+        )
+
+    def _save_before_reset(self) -> bool:
+        if self.current_profile_path is None:
+            return self._choose_profile_to_save()
+        try:
+            self.save_to_path(self.current_profile_path)
+        except (OSError, ValueError, TypeError) as error:
+            QMessageBox.critical(self, "Could Not Save Profile", str(error))
+            return False
+        return True
+
+    def _choose_profile_to_save(self) -> bool:
         suggested = str(
             self.current_profile_path
             or Path(f"{self.profile.name.strip() or 'build-profile'}.json")
@@ -199,13 +276,15 @@ class ProfileEditor(QWidget):
             "Grim Gleaner Profiles (*.json);;All Files (*)",
         )
         if not selected:
-            return
+            return False
         try:
             self.save_to_path(Path(selected))
         except (OSError, ValueError, TypeError) as error:
             QMessageBox.critical(self, "Could Not Save Profile", str(error))
+            return False
+        return True
 
-    def _choose_profile_to_load(self) -> None:
+    def _choose_profile_to_load(self) -> bool:
         starting_path = str(self.current_profile_path or Path.cwd())
         selected, _ = QFileDialog.getOpenFileName(
             self,
@@ -214,13 +293,16 @@ class ProfileEditor(QWidget):
             "Grim Gleaner Profiles (*.json);;All Files (*)",
         )
         if not selected:
-            return
+            return False
         try:
             self.load_from_path(Path(selected))
         except (OSError, ValueError, TypeError) as error:
             QMessageBox.critical(self, "Could Not Load Profile", str(error))
+            return False
+        return True
 
     def _mark_unsaved(self) -> None:
+        self.is_dirty = True
         if self.current_profile_path is None:
             self.file_status.setText("Not saved")
             self.file_status.setToolTip("")

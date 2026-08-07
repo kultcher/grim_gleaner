@@ -132,6 +132,69 @@ class StatRow(QWidget):
         layout.addWidget(self.weight_control)
 
 
+class PackageModifyControl(QWidget):
+    """Compact control that adjusts every weight in one package."""
+
+    increment_requested = Signal()
+    decrement_requested = Signal()
+    value_requested = Signal(int)
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("packageModifyControl")
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 8, 0)
+        layout.setSpacing(3)
+        label = QLabel("Modify All", self)
+        label.setObjectName("packageModifyLabel")
+        layout.addWidget(label)
+
+        self.decrement_button = QToolButton(self)
+        self.decrement_button.setObjectName("weightArrow")
+        self.decrement_button.setText("◀")
+        self.decrement_button.setToolTip("Decrease every stat in this package")
+        self.decrement_button.clicked.connect(self.decrement_requested)
+        layout.addWidget(self.decrement_button)
+
+        self.star_buttons: list[QToolButton] = []
+        for index in range(MAX_STAT_WEIGHT):
+            button = QToolButton(self)
+            button.setObjectName("weightStar")
+            button.setCursor(Qt.CursorShape.PointingHandCursor)
+            button.clicked.connect(
+                lambda checked=False, selected=index + 1: self.value_requested.emit(
+                    selected
+                )
+            )
+            self.star_buttons.append(button)
+            layout.addWidget(button)
+
+        self.increment_button = QToolButton(self)
+        self.increment_button.setObjectName("weightArrow")
+        self.increment_button.setText("▶")
+        self.increment_button.setToolTip("Increase every stat in this package")
+        self.increment_button.clicked.connect(self.increment_requested)
+        layout.addWidget(self.increment_button)
+
+    def refresh(self, values: tuple[int, ...]) -> None:
+        common = values[0] if values and len(set(values)) == 1 else None
+        minimum = min(values, default=0)
+        maximum = max(values, default=0)
+        self.decrement_button.setEnabled(maximum > 0)
+        self.increment_button.setEnabled(minimum < MAX_STAT_WEIGHT)
+        state = f"weight {common}" if common is not None else "mixed weights"
+        self.setToolTip(
+            f"Package has {state}. Arrows adjust each stat by one; stars set all stats."
+        )
+        for index, button in enumerate(self.star_buttons, start=1):
+            filled = common is not None and index <= common
+            button.setText("★" if filled else "☆")
+            button.setProperty("filled", filled)
+            button.setAccessibleName(f"Set every package stat to {index}")
+            button.style().unpolish(button)
+            button.style().polish(button)
+
+
 class PackageAccordion(QFrame):
     """Package whose nonzero values pin its contents open."""
 
@@ -154,11 +217,21 @@ class PackageAccordion(QFrame):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        self.header = QPushButton(self)
+        header_row = QWidget(self)
+        header_layout = QHBoxLayout(header_row)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(0)
+        self.header = QPushButton(header_row)
         self.header.setObjectName("packageHeader")
         self.header.setCheckable(True)
         self.header.clicked.connect(self._header_clicked)
-        layout.addWidget(self.header)
+        header_layout.addWidget(self.header, 1)
+        self.modify_all = PackageModifyControl(header_row)
+        self.modify_all.increment_requested.connect(lambda: self._modify_all(1))
+        self.modify_all.decrement_requested.connect(lambda: self._modify_all(-1))
+        self.modify_all.value_requested.connect(self._set_all)
+        header_layout.addWidget(self.modify_all)
+        layout.addWidget(header_row)
 
         self.body = QWidget(self)
         self.body.setObjectName("packageBody")
@@ -202,6 +275,7 @@ class PackageAccordion(QFrame):
             expanded = True
         self.header.setChecked(expanded)
         self.body.setVisible(expanded)
+        self.modify_all.setVisible(expanded)
         self._refresh_header()
 
     def refresh_from_profile(self) -> None:
@@ -211,6 +285,34 @@ class PackageAccordion(QFrame):
             row.weight_control.set_value(self._weight_for(stat_id), emit=False)
         self.set_expanded(self.is_pinned)
         self._refresh_header()
+
+    def _modify_all(self, delta: int) -> None:
+        values = {
+            stat_id: max(
+                0, min(MAX_STAT_WEIGHT, row.weight_control.value + delta)
+            )
+            for stat_id, row in self.rows.items()
+        }
+        self._apply_bulk(values)
+
+    def _set_all(self, weight: int) -> None:
+        self._apply_bulk({stat_id: weight for stat_id in self.rows})
+
+    def _apply_bulk(self, values: dict[str, int]) -> None:
+        changed = False
+        for stat_id, weight in values.items():
+            row = self.rows[stat_id]
+            if row.weight_control.value == weight:
+                continue
+            self._set_weight(stat_id, weight)
+            row.weight_control.set_value(weight, emit=False)
+            changed = True
+        if any(weight > 0 for weight in values.values()):
+            self.set_expanded(True)
+        self._refresh_header()
+        if changed and self.stat_ids:
+            first = self.stat_ids[0]
+            self.weight_changed.emit(first, self._weight_for(first))
 
     def _header_clicked(self, checked: bool) -> None:
         self.set_expanded(checked)
@@ -233,3 +335,6 @@ class PackageAccordion(QFrame):
             self.header.setToolTip("This package stays open while it contains weighted stats.")
         else:
             self.header.setToolTip("Expand or collapse this package.")
+        self.modify_all.refresh(
+            tuple(row.weight_control.value for row in self.rows.values())
+        )

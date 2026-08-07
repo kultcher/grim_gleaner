@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QSettings, Qt
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QListWidget,
@@ -21,6 +21,7 @@ from gd_affix_relevance.catalog import (
     SkillCatalog,
 )
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.profile_store import load_profile
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.profile_editor import ProfileEditor
 from gd_affix_relevance.ui.top_matches import TopMatchesPage
@@ -35,11 +36,31 @@ class MainWindow(QMainWindow):
         catalog: AffixCatalog | None = None,
         skills: SkillCatalog | None = None,
         items: ItemCatalog | None = None,
+        settings: QSettings | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Grim Gleaner")
         self.resize(1120, 780)
         self.setMinimumSize(880, 620)
+        self.settings = settings
+
+        profile_path: Path | None = None
+        startup_notice = ""
+        if profile is None and self.settings is not None:
+            raw_path = self.settings.value("profiles/active_path", "", type=str)
+            if raw_path:
+                candidate = Path(raw_path)
+                try:
+                    profile = load_profile(candidate)
+                except (OSError, ValueError, TypeError):
+                    self.settings.remove("profiles/active_path")
+                    self.settings.sync()
+                    startup_notice = (
+                        "The last active profile could not be found or read; "
+                        "started a new profile."
+                    )
+                else:
+                    profile_path = candidate
 
         central = QWidget(self)
         layout = QHBoxLayout(central)
@@ -70,7 +91,11 @@ class MainWindow(QMainWindow):
         items = items or ItemCatalog((), (), (), (), (), ())
 
         self.profile_editor = ProfileEditor(
-            profile, self.pages, skills=skills
+            profile,
+            self.pages,
+            skills=skills,
+            profile_path=profile_path,
+            startup_notice=startup_notice,
         )
         self.pages.addWidget(self.profile_editor)
         self._add_navigation_item("Build Profile", "Set the stats this build values")
@@ -102,6 +127,12 @@ class MainWindow(QMainWindow):
         )
 
         self.profile_editor.profile_changed.connect(self.top_matches_page.refresh)
+        self.profile_editor.profile_path_changed.connect(
+            self._remember_profile_path
+        )
+        self.profile_editor.view_matches_requested.connect(
+            lambda: self.navigation.setCurrentRow(1)
+        )
         self.navigation.currentRowChanged.connect(self._navigation_changed)
         self.navigation.setCurrentRow(0)
         self.setCentralWidget(central)
@@ -115,6 +146,17 @@ class MainWindow(QMainWindow):
         self.pages.setCurrentIndex(index)
         if index == 1:
             self.top_matches_page.refresh()
+
+    def _remember_profile_path(self, path: object) -> None:
+        if self.settings is None:
+            return
+        if path is None:
+            self.settings.remove("profiles/active_path")
+        else:
+            self.settings.setValue(
+                "profiles/active_path", str(Path(path).resolve())
+            )
+        self.settings.sync()
 
 
 def _load_development_catalog() -> tuple[CatalogBundle | None, str]:

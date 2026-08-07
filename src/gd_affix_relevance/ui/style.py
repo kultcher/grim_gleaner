@@ -29,6 +29,7 @@ QLabel#pageTitle { font-size: 19pt; font-weight: 650; color: #ffffff; }
 QLabel#placeholderTitle { font-size: 16pt; font-weight: 600; }
 QLabel#fieldLabel { color: #c9ced8; font-weight: 600; }
 QLabel#pageHint { color: #a7adb8; }
+QLabel#matchHighlightLegend { color: #9eb5ca; padding-left: 2px; }
 QLabel#weightLegend {
     background: #242831;
     border: 1px solid #343a46;
@@ -64,6 +65,14 @@ QFrame#uniqueSlotRow {
     background: #1b1e24;
     border: 1px solid #303640;
     border-radius: 6px;
+}
+QFrame#slotFilterDivider { color: #555d69; margin: 1px 5px; }
+QLabel#weaponFilterWarning {
+    background: #382f20;
+    border: 1px solid #705b31;
+    border-radius: 5px;
+    color: #efcf84;
+    padding: 7px 10px;
 }
 QLabel#affixCategoryTitle {
     color: #d4a843;
@@ -101,7 +110,28 @@ QHeaderView::section {
     border-right: 1px solid #343a46;
     padding: 7px;
 }
-QPlainTextEdit#matchDetails, QSpinBox#matchLimit {
+QFrame#matchDetailPane {
+    background: #20242b;
+    border: 1px solid #343a46;
+    border-radius: 5px;
+}
+QLabel#matchDetailTitle {
+    border: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #ffffff;
+    font-size: 11pt;
+    font-weight: 650;
+    padding: 9px 12px;
+}
+QTextEdit#matchDetails {
+    background: #20242b;
+    border: 0;
+    border-top: 1px solid #343a46;
+    border-radius: 0;
+    padding: 6px;
+}
+QSpinBox#matchLimit {
     background: #20242b;
     border: 1px solid #343a46;
     border-radius: 5px;
@@ -197,6 +227,8 @@ QPushButton#packageHeader {
     text-align: left;
 }
 QPushButton#packageHeader:hover { background: #2c323c; }
+QWidget#packageModifyControl { background: #252a32; }
+QLabel#packageModifyLabel { color: #b8bec9; padding: 0 4px 0 8px; }
 QWidget#packageBody { background: #1b1e24; }
 QToolButton#weightArrow {
     background: #292e37;

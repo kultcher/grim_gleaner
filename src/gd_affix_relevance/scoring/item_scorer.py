@@ -12,11 +12,12 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.scoring.catalog_scorer import (
     RelevanceScore,
+    canonical_skill_reference,
     minimum_score_for_grade,
     score_semantic_stat_ids,
     semantic_stat_id,
 )
-from gd_affix_relevance.slots import equipment_class_slot_id
+from gd_affix_relevance.slots import WEAPON_SLOTS, equipment_class_slot_id
 
 TYPE_MONSTER_INFREQUENT = "monster_infrequent"
 TYPE_EPIC = "epic"
@@ -52,9 +53,19 @@ class RankedItemVariant:
 def item_semantic_stat_ids(
     variant: ItemVariantDefinition,
 ) -> tuple[str, ...]:
-    return tuple(
-        sorted({semantic_stat_id(property_) for property_ in variant.properties})
-    )
+    stat_ids = {
+        semantic_stat_id(property_)
+        for property_ in variant.properties
+        if property_.property_id != "base_attack_speed"
+    }
+    if (
+        equipment_class_slot_id(variant.item_class) in WEAPON_SLOTS
+        and not any(
+            stat_id.startswith("base_weapon_damage_as_") for stat_id in stat_ids
+        )
+    ):
+        stat_ids.add("base_weapon_damage_as_physical")
+    return tuple(sorted(stat_ids))
 
 
 def unique_item_type(variant: ItemVariantDefinition) -> str:
@@ -104,9 +115,12 @@ def rank_unique_items_for_slot(
         score = score_semantic_stat_ids(semantic_ids, profile)
         if score.effective_score < minimum_score:
             continue
-        selected_skills = set(profile.skill_weights)
+        selected_skills = {
+            canonical_skill_reference(skill_id) for skill_id in profile.skill_weights
+        }
         has_selected_modifier = any(
-            modifier.modified_skill_reference in selected_skills
+            canonical_skill_reference(modifier.modified_skill_reference)
+            in selected_skills
             for modifier in variant.skill_modifiers
         )
         ranked.append(

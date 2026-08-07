@@ -8,6 +8,7 @@ dist/
 artifacts/
 .codex/
 lightning.json
+tests/
 
 # Locally extracted proprietary Grim Dawn data.
 game_data/

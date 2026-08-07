@@ -8,7 +8,10 @@ from gd_affix_relevance.catalog import (
     ItemVariantDefinition,
 )
 from gd_affix_relevance.domain import BuildProfile
-from gd_affix_relevance.scoring import rank_unique_items_for_slot
+from gd_affix_relevance.scoring import (
+    item_semantic_stat_ids,
+    rank_unique_items_for_slot,
+)
 from gd_affix_relevance.slots import SLOT_HEAD
 
 
@@ -54,7 +57,8 @@ def _item(name: str, *variants: ItemVariantDefinition) -> ItemDefinition:
 
 
 def test_unique_ranking_uses_highest_variant_and_flags_selected_skill_modifier() -> None:
-    skill_id = "records/skills/playerclass01/cadence1.dbr"
+    selected_skill_id = "records/skills/playerclass01/cadence1_buff.dbr"
+    modifier_skill_id = "records/skills/playerclass01/cadence1.dbr"
     low = _variant(
         properties=(ItemProperty("fire_resistance", "fire_resistance", {}),),
         stat_lines=("+[x]% Fire Resistance",),
@@ -64,14 +68,16 @@ def test_unique_ranking_uses_highest_variant_and_flags_selected_skill_modifier()
         item_level=94,
         level_requirement=84,
         skill_modifiers=(
-            ItemSkillModifier(skill_id, "Cadence", "modifier.dbr", (), ()),
+            ItemSkillModifier(
+                modifier_skill_id, "Cadence", "modifier.dbr", (), ()
+            ),
         ),
     )
     catalog = ItemCatalog((_item("Chosen Helm", low, high),), (), (), (), (), ())
     profile = BuildProfile(
         "Soldier",
         weights={"health": 4},
-        skill_weights={skill_id: 0},
+        skill_weights={selected_skill_id: 0},
     )
 
     matches = rank_unique_items_for_slot(catalog, profile, slot_id=SLOT_HEAD)
@@ -140,3 +146,61 @@ def test_selected_mastery_bonus_is_treated_as_core_weight() -> None:
     )
 
     assert matches[0].score.weighted_match == 4
+
+
+def test_physical_weapon_base_damage_is_inferred_when_no_override_exists() -> None:
+    physical_weapon = _variant(
+        category="legendary",
+        rarity="Legendary",
+        item_class="WeaponMelee_Axe",
+        properties=(ItemProperty("health", "health", {}),),
+    )
+
+    assert "base_weapon_damage_as_physical" in item_semantic_stat_ids(
+        physical_weapon
+    )
+
+    elemental_weapon = _variant(
+        category="legendary",
+        rarity="Legendary",
+        item_class="WeaponMelee_Axe",
+        properties=(
+            ItemProperty(
+                "flat_fire_damage",
+                "flat_fire_damage:base_weapon",
+                {},
+            ),
+        ),
+    )
+    semantic_ids = item_semantic_stat_ids(elemental_weapon)
+    assert "base_weapon_damage_as_fire" in semantic_ids
+    assert "base_weapon_damage_as_physical" not in semantic_ids
+
+
+def test_item_semantics_ignore_base_attack_speed_and_alias_buff_skill_ranks() -> None:
+    base_skill = "records/skills/playerclass07/lightningnet1.dbr"
+    selected_buff = "records/skills/playerclass07/lightningnet1_buff.dbr"
+    variant = _variant(
+        category="epic",
+        rarity="Epic",
+        properties=(
+            ItemProperty("base_attack_speed", "base_attack_speed", {}),
+            ItemProperty(
+                "skill_bonus",
+                "skill_bonus:1",
+                {"skill_reference": base_skill},
+            ),
+        ),
+    )
+    semantic_ids = item_semantic_stat_ids(variant)
+    assert "base_attack_speed" not in semantic_ids
+
+    catalog = ItemCatalog((_item("Storm Item", variant),), (), (), (), (), ())
+    matches = rank_unique_items_for_slot(
+        catalog,
+        BuildProfile(skill_weights={selected_buff: 4}),
+        slot_id=SLOT_HEAD,
+    )
+    assert matches[0].score.matched_count == 1
+    assert matches[0].score.total_category_count == 1
+    assert matches[0].score.coverage_ratio == 1

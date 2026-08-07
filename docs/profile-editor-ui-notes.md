@@ -31,6 +31,10 @@ collapsed instead of being hidden behind an add-package menu.
 - Returning every stat in the package to 0 makes it collapsible again.
 - An optional package header shows its nonzero-stat count, for example
   `Fire (3 weighted)`.
+- An expanded package header shows a `Modify All` star control. Its arrows
+  increment or decrement every row independently by one, respecting the 0–4
+  limits; selecting a star assigns that exact weight to every package row.
+  Mixed packages show unfilled summary stars until all rows share one value.
 
 Accordion expansion is presentation state, not scoring state. A package does not
 need a separate enabled flag: only its stat weights affect relevance. Expanded
@@ -39,7 +43,18 @@ profile's semantic weights.
 
 ## Profile files
 
-The editor provides `Load...` and `Save...` actions beside the profile name.
+The editor provides `New Profile`, `Load...`, and `Save...` actions beside the
+profile name. New Profile prompts to Save, Discard, or Cancel when the current
+profile is dirty. Continuing resets the profile in place to its baseline name,
+zero weights, empty mastery slots, and no build-relevant skills. A View Matches
+button above the weighting tabs navigates directly to Top Matches.
+
+The application remembers the path most recently saved or loaded and restores
+that profile in the next session. The path is persisted immediately rather
+than only during a graceful close. If the file is missing or invalid, the stale
+setting is removed and the editor starts with a blank profile plus a status
+message.
+
 The user chooses the file location and filename; `.json` is added when a save
 path has no extension. Files contain a schema version, profile name, two mastery
 IDs, selected-skill weights, and the nonzero semantic-stat weights. Weight
@@ -58,6 +73,10 @@ weights.
   Damage tab's default Base package.
 - Damage-type packages expose directional conversion into their selected damage
   type rather than duplicating one generic conversion weight.
+- Direct damage packages expose `Base Weapon Damage as <type>`. Item base-damage
+  DBR bundles map to this category instead of ordinary flat damage; weapons
+  without an explicit nonphysical override are treated as physical-base
+  weapons. DoT-only Bleeding does not expose a misleading base-weapon option.
 - Granted item skills remain separate from the mastery-skill selector. Their
   eventual weighting and scoring behavior is still deferred.
 
@@ -100,7 +119,10 @@ that path.
 Affixes are grouped by atomic gear slot. Each slot row contains an independent
 top-five prefix table and top-five suffix table; matched profile stats remain in
 the shared detail pane instead of consuming table width. Broadly applicable
-affixes may correctly appear in several slot rows.
+affixes may correctly appear in several slot rows. Rows with bonus ranks to a
+build-relevant skill are highlighted pale turquoise. Rows with modifiers for a
+build-relevant skill are highlighted aquamarine and take precedence when both
+are present.
 
 The shared, default-on filters for 1H, 2H, melee, caster, ranged, shield, and
 off-hand rows apply to both the Affixes and Uniques tabs. They are presentation
@@ -108,13 +130,34 @@ filters rather than saved profile choices. A later `Weapon Type(s)` profile
 setting can reuse the same stable slot IDs when loadout choice needs to affect
 Add-ons and Build Support globally.
 
+A divider separates handedness from weapon style. If neither 1H nor 2H is
+selected, or no melee/caster/ranged style is selected, the Weapons category
+stays visible and explains which two filter groups require a selection.
+
 Within each affix/type/slot combination, the highest-level stat layout is shown
 and lower tiers are deduplicated. This max-level assumption is stated once in
 the page and detail views rather than marked on nearly every result. It remains
 separate from `*`, which is the conservative multi-layout marker used by
-generated in-game annotations. Selecting a row shows matched stats, the full
-number-free stat list, level information, localization tag, and representative
-record. Changing a profile weight or loading a profile reranks every table.
+generated in-game annotations. Selecting a row partitions its semantic stats
+into matched and remaining-unmatched lists, so matched entries are not repeated.
+Unique skill-modifier lines remain in their own detail section. Level
+information, localization tag, and representative record remain visible.
+Changing a profile weight or loading a profile reranks every table.
+
+The detail pane has a fixed title above its independently scrolling body. Unique
+titles show grade, item, slot, and type, with green, blue, or purple title bars
+for Monster Infrequent, Epic, or Legendary items. Affixes use the same title
+layout with a neutral bar because the current AffixCatalog has no rarity field.
+Semantic stat colors follow the Rainbow-style damage and resistance families;
+attributes, OA/DA, health, energy, skill ranks, and skill modifiers have their
+own high-contrast colors. Vitality uses a distinct violet pending visual tuning.
+
+Item `base_attack_speed` is structural weapon metadata rather than a weighted
+build stat, so it is excluded from both item coverage and unmatched details.
+Mastery-wide bonuses resolve through the compiled mastery display name. Named
+skill `_buff` DBRs are treated as aliases of their base skill record, allowing
+items such as Ugdenbog Sparkthrower to match and highlight a selected Storm Box
+of Elgoloth even though the profile and modifier reference different DBRs.
 
 The Uniques tab contains one variable-length table per slot. Its minimum-grade
 dropdown supports S, A, or B and defaults to A; C and D are intentionally not

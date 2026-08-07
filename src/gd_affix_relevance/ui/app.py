@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 from collections.abc import Sequence
 
+from PySide6.QtCore import QSettings
 from PySide6.QtWidgets import QApplication
 
 from gd_affix_relevance.ui.main_window import MainWindow
@@ -25,7 +26,7 @@ def create_application(argv: Sequence[str] | None = None) -> QApplication:
 
 def main(argv: Sequence[str] | None = None) -> int:
     application = create_application(argv)
-    window = MainWindow()
+    window = MainWindow(settings=QSettings())
     window.show()
     return application.exec()
 

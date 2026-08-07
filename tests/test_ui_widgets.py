@@ -1,12 +1,14 @@
 import os
+from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QSettings, Qt
 from PySide6.QtWidgets import QApplication
 
 from gd_affix_relevance.catalog import AffixCatalog
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.profile_store import save_profile
 from gd_affix_relevance.ui.catalog import PackageDefinition, stat
 from gd_affix_relevance.ui.main_window import MainWindow
 from gd_affix_relevance.ui.widgets import PackageAccordion, WeightControl
@@ -55,6 +57,37 @@ def test_optional_accordion_is_pinned_by_nonzero_data() -> None:
     assert not accordion.is_expanded
 
 
+def test_package_modify_all_adjusts_every_stat_and_only_shows_when_expanded() -> None:
+    _application()
+    profile = BuildProfile()
+    definition = PackageDefinition(
+        "test",
+        "Test",
+        (stat("health", "Health"), stat("movement_speed", "Movement Speed")),
+    )
+    accordion = PackageAccordion(
+        definition,
+        profile.weight_for,
+        profile.set_weight,
+    )
+    changes: list[tuple[str, int]] = []
+    accordion.weight_changed.connect(
+        lambda stat_id, weight: changes.append((stat_id, weight))
+    )
+    accordion.show()
+
+    assert accordion.modify_all.isHidden()
+    accordion.set_expanded(True)
+    assert not accordion.modify_all.isHidden()
+    accordion.modify_all.increment_button.click()
+    assert profile.weights == {"health": 1, "movement_speed": 1}
+    assert len(changes) == 1
+    accordion.modify_all.star_buttons[2].click()
+    assert profile.weights == {"health": 3, "movement_speed": 3}
+    accordion.modify_all.decrement_button.click()
+    assert profile.weights == {"health": 2, "movement_speed": 2}
+
+
 def test_main_window_reserves_top_matches_navigation() -> None:
     _application()
     window = MainWindow(catalog=AffixCatalog(()))
@@ -76,3 +109,43 @@ def test_main_window_reserves_top_matches_navigation() -> None:
         for package_id in ("pets_damage", "pets_defenses", "pets_utility")
     )
     assert window.focusPolicy() == Qt.FocusPolicy.NoFocus
+
+    window.profile_editor.view_matches_button.click()
+    assert window.navigation.currentRow() == 1
+
+
+def test_main_window_restores_and_tracks_last_active_profile(tmp_path: Path) -> None:
+    _application()
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
+    )
+    saved = save_profile(
+        BuildProfile("Remembered", {"health": 4}),
+        tmp_path / "remembered.json",
+    )
+    settings.setValue("profiles/active_path", str(saved))
+    settings.sync()
+
+    window = MainWindow(catalog=AffixCatalog(()), settings=settings)
+    assert window.profile_editor.profile.name == "Remembered"
+    assert window.profile_editor.current_profile_path == saved
+
+    replacement = window.profile_editor.save_to_path(tmp_path / "replacement.json")
+    assert settings.value("profiles/active_path") == str(replacement.resolve())
+    window.profile_editor.new_profile()
+    assert settings.value("profiles/active_path") is None
+
+
+def test_missing_last_profile_falls_back_to_blank_profile(tmp_path: Path) -> None:
+    _application()
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
+    )
+    settings.setValue("profiles/active_path", str(tmp_path / "missing.json"))
+    settings.sync()
+
+    window = MainWindow(catalog=AffixCatalog(()), settings=settings)
+
+    assert window.profile_editor.profile.name == "New Build Profile"
+    assert "could not be found" in window.profile_editor.file_status.text()
+    assert settings.value("profiles/active_path") is None

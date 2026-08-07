@@ -65,6 +65,14 @@ class RankedAffixVariant:
 def semantic_stat_id(property_: AffixProperty) -> str:
     """Translate a compiled property into the ID used by build profiles."""
 
+    if property_.property_key.endswith(":base_weapon") and (
+        property_.property_id.startswith("flat_")
+        and property_.property_id.endswith("_damage")
+    ):
+        damage_type = property_.property_id.removeprefix("flat_").removesuffix(
+            "_damage"
+        )
+        return f"base_weapon_damage_as_{damage_type}"
     if property_.property_id == "damage_conversion":
         destination = property_.attributes.get("destination_damage_type", "unknown")
         destination = {"life": "vitality", "poison": "acid"}.get(
@@ -316,12 +324,30 @@ def profile_weight_for_semantic_id(
 
     prefix = "skill_bonus:"
     if semantic_stat_id.startswith(prefix):
-        return profile.skill_weight_for(semantic_stat_id[len(prefix) :])
+        reference = semantic_stat_id[len(prefix) :]
+        canonical = canonical_skill_reference(reference)
+        return max(
+            (
+                weight
+                for skill_id, weight in profile.skill_weights.items()
+                if canonical_skill_reference(skill_id) == canonical
+            ),
+            default=0,
+        )
     mastery_prefix = "mastery_bonus:"
     if semantic_stat_id.startswith(mastery_prefix):
         mastery_id = semantic_stat_id[len(mastery_prefix) :]
         return 4 if mastery_id in profile.masteries else 0
     return profile.weight_for(semantic_stat_id)
+
+
+def canonical_skill_reference(reference: str) -> str:
+    """Collapse a named skill's runtime ``_buff`` record onto its base DBR."""
+
+    normalized = reference.strip().lower().replace("\\", "/")
+    if normalized.endswith("_buff.dbr"):
+        return normalized.removesuffix("_buff.dbr") + ".dbr"
+    return normalized
 
 
 def minimum_score_for_grade(grade: str) -> float:
