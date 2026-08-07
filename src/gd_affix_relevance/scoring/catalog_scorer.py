@@ -46,8 +46,6 @@ class RankedAffixVariant:
 
     @property
     def marker(self) -> str:
-        if self.has_level_variations:
-            return f"[{self.score.grade}!{self.score.matched_count}]"
         return self.score.marker
 
 
@@ -63,6 +61,17 @@ def semantic_stat_id(property_: AffixProperty) -> str:
     if property_.property_id in {"skill_bonus", "granted_item_skill"}:
         reference = property_.attributes.get("skill_reference", property_.property_key)
         return f"{property_.property_id}:{reference}"
+    if property_.property_id == "mastery_bonus":
+        reference = property_.attributes.get("mastery_reference", "")
+        mastery_id = next(
+            (
+                part
+                for part in reference.lower().replace("\\", "/").split("/")
+                if part.startswith("playerclass")
+            ),
+            reference,
+        )
+        return f"mastery_bonus:{mastery_id}"
     if property_.property_id in {"pet_bonus", "unmapped"}:
         return f"{property_.property_id}:{property_.property_key}"
     return property_.property_id
@@ -282,6 +291,10 @@ def profile_weight_for_semantic_id(
     prefix = "skill_bonus:"
     if semantic_stat_id.startswith(prefix):
         return profile.skill_weight_for(semantic_stat_id[len(prefix) :])
+    mastery_prefix = "mastery_bonus:"
+    if semantic_stat_id.startswith(mastery_prefix):
+        mastery_id = semantic_stat_id[len(mastery_prefix) :]
+        return 4 if mastery_id in profile.masteries else 0
     return profile.weight_for(semantic_stat_id)
 
 

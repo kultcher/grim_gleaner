@@ -14,7 +14,12 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gd_affix_relevance.catalog import AffixCatalog, CatalogBundle, SkillCatalog
+from gd_affix_relevance.catalog import (
+    AffixCatalog,
+    CatalogBundle,
+    ItemCatalog,
+    SkillCatalog,
+)
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.profile_editor import ProfileEditor
@@ -29,6 +34,7 @@ class MainWindow(QMainWindow):
         *,
         catalog: AffixCatalog | None = None,
         skills: SkillCatalog | None = None,
+        items: ItemCatalog | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Grim Gleaner")
@@ -53,13 +59,15 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.pages, 1)
 
         catalog_status = ""
-        if catalog is None and skills is None:
+        if catalog is None and skills is None and items is None:
             bundle, catalog_status = _load_development_catalog()
             if bundle is not None:
                 catalog = bundle.affixes
                 skills = bundle.skills
+                items = bundle.items
         catalog = catalog or AffixCatalog(())
         skills = skills or SkillCatalog(())
+        items = items or ItemCatalog((), (), (), (), (), ())
 
         self.profile_editor = ProfileEditor(
             profile, self.pages, skills=skills
@@ -72,10 +80,11 @@ class MainWindow(QMainWindow):
             self.profile_editor.profile,
             catalog_status=catalog_status,
             skills=skills,
+            items=items,
             parent=self.pages,
         )
         self.pages.addWidget(self.top_matches_page)
-        self._add_navigation_item("Top Matches", "Rank affixes against this profile")
+        self._add_navigation_item("Top Matches", "Rank affixes and gear against this profile")
 
         source_root, output_root = _development_output_paths()
         self.generate_output_page = GenerateOutputPage(
@@ -125,7 +134,7 @@ def _load_development_catalog() -> tuple[CatalogBundle | None, str]:
         return bundle, f"Catalog: {root}"
     if failures:
         return None, "Could not load the compiled catalog: " + "; ".join(failures)
-    return None, "Compile a development catalog under artifacts/catalog to rank affixes."
+    return None, "Compile a development catalog under artifacts/catalog to rank gear."
 
 
 def _development_output_paths() -> tuple[Path, Path]:

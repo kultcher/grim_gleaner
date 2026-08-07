@@ -20,6 +20,7 @@ from gd_affix_relevance.normalization.mapping_proposals import propose_field_map
 from gd_affix_relevance.normalization.sample_report import (
     RecordResolver,
     normalize_record_stat_lines,
+    record_semantic_fingerprint,
 )
 
 
@@ -133,6 +134,7 @@ def compile_item_payloads(
         localization_lookup.setdefault(folded, entry)
 
     records = _discover_records(root, source_names)
+    crafted_item_paths = _discover_crafted_item_paths(root, source_names)
     grouped: dict[str, dict[str, list[dict[str, Any]]]] = {
         family: defaultdict(list) for family in ITEM_FAMILIES
     }
@@ -265,6 +267,11 @@ def compile_item_payloads(
                 "properties": properties,
                 "stat_lines": list(dict.fromkeys(lines)),
                 "skill_modifiers": skill_modifiers,
+                "acquisition_source": _acquisition_source(
+                    logical_path,
+                    _item_category(family, logical_path, record),
+                    crafted_item_paths,
+                ),
             }
             grouped[family][name_tag].append(variant)
             identity[(family, name_tag)] = (
@@ -312,6 +319,44 @@ def compile_item_payloads(
             ),
         )
     return payloads, variant_count, unresolved_names
+
+
+def _discover_crafted_item_paths(
+    data_root: Path,
+    source_names: tuple[str, ...],
+) -> frozenset[str]:
+    targets: set[str] = set()
+    for source in source_names:
+        blueprints = (
+            data_root
+            / source
+            / "records"
+            / "items"
+            / "crafting"
+            / "blueprints"
+        )
+        if not blueprints.is_dir():
+            continue
+        for path in blueprints.rglob("*.dbr"):
+            reference = (parse_dbr_file(path).first_value("artifactName") or "")
+            logical = reference.strip().lower().replace("\\", "/")
+            if logical.startswith("records/items/") and logical.endswith(".dbr"):
+                targets.add(logical)
+    return frozenset(targets)
+
+
+def _acquisition_source(
+    logical_path: str,
+    category: str,
+    crafted_item_paths: frozenset[str],
+) -> str:
+    if category == "faction":
+        return "Purchased"
+    if category == "crafted" or logical_path in crafted_item_paths:
+        return "Crafted"
+    if category == "monster_infrequent":
+        return "Specific Monster Drop"
+    return "Random Drop"
 
 
 def _discover_records(
@@ -486,6 +531,26 @@ def _property_payloads(
             continue
         property_ids[proposal.bundle_key] = proposal.property_id
         bundles[proposal.bundle_key][proposal.value_role] = field.value
+
+    pet_attributes = bundles.get("pet_bonus")
+    if pet_attributes is not None:
+        pet_reference = pet_attributes.get("record_reference", "")
+        resolved_pet = resolver.resolve(pet_reference, source)
+        if resolved_pet is not None:
+            del bundles["pet_bonus"]
+            del property_ids["pet_bonus"]
+            _, pet_record = resolved_pet
+            for property_key, role, value in record_semantic_fingerprint(
+                pet_record
+            ):
+                if property_key.startswith("unmapped:"):
+                    continue
+                nested_key = f"pet_{property_key}"
+                nested_id = f"pet_{property_key.split(':', 1)[0]}"
+                property_ids[nested_key] = nested_id
+                bundles[nested_key]["record_reference"] = pet_reference
+                if value:
+                    bundles[nested_key][role] = value
 
     payloads: list[dict[str, Any]] = []
     for property_key, attributes in sorted(bundles.items()):

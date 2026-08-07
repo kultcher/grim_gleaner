@@ -31,9 +31,11 @@ until redistribution terms and the release packaging policy are settled.
 
 The current UI provides the data-driven profile editor with 0–4 star weights,
 discoverable package accordions, three pet-stat packages, and a two-mastery
-Skills editor. Its Top Matches view ranks the compiled affix catalog against
-the active profile in separate prefix and suffix tables for every atomic gear
-slot. Build profiles can be saved to and loaded from user-selected JSON files.
+Skills editor. Its Top Matches view ranks both affixes and fixed unique-item
+stats against the active profile for every atomic gear slot. Affixes use paired
+prefix/suffix tables; Monster Infrequents, epics, and legendaries use a single
+B-or-better table per slot with basic acquisition-source labels. Build profiles
+can be saved to and loaded from user-selected JSON files.
 The Generate Output page creates a complete, graded Rainbow `text_en` staging
 folder for manual installation.
 

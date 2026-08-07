@@ -271,6 +271,10 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
         [("setName", "tagTestSet")],
     )
     _write_dbr(
+        base_items / "crafting/blueprints/test_helm_blueprint.dbr",
+        [("artifactName", "records/items/gearhead/b001b_head.dbr")],
+    )
+    _write_dbr(
         base_items / "gearhead/c000_head.dbr",
         [
             ("Class", "ArmorProtective_Head"),
@@ -376,8 +380,10 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     assert len(helm.variants) == 2
     assert helm.variants[0].category == "monster_infrequent"
     assert helm.variants[0].gear_slot == "Head"
+    assert helm.variants[0].acquisition_source == "Specific Monster Drop"
     assert helm.variants[0].properties[0].property_id == "health"
     assert helm.variants[1].set_name == "Test Set"
+    assert helm.variants[1].acquisition_source == "Crafted"
     component = bundle.items.components[0]
     assert component.description == "Component description"
     assert component.variants[0].applicable_slots == ("Head",)

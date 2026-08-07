@@ -125,3 +125,35 @@ def slot_ids_from_legacy_label(label: str) -> tuple[str, ...]:
     for part in label.split("; "):
         slots.extend(aliases.get(part, ()))
     return tuple(dict.fromkeys(slots))
+
+
+def equipment_class_slot_id(item_class: str) -> str:
+    """Map a concrete equipment DBR class onto an atomic recommendation slot."""
+
+    fixed = {
+        "ArmorProtective_Head": SLOT_HEAD,
+        "ArmorProtective_Shoulders": SLOT_SHOULDERS,
+        "ArmorProtective_Chest": SLOT_CHEST,
+        "ArmorProtective_Hands": SLOT_HANDS,
+        "ArmorProtective_Legs": SLOT_LEGS,
+        "ArmorProtective_Feet": SLOT_FEET,
+        "ArmorProtective_Waist": SLOT_WAIST,
+        "ArmorJewelry_Ring": SLOT_RING,
+        "ArmorJewelry_Amulet": SLOT_AMULET,
+        "ArmorJewelry_Medal": SLOT_MEDAL,
+        "WeaponArmor_Shield": SLOT_SHIELD,
+        "WeaponArmor_Offhand": SLOT_OFF_HAND,
+        "WeaponMelee_Dagger": SLOT_WEAPON_1H_CASTER,
+        "WeaponMelee_Scepter": SLOT_WEAPON_1H_CASTER,
+        "WeaponHunting_Ranged1h": SLOT_WEAPON_1H_RANGED,
+        "WeaponHunting_Ranged2h": SLOT_WEAPON_2H_RANGED,
+    }
+    if item_class in fixed:
+        return fixed[item_class]
+    if item_class.startswith("WeaponMelee_"):
+        return (
+            SLOT_WEAPON_2H_MELEE
+            if item_class.endswith("2h")
+            else SLOT_WEAPON_1H_MELEE
+        )
+    return ""

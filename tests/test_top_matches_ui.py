@@ -9,6 +9,10 @@ from gd_affix_relevance.catalog import (
     AffixDefinition,
     AffixProperty,
     AffixVariantDefinition,
+    ItemCatalog,
+    ItemDefinition,
+    ItemProperty,
+    ItemVariantDefinition,
     SkillCatalog,
     SkillDefinition,
 )
@@ -52,6 +56,50 @@ def _affix(
                 source_record_count=1,
                 stat_layout_count=1,
                 applicable_slots=(slot_id,),
+            ),
+        ),
+    )
+
+
+def _item(
+    name: str,
+    *,
+    category: str,
+    rarity: str,
+    source: str,
+) -> ItemDefinition:
+    return ItemDefinition(
+        item_id=f"equipment:{name.casefold()}",
+        family="equipment",
+        localization_tag=f"tag{name}",
+        display_name=name,
+        name_resolution="localized",
+        description_tag="",
+        description="",
+        variants=(
+            ItemVariantDefinition(
+                source="base",
+                record_path=f"records/items/gearhead/{name.casefold()}.dbr",
+                category=category,
+                rarity=rarity,
+                item_class="ArmorProtective_Head",
+                gear_slot="Head",
+                item_level=94,
+                level_requirement=84,
+                applicable_slots=(),
+                set_reference="",
+                set_name="",
+                granted_skill_reference="",
+                granted_skill_name="",
+                effect_skill_reference="",
+                effect_skill_name="",
+                effect_properties=(),
+                effect_stat_lines=(),
+                completion_bonus_reference="",
+                properties=(ItemProperty("health", "health", {}),),
+                stat_lines=("+[x] Health",),
+                skill_modifiers=(),
+                acquisition_source=source,
             ),
         ),
     )
@@ -176,9 +224,67 @@ def test_weapon_filters_compose_handedness_and_weapon_style() -> None:
     assert page.slot_rows[SLOT_WEAPON_1H_MELEE].isHidden()
     assert page.slot_rows[SLOT_WEAPON_1H_CASTER].isHidden()
     assert page.slot_rows[SLOT_WEAPON_1H_RANGED].isHidden()
+    assert page.unique_slot_rows[SLOT_WEAPON_1H_MELEE].isHidden()
+    assert page.unique_slot_rows[SLOT_WEAPON_1H_CASTER].isHidden()
+    assert page.unique_slot_rows[SLOT_WEAPON_1H_RANGED].isHidden()
     assert not page.slot_rows[SLOT_WEAPON_2H_MELEE].isHidden()
     assert not page.slot_rows[SLOT_WEAPON_2H_RANGED].isHidden()
 
     page.slot_filters["melee"].setChecked(False)
     assert page.slot_rows[SLOT_WEAPON_2H_MELEE].isHidden()
     assert not page.slot_rows[SLOT_WEAPON_2H_RANGED].isHidden()
+
+
+def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
+    _application()
+    items = ItemCatalog(
+        (
+            _item(
+                "Chosen Visage",
+                category="monster_infrequent",
+                rarity="Rare",
+                source="Specific Monster Drop",
+            ),
+            _item(
+                "Crafted Crown",
+                category="legendary",
+                rarity="Legendary",
+                source="Crafted",
+            ),
+            _item(
+                "Epic Crown",
+                category="epic",
+                rarity="Epic",
+                source="Random Drop",
+            ),
+        ),
+        (),
+        (),
+        (),
+        (),
+        (),
+    )
+    window = MainWindow(
+        BuildProfile(weights={"health": 4}),
+        catalog=AffixCatalog(()),
+        items=items,
+    )
+    page = window.top_matches_page
+    table = page.unique_tables["head"]
+
+    assert table.rowCount() == 3
+    assert [
+        table.horizontalHeaderItem(column).text()
+        for column in range(table.columnCount())
+    ] == ["Grade", "Item", "Type", "Source", "Score", "Coverage"]
+    assert {table.item(row, 2).text() for row in range(3)} == {
+        "Monster Infrequent",
+        "Epic",
+        "Legendary",
+    }
+    assert "Grades assume the highest-level" in page.status.text()
+
+    page.type_filters["epic"].setChecked(False)
+
+    assert table.rowCount() == 2
+    assert "Epic" not in {table.item(row, 2).text() for row in range(2)}

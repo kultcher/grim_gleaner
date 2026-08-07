@@ -187,4 +187,4 @@ def test_slot_ranking_uses_highest_level_layout_and_marks_variations() -> None:
     assert len(matches) == 1
     assert matches[0].variant is high
     assert matches[0].has_level_variations
-    assert matches[0].marker == "[B!2]"
+    assert matches[0].marker == "[B2]"

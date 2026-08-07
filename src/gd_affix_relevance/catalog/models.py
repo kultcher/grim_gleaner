@@ -140,6 +140,7 @@ class ItemVariantDefinition:
     properties: tuple[ItemProperty, ...]
     stat_lines: tuple[str, ...]
     skill_modifiers: tuple[ItemSkillModifier, ...]
+    acquisition_source: str = "Random Drop"
 
 
 @dataclass(frozen=True, slots=True)
@@ -407,6 +408,7 @@ def _item_variant_from_dict(payload: dict[str, Any]) -> ItemVariantDefinition:
             _item_skill_modifier_from_dict(item)
             for item in payload["skill_modifiers"]
         ),
+        acquisition_source=payload.get("acquisition_source", "Random Drop"),
     )
 
 

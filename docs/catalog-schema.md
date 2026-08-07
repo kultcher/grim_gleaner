@@ -107,6 +107,13 @@ skills, component completion-table references, and MI/rune skill modifiers.
 Fixed property attributes retain their raw DBR role values even though current
 scoring remains category-presence based.
 
+Equipment variants also retain a broad acquisition-source classification for
+recommendation display. Faction equipment is `Purchased`, equipment referenced
+directly by a blueprint is `Crafted`, Monster Infrequents are `Specific Monster
+Drop`, and other equipment defaults to `Random Drop`. Referenced pet-bonus
+records are expanded into individual `pet_*` properties so unique-equipment
+scoring can reuse the same pet weights as affix scoring.
+
 Set names and player, pet, item-granted, and modifier skill names resolve during
 compilation. Records whose name tags are absent from official localization are
 reported and skipped; the current extracted data identifies these as blank or
