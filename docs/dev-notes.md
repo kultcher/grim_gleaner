@@ -1,5 +1,5 @@
 TO DO:
-- maybe set S-rank threshhold to 12-15
+- save before exit warning
 - add-ons view
 - resistance-focus mode for add-ons view
 - implement build support calculations (remember: important to also classify slot diversity)
@@ -14,6 +14,7 @@ TO DO:
 
 NOTES: 
 - start considering distribution concerns
+- maybe set S-rank threshhold to 12-15? maybe 5-star ranking system?
 
 UI:
 - give lower box a title bar with name and rarity/slot
@@ -25,6 +26,3 @@ UI:
 
 - lockout skill choices in Skills tab based on prerequisites
 - gear displays can include numbers for unchanging values such as +skill ranks
-
-ISSUES:
-- detail view shows "+ranks to playerclass07" instead of classname
