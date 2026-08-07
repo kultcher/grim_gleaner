@@ -18,6 +18,8 @@ from gd_affix_relevance.slots import slot_ids_from_legacy_label
 class RelevanceScore:
     grade: str
     weighted_match: int
+    relevance_points: float
+    effective_score: float
     matched_count: int
     total_category_count: int
     coverage_ratio: float
@@ -30,10 +32,21 @@ class RelevanceScore:
     @property
     def rank_key(self) -> tuple[float, ...]:
         return (
+            self.effective_score,
+            self.relevance_points,
             float(self.weighted_match),
             float(self.matched_count),
             self.coverage_ratio,
         )
+
+
+GRADE_THRESHOLDS = {
+    "S": 10.0,
+    "A": 6.5,
+    "B": 4.0,
+    "C": 1.0,
+    "D": 0.0,
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -136,9 +149,17 @@ def score_semantic_stat_ids(
     coverage_ratio = (
         matched_count / total_category_count if total_category_count else 0.0
     )
+    relevance_points = sum(
+        _points_for_weight(profile_weight_for_semantic_id(profile, stat_id))
+        for stat_id in matched
+    )
+    coverage_multiplier = 0.70 + 0.30 * coverage_ratio
+    effective_score = relevance_points * coverage_multiplier
     return RelevanceScore(
-        grade=_grade_for_weighted_match(weighted_match),
+        grade=_grade_for_effective_score(effective_score),
         weighted_match=weighted_match,
+        relevance_points=relevance_points,
+        effective_score=effective_score,
         matched_count=matched_count,
         total_category_count=total_category_count,
         coverage_ratio=coverage_ratio,
@@ -169,6 +190,8 @@ def rank_affix_catalog(
             )
     ranked.sort(
         key=lambda match: (
+            -match.score.effective_score,
+            -match.score.relevance_points,
             -match.score.weighted_match,
             -match.score.matched_count,
             -match.score.coverage_ratio,
@@ -228,6 +251,8 @@ def rank_affixes_for_slot(
         )
     ranked.sort(
         key=lambda match: (
+            -match.score.effective_score,
+            -match.score.relevance_points,
             -match.score.weighted_match,
             -match.score.matched_count,
             -match.score.coverage_ratio,
@@ -266,6 +291,7 @@ def format_ranked_catalog_report(
                 f"   Type: {match.affix.kind.title()}",
                 f"   Gear slot: {match.variant.gear_slot}",
                 f"   Weighted match: {score.weighted_match}",
+                f"   Effective score: {score.effective_score:.2f}",
                 "   Coverage: "
                 f"{score.matched_count}/{score.total_category_count} "
                 f"({score.coverage_ratio:.0%})",
@@ -298,16 +324,29 @@ def profile_weight_for_semantic_id(
     return profile.weight_for(semantic_stat_id)
 
 
-def _grade_for_weighted_match(weighted_match: int) -> str:
-    if weighted_match >= 10:
+def minimum_score_for_grade(grade: str) -> float:
+    """Return the effective-score floor for a display-grade cutoff."""
+
+    normalized = grade.upper()
+    if normalized not in GRADE_THRESHOLDS or normalized in {"C", "D"}:
+        raise ValueError("minimum grade must be S, A, or B")
+    return GRADE_THRESHOLDS[normalized]
+
+
+def _points_for_weight(weight: int) -> float:
+    return (weight * weight) / 4
+
+
+def _grade_for_effective_score(effective_score: float) -> str:
+    if effective_score >= GRADE_THRESHOLDS["S"]:
         return "S"
-    if weighted_match >= 7:
+    if effective_score >= GRADE_THRESHOLDS["A"]:
         return "A"
-    if weighted_match >= 4:
+    if effective_score >= GRADE_THRESHOLDS["B"]:
         return "B"
-    if weighted_match >= 2:
+    if effective_score >= GRADE_THRESHOLDS["C"]:
         return "C"
-    if weighted_match >= 1:
+    if effective_score > GRADE_THRESHOLDS["D"]:
         return "D"
     return "-"
 

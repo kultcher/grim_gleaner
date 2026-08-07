@@ -12,6 +12,7 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.scoring.catalog_scorer import (
     RelevanceScore,
+    minimum_score_for_grade,
     score_semantic_stat_ids,
     semantic_stat_id,
 )
@@ -73,9 +74,11 @@ def rank_unique_items_for_slot(
     *,
     slot_id: str,
     enabled_types: frozenset[str] = frozenset(UNIQUE_ITEM_TYPES),
+    minimum_grade: str = "B",
 ) -> tuple[RankedItemVariant, ...]:
-    """Return every B-or-better unique item for one atomic slot."""
+    """Return unique items meeting the requested grade for one atomic slot."""
 
+    minimum_score = minimum_score_for_grade(minimum_grade)
     ranked: list[RankedItemVariant] = []
     for item in catalog.equipment:
         candidates = tuple(
@@ -99,7 +102,7 @@ def rank_unique_items_for_slot(
         )
         semantic_ids = item_semantic_stat_ids(variant)
         score = score_semantic_stat_ids(semantic_ids, profile)
-        if score.weighted_match < 4:
+        if score.effective_score < minimum_score:
             continue
         selected_skills = set(profile.skill_weights)
         has_selected_modifier = any(
@@ -118,6 +121,8 @@ def rank_unique_items_for_slot(
         )
     ranked.sort(
         key=lambda match: (
+            -match.score.effective_score,
+            -match.score.relevance_points,
             -match.score.weighted_match,
             -match.score.matched_count,
             -match.score.coverage_ratio,

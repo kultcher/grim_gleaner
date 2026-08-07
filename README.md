@@ -34,7 +34,7 @@ discoverable package accordions, three pet-stat packages, and a two-mastery
 Skills editor. Its Top Matches view ranks both affixes and fixed unique-item
 stats against the active profile for every atomic gear slot. Affixes use paired
 prefix/suffix tables; Monster Infrequents, epics, and legendaries use a single
-B-or-better table per slot with basic acquisition-source labels. Build profiles
+minimum-grade-filtered table per slot with basic acquisition-source labels. Build profiles
 can be saved to and loaded from user-selected JSON files.
 The Generate Output page creates a complete, graded Rainbow `text_en` staging
 folder for manual installation.
@@ -164,8 +164,12 @@ list, and source record. Direct bonuses to a selected mastery skill use that
 skill's profile weight. Skill-modifier effects remain cataloged but are not yet
 part of scoring.
 
-This is deliberately a category-presence relevance grade. It ignores numeric
-roll magnitude and does not estimate whether an item is an upgrade.
+This is deliberately a category-presence relevance grade. Each matched weight
+contributes `weight² / 4` points, then receives a soft multiplier from 70% to
+100% based on the share of that affix or item's stat categories that matched.
+This makes core and emphasized stats increasingly valuable without imposing a
+hard core-stat requirement. It ignores numeric roll magnitude and does not
+estimate whether an item is an upgrade.
 
 ## Generate Rainbow staging output
 

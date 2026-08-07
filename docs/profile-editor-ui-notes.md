@@ -116,9 +116,10 @@ generated in-game annotations. Selecting a row shows matched stats, the full
 number-free stat list, level information, localization tag, and representative
 record. Changing a profile weight or loading a profile reranks every table.
 
-The Uniques tab contains one variable-length table per slot and includes every
-Monster Infrequent, epic, or legendary with a B grade or better. A second,
-default-on filter row controls those three types. The Type and Source columns
+The Uniques tab contains one variable-length table per slot. Its minimum-grade
+dropdown supports S, A, or B and defaults to A; C and D are intentionally not
+presentation cutoffs. A second, default-on filter row controls Monster
+Infrequent, epic, and legendary types. The Type and Source columns
 distinguish item rarity from the current basic acquisition classification:
 Crafted, Purchased, Random Drop, or Specific Monster Drop. Source inference is
 deliberately broad for this first pass: faction records are purchased, direct
@@ -129,6 +130,14 @@ Fixed item stats, selected-mastery bonuses, and ordinary selected-skill rank
 bonuses participate in grading. `†` flags an item that modifies a skill in the
 build-relevant skill list. Skill-modifier mechanics, including conversions, are
 not yet included in the numeric grade and are called out in the detail pane.
+
+Affixes and unique items share the same nonlinear relevance formula. Weight
+`w` contributes `w² / 4` points, and the sum is multiplied by
+`0.70 + 0.30 × coverage`, where coverage is matched categories divided by all
+gradeable categories on that affix or item. Grade floors are S 10, A 6.5, B 4,
+C 1, and D above zero. A one-stat affix therefore receives full coverage: a
+core match is B, a useful or emphasized match is C, and an incidental match is
+D. The detail pane retains the raw linear weight total for diagnosis.
 
 ## Generate Output staging view
 

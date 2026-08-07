@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
+    QComboBox,
     QFrame,
     QHBoxLayout,
     QHeaderView,
@@ -46,6 +47,10 @@ STAT_LABELS = {
 RESULTS_PER_AFFIX_TABLE = 5
 
 
+def _format_score(value: float) -> str:
+    return f"{value:.2f}".rstrip("0").rstrip(".")
+
+
 def _configure_table(table: QTableWidget, stretch_column: int) -> None:
     table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
     table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -82,7 +87,7 @@ class AffixSlotTable(QTableWidget):
             values = (
                 match.marker,
                 match.affix.display_name,
-                str(score.weighted_match),
+                _format_score(score.effective_score),
                 f"{score.matched_count}/{score.total_category_count}",
             )
             for column, value in enumerate(values):
@@ -160,7 +165,7 @@ class UniqueSlotTable(QTableWidget):
                 match.item.display_name,
                 UNIQUE_TYPE_LABELS[match.item_type],
                 match.variant.acquisition_source,
-                str(score.weighted_match),
+                _format_score(score.effective_score),
                 f"{score.matched_count}/{score.total_category_count}",
             )
             for column, value in enumerate(values):
@@ -341,6 +346,16 @@ class TopMatchesPage(QWidget):
             checkbox.toggled.connect(self._type_filter_changed)
             type_layout.addWidget(checkbox)
             self.type_filters[type_id] = checkbox
+        type_layout.addSpacing(14)
+        type_layout.addWidget(QLabel("Minimum grade:", type_frame))
+        self.minimum_grade = QComboBox(type_frame)
+        self.minimum_grade.setObjectName("minimumGradeSelector")
+        self.minimum_grade.addItems(("S", "A", "B"))
+        self.minimum_grade.setCurrentText("A")
+        self.minimum_grade.currentTextChanged.connect(
+            self._minimum_grade_changed
+        )
+        type_layout.addWidget(self.minimum_grade)
         type_layout.addStretch()
         upper_layout.addWidget(type_frame)
 
@@ -441,6 +456,7 @@ class TopMatchesPage(QWidget):
                 self.profile,
                 slot_id=slot_id,
                 enabled_types=enabled_types,
+                minimum_grade=self.minimum_grade.currentText(),
             )
             table.set_matches(matches)
             all_matches.extend(matches)
@@ -458,6 +474,9 @@ class TopMatchesPage(QWidget):
         self._refresh_uniques()
         self._update_status()
         self._select_first_visible_unique()
+
+    def _minimum_grade_changed(self, _grade: str) -> None:
+        self._type_filter_changed(False)
 
     def _apply_slot_filters(self) -> None:
         enabled = {
@@ -491,7 +510,8 @@ class TopMatchesPage(QWidget):
         source_note = f" {self.catalog_status}" if self.catalog_status else ""
         self.status.setText(
             f"{self.profile.name}: {visible_affixes} ranked affix entries and "
-            f"{visible_uniques} B-or-better unique-item entries. Grades assume "
+            f"{visible_uniques} {self.minimum_grade.currentText()}-or-better "
+            "unique-item entries. Grades assume "
             f"the highest-level stat layout.{source_note}"
         )
 
@@ -538,7 +558,8 @@ class TopMatchesPage(QWidget):
         lines = [
             f"{match.marker} {match.affix.display_name}",
             f"{match.affix.kind.title()} for {SLOT_LABELS[slot_id]}",
-            f"Weighted match: {score.weighted_match}",
+            f"Effective score: {_format_score(score.effective_score)}",
+            f"Raw weight total: {score.weighted_match}",
             "Coverage: "
             f"{score.matched_count}/{score.total_category_count} "
             f"({score.coverage_ratio:.0%})",
@@ -589,7 +610,8 @@ class TopMatchesPage(QWidget):
             f"{match.marker} {match.item.display_name}",
             f"{UNIQUE_TYPE_LABELS[match.item_type]} {SLOT_LABELS[slot_id]}",
             f"Source: {match.variant.acquisition_source}",
-            f"Weighted match: {score.weighted_match}",
+            f"Effective score: {_format_score(score.effective_score)}",
+            f"Raw weight total: {score.weighted_match}",
             "Coverage: "
             f"{score.matched_count}/{score.total_category_count} "
             f"({score.coverage_ratio:.0%})",

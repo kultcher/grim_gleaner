@@ -77,6 +77,18 @@ QLabel#affixSlotName, QLabel#affixTableTitle {
 }
 QCheckBox { spacing: 5px; }
 QCheckBox::indicator { width: 15px; height: 15px; }
+QComboBox#minimumGradeSelector {
+    background: #242932;
+    border: 1px solid #3a414d;
+    border-radius: 5px;
+    padding: 4px 9px;
+    min-width: 48px;
+}
+QComboBox#minimumGradeSelector QAbstractItemView {
+    background: #20242b;
+    border: 1px solid #3a414d;
+    selection-background-color: #3a4454;
+}
 QTabWidget#recommendationTabs::pane {
     border: 1px solid #303540;
     border-radius: 7px;

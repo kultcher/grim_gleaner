@@ -67,6 +67,7 @@ def _item(
     category: str,
     rarity: str,
     source: str,
+    emphasized: bool = True,
 ) -> ItemDefinition:
     return ItemDefinition(
         item_id=f"equipment:{name.casefold()}",
@@ -96,8 +97,18 @@ def _item(
                 effect_properties=(),
                 effect_stat_lines=(),
                 completion_bonus_reference="",
-                properties=(ItemProperty("health", "health", {}),),
-                stat_lines=("+[x] Health",),
+                properties=(
+                    ItemProperty("health", "health", {}),
+                    *(
+                        (ItemProperty("offensive_ability", "offensive_ability", {}),)
+                        if emphasized
+                        else ()
+                    ),
+                ),
+                stat_lines=(
+                    "+[x] Health",
+                    *(("+[x] Offensive Ability",) if emphasized else ()),
+                ),
                 skill_modifiers=(),
                 acquisition_source=source,
             ),
@@ -257,6 +268,13 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
                 rarity="Epic",
                 source="Random Drop",
             ),
+            _item(
+                "Useful Crown",
+                category="epic",
+                rarity="Epic",
+                source="Random Drop",
+                emphasized=False,
+            ),
         ),
         (),
         (),
@@ -265,13 +283,14 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
         (),
     )
     window = MainWindow(
-        BuildProfile(weights={"health": 4}),
+        BuildProfile(weights={"health": 4, "offensive_ability": 4}),
         catalog=AffixCatalog(()),
         items=items,
     )
     page = window.top_matches_page
     table = page.unique_tables["head"]
 
+    assert page.minimum_grade.currentText() == "A"
     assert table.rowCount() == 3
     assert [
         table.horizontalHeaderItem(column).text()
@@ -283,6 +302,9 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
         "Legendary",
     }
     assert "Grades assume the highest-level" in page.status.text()
+
+    page.minimum_grade.setCurrentText("B")
+    assert table.rowCount() == 4
 
     page.type_filters["epic"].setChecked(False)
 

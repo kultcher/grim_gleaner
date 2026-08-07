@@ -107,6 +107,13 @@ def test_unique_ranking_filters_types_and_excludes_items_below_b_grade() -> None
     )[0].item.display_name == "Legendary Helm"
     assert not rank_unique_items_for_slot(
         catalog,
+        BuildProfile(weights={"health": 4}),
+        slot_id=SLOT_HEAD,
+        enabled_types=frozenset({"legendary"}),
+        minimum_grade="A",
+    )
+    assert not rank_unique_items_for_slot(
+        catalog,
         BuildProfile(weights={"health": 3}),
         slot_id=SLOT_HEAD,
     )

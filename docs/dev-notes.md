@@ -3,6 +3,9 @@ TO DO:
 - Add drop locations* of MIs/Epics/Legendaries (maybe just redirect to Grim Tools?)
 - implement build support calculations
 - resistance-focus mode for add-ons view
+- add highlighting for skill modifiers (on uniques only, probably?)
+- new sessions auto-loads last profile
+- maybe set S-rank threshhold to 12-15
 - stretch: "resistance hunt" mode
 - stretch: add system tailoring affixes to given level, including numbers
 - stretch: per-slot filtering for profiles
@@ -21,3 +24,6 @@ UI:
 - strict vs. loose grading: strict further emphasizes high grades
 - switch "all stats" to "unmatched stats" in Top Matches view
 - lockout skill choices in Skills tab based on prerequisites
+
+ISSUES:
+- detail view shows "+ranks to playerclass07" instead of classname

@@ -1,3 +1,5 @@
+import pytest
+
 from gd_affix_relevance.catalog import (
     AffixCatalog,
     AffixDefinition,
@@ -10,6 +12,7 @@ from gd_affix_relevance.scoring import (
     rank_affix_catalog,
     rank_affixes_for_slot,
     score_affix_variant,
+    score_semantic_stat_ids,
     semantic_stat_id,
 )
 from gd_affix_relevance.slots import SLOT_RING
@@ -63,11 +66,13 @@ def test_catalog_scorer_uses_editable_profile_stat_ids_directly() -> None:
     score = score_affix_variant(variant, profile)
 
     assert score.weighted_match == 10
+    assert score.relevance_points == 9
+    assert score.effective_score == pytest.approx(8.325)
     assert score.matched_count == 3
     assert score.total_category_count == 4
     assert score.coverage_ratio == 0.75
-    assert score.grade == "S"
-    assert score.marker == "[S3]"
+    assert score.grade == "A"
+    assert score.marker == "[A3]"
 
 
 def test_conversion_property_maps_its_destination_to_profile_id() -> None:
@@ -81,6 +86,30 @@ def test_conversion_property_maps_its_destination_to_profile_id() -> None:
     )
 
     assert semantic_stat_id(property_) == "damage_conversion_to_vitality"
+
+
+def test_nonlinear_score_softly_penalizes_low_item_coverage() -> None:
+    stat_ids = (
+        "defensive_ability",
+        "elemental_resistance",
+        "chaos_damage_percent",
+        "damage_conversion_to_chaos",
+        "flat_chaos_damage",
+        "base_attack_speed",
+        "skill_bonus:one",
+        "skill_bonus:two",
+    )
+    profile = BuildProfile(
+        weights={"defensive_ability": 2, "elemental_resistance": 3}
+    )
+
+    score = score_semantic_stat_ids(stat_ids, profile)
+
+    assert score.weighted_match == 5
+    assert score.relevance_points == 3.25
+    assert score.coverage_ratio == 0.25
+    assert score.effective_score == pytest.approx(2.51875)
+    assert score.grade == "C"
 
 
 def test_catalog_ranking_orders_variants_and_applies_limit() -> None:
@@ -187,4 +216,4 @@ def test_slot_ranking_uses_highest_level_layout_and_marks_variations() -> None:
     assert len(matches) == 1
     assert matches[0].variant is high
     assert matches[0].has_level_variations
-    assert matches[0].marker == "[B2]"
+    assert matches[0].marker == "[C2]"
