@@ -44,6 +44,26 @@ def test_damage_base_owns_resistance_reduction_and_conversions_are_directional()
     }
 
 
+def test_reachable_chance_damage_families_have_distinct_profile_rows() -> None:
+    stats_by_package = {
+        package.package_id: {definition.stat_id for definition in package.stats}
+        for package in DAMAGE_TAB.packages
+    }
+
+    assert "chance_flat_fire_damage" in stats_by_package["damage_fire"]
+    assert "chance_flat_burn_damage" in stats_by_package["damage_fire"]
+    assert "chance_flat_physical_damage" in stats_by_package["damage_physical"]
+    assert "chance_flat_pierce_damage" in stats_by_package["damage_pierce"]
+    assert "armor_piercing_percent" in stats_by_package["damage_pierce"]
+    armor_piercing = next(
+        definition
+        for package in DAMAGE_TAB.packages
+        for definition in package.stats
+        if definition.stat_id == "armor_piercing_percent"
+    )
+    assert armor_piercing.label == "100% Armor Piercing"
+
+
 def test_pet_tab_surfaces_every_current_affix_pet_stat_by_default() -> None:
     assert [package.label for package in PETS_TAB.packages] == [
         "Damage",

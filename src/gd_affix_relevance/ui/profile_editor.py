@@ -140,8 +140,17 @@ class ProfileEditor(QWidget):
                 self.profile.weight_for,
                 self.profile.set_weight,
                 content,
+                conversion_source_enabled=(
+                    self.profile.conversion_source_enabled
+                ),
+                set_conversion_source_enabled=(
+                    self.profile.set_conversion_source_enabled
+                ),
             )
             accordion.weight_changed.connect(self._weights_changed)
+            accordion.conversion_source_changed.connect(
+                self._conversion_source_changed
+            )
             content_layout.addWidget(accordion)
             self.accordions[package.package_id] = accordion
         content_layout.addStretch()
@@ -175,6 +184,12 @@ class ProfileEditor(QWidget):
         self._mark_unsaved()
         self.profile_changed.emit()
 
+    def _conversion_source_changed(
+        self, _destination: str, _source: str, _enabled: bool
+    ) -> None:
+        self._mark_unsaved()
+        self.profile_changed.emit()
+
     def save_to_path(self, path: Path) -> Path:
         """Save the active profile, primarily for UI actions and tests."""
 
@@ -198,6 +213,12 @@ class ProfileEditor(QWidget):
         self.profile.skill_weights.clear()
         for skill_id, weight in loaded.skill_weights.items():
             self.profile.set_skill_weight(skill_id, weight)
+        self.profile.excluded_conversion_sources.clear()
+        for destination, sources in loaded.excluded_conversion_sources.items():
+            for source in sources:
+                self.profile.set_conversion_source_enabled(
+                    destination, source, False
+                )
 
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
@@ -229,6 +250,7 @@ class ProfileEditor(QWidget):
         self.profile.weights.clear()
         self.profile.masteries = baseline.masteries
         self.profile.skill_weights.clear()
+        self.profile.excluded_conversion_sources.clear()
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
         del blocker

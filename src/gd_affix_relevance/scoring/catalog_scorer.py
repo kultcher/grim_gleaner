@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from gd_affix_relevance.catalog import (
@@ -10,6 +11,7 @@ from gd_affix_relevance.catalog import (
     AffixProperty,
     AffixVariantDefinition,
 )
+from gd_affix_relevance.conversions import canonical_damage_type
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.slots import slot_ids_from_legacy_label
 
@@ -100,8 +102,17 @@ def semantic_stat_id(property_: AffixProperty) -> str:
 
 def variant_semantic_stat_ids(
     variant: AffixVariantDefinition,
+    profile: BuildProfile | None = None,
 ) -> tuple[str, ...]:
-    return tuple(sorted({semantic_stat_id(property_) for property_ in variant.properties}))
+    return tuple(
+        sorted(
+            {
+                semantic_stat_id(property_)
+                for property_ in variant.properties
+                if property_enabled_for_profile(property_, profile)
+            }
+        )
+    )
 
 
 def score_affix_variant(
@@ -110,7 +121,9 @@ def score_affix_variant(
 ) -> RelevanceScore:
     """Score semantic-category presence without considering numeric roll size."""
 
-    return score_semantic_stat_ids(variant_semantic_stat_ids(variant), profile)
+    return score_semantic_stat_ids(
+        variant_semantic_stat_ids(variant, profile), profile
+    )
 
 
 def affix_common_stat_ids(affix: AffixDefinition) -> tuple[str, ...]:
@@ -129,28 +142,38 @@ def score_affix_common_properties(
 ) -> RelevanceScore:
     """Conservatively score only properties shared by all variants of a tag."""
 
-    return score_semantic_stat_ids(affix_common_stat_ids(affix), profile)
+    variant_sets = [
+        set(variant_semantic_stat_ids(variant, profile))
+        for variant in affix.variants
+    ]
+    common = tuple(sorted(set.intersection(*variant_sets))) if variant_sets else ()
+    return score_semantic_stat_ids(common, profile)
 
 
 def score_semantic_stat_ids(
     stat_ids: tuple[str, ...],
     profile: BuildProfile,
+    *,
+    weight_for: Callable[[str], int] | None = None,
 ) -> RelevanceScore:
+    resolve_weight = weight_for or (
+        lambda stat_id: profile_weight_for_semantic_id(profile, stat_id)
+    )
     matched = tuple(
         sorted(
             (
                 stat_id
                 for stat_id in stat_ids
-                if profile_weight_for_semantic_id(profile, stat_id) > 0
+                if resolve_weight(stat_id) > 0
             ),
             key=lambda stat_id: (
-                -profile_weight_for_semantic_id(profile, stat_id),
+                -resolve_weight(stat_id),
                 stat_id,
             ),
         )
     )
     weighted_match = sum(
-        profile_weight_for_semantic_id(profile, stat_id) for stat_id in matched
+        resolve_weight(stat_id) for stat_id in matched
     )
     matched_count = len(matched)
     total_category_count = len(stat_ids)
@@ -158,7 +181,7 @@ def score_semantic_stat_ids(
         matched_count / total_category_count if total_category_count else 0.0
     )
     relevance_points = sum(
-        _points_for_weight(profile_weight_for_semantic_id(profile, stat_id))
+        _points_for_weight(resolve_weight(stat_id))
         for stat_id in matched
     )
     coverage_multiplier = 0.70 + 0.30 * coverage_ratio
@@ -187,7 +210,7 @@ def rank_affix_catalog(
     ranked: list[RankedAffixVariant] = []
     for affix in catalog.affixes:
         for variant in affix.variants:
-            stat_ids = variant_semantic_stat_ids(variant)
+            stat_ids = variant_semantic_stat_ids(variant, profile)
             ranked.append(
                 RankedAffixVariant(
                     affix=affix,
@@ -234,7 +257,10 @@ def rank_affixes_for_slot(
         )
         if not variants:
             continue
-        layouts = {variant_semantic_stat_ids(variant) for variant in variants}
+        layouts = {
+            variant_semantic_stat_ids(variant, profile)
+            for variant in variants
+        }
         selected = max(
             variants,
             key=lambda variant: (
@@ -244,7 +270,7 @@ def rank_affixes_for_slot(
                 variant.representative_source,
             ),
         )
-        semantic_ids = variant_semantic_stat_ids(selected)
+        semantic_ids = variant_semantic_stat_ids(selected, profile)
         score = score_semantic_stat_ids(semantic_ids, profile)
         if score.weighted_match == 0:
             continue
@@ -348,6 +374,22 @@ def canonical_skill_reference(reference: str) -> str:
     if normalized.endswith("_buff.dbr"):
         return normalized.removesuffix("_buff.dbr") + ".dbr"
     return normalized
+
+
+def property_enabled_for_profile(
+    property_: AffixProperty, profile: BuildProfile | None
+) -> bool:
+    if profile is None or property_.property_id != "damage_conversion":
+        return True
+    source = canonical_damage_type(
+        property_.attributes.get("source_damage_type", "")
+    )
+    destination = canonical_damage_type(
+        property_.attributes.get("destination_damage_type", "")
+    )
+    if not source or not destination:
+        return True
+    return profile.conversion_source_enabled(destination, source)
 
 
 def minimum_score_for_grade(grade: str) -> float:

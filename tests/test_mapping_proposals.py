@@ -1,4 +1,6 @@
 from gd_affix_relevance.normalization.mapping_proposals import (
+    chance_damage_bundle_keys,
+    contextualize_damage_chance,
     propose_field_mapping,
 )
 
@@ -73,6 +75,16 @@ def test_optional_chance_components_join_their_damage_properties() -> None:
     assert pierce_percent.bundle_key == pierce_percent_chance.bundle_key
     assert pierce_percent_chance.value_role == "chance_percent"
     assert pierce_percent_chance.component_requirement == "optional"
+
+    chance_bundles = chance_damage_bundle_keys((pierce_min, pierce_chance))
+    contextual_min = contextualize_damage_chance(
+        pierce_min, chance_bundles
+    )
+    contextual_chance = contextualize_damage_chance(
+        pierce_chance, chance_bundles
+    )
+    assert contextual_min.property_id == "chance_flat_pierce_damage"
+    assert contextual_min.bundle_key == contextual_chance.bundle_key
 
 
 def test_dot_duration_modifier_is_optional_with_same_percent_damage_bundle() -> None:

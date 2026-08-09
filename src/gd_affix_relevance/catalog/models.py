@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATALOG_SCHEMA_VERSION = 4
+CATALOG_SCHEMA_VERSION = 5
 
 ITEM_CATALOG_FILES = (
     "equipment.json",
@@ -122,6 +122,13 @@ class ItemSkillModifier:
 
 
 @dataclass(frozen=True, slots=True)
+class ItemVendorSource:
+    faction_source: str
+    faction_name: str
+    reputation: str
+
+
+@dataclass(frozen=True, slots=True)
 class ItemVariantDefinition:
     source: str
     record_path: str
@@ -145,6 +152,9 @@ class ItemVariantDefinition:
     stat_lines: tuple[str, ...]
     skill_modifiers: tuple[ItemSkillModifier, ...]
     acquisition_source: str = "Random Drop"
+    faction_source: str = ""
+    faction_name: str = ""
+    vendor_sources: tuple[ItemVendorSource, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -386,6 +396,14 @@ def _item_skill_modifier_from_dict(payload: dict[str, Any]) -> ItemSkillModifier
     )
 
 
+def _item_vendor_source_from_dict(payload: dict[str, Any]) -> ItemVendorSource:
+    return ItemVendorSource(
+        faction_source=payload.get("faction_source", ""),
+        faction_name=payload.get("faction_name", ""),
+        reputation=payload.get("reputation", ""),
+    )
+
+
 def _item_variant_from_dict(payload: dict[str, Any]) -> ItemVariantDefinition:
     return ItemVariantDefinition(
         source=payload["source"],
@@ -417,6 +435,12 @@ def _item_variant_from_dict(payload: dict[str, Any]) -> ItemVariantDefinition:
             for item in payload["skill_modifiers"]
         ),
         acquisition_source=payload.get("acquisition_source", "Random Drop"),
+        faction_source=payload.get("faction_source", ""),
+        faction_name=payload.get("faction_name", ""),
+        vendor_sources=tuple(
+            _item_vendor_source_from_dict(source)
+            for source in payload.get("vendor_sources", ())
+        ),
     )
 
 

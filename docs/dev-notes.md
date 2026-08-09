@@ -1,12 +1,4 @@
 TO DO:
-- save before exit warning
-- switch skill add behavior -> grey out instead of remove
-- affix rarity and titlebar color
-
-- add "% chance of" to relevant damage types
-- gear displays can include numbers for unchanging values such as +skill ranks
-- add bonus weight to skill rank bonuses higher than 1?
-
 - add-ons view
 - resistance-focus mode for add-ons view
 
@@ -15,6 +7,8 @@ TO DO:
 
 - robust conversion filtering
 - skill mastery work
+
+- add bonus weight to skill rank bonuses higher than 1?
 
 - stretch: implement build support calculations (remember: important to also classify slot diversity)
 - stretch: strict vs. loose grading: strict further emphasizes high grades
@@ -30,5 +24,4 @@ NOTES/EXPLORATIONS:
 - maybe set S-rank threshhold to 12-15? maybe 5-star ranking system? add ++ ranks for super high scores?
 - apply affix colors to profile view, maybe?
 - outport sorting: currently by weight. Alt: flat damage, % damage, damage conversion, core stats, health/energy mod, OA/DA, speed, damage resistances, other resistances, skill bonuses, misc, granted skills...
-
-
+- dig into _html_line stuff in scoring

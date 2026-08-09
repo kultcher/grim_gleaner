@@ -73,6 +73,32 @@ SLOT_FILTERS = {
     SLOT_OFF_HAND: frozenset({"off_hand"}),
 }
 
+ITEM_APPLICABILITY_SLOTS = {
+    "Amulet": (SLOT_AMULET,),
+    "Axe": (SLOT_WEAPON_1H_MELEE,),
+    "Dagger": (SLOT_WEAPON_1H_CASTER,),
+    "Mace": (SLOT_WEAPON_1H_MELEE,),
+    "Medal": (SLOT_MEDAL,),
+    "Off-hand": (SLOT_OFF_HAND,),
+    "One-handed ranged weapon": (SLOT_WEAPON_1H_RANGED,),
+    "Ring": (SLOT_RING,),
+    "Scepter": (SLOT_WEAPON_1H_CASTER,),
+    "Shield": (SLOT_SHIELD,),
+    "Sword": (SLOT_WEAPON_1H_MELEE,),
+    "Two-handed axe": (SLOT_WEAPON_2H_MELEE,),
+    "Two-handed mace": (SLOT_WEAPON_2H_MELEE,),
+    "Two-handed ranged weapon": (SLOT_WEAPON_2H_RANGED,),
+    "Two-handed spear": (SLOT_WEAPON_2H_MELEE,),
+    "Two-handed sword": (SLOT_WEAPON_2H_MELEE,),
+    "Waist": (SLOT_WAIST,),
+    "Head": (SLOT_HEAD,),
+    "Chest": (SLOT_CHEST,),
+    "Shoulders": (SLOT_SHOULDERS,),
+    "Legs": (SLOT_LEGS,),
+    "Hands": (SLOT_HANDS,),
+    "Feet": (SLOT_FEET,),
+}
+
 FILTER_LABELS = (
     ("one_handed", "1H"),
     ("two_handed", "2H"),
@@ -124,6 +150,17 @@ def slot_ids_from_legacy_label(label: str) -> tuple[str, ...]:
     slots: list[str] = []
     for part in label.split("; "):
         slots.extend(aliases.get(part, ()))
+    return tuple(dict.fromkeys(slots))
+
+
+def slot_ids_from_item_applicability(
+    applicable_slots: tuple[str, ...],
+) -> tuple[str, ...]:
+    """Expand item attachment labels into recommendation slot IDs."""
+
+    slots: list[str] = []
+    for label in applicable_slots:
+        slots.extend(ITEM_APPLICABILITY_SLOTS.get(label, ()))
     return tuple(dict.fromkeys(slots))
 
 

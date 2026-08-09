@@ -4,8 +4,9 @@ Grim Gleaner analyzes Grim Dawn item properties and proposes build-relevance
 annotations for their localization tags. Its first scoring catalog covers magic
 and rare affixes; its compiled item data also covers base items, Monster
 Infrequents, epics, legendaries, components, augments, relics, runes, and
-consumables. It does not currently score those item catalogs or estimate whether
-an item is an upgrade.
+consumables. The current UI scores affixes, unique equipment, components, and
+augments; it does not attempt to determine whether an entire dropped item is an
+upgrade over the player's current equipment.
 
 ## Development setup
 
@@ -37,13 +38,21 @@ Matches button. Its Top Matches view ranks both affixes and fixed unique-item
 stats against the active profile for every atomic gear slot. Affixes use paired
 prefix/suffix tables; Monster Infrequents, epics, and legendaries use a single
 minimum-grade-filtered table per slot with basic acquisition-source labels.
+Add-ons use paired component/augment tables per slot, including component
+acquisition and localized augment-faction columns.
+Their fold-down Resistance Cap Mode can temporarily override resistance weights
+for add-on ranking without changing the saved profile or the Affixes/Uniques
+results.
 Build profiles can be saved to and loaded from user-selected JSON files.
 The Generate Output page creates a complete, graded Rainbow `text_en` staging
 folder for manual installation.
 
 Profile files are versioned, human-readable JSON. Ordinary stats with weight 0
 are omitted, while selected build-relevant skills are retained even at weight 0
-so adding a skill and weighting it remain separate choices. For example:
+so adding a skill and weighting it remain separate choices. Conversion sources,
+including the future-facing `Specific Skill` selector, default to enabled;
+profiles store only sources the user explicitly unchecks.
+For example:
 
 ```json
 {
@@ -52,7 +61,13 @@ so adding a skill and weighting it remain separate choices. For example:
     "playerclass04"
   ],
   "name": "Bleed Werewolf",
-  "schema_version": 2,
+  "schema_version": 3,
+  "excluded_conversion_sources": {
+    "fire": [
+      "aether",
+      "chaos"
+    ]
+  },
   "skill_weights": {
     "records/skills/playerclass06/savagery1.dbr": 4
   },
@@ -219,7 +234,7 @@ the first definition wins. The compiler applies DBR sources in the opposite
 direction (base through the newest expansion), so newer records replace older
 records at the same logical path.
 
-The deterministic schema-version-4 bundle contains all structurally reachable
+The deterministic schema-version-5 bundle contains all structurally reachable
 magic/rare affix variants; named player/mastery, pet, and item-granted skill
 DBRs; and split item catalogs for equipment, components, augments, relics,
 runes, and consumables. Equipment includes common/magical bases, Monster
@@ -240,8 +255,10 @@ values. Mastery skills retain their DBR tier and class-tree order; curated
 parent/child links are loaded from `artifacts/mastery-trees` when that optional
 compiler argument is supplied.
 
-The item-catalog compiler needs only `records/items` plus the
-player, pet, and item-granted definitions it follows into `records/skills`.
+The item-catalog compiler needs `records/items` plus the player, pet, and
+item-granted definitions it follows into `records/skills`. Optional component
+faction-vendor and reputation metadata also uses
+`records/creatures/npcs/merchants` and referenced faction controllers.
 Complete official localization files are separate compilation inputs used to
 resolve names and seed safe optional `tags*_items.txt` output. World-data DBRs
 outside those branches are not required unless Grim Gleaner later begins

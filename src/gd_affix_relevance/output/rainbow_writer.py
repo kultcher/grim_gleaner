@@ -50,7 +50,7 @@ def build_affix_markers(
     for affix in catalog.affixes:
         for variant in affix.variants:
             variant_sets_by_tag[affix.localization_tag].append(
-                set(variant_semantic_stat_ids(variant))
+                set(variant_semantic_stat_ids(variant, profile))
             )
 
     markers: dict[str, str] = {}

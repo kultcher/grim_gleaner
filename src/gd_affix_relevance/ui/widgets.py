@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import QSignalBlocker, Qt, Signal
 from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import (
+    QCheckBox,
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QPushButton,
@@ -18,6 +20,10 @@ from PySide6.QtWidgets import (
 )
 
 from gd_affix_relevance.domain import MAX_STAT_WEIGHT, WEIGHT_LABELS
+from gd_affix_relevance.conversions import (
+    CONVERSION_DAMAGE_LABELS,
+    conversion_sources_for,
+)
 from gd_affix_relevance.ui.catalog import PackageDefinition, StatDefinition
 
 
@@ -132,6 +138,113 @@ class StatRow(QWidget):
         layout.addWidget(self.weight_control)
 
 
+class ConversionStatRow(QWidget):
+    """Weighted conversion destination with nested source-type filters."""
+
+    value_changed = Signal(str, int)
+    source_changed = Signal(str, str, bool)
+
+    def __init__(
+        self,
+        definition: StatDefinition,
+        value: int,
+        source_enabled: Callable[[str, str], bool],
+        set_source_enabled: Callable[[str, str, bool], None],
+        parent: QWidget | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self.definition = definition
+        self.destination = definition.stat_id.removeprefix(
+            "damage_conversion_to_"
+        )
+        self._source_enabled = source_enabled
+        self._set_source_enabled = set_source_enabled
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+        main_row = QWidget(self)
+        main_layout = QHBoxLayout(main_row)
+        main_layout.setContentsMargins(12, 5, 10, 5)
+        label = QLabel(definition.label, main_row)
+        label.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+        )
+        main_layout.addWidget(label)
+        self.sources_button = QToolButton(main_row)
+        self.sources_button.setObjectName("conversionSourcesButton")
+        self.sources_button.setCheckable(True)
+        self.sources_button.setAutoRaise(True)
+        self.sources_button.toggled.connect(self._set_sources_expanded)
+        main_layout.addWidget(self.sources_button)
+        self.weight_control = WeightControl(value, main_row)
+        self.weight_control.value_changed.connect(
+            lambda weight: self.value_changed.emit(definition.stat_id, weight)
+        )
+        main_layout.addWidget(self.weight_control)
+        layout.addWidget(main_row)
+
+        self.sources_body = QFrame(self)
+        self.sources_body.setObjectName("conversionSourcesBody")
+        sources_layout = QGridLayout(self.sources_body)
+        sources_layout.setContentsMargins(32, 4, 12, 9)
+        sources_layout.setHorizontalSpacing(18)
+        sources_layout.setVerticalSpacing(5)
+        self.source_checkboxes: dict[str, QCheckBox] = {}
+        for index, source in enumerate(
+            conversion_sources_for(self.destination)
+        ):
+            checkbox = QCheckBox(
+                CONVERSION_DAMAGE_LABELS[source], self.sources_body
+            )
+            checkbox.toggled.connect(
+                lambda checked, selected=source: self._source_toggled(
+                    selected, checked
+                )
+            )
+            if source == "specific_skill":
+                checkbox.setToolTip(
+                    "Include conversions that apply only to a specific skill."
+                )
+            sources_layout.addWidget(checkbox, index // 3, index % 3)
+            self.source_checkboxes[source] = checkbox
+        layout.addWidget(self.sources_body)
+        self.refresh_sources()
+        self._set_sources_expanded(False)
+
+    def refresh_sources(self) -> None:
+        for source, checkbox in self.source_checkboxes.items():
+            blocker = QSignalBlocker(checkbox)
+            checkbox.setChecked(
+                self._source_enabled(self.destination, source)
+            )
+            del blocker
+        self._refresh_sources_button()
+
+    def _set_sources_expanded(self, expanded: bool) -> None:
+        self.sources_button.setChecked(expanded)
+        self.sources_body.setVisible(expanded)
+        self._refresh_sources_button()
+
+    def _source_toggled(self, source: str, checked: bool) -> None:
+        self._set_source_enabled(self.destination, source, checked)
+        self._refresh_sources_button()
+        self.source_changed.emit(self.destination, source, checked)
+
+    def _refresh_sources_button(self) -> None:
+        enabled = sum(
+            checkbox.isChecked()
+            for checkbox in self.source_checkboxes.values()
+        )
+        total = len(self.source_checkboxes)
+        indicator = "\u25be" if self.sources_button.isChecked() else "\u25b8"
+        self.sources_button.setText(f"{indicator} Sources {enabled}/{total}")
+        self.sources_button.setToolTip(
+            "Choose which incoming damage types make this conversion relevant."
+        )
+
+
 class PackageModifyControl(QWidget):
     """Compact control that adjusts every weight in one package."""
 
@@ -199,6 +312,7 @@ class PackageAccordion(QFrame):
     """Package whose nonzero values pin its contents open."""
 
     weight_changed = Signal(str, int)
+    conversion_source_changed = Signal(str, str, bool)
 
     def __init__(
         self,
@@ -206,6 +320,11 @@ class PackageAccordion(QFrame):
         weight_for: Callable[[str], int],
         set_weight: Callable[[str, int], None],
         parent: QWidget | None = None,
+        *,
+        conversion_source_enabled: Callable[[str, str], bool] | None = None,
+        set_conversion_source_enabled: (
+            Callable[[str, str, bool], None] | None
+        ) = None,
     ) -> None:
         super().__init__(parent)
         self.definition = definition
@@ -238,13 +357,27 @@ class PackageAccordion(QFrame):
         body_layout = QVBoxLayout(self.body)
         body_layout.setContentsMargins(0, 3, 0, 7)
         body_layout.setSpacing(0)
-        self.rows: dict[str, StatRow] = {}
+        self.rows: dict[str, StatRow | ConversionStatRow] = {}
         for stat_definition in definition.stats:
-            row = StatRow(
-                stat_definition,
-                weight_for(stat_definition.stat_id),
-                self.body,
-            )
+            if (
+                stat_definition.stat_id.startswith("damage_conversion_to_")
+                and conversion_source_enabled is not None
+                and set_conversion_source_enabled is not None
+            ):
+                row = ConversionStatRow(
+                    stat_definition,
+                    weight_for(stat_definition.stat_id),
+                    conversion_source_enabled,
+                    set_conversion_source_enabled,
+                    self.body,
+                )
+                row.source_changed.connect(self.conversion_source_changed)
+            else:
+                row = StatRow(
+                    stat_definition,
+                    weight_for(stat_definition.stat_id),
+                    self.body,
+                )
             row.value_changed.connect(self._weight_changed)
             body_layout.addWidget(row)
             self.rows[stat_definition.stat_id] = row
@@ -283,6 +416,8 @@ class PackageAccordion(QFrame):
 
         for stat_id, row in self.rows.items():
             row.weight_control.set_value(self._weight_for(stat_id), emit=False)
+            if isinstance(row, ConversionStatRow):
+                row.refresh_sources()
         self.set_expanded(self.is_pinned)
         self._refresh_header()
 

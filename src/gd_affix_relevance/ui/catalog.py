@@ -41,6 +41,13 @@ def base_weapon_damage_stat(damage_type: str, label: str) -> StatDefinition:
     )
 
 
+def chance_damage_stat(damage_type: str, label: str) -> StatDefinition:
+    return stat(
+        f"chance_flat_{damage_type}_damage",
+        f"Chance of {label} Damage",
+    )
+
+
 DAMAGE_TAB = TabDefinition(
     "damage",
     "Damage",
@@ -107,9 +114,11 @@ DAMAGE_TAB = TabDefinition(
             "Fire / Burn",
             (
                 stat("flat_fire_damage", "Fire Damage (Flat)"),
+                chance_damage_stat("fire", "Fire"),
                 stat("fire_damage_percent", "Fire Damage (+%)"),
                 base_weapon_damage_stat("fire", "Fire"),
                 stat("flat_burn_damage", "Burn Damage (Flat DoT)"),
+                chance_damage_stat("burn", "Burn"),
                 stat("burn_damage_percent", "Burn Damage (+% DoT)"),
                 conversion_stat("fire", "Fire"),
             ),
@@ -153,6 +162,7 @@ DAMAGE_TAB = TabDefinition(
             "Physical / Internal Trauma",
             (
                 stat("flat_physical_damage", "Physical Damage (Flat)"),
+                chance_damage_stat("physical", "Physical"),
                 stat("physical_damage_percent", "Physical Damage (+%)"),
                 base_weapon_damage_stat("physical", "Physical"),
                 stat("flat_internal_trauma_damage", "Internal Trauma (Flat DoT)"),
@@ -165,8 +175,10 @@ DAMAGE_TAB = TabDefinition(
             "Pierce",
             (
                 stat("flat_pierce_damage", "Pierce Damage (Flat)"),
+                chance_damage_stat("pierce", "Pierce"),
                 stat("pierce_damage_percent", "Pierce Damage (+%)"),
                 base_weapon_damage_stat("pierce", "Pierce"),
+                stat("armor_piercing_percent", "100% Armor Piercing"),
                 conversion_stat("pierce", "Pierce"),
             ),
         ),
@@ -186,6 +198,24 @@ DAMAGE_TAB = TabDefinition(
 )
 
 
+RESISTANCE_STATS = tuple(
+    stat(stat_id, label)
+    for stat_id, label in (
+        ("elemental_resistance", "Elemental Resistance"),
+        ("aether_resistance", "Aether Resistance"),
+        ("bleeding_resistance", "Bleeding Resistance"),
+        ("chaos_resistance", "Chaos Resistance"),
+        ("cold_resistance", "Cold Resistance"),
+        ("fire_resistance", "Fire Resistance"),
+        ("lightning_resistance", "Lightning Resistance"),
+        ("physical_resistance", "Physical Resistance"),
+        ("pierce_resistance", "Pierce Resistance"),
+        ("poison_acid_resistance", "Poison & Acid Resistance"),
+        ("vitality_resistance", "Vitality Resistance"),
+    )
+)
+
+
 DEFENSES_TAB = TabDefinition(
     "defenses",
     "Defenses",
@@ -193,22 +223,7 @@ DEFENSES_TAB = TabDefinition(
         PackageDefinition(
             "defense_resistances",
             "Resistances",
-            tuple(
-                stat(stat_id, label)
-                for stat_id, label in (
-                    ("elemental_resistance", "Elemental Resistance"),
-                    ("aether_resistance", "Aether Resistance"),
-                    ("bleeding_resistance", "Bleeding Resistance"),
-                    ("chaos_resistance", "Chaos Resistance"),
-                    ("cold_resistance", "Cold Resistance"),
-                    ("fire_resistance", "Fire Resistance"),
-                    ("lightning_resistance", "Lightning Resistance"),
-                    ("physical_resistance", "Physical Resistance"),
-                    ("pierce_resistance", "Pierce Resistance"),
-                    ("poison_acid_resistance", "Poison & Acid Resistance"),
-                    ("vitality_resistance", "Vitality Resistance"),
-                )
-            ),
+            RESISTANCE_STATS,
             default_expanded=True,
         ),
         PackageDefinition(

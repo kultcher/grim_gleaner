@@ -30,6 +30,22 @@ QLabel#placeholderTitle { font-size: 16pt; font-weight: 600; }
 QLabel#fieldLabel { color: #c9ced8; font-weight: 600; }
 QLabel#pageHint { color: #a7adb8; }
 QLabel#matchHighlightLegend { color: #9eb5ca; padding-left: 2px; }
+QToolButton#resistanceCapButton {
+    background: #292e37;
+    border: 1px solid #3d4654;
+    border-radius: 6px;
+    color: #d9e3ed;
+    font-weight: 600;
+    padding: 7px 16px;
+}
+QToolButton#resistanceCapButton:hover { background: #39404c; }
+QFrame#resistanceCapBody {
+    background: #1b2027;
+    border: 1px solid #3a4654;
+    border-radius: 6px;
+}
+QCheckBox#resistanceCapToggle { font-weight: 600; color: #edf3f7; }
+QLabel#resistanceCapHint { color: #9eabb9; padding-bottom: 3px; }
 QLabel#weightLegend {
     background: #242831;
     border: 1px solid #343a46;
@@ -53,7 +69,7 @@ QPushButton#profileAction {
 QPushButton#profileAction:hover { background: #39404c; }
 QLabel#profileFileStatus { color: #8f96a3; padding-left: 93px; }
 QTableWidget#topMatchesTable, QTableWidget#affixSlotTable,
-QTableWidget#uniqueSlotTable {
+QTableWidget#uniqueSlotTable, QTableWidget#addonSlotTable {
     background: #181b20;
     alternate-background-color: #1e2229;
     border: 1px solid #303540;
@@ -61,7 +77,7 @@ QTableWidget#uniqueSlotTable {
     selection-background-color: #3a4454;
 }
 QFrame#slotFilterBar, QFrame#typeFilterBar, QFrame#affixSlotRow,
-QFrame#uniqueSlotRow {
+QFrame#uniqueSlotRow, QFrame#addonSlotRow {
     background: #1b1e24;
     border: 1px solid #303640;
     border-radius: 6px;
@@ -234,6 +250,21 @@ QPushButton#packageHeader:hover { background: #2c323c; }
 QWidget#packageModifyControl { background: #252a32; }
 QLabel#packageModifyLabel { color: #b8bec9; padding: 0 4px 0 8px; }
 QWidget#packageBody { background: #1b1e24; }
+QToolButton#conversionSourcesButton {
+    color: #aeb8c6;
+    padding: 3px 7px;
+}
+QToolButton#conversionSourcesButton:hover {
+    background: #303640;
+    border-radius: 4px;
+    color: #ffffff;
+}
+QFrame#conversionSourcesBody {
+    background: #171a1f;
+    border-top: 1px solid #2b3039;
+    border-bottom: 1px solid #2b3039;
+}
+QFrame#conversionSourcesBody QCheckBox { color: #c2c8d1; }
 QToolButton#weightArrow {
     background: #292e37;
     border: 1px solid #3a414d;

@@ -19,6 +19,7 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
         "Bleed Werewolf",
         {"health": 2, "bleeding_damage_percent": 4},
     )
+    profile.set_conversion_source_enabled("fire", "physical", False)
 
     destination = save_profile(profile, tmp_path / "bleed-werewolf")
     first_bytes = destination.read_bytes()
@@ -29,6 +30,7 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
     payload = json.loads(destination.read_text(encoding="utf-8"))
     assert payload == {
         "schema_version": PROFILE_FILE_SCHEMA_VERSION,
+        "excluded_conversion_sources": {"fire": ["physical"]},
         "masteries": ["", ""],
         "name": "Bleed Werewolf",
         "skill_weights": {},
@@ -93,3 +95,4 @@ def test_profile_loader_migrates_schema_one_with_empty_skill_state(
     assert profile.masteries == ("", "")
     assert profile.skill_weights == {}
     assert profile.weights == {"health": 2}
+    assert profile.excluded_conversion_sources == {}

@@ -40,6 +40,31 @@ def test_profile_round_trip_is_deterministic() -> None:
     ]
 
 
+def test_conversion_sources_default_enabled_and_round_trip_exclusions() -> None:
+    profile = BuildProfile(weights={"damage_conversion_to_fire": 4})
+
+    assert profile.conversion_source_enabled("fire", "physical")
+    profile.set_conversion_source_enabled("fire", "physical", False)
+    profile.set_conversion_source_enabled("fire", "chaos", False)
+    assert not profile.conversion_source_enabled("Fire", "Physical")
+
+    restored = BuildProfile.from_dict(profile.to_dict())
+    assert restored.excluded_conversion_sources == {
+        "fire": {"chaos", "physical"}
+    }
+    restored.set_conversion_source_enabled("fire", "physical", True)
+    assert restored.conversion_source_enabled("fire", "physical")
+
+    restored.set_conversion_source_enabled("fire", "specific skill", False)
+    assert not restored.conversion_source_enabled("fire", "specific_skill")
+    assert BuildProfile.from_dict(restored.to_dict()).excluded_conversion_sources == {
+        "fire": {"chaos", "specific_skill"}
+    }
+
+    with pytest.raises(ValueError, match="must differ"):
+        profile.set_conversion_source_enabled("fire", "fire", False)
+
+
 def test_profile_masteries_are_exclusive_and_zero_weight_skills_persist() -> None:
     profile = BuildProfile()
     profile.set_mastery(0, "playerclass01")

@@ -89,6 +89,43 @@ def test_package_modify_all_adjusts_every_stat_and_only_shows_when_expanded() ->
     assert profile.weights == {"health": 2, "movement_speed": 2}
 
 
+def test_conversion_row_folds_sources_and_persists_unchecked_types() -> None:
+    _application()
+    profile = BuildProfile(weights={"damage_conversion_to_fire": 4})
+    definition = PackageDefinition(
+        "fire",
+        "Fire",
+        (stat("damage_conversion_to_fire", "Damage Converted to Fire"),),
+    )
+    accordion = PackageAccordion(
+        definition,
+        profile.weight_for,
+        profile.set_weight,
+        conversion_source_enabled=profile.conversion_source_enabled,
+        set_conversion_source_enabled=profile.set_conversion_source_enabled,
+    )
+    changes: list[tuple[str, str, bool]] = []
+    accordion.conversion_source_changed.connect(
+        lambda destination, source, enabled: changes.append(
+            (destination, source, enabled)
+        )
+    )
+    accordion.show()
+
+    row = accordion.rows["damage_conversion_to_fire"]
+    assert row.sources_button.text().endswith("Sources 10/10")
+    assert row.source_checkboxes["specific_skill"].text() == "Specific Skill"
+    assert row.source_checkboxes["specific_skill"].isChecked()
+    assert row.sources_body.isHidden()
+    row.sources_button.click()
+    assert not row.sources_body.isHidden()
+    row.source_checkboxes["physical"].setChecked(False)
+
+    assert not profile.conversion_source_enabled("fire", "physical")
+    assert row.sources_button.text().endswith("Sources 9/10")
+    assert changes == [("fire", "physical", False)]
+
+
 def test_main_window_reserves_top_matches_navigation() -> None:
     _application()
     window = MainWindow(catalog=AffixCatalog(()))

@@ -9,7 +9,10 @@ from gd_affix_relevance.catalog import (
 )
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.scoring import (
+    ADDON_AUGMENT,
+    ADDON_COMPONENT,
     item_semantic_stat_ids,
+    rank_addons_for_slot,
     rank_unique_items_for_slot,
 )
 from gd_affix_relevance.slots import SLOT_HEAD
@@ -204,3 +207,154 @@ def test_item_semantics_ignore_base_attack_speed_and_alias_buff_skill_ranks() ->
     assert matches[0].score.matched_count == 1
     assert matches[0].score.total_category_count == 1
     assert matches[0].score.coverage_ratio == 1
+
+
+def test_armor_piercing_uses_the_normal_profile_weight_path() -> None:
+    variant = _variant(
+        category="legendary",
+        rarity="Legendary",
+        properties=(
+            ItemProperty(
+                "armor_piercing_percent",
+                "armor_piercing_percent",
+                {"percent": "100.000000"},
+            ),
+        ),
+    )
+    catalog = ItemCatalog(
+        (_item("Piercing Helm", variant),), (), (), (), (), ()
+    )
+
+    matches = rank_unique_items_for_slot(
+        catalog,
+        BuildProfile(weights={"armor_piercing_percent": 4}),
+        slot_id=SLOT_HEAD,
+    )
+
+    assert matches[0].score.matched_stat_ids == ("armor_piercing_percent",)
+    assert matches[0].score.weighted_match == 4
+
+
+def test_unique_conversion_respects_selected_source_types() -> None:
+    variant = _variant(
+        category="legendary",
+        rarity="Legendary",
+        properties=(
+            ItemProperty(
+                "damage_conversion",
+                "damage_conversion:1",
+                {
+                    "source_damage_type": "Physical",
+                    "destination_damage_type": "Fire",
+                },
+            ),
+        ),
+    )
+    catalog = ItemCatalog(
+        (_item("Conversion Helm", variant),), (), (), (), (), ()
+    )
+    profile = BuildProfile(weights={"damage_conversion_to_fire": 4})
+
+    assert rank_unique_items_for_slot(
+        catalog, profile, slot_id=SLOT_HEAD
+    )
+    profile.set_conversion_source_enabled("fire", "physical", False)
+    assert not rank_unique_items_for_slot(
+        catalog, profile, slot_id=SLOT_HEAD
+    )
+
+
+def test_addon_ranking_uses_applicable_slots_and_requested_family() -> None:
+    component_variant = _variant(
+        category="component",
+        item_class="ItemRelic",
+        applicable_slots=("Head", "Chest"),
+        acquisition_source="Crafted",
+    )
+    augment_variant = _variant(
+        category="augment",
+        item_class="ItemEnchantment",
+        applicable_slots=("Head",),
+        acquisition_source="Purchased",
+        faction_source="User7",
+        faction_name="The Black Legion",
+    )
+    component = replace(
+        _item("Health Component", component_variant), family="components"
+    )
+    augment = replace(
+        _item("Health Augment", augment_variant), family="augments"
+    )
+    catalog = ItemCatalog((), (component,), (augment,), (), (), ())
+    profile = BuildProfile(weights={"health": 4})
+
+    components = rank_addons_for_slot(
+        catalog,
+        profile,
+        slot_id=SLOT_HEAD,
+        addon_type=ADDON_COMPONENT,
+    )
+    augments = rank_addons_for_slot(
+        catalog,
+        profile,
+        slot_id=SLOT_HEAD,
+        addon_type=ADDON_AUGMENT,
+    )
+
+    assert [match.item.display_name for match in components] == [
+        "Health Component"
+    ]
+    assert components[0].variant.acquisition_source == "Crafted"
+    assert [match.item.display_name for match in augments] == [
+        "Health Augment"
+    ]
+    assert augments[0].variant.faction_name == "The Black Legion"
+
+
+def test_resistance_cap_weights_override_and_amplify_addons_only() -> None:
+    variant = _variant(
+        category="component",
+        item_class="ItemRelic",
+        applicable_slots=("Head",),
+        properties=(
+            ItemProperty("fire_resistance", "fire_resistance", {}),
+        ),
+    )
+    component = replace(
+        _item("Fire Ward", variant), family="components"
+    )
+    catalog = ItemCatalog((), (component,), (), (), (), ())
+    profile = BuildProfile(weights={"fire_resistance": 4})
+
+    ordinary = rank_addons_for_slot(
+        catalog,
+        profile,
+        slot_id=SLOT_HEAD,
+        addon_type=ADDON_COMPONENT,
+    )[0]
+    cap_two = rank_addons_for_slot(
+        catalog,
+        profile,
+        slot_id=SLOT_HEAD,
+        addon_type=ADDON_COMPONENT,
+        resistance_cap_weights={"fire_resistance": 2},
+    )[0]
+    cap_four = rank_addons_for_slot(
+        catalog,
+        profile,
+        slot_id=SLOT_HEAD,
+        addon_type=ADDON_COMPONENT,
+        resistance_cap_weights={"fire_resistance": 4},
+    )[0]
+
+    assert cap_two.score.effective_score == ordinary.score.effective_score
+    assert cap_two.score.weighted_match == ordinary.score.weighted_match == 4
+    assert cap_four.score.effective_score == 16
+    assert cap_four.score.weighted_match == 8
+    assert not rank_addons_for_slot(
+        catalog,
+        profile,
+        slot_id=SLOT_HEAD,
+        addon_type=ADDON_COMPONENT,
+        resistance_cap_weights={"fire_resistance": 0},
+    )

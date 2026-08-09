@@ -29,16 +29,26 @@ def test_editor_saves_and_loads_profile_into_existing_controls(
     assert editor.current_profile_path == saved_path
     assert editor.file_status.text() == "Saved: original.json"
 
-    loaded_path = save_profile(
-        BuildProfile("Loaded Build", {"health": 4, "movement_speed": 2}),
-        tmp_path / "loaded.json",
+    loaded_profile = BuildProfile(
+        "Loaded Build",
+        {
+            "health": 4,
+            "movement_speed": 2,
+            "damage_conversion_to_fire": 4,
+        },
     )
+    loaded_profile.set_conversion_source_enabled("fire", "physical", False)
+    loaded_path = save_profile(loaded_profile, tmp_path / "loaded.json")
     returned = editor.load_from_path(loaded_path)
 
     assert returned is original
     assert editor.profile is original
     assert editor.name_edit.text() == "Loaded Build"
-    assert original.weights == {"health": 4, "movement_speed": 2}
+    assert original.weights == {
+        "health": 4,
+        "movement_speed": 2,
+        "damage_conversion_to_fire": 4,
+    }
     assert (
         editor.accordions["core_health"].rows["health"].weight_control.value
         == 4
@@ -50,6 +60,11 @@ def test_editor_saves_and_loads_profile_into_existing_controls(
         == 2
     )
     assert editor.accordions["core_health"].is_expanded
+    conversion_row = editor.accordions["damage_fire"].rows[
+        "damage_conversion_to_fire"
+    ]
+    assert not conversion_row.source_checkboxes["physical"].isChecked()
+    assert conversion_row.sources_button.text().endswith("Sources 9/10")
     assert editor.file_status.text() == "Loaded: loaded.json"
 
     editor.accordions["core_health"].rows["health"].weight_control.set_value(3)
@@ -65,6 +80,7 @@ def test_new_profile_can_cancel_or_clear_every_profile_field() -> None:
         masteries=("playerclass01", "playerclass02"),
         skill_weights={skill_id: 3},
     )
+    profile.set_conversion_source_enabled("fire", "physical", False)
     editor = ProfileEditor(profile)
     editor.name_edit.setText("Changed")
     assert editor.is_dirty
@@ -85,11 +101,17 @@ def test_new_profile_can_cancel_or_clear_every_profile_field() -> None:
     assert profile.weights == {}
     assert profile.masteries == ("", "")
     assert profile.skill_weights == {}
+    assert profile.excluded_conversion_sources == {}
     assert editor.current_profile_path is None
     assert not editor.is_dirty
     assert editor.accordions["core_health"].rows[
         "health"
     ].weight_control.value == 0
+    conversion_row = editor.accordions["damage_fire"].rows[
+        "damage_conversion_to_fire"
+    ]
+    assert conversion_row.source_checkboxes["physical"].isChecked()
+    assert conversion_row.sources_button.text().endswith("Sources 10/10")
 
 
 def test_new_profile_save_choice_writes_dirty_profile_before_reset(

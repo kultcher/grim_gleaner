@@ -73,10 +73,20 @@ weights.
   Damage tab's default Base package.
 - Damage-type packages expose directional conversion into their selected damage
   type rather than duplicating one generic conversion weight.
+- Each conversion destination has a nested source filter. Its incoming damage
+  types and a future-facing `Specific Skill` option are enabled by default;
+  unchecked global sources are omitted from affix, unique-item, and
+  generated-marker scoring and all selections persist with the profile. The
+  source-type itself is excluded when it matches the destination. These menus
+  show the complete set of other damage families; they are not narrowed to
+  source/destination pairs observed in the current catalog.
 - Direct damage packages expose `Base Weapon Damage as <type>`. Item base-damage
   DBR bundles map to this category instead of ordinary flat damage; weapons
   without an explicit nonphysical override are treated as physical-base
   weapons. DoT-only Bleeding does not expose a misleading base-weapon option.
+- The Pierce package exposes the normalized weapon implicit as `100% Armor
+  Piercing`. Its existing `armor_piercing_percent` property uses the same
+  user-weighted scoring path as other profile stats.
 - Granted item skills remain separate from the mastery-skill selector. Their
   eventual weighting and scoring behavior is still deferred.
 
@@ -139,7 +149,7 @@ build-relevant skill are highlighted aquamarine and take precedence when both
 are present.
 
 The shared, default-on filters for 1H, 2H, melee, caster, ranged, shield, and
-off-hand rows apply to both the Affixes and Uniques tabs. They are presentation
+off-hand rows apply to the Affixes, Uniques, and Add-ons tabs. They are presentation
 filters rather than saved profile choices. A later `Weapon Type(s)` profile
 setting can reuse the same stable slot IDs when loadout choice needs to affect
 Add-ons and Build Support globally.
@@ -160,8 +170,8 @@ Changing a profile weight or loading a profile reranks every table.
 
 The detail pane has a fixed title above its independently scrolling body. Unique
 titles show grade, item, slot, and type, with green, blue, or purple title bars
-for Monster Infrequent, Epic, or Legendary items. Affixes use the same title
-layout with a neutral bar because the current AffixCatalog has no rarity field.
+for Monster Infrequent, Epic, or Legendary items. Affixes and add-ons use the
+same title layout with their compiled rarity or family presentation colors.
 Semantic stat colors follow the Rainbow-style damage and resistance families;
 attributes, OA/DA, health, energy, skill ranks, and skill modifiers have their
 own high-contrast colors. Vitality uses a distinct violet pending visual tuning.
@@ -183,12 +193,33 @@ deliberately broad for this first pass: faction records are purchased, direct
 blueprint outputs are crafted, Monster Infrequents are specific-monster drops,
 and remaining epics or legendaries are random drops.
 
+The Add-ons tab mirrors the compact Affixes layout: every slot row has a
+top-five Components table and a top-five Augments table. Components show the
+catalog's broad Crafted or Random Drop source. Augments show the officially
+localized faction resolved from their DBR `factionSource`; their acquisition
+source is Purchased. Selecting either family opens the same matched versus
+remaining-unmatched detail structure used elsewhere. Component faction-vendor
+availability and reputation tier are added when the corresponding merchant
+tables are present in the compiler inputs; otherwise the broad source label
+remains available.
+
+Add-ons also provide a centered, collapsed Resistance Cap Mode section. Its
+enable checkbox and local copy of the primary Resistances package are temporary
+view state rather than saved profile data. While enabled, all local resistance
+weights replace the main profile's resistance weights for component and augment
+ranking only; Affixes and Uniques continue to use the profile. Non-resistance
+profile weights continue contributing to Add-ons. Cap-mode weights are treated
+as double their displayed value before the ordinary quadratic scoring curve, so
+two cap stars equal an ordinary four-star contribution and four cap stars
+contribute 16 relevance points before coverage.
+
 Fixed item stats, selected-mastery bonuses, and ordinary selected-skill rank
 bonuses participate in grading. `†` flags an item that modifies a skill in the
 build-relevant skill list. Skill-modifier mechanics, including conversions, are
 not yet included in the numeric grade and are called out in the detail pane.
 
-Affixes and unique items share the same nonlinear relevance formula. Weight
+Affixes, unique items, components, and augments share the same nonlinear
+relevance formula. Weight
 `w` contributes `w² / 4` points, and the sum is multiplied by
 `0.70 + 0.30 × coverage`, where coverage is matched categories divided by all
 gradeable categories on that affix or item. Grade floors are S 10, A 6.5, B 4,

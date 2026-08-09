@@ -9,7 +9,7 @@ from gd_affix_relevance.catalog import (
     AffixVariantDefinition,
 )
 from gd_affix_relevance.domain import BuildProfile
-from gd_affix_relevance.output import generate_rainbow_output
+from gd_affix_relevance.output import build_affix_markers, generate_rainbow_output
 
 
 def _variant(*stat_ids: str) -> AffixVariantDefinition:
@@ -123,3 +123,29 @@ def test_writer_rejects_overlapping_source_and_output(tmp_path: Path) -> None:
             AffixCatalog(()),
             BuildProfile(),
         )
+
+
+def test_marker_scoring_respects_conversion_source_filters() -> None:
+    conversion = AffixProperty(
+        "damage_conversion",
+        "damage_conversion:1",
+        {
+            "source_damage_type": "Physical",
+            "destination_damage_type": "Fire",
+        },
+    )
+    variant = AffixVariantDefinition(
+        gear_slot="Ring",
+        level_requirements=(5,),
+        properties=(conversion,),
+        stat_lines=("[x]% Physical Damage converted to Fire Damage",),
+        representative_source="base:example.dbr",
+        source_record_count=1,
+        stat_layout_count=1,
+    )
+    catalog = AffixCatalog((_affix("tagConversion", "Converted", variant),))
+    profile = BuildProfile(weights={"damage_conversion_to_fire": 4})
+
+    assert build_affix_markers(catalog, profile)["tagConversion"] == "(B1)"
+    profile.set_conversion_source_enabled("fire", "physical", False)
+    assert build_affix_markers(catalog, profile)["tagConversion"] == "(-0)"

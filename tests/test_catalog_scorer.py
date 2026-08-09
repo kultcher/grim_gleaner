@@ -88,6 +88,34 @@ def test_conversion_property_maps_its_destination_to_profile_id() -> None:
     assert semantic_stat_id(property_) == "damage_conversion_to_vitality"
 
 
+def test_conversion_source_filter_omits_irrelevant_incoming_type() -> None:
+    physical_to_fire = AffixProperty(
+        "damage_conversion",
+        "damage_conversion:1",
+        {
+            "source_damage_type": "Physical",
+            "destination_damage_type": "Fire",
+        },
+    )
+    variant = AffixVariantDefinition(
+        gear_slot="Ring",
+        level_requirements=(20,),
+        properties=(physical_to_fire,),
+        stat_lines=("[x]% Physical Damage converted to Fire Damage",),
+        representative_source="base:test.dbr",
+        source_record_count=1,
+        stat_layout_count=1,
+    )
+    profile = BuildProfile(weights={"damage_conversion_to_fire": 4})
+
+    assert score_affix_variant(variant, profile).matched_count == 1
+    profile.set_conversion_source_enabled("fire", "physical", False)
+    filtered = score_affix_variant(variant, profile)
+
+    assert filtered.matched_count == 0
+    assert filtered.total_category_count == 0
+
+
 def test_item_base_weapon_damage_maps_separately_from_flat_damage() -> None:
     property_ = AffixProperty(
         "flat_lightning_damage",

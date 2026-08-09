@@ -87,7 +87,8 @@ layout remains a separate variant. A variant preserves:
 - structured atomic applicability, including melee, caster, and ranged weapon
   families rather than a display string alone;
 - semantic property IDs and distinguishing attributes;
-- number-free player-facing stat lines;
+- player-facing stat lines with abstract roll values but concrete discrete
+  skill-rank bonuses;
 - representative source path and source-record count;
 - the count of layouts observed for the same affix and gear slot.
 
@@ -97,12 +98,18 @@ contain different rank values, `skill_level` follows the catalog's current
 max-level assumption and `skill_level_min` / `skill_level_max` preserve the
 observed range for later level-aware scoring.
 
+Flat damage wrapped in an explicit proc-chance field is compiled under a
+separate `chance_flat_<type>_damage` property instead of being conflated with
+always-on flat damage. The current reachable affix data uses this form for
+Fire, Burn, Physical, and Pierce damage.
+
 ## Item catalog
 
 Schema version 2 added one logical `ItemCatalog` stored in six files. Schema
 version 3 added structured atomic applicability to affix variants. Schema
 version 4 adds affix rarity and skill-rank magnitudes plus mastery tier, order,
-and curated parent links. Splitting the files keeps large equipment data
+and curated parent links. Schema version 5 adds attachment acquisition and
+localized faction metadata. Splitting the files keeps large equipment data
 separate from smaller attachment and consumable families without forcing
 callers to manage six unrelated models:
 
@@ -120,8 +127,9 @@ Items group by family and localization tag. Each definition contains one or
 more concrete variants so shared names can retain level tiers, expansion
 overlays, and upgraded records. Variants preserve rarity, item class, gear or
 applicable slots, item and required level, fixed normalized properties,
-number-free stat lines, set membership, granted skills, consumable effect
-skills, component completion-table references, and MI/rune skill modifiers.
+stat lines with concrete discrete skill-rank bonuses, set membership, granted
+skills, consumable effect skills, component completion-table references, and
+MI/rune skill modifiers.
 Fixed property attributes retain their raw DBR role values even though current
 scoring remains category-presence based.
 
@@ -132,14 +140,25 @@ Drop`, and other equipment defaults to `Random Drop`. Referenced pet-bonus
 records are expanded into individual `pet_*` properties so unique-equipment
 scoring can reuse the same pet weights as affix scoring.
 
+Component variants use the same broad source field: records referenced by a
+blueprint are `Crafted`, while the remainder currently default to `Random
+Drop`. When faction merchant tables are present, direct component offers and
+offered blueprints compile to structured faction and reputation sources.
+Augments retain their raw DBR
+`factionSource`, its official localized faction name, and `Purchased`
+acquisition. This metadata is presentation-oriented and does not affect
+relevance grades.
+
 Set names and player, pet, item-granted, and modifier skill names resolve during
 compilation. Records whose name tags are absent from official localization are
 reported and skipped; the current extracted data identifies these as blank or
 retired templates rather than releasable items. `enemygear`, transmute proxies,
 and decorative equipment-class records are outside the item scope.
 
-The `records/items` and `records/skills` DBR branches are sufficient for the item and scoring
-catalogs. They are not a complete inventory of every consumer of an item
+The `records/items` and `records/skills` DBR branches are sufficient for item
+stats and scoring. Optional component faction-vendor attribution additionally
+uses `records/creatures/npcs/merchants` and the referenced faction-controller
+records. These branches are not a complete inventory of every consumer of an item
 localization tag: chests and corpses are usually under `records/items`, while
 some doors, map interactables, and quest assets live under `records/level art`,
 `records/storyelements*`, or other world-data branches. Grim Gleaner does not

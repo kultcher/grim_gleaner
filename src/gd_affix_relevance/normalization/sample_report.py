@@ -21,6 +21,8 @@ from gd_affix_relevance.normalization.field_inventory import active_value_kind
 from gd_affix_relevance.normalization.field_policy import fields_for_semantic_analysis
 from gd_affix_relevance.normalization.mapping_proposals import (
     FieldMappingProposal,
+    chance_damage_bundle_keys,
+    contextualize_damage_chance,
     propose_field_mapping,
 )
 from gd_affix_relevance.slots import (
@@ -223,11 +225,17 @@ def build_sample_candidates(
     resolver = RecordResolver(root, source_names)
     candidates: list[AffixSampleCandidate] = []
     for group in chosen_groups:
+        value_overrides = {
+            key_and_role: str(max(int(value) for value in values))
+            for key_and_role, values in group.preserved_values.items()
+            if values
+        }
         stat_lines = normalize_record_stat_lines(
             group.representative_record,
             preferred_source=group.preferred_source,
             resolver=resolver,
             localization_lookup=localization_lookup,
+            value_overrides=value_overrides,
         )
         if not stat_lines:
             stat_lines = ("[No active normalized stats]",)
@@ -333,9 +341,11 @@ def normalize_record_stat_lines(
     preferred_source: str,
     resolver: RecordResolver,
     localization_lookup: dict[str, LocalizationEntry],
+    value_overrides: dict[tuple[str, str], str] | None = None,
 ) -> tuple[str, ...]:
-    """Turn active raw fields into number-free player-facing stat lines."""
+    """Turn active raw fields into mostly abstract player-facing stat lines."""
 
+    mapped_fields: list[tuple[FieldMappingProposal, str]] = []
     bundles: dict[str, list[tuple[FieldMappingProposal, str]]] = {}
     order: list[str] = []
     unresolved_fields: list[str] = []
@@ -349,10 +359,21 @@ def normalize_record_stat_lines(
             continue
         if proposal.status == "ignored" or proposal.component_requirement == "metadata":
             continue
+        mapped_fields.append((proposal, raw_field.value))
+
+    chance_bundles = chance_damage_bundle_keys(
+        proposal for proposal, _ in mapped_fields
+    )
+    overrides = value_overrides or {}
+    for raw_proposal, raw_value in mapped_fields:
+        proposal = contextualize_damage_chance(raw_proposal, chance_bundles)
+        value = overrides.get(
+            (raw_proposal.bundle_key, raw_proposal.value_role), raw_value
+        )
         if proposal.bundle_key not in bundles:
             bundles[proposal.bundle_key] = []
             order.append(proposal.bundle_key)
-        bundles[proposal.bundle_key].append((proposal, raw_field.value))
+        bundles[proposal.bundle_key].append((proposal, value))
 
     lines: list[str] = []
     for bundle_key in order:
@@ -506,13 +527,34 @@ def _format_skill_bonus(
     localization_lookup: dict[str, LocalizationEntry],
 ) -> str:
     reference = next(
-        (value for proposal, value in components if proposal.value_role == "skill_reference"),
+        (
+            value
+            for proposal, value in components
+            if proposal.value_role == "skill_reference"
+        ),
         "",
     )
     skill_name = resolver.resolve_skill_name(
         reference, preferred_source, localization_lookup
     )
-    return f"+[x] to {skill_name}"
+    level = next(
+        (
+            value
+            for proposal, value in components
+            if proposal.value_role == "skill_level"
+        ),
+        "",
+    )
+    if level:
+        return f"+{_format_discrete_number(level)} to {skill_name}"
+    return f"Bonus to {skill_name}"
+
+
+def _format_discrete_number(value: str) -> str:
+    try:
+        return str(int(float(value)))
+    except ValueError:
+        return value
 
 
 def _format_granted_skill(
@@ -663,6 +705,7 @@ def record_semantic_fingerprint(
 ) -> tuple[tuple[str, str, str], ...]:
     """Fingerprint stat presence before expensive reference humanization."""
 
+    mapped_fields: list[tuple[FieldMappingProposal, str]] = []
     components: list[tuple[str, str, str]] = []
     for raw_field in fields_for_semantic_analysis(record):
         if active_value_kind(raw_field.value) is None:
@@ -673,16 +716,23 @@ def record_semantic_fingerprint(
             continue
         if proposal.status == "ignored" or proposal.component_requirement == "metadata":
             continue
+        mapped_fields.append((proposal, raw_field.value))
+
+    chance_bundles = chance_damage_bundle_keys(
+        proposal for proposal, _ in mapped_fields
+    )
+    for raw_proposal, raw_value in mapped_fields:
+        proposal = contextualize_damage_chance(raw_proposal, chance_bundles)
         distinguishing_value = ""
         if proposal.value_role in {
             "skill_reference",
             "source_damage_type",
             "destination_damage_type",
         }:
-            distinguishing_value = _logical_path(raw_field.value)
+            distinguishing_value = _logical_path(raw_value)
         elif proposal.property_id == "pet_bonus":
             distinguishing_value = re.sub(
-                r"_\d+(?=\.dbr$)", "_[tier]", _logical_path(raw_field.value)
+                r"_\d+(?=\.dbr$)", "_[tier]", _logical_path(raw_value)
             )
         components.append(
             (proposal.bundle_key, proposal.value_role, distinguishing_value)

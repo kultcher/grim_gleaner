@@ -9,8 +9,8 @@ by what you might want to change, rather than by the program's architecture.
 | --- | --- | --- |
 | General colors, borders, spacing, fonts | `src/gd_affix_relevance/ui/style.py` | `APP_STYLESHEET` |
 | Matches stat colors or row highlights | `src/gd_affix_relevance/ui/top_matches.py` | `STAT_CATEGORY_COLORS`, `DETAIL_TITLE_COLORS`, `_semantic_stat_color()` |
-| Detail-view content or line ordering | `src/gd_affix_relevance/ui/top_matches.py` | `_show_match()`, `_show_unique()` |
-| Affix or unique table columns | `src/gd_affix_relevance/ui/top_matches.py` | `AffixSlotTable`, `UniqueSlotTable` |
+| Detail-view content or line ordering | `src/gd_affix_relevance/ui/top_matches.py` | `_show_match()`, `_show_unique()`, `_show_addon()` |
+| Affix, unique, or add-on table columns | `src/gd_affix_relevance/ui/top_matches.py` | `AffixSlotTable`, `UniqueSlotTable`, `AddonSlotTable` |
 | Gear-slot labels, grouping, or filter rules | `src/gd_affix_relevance/slots.py` | `SLOT_LABELS`, `SLOT_GROUPS`, `SLOT_FILTERS`, `FILTER_LABELS` |
 | Profile tabs, packages, stat labels, or ordering | `src/gd_affix_relevance/ui/catalog.py` | `DAMAGE_TAB`, `DEFENSES_TAB`, `CORE_TAB`, `ADVANCED_TAB`, `PETS_TAB` |
 | Stars, arrows, stat rows, or accordion headers | `src/gd_affix_relevance/ui/widgets.py` | `WeightControl`, `StatRow`, `PackageAccordion` |
@@ -21,6 +21,8 @@ by what you might want to change, rather than by the program's architecture.
 | Actual `tags*_items.txt` annotation behavior | `src/gd_affix_relevance/output/rainbow_writer.py` | `generate_rainbow_output()` |
 | Grades, coverage, and weight math | `src/gd_affix_relevance/scoring/catalog_scorer.py` | `GRADE_THRESHOLDS`, `score_semantic_stat_ids()`, `_points_for_weight()` |
 | Which fixed items enter the Uniques results | `src/gd_affix_relevance/scoring/item_scorer.py` | `unique_item_type()`, `rank_unique_items_for_slot()` |
+| Which components or augments enter Add-ons | `src/gd_affix_relevance/scoring/item_scorer.py` | `rank_addons_for_slot()` |
+| Resistance Cap Mode UI or amplification | `src/gd_affix_relevance/ui/top_matches.py` and `src/gd_affix_relevance/scoring/item_scorer.py` | `_build_addon_tab()`, `_resistance_cap_toggled()`, `rank_addons_for_slot()` |
 | Saved-profile JSON fields | `src/gd_affix_relevance/domain/profile.py` and `src/gd_affix_relevance/profile_store.py` | `BuildProfile`, `PROFILE_FILE_SCHEMA_VERSION` |
 
 ## Colors and appearance
@@ -74,6 +76,7 @@ The detail-body order is deliberately explicit:
 
 - `_show_match()` constructs an affix's detail body.
 - `_show_unique()` constructs an MI/epic/legendary detail body.
+- `_show_addon()` constructs a component/augment detail body.
 
 Each method builds an `html` list from top to bottom and finally passes it to
 `setHtml()`. Move the relevant `_html_line()` or `_stat_html()` calls to reorder
@@ -90,6 +93,8 @@ neutral title because `AffixCatalog` does not carry reliable rarity metadata.
 
 - `AffixSlotTable.set_matches()` defines affix table values and columns.
 - `UniqueSlotTable.set_matches()` defines unique-item table values and columns.
+- `AddonSlotTable.set_matches()` defines component/augment values and columns.
+- `_build_addon_tab()` constructs the fold-down Resistance Cap Mode controls.
 - `RESULTS_PER_AFFIX_TABLE` controls the five-result affix limit.
 - The Uniques minimum-grade dropdown is constructed in `_build_unique_tab()`.
 - `_update_status()` produces the summary sentence above the filters.
@@ -109,8 +114,8 @@ The reusable gear vocabulary lives in `slots.py`, not in the page itself:
 - `SLOT_FILTERS` determines which checkboxes must be enabled for a row.
 - `FILTER_LABELS` controls checkbox order and text.
 
-These definitions are shared by Affixes and Uniques, so changing them normally
-keeps both tabs aligned.
+These definitions are shared by Affixes, Uniques, and Add-ons, so changing them
+normally keeps all three tabs aligned.
 
 ## Build Profile page
 

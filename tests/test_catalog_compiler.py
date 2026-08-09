@@ -101,6 +101,9 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
             ("lootRandomizerName", "tagTestAcid"),
             ("levelRequirement", "5"),
             ("offensivePoisonModifier", "25.000000"),
+            ("offensiveFireMin", "3.000000"),
+            ("offensiveFireMax", "5.000000"),
+            ("offensiveFireChance", "10.000000"),
             ("petBonusName", pet_bonus_path),
             ("augmentSkillLevel1", "2"),
             ("augmentSkillName1", "records/skills/playerclass06/squall2.dbr"),
@@ -189,11 +192,17 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
     ]
     assert skill_properties[0].attributes["display_name"] == "Raging Tempest"
     assert skill_properties[0].attributes["skill_level"] == "2"
+    assert "+2 to Raging Tempest" in bundle.affixes.affixes[0].variants[0].stat_lines
+    assert (
+        "[x]% Chance of [y]-[z] Fire Damage"
+        in bundle.affixes.affixes[0].variants[0].stat_lines
+    )
     property_ids = {
         property_.property_id
         for property_ in bundle.affixes.affixes[0].variants[0].properties
     }
     assert "pet_bonus" not in property_ids
+    assert "chance_flat_fire_damage" in property_ids
     assert {
         "pet_total_damage_percent",
         "pet_health_percent",
@@ -341,6 +350,7 @@ def test_compiler_preserves_max_skill_rank_for_collapsed_affix_layout(
     assert skill_bonus.attributes["skill_level"] == "3"
     assert skill_bonus.attributes["skill_level_min"] == "1"
     assert skill_bonus.attributes["skill_level_max"] == "3"
+    assert affix.variants[0].stat_lines == ("+3 to Test Skill",)
 
 
 def test_catalog_output_is_deterministic(tmp_path: Path) -> None:
@@ -410,6 +420,8 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
             ("itemLevel", "20"),
             ("levelRequirement", "15"),
             ("characterLife", "100"),
+            ("augmentSkillLevel1", "1"),
+            ("augmentSkillName1", "records/skills/playerclass01/testskill.dbr"),
         ],
     )
     _write_dbr(
@@ -422,6 +434,10 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
             ("itemLevel", "50"),
             ("levelRequirement", "45"),
             ("characterLife", "200"),
+            ("offensivePierceMin", "10"),
+            ("offensivePierceChance", "30"),
+            ("augmentSkillLevel1", "2"),
+            ("augmentSkillName1", "records/skills/playerclass01/testskill.dbr"),
             ("itemSetName", "records/items/lootsets/test_set.dbr"),
         ],
     )
@@ -454,6 +470,49 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
         ],
     )
     _write_dbr(
+        base_items / "crafting/blueprints/component/craft_comp_test.dbr",
+        [("artifactName", "records/items/materia/comp_test.dbr")],
+    )
+    _write_dbr(
+        data_root / "base/records/controllers/factions/faction_test.dbr",
+        [("myFaction", "User7")],
+    )
+    _write_dbr(
+        data_root / "base/records/creatures/npcs/merchants/merchant_test.dbr",
+        [
+            (
+                "marketFileName",
+                "records/creatures/npcs/merchants/factiontables/"
+                "_merchanttbl_test.dbr",
+            ),
+            ("factions", "records/controllers/factions/faction_test.dbr"),
+        ],
+    )
+    _write_dbr(
+        data_root
+        / "base/records/creatures/npcs/merchants/factiontables/"
+        "_merchanttbl_test.dbr",
+        [
+            (
+                "respectedNormalTable",
+                "records/creatures/npcs/merchants/factiontables/"
+                "test_respected.dbr",
+            )
+        ],
+    )
+    _write_dbr(
+        data_root
+        / "base/records/creatures/npcs/merchants/factiontables/"
+        "test_respected.dbr",
+        [
+            (
+                "marketStaticItems",
+                "records/items/crafting/blueprints/component/"
+                "craft_comp_test.dbr",
+            )
+        ],
+    )
+    _write_dbr(
         base_items / "gearrelic/relic_test.dbr",
         [
             ("Class", "ItemArtifact"),
@@ -468,6 +527,7 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
             ("description", "tagTestAugment"),
             ("itemClassification", "Rare"),
             ("amulet", "1"),
+            ("factionSource", "User7"),
         ],
     )
     _write_dbr(
@@ -493,6 +553,10 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
         [("skillDisplayName", "tagTestRuneSkill")],
     )
     _write_dbr(
+        data_root / "base/records/skills/playerclass01/testskill.dbr",
+        [("skillDisplayName", "tagTestSkillName")],
+    )
+    _write_dbr(
         data_root / "base/records/skills/itemskills/test_consumable_skill.dbr",
         [
             ("skillDisplayName", "tagTestConsumableSkill"),
@@ -508,8 +572,10 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
                 "tagTestComponentDesc=Component description",
                 "tagTestRelic=Test Relic",
                 "tagTestAugment=Test Augment",
+                "tagFactionUser7=The Black Legion",
                 "tagTestRune=Test Rune",
                 "tagTestRuneSkill=Rune Dash",
+                "tagTestSkillName=Test Skill",
                 "tagTestConsumable=Test Consumable",
                 "tagTestConsumableSkill=Consumable Ward",
             )
@@ -543,10 +609,27 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     assert helm.variants[0].properties[0].property_id == "health"
     assert helm.variants[1].set_name == "Test Set"
     assert helm.variants[1].acquisition_source == "Crafted"
+    assert "+2 to Test Skill" in helm.variants[1].stat_lines
+    assert "[x]% Chance of [y] Pierce Damage" in helm.variants[1].stat_lines
+    assert "chance_flat_pierce_damage" in {
+        property_.property_id for property_ in helm.variants[1].properties
+    }
     component = bundle.items.components[0]
     assert component.description == "Component description"
     assert component.variants[0].applicable_slots == ("Head",)
     assert component.variants[0].properties[0].property_id == "fire_resistance"
+    assert component.variants[0].acquisition_source == (
+        "Crafted / Faction Vendor"
+    )
+    assert len(component.variants[0].vendor_sources) == 1
+    assert component.variants[0].vendor_sources[0].faction_name == (
+        "The Black Legion"
+    )
+    assert component.variants[0].vendor_sources[0].reputation == "Respected"
+    augment = bundle.items.augments[0].variants[0]
+    assert augment.acquisition_source == "Purchased"
+    assert augment.faction_source == "User7"
+    assert augment.faction_name == "The Black Legion"
     assert bundle.items.runes[0].variants[0].granted_skill_name == "Rune Dash"
     consumable = bundle.items.consumables[0].variants[0]
     assert consumable.effect_skill_name == "Consumable Ward"

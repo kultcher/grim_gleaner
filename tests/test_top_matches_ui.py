@@ -129,6 +129,29 @@ def _item(
     )
 
 
+def _addon(
+    name: str,
+    *,
+    family: str,
+    acquisition_source: str,
+    faction_name: str = "",
+) -> ItemDefinition:
+    base = _item(
+        name,
+        category="component" if family == "components" else "augment",
+        rarity="Rare",
+        source=acquisition_source,
+    )
+    variant = replace(
+        base.variants[0],
+        item_class=("ItemRelic" if family == "components" else "ItemEnchantment"),
+        applicable_slots=("Head",),
+        faction_source="User7" if faction_name else "",
+        faction_name=faction_name,
+    )
+    return replace(base, family=family, variants=(variant,))
+
+
 def test_slot_tables_separate_prefixes_and_suffixes_and_track_profile() -> None:
     _application()
     profile = BuildProfile("Testing", {"health": 4})
@@ -208,7 +231,7 @@ def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
     property_ = AffixProperty(
         "skill_bonus",
         "skill_bonus:1",
-        {"skill_reference": skill_id},
+        {"skill_reference": skill_id, "skill_level": "2"},
     )
     affix = AffixDefinition(
         affix_id="prefix:cadence",
@@ -221,7 +244,7 @@ def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
                 gear_slot="Ring",
                 level_requirements=(20,),
                 properties=(property_,),
-                stat_lines=("+[x] to Cadence",),
+                stat_lines=("+2 to Cadence",),
                 representative_source="base:records/items/example.dbr",
                 source_record_count=1,
                 stat_layout_count=1,
@@ -253,7 +276,7 @@ def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
     table = window.top_matches_page.tables[(SLOT_RING, "prefix")]
     assert table.rowCount() == 1
     assert table.item(0, 0).text() == "[B1]"
-    assert "+Ranks to Cadence: weight 4" in (
+    assert "+2 to Cadence: weight 4" in (
         window.top_matches_page.details.toPlainText()
     )
     assert window.top_matches_page._label_for(
@@ -378,6 +401,154 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
 
     assert table.rowCount() == 2
     assert "Epic" not in {table.item(row, 2).text() for row in range(2)}
+
+
+def test_addon_tables_rank_components_and_augments_per_slot() -> None:
+    app = _application()
+    component = _addon(
+        "Living Armor",
+        family="components",
+        acquisition_source="Crafted",
+    )
+    augment = _addon(
+        "Mankind's Vigil",
+        family="augments",
+        acquisition_source="Purchased",
+        faction_name="The Black Legion",
+    )
+    items = ItemCatalog((), (component,), (augment,), (), (), ())
+    window = MainWindow(
+        BuildProfile(weights={"health": 4, "offensive_ability": 4}),
+        catalog=AffixCatalog(()),
+        items=items,
+    )
+    window.show()
+    page = window.top_matches_page
+
+    assert page.tabs.count() == 3
+    assert page.tabs.tabText(2) == "Add-ons"
+    component_table = page.addon_tables[("head", "component")]
+    augment_table = page.addon_tables[("head", "augment")]
+    assert component_table.item(0, 1).text() == "Living Armor"
+    assert component_table.item(0, 2).text() == "Crafted"
+    assert augment_table.item(0, 1).text() == "Mankind's Vigil"
+    assert augment_table.item(0, 2).text() == "The Black Legion"
+    assert [
+        component_table.horizontalHeaderItem(column).text()
+        for column in range(component_table.columnCount())
+    ] == ["Grade", "Component", "Source", "Score", "Coverage"]
+    assert [
+        augment_table.horizontalHeaderItem(column).text()
+        for column in range(augment_table.columnCount())
+    ] == ["Grade", "Augment", "Faction", "Score", "Coverage"]
+
+    augment_table.selectRow(0)
+    app.processEvents()
+    assert "Faction: The Black Legion" in page.addon_details.toPlainText()
+    assert "Source: Purchased" in page.addon_details.toPlainText()
+    assert "Matched stats" in page.addon_details.toPlainText()
+
+
+def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
+    app = _application()
+    component_base = _addon(
+        "Fire Ward",
+        family="components",
+        acquisition_source="Crafted",
+    )
+    component = replace(
+        component_base,
+        variants=(
+            replace(
+                component_base.variants[0],
+                properties=(
+                    ItemProperty(
+                        "fire_resistance", "fire_resistance", {}
+                    ),
+                ),
+                stat_lines=("+[x]% Fire Resistance",),
+            ),
+        ),
+    )
+    affix = _affix(
+        "prefix:fireward",
+        "Fireward",
+        "fire_resistance",
+        slot_id=SLOT_RING,
+    )
+    unique_base = _item(
+        "Fire Crown",
+        category="epic",
+        rarity="Epic",
+        source="Random Drop",
+        emphasized=False,
+    )
+    unique = replace(
+        unique_base,
+        variants=(
+            replace(
+                unique_base.variants[0],
+                properties=(
+                    ItemProperty(
+                        "fire_resistance", "fire_resistance", {}
+                    ),
+                ),
+                stat_lines=("+[x]% Fire Resistance",),
+            ),
+        ),
+    )
+    profile = BuildProfile(weights={"fire_resistance": 4})
+    window = MainWindow(
+        profile,
+        catalog=AffixCatalog((affix,)),
+        items=ItemCatalog((unique,), (component,), (), (), (), ()),
+    )
+    window.show()
+    page = window.top_matches_page
+    component_table = page.addon_tables[("head", "component")]
+    affix_table = page.tables[(SLOT_RING, "prefix")]
+    page.minimum_grade.setCurrentText("B")
+    unique_table = page.unique_tables["head"]
+
+    assert page.resistance_cap_body.isHidden()
+    assert not page.resistance_cap_toggle.isChecked()
+    assert not page.resistance_cap_rows_widget.isEnabled()
+    assert component_table.rowCount() == 1
+    assert affix_table.rowCount() == 1
+    assert unique_table.rowCount() == 1
+
+    page.resistance_cap_button.click()
+    assert not page.resistance_cap_body.isHidden()
+    page.resistance_cap_toggle.setChecked(True)
+    assert page.resistance_cap_rows_widget.isEnabled()
+    assert component_table.rowCount() == 0
+    assert affix_table.rowCount() == 1
+    assert unique_table.rowCount() == 1
+    assert profile.weight_for("fire_resistance") == 4
+
+    fire_control = page.resistance_cap_rows[
+        "fire_resistance"
+    ].weight_control
+    fire_control.set_value(2)
+    assert component_table.rowCount() == 1
+    assert component_table.matches[0].score.effective_score == 4
+    assert affix_table.matches[0].score.effective_score == 4
+    assert unique_table.matches[0].score.effective_score == 4
+
+    fire_control.set_value(4)
+    component_table.selectRow(0)
+    app.processEvents()
+    assert component_table.matches[0].score.effective_score == 16
+    assert component_table.item(0, 0).text().startswith("[S")
+    assert "cap weight 4 (amplified to 8)" in (
+        page.addon_details.toPlainText()
+    )
+    assert "Resistance Cap Mode is enabled" in page.status.text()
+
+    page.resistance_cap_toggle.setChecked(False)
+    assert component_table.matches[0].score.effective_score == 4
+    assert affix_table.matches[0].score.effective_score == 4
+    assert unique_table.matches[0].score.effective_score == 4
 
 
 def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> None:
@@ -506,7 +677,7 @@ def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> No
     assert DETAIL_TITLE_COLORS["legendary"] in (
         window.top_matches_page.unique_detail_pane.title.styleSheet()
     )
-    assert details.startswith("Source: Random Drop")
+    assert details.startswith("Effective score:")
     assert "Matched stats:" in details
     assert "Remaining unmatched stats:" in details
     assert "Fire Resistance" in details

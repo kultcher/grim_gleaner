@@ -16,7 +16,11 @@ from gd_affix_relevance.normalization.item_audit import (
     MODIFIER_SPECIAL_FIELDS,
     SPECIAL_GAMEPLAY_FIELDS,
 )
-from gd_affix_relevance.normalization.mapping_proposals import propose_field_mapping
+from gd_affix_relevance.normalization.mapping_proposals import (
+    chance_damage_bundle_keys,
+    contextualize_damage_chance,
+    propose_field_mapping,
+)
 from gd_affix_relevance.normalization.sample_report import (
     RecordResolver,
     normalize_record_stat_lines,
@@ -135,6 +139,9 @@ def compile_item_payloads(
 
     records = _discover_records(root, source_names)
     crafted_item_paths = _discover_crafted_item_paths(root, source_names)
+    faction_vendor_sources = _discover_faction_vendor_sources(
+        root, source_names, resolver
+    )
     grouped: dict[str, dict[str, list[dict[str, Any]]]] = {
         family: defaultdict(list) for family in ITEM_FAMILIES
     }
@@ -243,6 +250,18 @@ def compile_item_payloads(
                     if set_entry is not None:
                         set_name = plain_display_name(set_entry.value)
                         strings[set_tag] = set_name
+            faction_source, faction_name = _faction_metadata(
+                record,
+                exact_names,
+                folded_names,
+                strings,
+            )
+            vendor_sources = _vendor_source_payloads(
+                faction_vendor_sources.get(logical_path, ()),
+                exact_names,
+                folded_names,
+                strings,
+            )
             variant = {
                 "source": source,
                 "record_path": logical_path,
@@ -271,7 +290,12 @@ def compile_item_payloads(
                     logical_path,
                     _item_category(family, logical_path, record),
                     crafted_item_paths,
+                    faction_source,
+                    bool(vendor_sources) and family == "components",
                 ),
+                "faction_source": faction_source,
+                "faction_name": faction_name,
+                "vendor_sources": vendor_sources,
             }
             grouped[family][name_tag].append(variant)
             identity[(family, name_tag)] = (
@@ -349,14 +373,146 @@ def _acquisition_source(
     logical_path: str,
     category: str,
     crafted_item_paths: frozenset[str],
+    faction_source: str = "",
+    faction_component_vendor: bool = False,
 ) -> str:
-    if category == "faction":
+    if category == "faction" or faction_source:
         return "Purchased"
+    if faction_component_vendor and logical_path in crafted_item_paths:
+        return "Crafted / Faction Vendor"
+    if faction_component_vendor:
+        return "Faction Vendor"
     if category == "crafted" or logical_path in crafted_item_paths:
         return "Crafted"
     if category == "monster_infrequent":
         return "Specific Monster Drop"
     return "Random Drop"
+
+
+def _faction_metadata(
+    record: RawDbrRecord,
+    exact_names: dict[str, LocalizationEntry],
+    folded_names: dict[str, LocalizationEntry],
+    strings: dict[str, str],
+) -> tuple[str, str]:
+    faction_source = (record.first_value("factionSource") or "").strip()
+    if not faction_source:
+        return "", ""
+    return faction_source, _localized_faction_name(
+        faction_source, exact_names, folded_names, strings
+    )
+
+
+def _localized_faction_name(
+    faction_source: str,
+    exact_names: dict[str, LocalizationEntry],
+    folded_names: dict[str, LocalizationEntry],
+    strings: dict[str, str],
+) -> str:
+    faction_tag = f"tagFaction{faction_source}"
+    entry = exact_names.get(faction_tag) or folded_names.get(
+        faction_tag.casefold()
+    )
+    if entry is None:
+        return faction_source
+    faction_name = plain_display_name(entry.value)
+    strings[faction_tag] = faction_name
+    return faction_name
+
+
+def _vendor_source_payloads(
+    sources: tuple[tuple[str, str], ...],
+    exact_names: dict[str, LocalizationEntry],
+    folded_names: dict[str, LocalizationEntry],
+    strings: dict[str, str],
+) -> list[dict[str, str]]:
+    return [
+        {
+            "faction_source": faction_source,
+            "faction_name": _localized_faction_name(
+                faction_source, exact_names, folded_names, strings
+            ),
+            "reputation": reputation,
+        }
+        for faction_source, reputation in sources
+    ]
+
+
+def _discover_faction_vendor_sources(
+    data_root: Path,
+    source_names: tuple[str, ...],
+    resolver: RecordResolver,
+) -> dict[str, tuple[tuple[str, str], ...]]:
+    """Trace faction merchant tiers to direct items or blueprint outputs."""
+
+    merchants: dict[str, tuple[str, Path]] = {}
+    for source in source_names:
+        source_root = data_root / source
+        merchant_root = source_root / "records/creatures/npcs/merchants"
+        if not merchant_root.is_dir():
+            continue
+        for path in merchant_root.rglob("*.dbr"):
+            logical = path.relative_to(source_root).as_posix().lower()
+            merchants[logical] = (source, path)
+
+    tier_fields = (
+        ("friendlyNormalTable", "Friendly"),
+        ("honoredNormalTable", "Honored"),
+        ("respectedNormalTable", "Respected"),
+        ("reveredNormalTable", "Revered"),
+    )
+    discovered: dict[str, set[tuple[str, str]]] = defaultdict(set)
+    for source, path in merchants.values():
+        merchant = parse_dbr_file(path)
+        market_reference = (merchant.first_value("marketFileName") or "").strip()
+        faction_reference = (merchant.first_value("factions") or "").strip()
+        if not market_reference or not faction_reference:
+            continue
+        resolved_faction = resolver.resolve(faction_reference, source)
+        resolved_market = resolver.resolve(market_reference, source)
+        if resolved_faction is None or resolved_market is None:
+            continue
+        _, faction_record = resolved_faction
+        market_source, market_record = resolved_market
+        faction_source = (faction_record.first_value("myFaction") or "").strip()
+        if not faction_source:
+            continue
+        for field, reputation in tier_fields:
+            tier_reference = (market_record.first_value(field) or "").strip()
+            if not tier_reference:
+                continue
+            resolved_tier = resolver.resolve(tier_reference, market_source)
+            if resolved_tier is None:
+                continue
+            tier_source, tier_record = resolved_tier
+            static_items = (tier_record.first_value("marketStaticItems") or "")
+            for offered_reference in static_items.split(";"):
+                offered_reference = offered_reference.strip().lower().replace(
+                    "\\", "/"
+                )
+                if not offered_reference:
+                    continue
+                target = offered_reference
+                if "/crafting/blueprints/" in offered_reference:
+                    resolved_blueprint = resolver.resolve(
+                        offered_reference, tier_source
+                    )
+                    if resolved_blueprint is None:
+                        continue
+                    _, blueprint = resolved_blueprint
+                    target = (
+                        blueprint.first_value("artifactName")
+                        or blueprint.first_value("forcedRandomArtifactName")
+                        or ""
+                    ).strip().lower().replace("\\", "/")
+                if target.startswith("records/items/") and target.endswith(
+                    ".dbr"
+                ):
+                    discovered[target].add((faction_source, reputation))
+    return {
+        target: tuple(sorted(sources))
+        for target, sources in sorted(discovered.items())
+    }
 
 
 def _discover_records(
@@ -505,6 +661,12 @@ def _property_payloads(
 ) -> list[dict[str, Any]]:
     bundles: dict[str, dict[str, str]] = defaultdict(dict)
     property_ids: dict[str, str] = {}
+    chance_bundles = chance_damage_bundle_keys(
+        proposal
+        for field in fields_for_semantic_analysis(record)
+        if active_value_kind(field.value) is not None
+        if (proposal := propose_field_mapping(field.key)) is not None
+    )
     for field in fields_for_semantic_analysis(record):
         if active_value_kind(field.value) is None:
             continue
@@ -527,8 +689,13 @@ def _property_payloads(
             bundles[special]["value"] = field.value
             continue
         proposal = propose_field_mapping(field.key)
-        if proposal is None or proposal.status == "ignored" or proposal.component_requirement == "metadata":
+        if (
+            proposal is None
+            or proposal.status == "ignored"
+            or proposal.component_requirement == "metadata"
+        ):
             continue
+        proposal = contextualize_damage_chance(proposal, chance_bundles)
         property_ids[proposal.bundle_key] = proposal.property_id
         bundles[proposal.bundle_key][proposal.value_role] = field.value
 
@@ -584,7 +751,11 @@ def _mastery_stat_lines(
             continue
         level = record.first_value(f"augmentMasteryLevel{match.group(1)}") or ""
         name = resolver.resolve_skill_name(field.value, source, localization_lookup)
-        lines.append(f"+[x] to All Skills in {name}" if level else f"Bonus to {name}")
+        lines.append(
+            f"+{int(float(level))} to All Skills in {name}"
+            if level
+            else f"Bonus to {name}"
+        )
     return tuple(lines)
 
 

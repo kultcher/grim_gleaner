@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from collections.abc import Iterable
+from dataclasses import dataclass, replace
 from typing import Literal
 
 from gd_affix_relevance.normalization.field_policy import (
@@ -27,6 +28,37 @@ class FieldMappingProposal:
     confidence: MappingConfidence
     display_template: str = ""
     notes: str = ""
+
+
+def chance_damage_bundle_keys(
+    proposals: Iterable[FieldMappingProposal],
+) -> frozenset[str]:
+    """Find flat-damage bundles wrapped in an explicit proc chance."""
+
+    return frozenset(
+        proposal.bundle_key
+        for proposal in proposals
+        if proposal.value_role == "chance_percent"
+        and proposal.property_id.startswith("flat_")
+        and proposal.property_id.endswith("_damage")
+    )
+
+
+def contextualize_damage_chance(
+    proposal: FieldMappingProposal,
+    chance_bundles: frozenset[str],
+) -> FieldMappingProposal:
+    """Split chance-based damage from ordinary always-on flat damage."""
+
+    if proposal.bundle_key not in chance_bundles:
+        return proposal
+    property_id = f"chance_{proposal.property_id}"
+    bundle_suffix = proposal.bundle_key.removeprefix(proposal.property_id)
+    return replace(
+        proposal,
+        property_id=property_id,
+        bundle_key=f"{property_id}{bundle_suffix}",
+    )
 
 
 def _proposal(
