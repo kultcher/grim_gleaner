@@ -33,6 +33,17 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
         [
             ("skillDisplayName", "TagExpansionSkillName"),
             ("skillBaseDescription", "tagExpansionSkillDescription"),
+            ("skillTier", "5"),
+        ],
+    )
+    _write_dbr(
+        base / "records/skills/playerclass01/_classtree_class01.dbr",
+        [
+            (
+                "skillName1",
+                "records/skills/playerclass01/_classtraining_class01.dbr",
+            ),
+            ("skillName2", skill_path.as_posix()),
         ],
     )
     _write_dbr(
@@ -138,7 +149,9 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
     assert result.affix_count == 1
     assert bundle.manifest.game_version == "test-version"
     assert bundle.manifest.affix_scope == "structurally_reachable_magic_and_rare"
-    assert bundle.manifest.skill_scope == "named_player_pet_and_item_granted"
+    assert bundle.manifest.skill_scope == (
+        "named_player_pet_and_item_granted_with_mastery_tree_metadata"
+    )
     assert bundle.manifest.item_scope == (
         "named_equipment_components_augments_relics_runes_and_consumables"
     )
@@ -150,6 +163,8 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
     assert overlaid.category == "player"
     assert overlaid.mastery_id == "playerclass01"
     assert overlaid.mastery_name == "Soldier"
+    assert overlaid.skill_tier == 5
+    assert overlaid.tree_order == 2
     training = skills["records/skills/playerclass01/_classtraining_class01.dbr"]
     assert training.is_mastery
     assert "records/skills/itemskills/unreferenced_skill.dbr" in skills
@@ -164,6 +179,7 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
     assert "records/skills/devotion/named_devotion_skill.dbr" not in skills
     assert "records/skills/base_template skills/named_template.dbr" not in skills
     assert bundle.affixes.affixes[0].display_name == "Corrosive"
+    assert bundle.affixes.affixes[0].rarity == "Magical"
     assert bundle.affixes.affixes[0].variants[0].gear_slot == "Ring"
     assert bundle.affixes.affixes[0].variants[0].applicable_slots == (SLOT_RING,)
     skill_properties = [
@@ -172,6 +188,7 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
         if property_.property_id == "skill_bonus"
     ]
     assert skill_properties[0].attributes["display_name"] == "Raging Tempest"
+    assert skill_properties[0].attributes["skill_level"] == "2"
     property_ids = {
         property_.property_id
         for property_ in bundle.affixes.affixes[0].variants[0].properties
@@ -182,6 +199,148 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
         "pet_health_percent",
         "pet_offensive_ability_percent",
     } <= property_ids
+
+
+def test_compiler_applies_curated_mastery_relationships(
+    tmp_path: Path,
+) -> None:
+    base = tmp_path / "game_data/base"
+    parent_path = "records/skills/playerclass01/parent.dbr"
+    child_path = "records/skills/playerclass01/child.dbr"
+    child_proxy_path = "records/skills/playerclass01/child_proxy.dbr"
+    alternate_path = "records/skills/playerclass01/alternate.dbr"
+    _write_dbr(
+        base / "records/skills/playerclass01/_classtraining_class01.dbr",
+        [("skillDisplayName", "tagSoldier")],
+    )
+    _write_dbr(
+        base / parent_path,
+        [("skillDisplayName", "tagParent"), ("skillTier", "1")],
+    )
+    _write_dbr(
+        base / child_path,
+        [("skillDisplayName", "tagChild"), ("skillTier", "3")],
+    )
+    _write_dbr(
+        base / alternate_path,
+        [("skillDisplayName", "tagAlternate"), ("skillTier", "3")],
+    )
+    _write_dbr(
+        base / child_proxy_path,
+        [
+            ("petSkillName", child_path),
+            ("alternatePetModifierSkillName", alternate_path),
+        ],
+    )
+    _write_dbr(
+        base / "records/skills/playerclass01/_classtree_class01.dbr",
+        [
+            (
+                "skillName1",
+                "records/skills/playerclass01/_classtraining_class01.dbr",
+            ),
+            ("skillName2", parent_path),
+            ("skillName3", child_proxy_path),
+        ],
+    )
+    tree_root = tmp_path / "mastery-trees"
+    tree_root.mkdir()
+    (tree_root / "01soldier.md").write_text(
+        "# CLASS 01: Soldier\n"
+        "## PARENT SKILL: Parent Skill\n"
+        "### CHILD 1: Child Skill\n",
+        encoding="utf-8",
+    )
+
+    output = tmp_path / "catalog"
+    compile_catalog_bundle(
+        tmp_path / "game_data",
+        parse_localization_text(
+            "tagSoldier=Soldier\ntagParent=Parent Skill\n"
+            "tagChild=Child Skill\ntagAlternate=Alternate Skill\n"
+        ),
+        output,
+        source_names=("base",),
+        mastery_tree_root=tree_root,
+    )
+
+    skills = CatalogBundle.load(output).skills.by_id()
+    assert skills[parent_path].tree_order == 2
+    assert skills[parent_path].parent_skill_id == ""
+    assert skills[child_path].tree_order == 3
+    assert skills[child_path].skill_tier == 3
+    assert skills[child_path].parent_skill_id == parent_path
+    assert skills[alternate_path].tree_order == 0
+
+
+def test_compiler_preserves_max_skill_rank_for_collapsed_affix_layout(
+    tmp_path: Path,
+) -> None:
+    base = tmp_path / "game_data/base"
+    affix_root = base / "records/items/lootaffixes/prefix"
+    for suffix, level, ranks in (("a", 10, 1), ("b", 50, 3)):
+        _write_dbr(
+            affix_root / f"test_skill_{suffix}.dbr",
+            [
+                ("Class", "LootRandomizer"),
+                ("itemClassification", "Rare"),
+                ("lootRandomizerName", "tagTestSkill"),
+                ("levelRequirement", str(level)),
+                ("augmentSkillLevel1", str(ranks)),
+                (
+                    "augmentSkillName1",
+                    "records/skills/playerclass01/testskill.dbr",
+                ),
+            ],
+        )
+    _write_dbr(
+        affix_root / "prefixtables/prefix_ring.dbr",
+        [
+            (
+                "randomizerName1",
+                "records/items/lootaffixes/prefix/test_skill_a.dbr",
+            ),
+            (
+                "randomizerName2",
+                "records/items/lootaffixes/prefix/test_skill_b.dbr",
+            ),
+        ],
+    )
+    _write_dbr(
+        base / "records/items/loottables/gearaccessories/lt_ring.dbr",
+        [
+            (
+                "prefixTableName1",
+                "records/items/lootaffixes/prefix/prefixtables/prefix_ring.dbr",
+            )
+        ],
+    )
+    _write_dbr(
+        base / "records/skills/playerclass01/testskill.dbr",
+        [("skillDisplayName", "tagTestSkillName")],
+    )
+
+    output = tmp_path / "catalog"
+    compile_catalog_bundle(
+        tmp_path / "game_data",
+        parse_localization_text(
+            "tagTestSkill=Skilled\ntagTestSkillName=Test Skill\n"
+        ),
+        output,
+        source_names=("base",),
+    )
+
+    affix = CatalogBundle.load(output).affixes.affixes[0]
+    assert affix.rarity == "Rare"
+    assert len(affix.variants) == 1
+    skill_bonus = next(
+        property_
+        for property_ in affix.variants[0].properties
+        if property_.property_id == "skill_bonus"
+    )
+    assert skill_bonus.attributes["skill_level"] == "3"
+    assert skill_bonus.attributes["skill_level_min"] == "1"
+    assert skill_bonus.attributes["skill_level_max"] == "3"
 
 
 def test_catalog_output_is_deterministic(tmp_path: Path) -> None:

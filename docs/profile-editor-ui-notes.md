@@ -88,6 +88,16 @@ can be added with the Add button or by double-clicking it, then assigned the
 same 0-through-4 weight used by ordinary stats. Removing a skill removes its
 stored weight.
 
+After a skill is added, it remains in the Mastery Skills list in its original
+tree position but is disabled and visually muted. This preserves the visible
+parent/child structure while preventing duplicate selections.
+
+The available list uses compiled mastery-tree metadata rather than raw skill
+record paths. Parent and standalone skills are ordered primarily by mastery
+tier. Rankable child nodes remain visible at all times, appear immediately
+below their parent, and use a `└` marker. Single-rank transmuters and internal
+helper records are omitted because item bonuses cannot add ranks to them.
+
 The same mastery cannot be selected in both panels. Changing either selected
 mastery while the build-relevant list is nonempty displays:
 `Changing masteries will erase the build-relevant skills list and all weights.`
@@ -100,6 +110,10 @@ Profiles store mastery IDs and exact skill record paths rather than display
 names. This keeps saved builds stable across presentation changes and lets
 direct `+X to Skill` affix properties use the chosen skill weight immediately.
 Skill modifiers and granted-skill evaluation remain later work.
+
+Closing the application with unsaved profile changes offers Save, Discard, and
+Cancel. Cancel leaves the application open; Save uses the active profile path
+or opens the normal save-file chooser for a new profile.
 
 ## Pets tab
 

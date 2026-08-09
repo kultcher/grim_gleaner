@@ -51,12 +51,14 @@ def _affix(
     *,
     kind: str = "prefix",
     slot_id: str = SLOT_RING,
+    rarity: str = "Rare",
 ) -> AffixDefinition:
     return AffixDefinition(
         affix_id=affix_id,
         localization_tag=f"tag{name}",
         display_name=name,
         kind=kind,
+        rarity=rarity,
         variants=(
             AffixVariantDefinition(
                 gear_slot=SLOT_LABELS[slot_id],
@@ -178,6 +180,27 @@ def test_slot_tables_prompt_for_a_weighted_profile() -> None:
     assert "Set at least one" in window.top_matches_page.status.text()
 
 
+def test_affix_detail_title_uses_compiled_rarity_and_color() -> None:
+    app = _application()
+    for rarity, color_key in (
+        ("Rare", "affix_rare"),
+        ("Magical", "affix_magical"),
+    ):
+        window = MainWindow(
+            BuildProfile(weights={"health": 4}),
+            catalog=AffixCatalog(
+                (_affix("prefix:tough", "Tough", "health", rarity=rarity),)
+            ),
+        )
+        table = window.top_matches_page.tables[(SLOT_RING, "prefix")]
+        table.selectRow(0)
+        app.processEvents()
+
+        title = window.top_matches_page.affix_detail_pane.title
+        assert title.text().endswith(f"Tough · Ring · {rarity} Prefix")
+        assert DETAIL_TITLE_COLORS[color_key] in title.styleSheet()
+
+
 def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
     _application()
     skill_id = "records/skills/playerclass01/cadence1.dbr"
@@ -192,6 +215,7 @@ def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
         localization_tag="tagCadence",
         display_name="Veteran's",
         kind="prefix",
+        rarity="Rare",
         variants=(
             AffixVariantDefinition(
                 gear_slot="Ring",
@@ -370,6 +394,7 @@ def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> No
         localization_tag="tagCadenceHealth",
         display_name="Veteran's",
         kind="prefix",
+        rarity="Rare",
         variants=(
             AffixVariantDefinition(
                 gear_slot="Ring",
@@ -447,9 +472,9 @@ def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> No
     affix_details = window.top_matches_page.details.toPlainText()
     affix_match = affix_table.matches[0]
     assert window.top_matches_page.affix_detail_pane.title.text() == (
-        f"{affix_match.marker}Veteran's · Ring · Prefix"
+        f"{affix_match.marker}Veteran's · Ring · Rare Prefix"
     )
-    assert DETAIL_TITLE_COLORS["affix"] in (
+    assert DETAIL_TITLE_COLORS["affix_rare"] in (
         window.top_matches_page.affix_detail_pane.title.styleSheet()
     )
     assert "Veteran's" not in affix_details

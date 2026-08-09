@@ -3,12 +3,17 @@
 from __future__ import annotations
 
 import json
+import re
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from gd_affix_relevance.catalog.models import CATALOG_SCHEMA_VERSION
+from gd_affix_relevance.catalog.mastery_trees import (
+    MasteryTreeRelationship,
+    load_mastery_tree_relationships,
+)
 from gd_affix_relevance.catalog.item_compiler import (
     ITEM_FAMILIES,
     ITEM_SCOPE,
@@ -29,7 +34,8 @@ from gd_affix_relevance.normalization.sample_report import (
 )
 
 AFFIX_SCOPE = "structurally_reachable_magic_and_rare"
-SKILL_SCOPE = "named_player_pet_and_item_granted"
+SKILL_SCOPE = "named_player_pet_and_item_granted_with_mastery_tree_metadata"
+TREE_PROXY_REFERENCE_FIELDS = frozenset({"buffSkillName", "petSkillName"})
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,6 +59,7 @@ def compile_catalog_bundle(
     *,
     game_version: str = "unknown",
     source_names: tuple[str, ...] = DEFAULT_DATA_SOURCES,
+    mastery_tree_root: Path | None = None,
 ) -> CatalogCompileResult:
     """Compile official English names, all named skills, and reachable affixes.
 
@@ -69,12 +76,16 @@ def compile_catalog_bundle(
         folded_names.setdefault(entry.tag.casefold(), entry)
 
     strings: dict[str, str] = {}
+    mastery_tree_relationships = load_mastery_tree_relationships(
+        mastery_tree_root
+    )
     skill_payloads, unresolved_skill_names = _compile_skills(
         root,
         source_names,
         exact_names,
         folded_names,
         strings,
+        mastery_tree_relationships,
     )
 
     sample_result = build_sample_candidates(
@@ -176,6 +187,7 @@ def _compile_skills(
     exact_names: dict[str, LocalizationEntry],
     folded_names: dict[str, LocalizationEntry],
     strings: dict[str, str],
+    mastery_tree_relationships: tuple[MasteryTreeRelationship, ...],
 ) -> tuple[list[dict[str, Any]], int]:
     overlaid_paths: dict[str, tuple[str, Path]] = {}
     for source_name in source_names:
@@ -187,13 +199,16 @@ def _compile_skills(
             logical_path = _logical_record_path(path.relative_to(source_root))
             overlaid_paths[logical_path] = (source_name, path)
 
+    records_by_path = {
+        logical_path: (source_name, parse_dbr_file(path))
+        for logical_path, (source_name, path) in sorted(overlaid_paths.items())
+    }
     prepared: list[tuple[str, str, Any, str, str, str, str]] = []
     unresolved = 0
-    for logical_path, (source_name, path) in sorted(overlaid_paths.items()):
+    for logical_path, (source_name, record) in records_by_path.items():
         category = _skill_category(logical_path)
         if category is None:
             continue
-        record = parse_dbr_file(path)
         name_tag = (record.first_value("skillDisplayName") or "").strip()
         if not name_tag:
             continue
@@ -230,6 +245,8 @@ def _compile_skills(
         and Path(logical_path).stem.startswith("_classtraining")
         and display_name
     }
+    named_skill_ids = {item[0] for item in prepared}
+    tree_orders = _mastery_tree_orders(records_by_path, named_skill_ids)
     skills: list[dict[str, Any]] = []
     for (
         logical_path,
@@ -258,12 +275,129 @@ def _compile_skills(
                     record.first_value("skillMasteryLevelRequired")
                 ),
                 "max_level": _integer_value(record.first_value("skillMaxLevel")),
+                "skill_tier": _integer_value(record.first_value("skillTier")),
+                "tree_order": tree_orders.get(logical_path, 0),
+                "parent_skill_id": "",
                 "is_mastery": Path(logical_path).stem.startswith(
                     "_classtraining"
                 ),
             }
         )
+    _apply_curated_mastery_relationships(skills, mastery_tree_relationships)
     return skills, unresolved
+
+
+def _mastery_tree_orders(
+    records_by_path: dict[str, tuple[str, Any]],
+    named_skill_ids: set[str],
+) -> dict[str, int]:
+    orders: dict[str, int] = {}
+    for logical_path, (_, tree_record) in records_by_path.items():
+        if not Path(logical_path).stem.startswith("_classtree_"):
+            continue
+        indexed_references: list[tuple[int, str]] = []
+        for field in tree_record.fields:
+            match = re.fullmatch(r"skillName(\d+)", field.key)
+            if match is None or "_classtraining_" in field.value.casefold():
+                continue
+            indexed_references.append((int(match.group(1)), field.value))
+        for order, reference in sorted(indexed_references):
+            skill_id = _resolve_named_tree_skill_id(
+                reference,
+                records_by_path,
+                named_skill_ids,
+            )
+            if not skill_id:
+                continue
+            orders[skill_id] = min(order, orders.get(skill_id, order))
+    return orders
+
+
+def _resolve_named_tree_skill_id(
+    reference: str,
+    records_by_path: dict[str, tuple[str, Any]],
+    named_skill_ids: set[str],
+) -> str:
+    pending = [_logical_skill_reference(reference)]
+    seen: set[str] = set()
+    matches: set[str] = set()
+    while pending:
+        current = pending.pop(0)
+        if not current or current in seen:
+            continue
+        seen.add(current)
+        if current in named_skill_ids:
+            matches.add(current)
+            continue
+        resolved = records_by_path.get(current)
+        if resolved is None:
+            continue
+        _, record = resolved
+        for field in record.fields:
+            if field.key not in TREE_PROXY_REFERENCE_FIELDS:
+                continue
+            child = _logical_skill_reference(field.value)
+            if child:
+                pending.append(child)
+    if len(matches) > 1:
+        raise ValueError(
+            f"mastery tree node {reference!r} resolves to multiple named skills: "
+            + ", ".join(sorted(matches))
+        )
+    return next(iter(matches), "")
+
+
+def _logical_skill_reference(value: str) -> str:
+    logical = value.replace("\\", "/").strip().lower()
+    if not logical.startswith("records/skills/") or not logical.endswith(".dbr"):
+        return ""
+    return logical
+
+
+def _apply_curated_mastery_relationships(
+    skills: list[dict[str, Any]],
+    relationships: tuple[MasteryTreeRelationship, ...],
+) -> None:
+    if not relationships:
+        return
+    tree_names: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for skill in skills:
+        if int(skill["tree_order"]) <= 0 or not skill["display_name"]:
+            continue
+        key = (
+            str(skill["mastery_id"]),
+            str(skill["display_name"]).casefold(),
+        )
+        tree_names[key].append(str(skill["skill_id"]))
+
+    parent_by_child: dict[str, str] = {}
+    for relationship in relationships:
+        parent_ids = tree_names.get(
+            (relationship.mastery_id, relationship.parent_name.casefold()), []
+        )
+        child_ids = tree_names.get(
+            (relationship.mastery_id, relationship.child_name.casefold()), []
+        )
+        if len(parent_ids) != 1 or len(child_ids) != 1:
+            raise ValueError(
+                f"{relationship.source}: mastery relationship must resolve to one "
+                f"tree node; parent {relationship.parent_name!r} -> {parent_ids}, "
+                f"child {relationship.child_name!r} -> {child_ids}"
+            )
+        child_id = child_ids[0]
+        parent_id = parent_ids[0]
+        existing = parent_by_child.get(child_id)
+        if existing is not None and existing != parent_id:
+            raise ValueError(
+                f"{relationship.source}: child {relationship.child_name!r} "
+                "resolves to multiple parent skill IDs"
+            )
+        parent_by_child[child_id] = parent_id
+
+    for skill in skills:
+        skill["parent_skill_id"] = parent_by_child.get(
+            str(skill["skill_id"]), ""
+        )
 
 
 def _compile_affixes(
@@ -279,6 +413,12 @@ def _compile_affixes(
 
     affixes: list[dict[str, Any]] = []
     for (kind, localization_tag), variants in grouped.items():
+        rarities = {variant.rarity for variant in variants if variant.rarity}
+        if len(rarities) != 1:
+            raise ValueError(
+                f"affix {localization_tag!r} must have one rarity, found "
+                f"{sorted(rarities)}"
+            )
         ordered_variants = sorted(
             variants,
             key=lambda candidate: (
@@ -294,6 +434,7 @@ def _compile_affixes(
                 "localization_tag": localization_tag,
                 "display_name": ordered_variants[0].display_name,
                 "kind": kind,
+                "rarity": next(iter(rarities)),
                 "variants": [
                     _variant_payload(variant, resolver, localization_lookup)
                     for variant in ordered_variants

@@ -119,6 +119,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     catalog.add_argument("--output-dir", type=Path, required=True)
     catalog.add_argument("--game-version", default="unknown")
+    catalog.add_argument(
+        "--mastery-tree-root",
+        type=Path,
+        help="optional curated Markdown parent/child relationship directory",
+    )
 
     generate = subparsers.add_parser(
         "generate-output",
@@ -257,6 +262,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             localization_entries,
             args.output_dir,
             game_version=args.game_version,
+            mastery_tree_root=args.mastery_tree_root,
         )
         print(
             json.dumps(

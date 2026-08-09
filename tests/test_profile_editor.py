@@ -107,3 +107,38 @@ def test_new_profile_save_choice_writes_dirty_profile_before_reset(
     assert editor.new_profile()
     assert load_profile(destination).weight_for("health") == 4
     assert editor.profile.weights == {}
+
+
+def test_confirm_close_resolves_unsaved_profile_changes(tmp_path: Path) -> None:
+    _application()
+    editor = ProfileEditor(BuildProfile("Closing", {"health": 2}))
+    destination = editor.save_to_path(tmp_path / "closing.json")
+    editor.accordions["core_health"].rows[
+        "health"
+    ].weight_control.set_value(4)
+
+    editor._prompt_exit_unsaved_action = (
+        lambda: QMessageBox.StandardButton.Cancel
+    )
+    assert not editor.confirm_close()
+    assert load_profile(destination).weight_for("health") == 2
+
+    editor._prompt_exit_unsaved_action = lambda: QMessageBox.StandardButton.Save
+    assert editor.confirm_close()
+    assert load_profile(destination).weight_for("health") == 4
+    assert not editor.is_dirty
+
+
+def test_confirm_close_allows_clean_or_discarded_profile() -> None:
+    _application()
+    editor = ProfileEditor(BuildProfile())
+    editor._prompt_exit_unsaved_action = lambda: (_ for _ in ()).throw(
+        AssertionError("clean profile should not prompt")
+    )
+    assert editor.confirm_close()
+
+    editor.name_edit.setText("Dirty")
+    editor._prompt_exit_unsaved_action = (
+        lambda: QMessageBox.StandardButton.Discard
+    )
+    assert editor.confirm_close()

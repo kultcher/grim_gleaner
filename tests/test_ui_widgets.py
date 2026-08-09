@@ -4,6 +4,7 @@ from pathlib import Path
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QSettings, Qt
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QApplication
 
 from gd_affix_relevance.catalog import AffixCatalog
@@ -112,6 +113,21 @@ def test_main_window_reserves_top_matches_navigation() -> None:
 
     window.profile_editor.view_matches_button.click()
     assert window.navigation.currentRow() == 1
+
+
+def test_main_window_close_honors_profile_confirmation() -> None:
+    _application()
+    window = MainWindow(catalog=AffixCatalog(()))
+
+    window.profile_editor.confirm_close = lambda: False
+    cancelled = QCloseEvent()
+    window.closeEvent(cancelled)
+    assert not cancelled.isAccepted()
+
+    window.profile_editor.confirm_close = lambda: True
+    accepted = QCloseEvent()
+    window.closeEvent(accepted)
+    assert accepted.isAccepted()
 
 
 def test_main_window_restores_and_tracks_last_active_profile(tmp_path: Path) -> None:

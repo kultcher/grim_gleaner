@@ -204,6 +204,10 @@ QListWidget#masterySkillList::item:selected {
     background: #3a4454;
     color: #ffffff;
 }
+QListWidget#masterySkillList::item:disabled {
+    background: #1b1e24;
+    color: #68707c;
+}
 QPushButton#skillAdd, QPushButton#skillRemove {
     background: #292e37;
     border: 1px solid #3a414d;

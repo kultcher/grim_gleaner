@@ -34,7 +34,7 @@ class MasterySkills:
 
 
 def build_mastery_skills(catalog: SkillCatalog) -> tuple[MasterySkills, ...]:
-    """Group selectable player skill-tree nodes by localized mastery."""
+    """Group and tree-order selectable, rankable skills by mastery."""
 
     mastery_names = {
         skill.mastery_id: skill.mastery_name or skill.display_name
@@ -46,10 +46,12 @@ def build_mastery_skills(catalog: SkillCatalog) -> tuple[MasterySkills, ...]:
     }
     for skill in catalog.skills:
         if (
-            skill.category != "player"
-            or skill.is_mastery
+            skill.is_mastery
             or not skill.mastery_id
             or not skill.display_name
+            or skill.skill_tier <= 0
+            or skill.tree_order <= 0
+            or skill.max_level <= 1
         ):
             continue
         grouped.setdefault(skill.mastery_id, []).append(skill)
@@ -58,16 +60,7 @@ def build_mastery_skills(catalog: SkillCatalog) -> tuple[MasterySkills, ...]:
         MasterySkills(
             mastery_id=mastery_id,
             display_name=mastery_names.get(mastery_id, mastery_id),
-            skills=tuple(
-                sorted(
-                    skills,
-                    key=lambda skill: (
-                        skill.mastery_level_required,
-                        skill.display_name.casefold(),
-                        skill.skill_id,
-                    ),
-                )
-            ),
+            skills=_order_skill_tree(skills),
         )
         for mastery_id, skills in grouped.items()
         if skills
@@ -78,6 +71,74 @@ def build_mastery_skills(catalog: SkillCatalog) -> tuple[MasterySkills, ...]:
             key=lambda mastery: _mastery_sort_key(mastery.mastery_id),
         )
     )
+
+
+def _order_skill_tree(
+    skills: list[SkillDefinition],
+) -> tuple[SkillDefinition, ...]:
+    """Place each child directly after its parent without losing tier order."""
+
+    skill_ids = {skill.skill_id for skill in skills}
+    children_by_parent: dict[str, list[SkillDefinition]] = {}
+    roots: list[SkillDefinition] = []
+    for skill in skills:
+        if skill.parent_skill_id and skill.parent_skill_id in skill_ids:
+            children_by_parent.setdefault(skill.parent_skill_id, []).append(skill)
+        else:
+            roots.append(skill)
+
+    roots.sort(key=_root_skill_sort_key)
+    for children in children_by_parent.values():
+        children.sort(key=_child_skill_sort_key)
+
+    ordered: list[SkillDefinition] = []
+    emitted: set[str] = set()
+
+    def emit_branch(skill: SkillDefinition) -> None:
+        if skill.skill_id in emitted:
+            return
+        emitted.add(skill.skill_id)
+        ordered.append(skill)
+        for child in children_by_parent.get(skill.skill_id, ()):
+            emit_branch(child)
+
+    for root in roots:
+        emit_branch(root)
+
+    # Malformed or cyclic relationships should not make otherwise valid skills
+    # vanish from the editor.
+    for skill in sorted(skills, key=_root_skill_sort_key):
+        emit_branch(skill)
+    return tuple(ordered)
+
+
+def _root_skill_sort_key(skill: SkillDefinition) -> tuple[int, int, str, str]:
+    return (
+        skill.skill_tier,
+        skill.tree_order,
+        skill.display_name.casefold(),
+        skill.skill_id,
+    )
+
+
+def _child_skill_sort_key(skill: SkillDefinition) -> tuple[int, int, str, str]:
+    return (
+        skill.tree_order,
+        skill.skill_tier,
+        skill.display_name.casefold(),
+        skill.skill_id,
+    )
+
+
+def _skill_label(skill: SkillDefinition) -> str:
+    return f"└ {skill.display_name}" if skill.parent_skill_id else skill.display_name
+
+
+def _skill_tooltip(skill: SkillDefinition) -> str:
+    details = [f"Mastery tier {skill.skill_tier}"]
+    if skill.max_level:
+        details.append(f"Max rank {skill.max_level}")
+    return "; ".join(details)
 
 
 class SkillWeightRow(QFrame):
@@ -99,12 +160,7 @@ class SkillWeightRow(QFrame):
 
         label = QLabel(skill.display_name, self)
         label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        details = []
-        if skill.mastery_level_required:
-            details.append(f"Requires mastery level {skill.mastery_level_required}")
-        if skill.max_level:
-            details.append(f"Maximum rank {skill.max_level}")
-        label.setToolTip("; ".join(details))
+        label.setToolTip(_skill_tooltip(skill))
         layout.addWidget(label, 1)
 
         self.weight_control = WeightControl(weight, self)
@@ -164,11 +220,7 @@ class MasteryPanel(QFrame):
         self.available_list = QListWidget(available)
         self.available_list.setObjectName("masterySkillList")
         self.available_list.itemSelectionChanged.connect(self._selection_changed)
-        self.available_list.itemDoubleClicked.connect(
-            lambda item: self.skill_add_requested.emit(
-                str(item.data(Qt.ItemDataRole.UserRole))
-            )
-        )
+        self.available_list.itemDoubleClicked.connect(self._request_skill_add)
         available_layout.addWidget(self.available_list, 1)
         self.add_button = QPushButton("Add", available)
         self.add_button.setObjectName("skillAdd")
@@ -224,16 +276,18 @@ class MasteryPanel(QFrame):
         } if mastery is not None else {}
         self.available_list.clear()
         for skill in self._skill_lookup.values():
-            if skill.skill_id in selected_weights:
-                continue
-            item = QListWidgetItem(skill.display_name)
+            item = QListWidgetItem(_skill_label(skill))
             item.setData(Qt.ItemDataRole.UserRole, skill.skill_id)
-            details = []
-            if skill.mastery_level_required:
-                details.append(f"Mastery {skill.mastery_level_required}")
-            if skill.max_level:
-                details.append(f"Max rank {skill.max_level}")
-            item.setToolTip("; ".join(details))
+            item.setToolTip(_skill_tooltip(skill))
+            if skill.skill_id in selected_weights:
+                item.setFlags(
+                    item.flags()
+                    & ~Qt.ItemFlag.ItemIsEnabled
+                    & ~Qt.ItemFlag.ItemIsSelectable
+                )
+                item.setToolTip(
+                    f"{item.toolTip()}; already in Build-Relevant Skills"
+                )
             self.available_list.addItem(item)
         self._selection_changed()
 
@@ -267,6 +321,10 @@ class MasteryPanel(QFrame):
     def _add_selected(self) -> None:
         item = self.available_list.currentItem()
         if item is not None:
+            self._request_skill_add(item)
+
+    def _request_skill_add(self, item: QListWidgetItem) -> None:
+        if item.flags() & Qt.ItemFlag.ItemIsEnabled:
             self.skill_add_requested.emit(str(item.data(Qt.ItemDataRole.UserRole)))
 
 

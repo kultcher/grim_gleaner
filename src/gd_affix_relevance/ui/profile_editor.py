@@ -243,11 +243,34 @@ class ProfileEditor(QWidget):
         self.profile_changed.emit()
         return True
 
+    def confirm_close(self) -> bool:
+        """Resolve unsaved profile changes before the application closes."""
+
+        if not self.is_dirty:
+            return True
+        action = self._prompt_exit_unsaved_action()
+        if action == QMessageBox.StandardButton.Cancel:
+            return False
+        if action == QMessageBox.StandardButton.Save:
+            return self._save_before_reset()
+        return True
+
     def _prompt_unsaved_action(self) -> QMessageBox.StandardButton:
         return QMessageBox.warning(
             self,
             "Unsaved Profile",
             "Save changes to the current profile before starting a new one?",
+            QMessageBox.StandardButton.Save
+            | QMessageBox.StandardButton.Discard
+            | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Save,
+        )
+
+    def _prompt_exit_unsaved_action(self) -> QMessageBox.StandardButton:
+        return QMessageBox.warning(
+            self,
+            "Unsaved Profile",
+            "Save changes to the current profile before exiting?",
             QMessageBox.StandardButton.Save
             | QMessageBox.StandardButton.Discard
             | QMessageBox.StandardButton.Cancel,

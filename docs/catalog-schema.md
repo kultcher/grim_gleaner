@@ -47,8 +47,17 @@ affix refers to them. Named monster, quest, devotion, default, template, and
 other internal branches are excluded. Each entry retains its logical record
 path, winning source, broad category, name tag, display name, name-resolution
 status, optional description tag, mastery ID and localized mastery name,
-mastery-level requirement, maximum level, and whether the record is the mastery
-header itself.
+maximum level, DBR `skillTier`, class-tree order, curated parent skill ID, and
+whether the record is the mastery header itself. The legacy
+`mastery_level_required` value remains temporarily for runtime compatibility but
+is not useful for sorting the current extracted mastery records.
+
+Class-tree order is derived from each `_classtree_classXX.dbr`, following
+unnamed `buffSkillName` and `petSkillName` proxies to their named backing skill.
+An order of 0 means the named record is not a selectable mastery-tree node.
+Curated parent/child display-name relationships come from the optional
+`artifacts/mastery-trees` Markdown source and compile to stable skill IDs.
+Unlisted nodes remain valid roots or unlinked skills.
 
 The resolution statuses are:
 
@@ -70,8 +79,9 @@ the compiled property's attributes.
 
 `affixes.json` includes structurally reachable magic and rare prefixes and
 suffixes. It does not include unique affixes or base-item/Monster Infrequent
-records. Affixes group by kind and localization tag, while each distinct gear
-slot and semantic layout remains a separate variant. A variant preserves:
+records. Affixes group by kind and localization tag and retain their consistent
+Magical or Rare classification, while each distinct gear slot and semantic
+layout remains a separate variant. A variant preserves:
 
 - all level requirements observed for that exact layout;
 - structured atomic applicability, including melee, caster, and ranged weapon
@@ -81,12 +91,20 @@ slot and semantic layout remains a separate variant. A variant preserves:
 - representative source path and source-record count;
 - the count of layouts observed for the same affix and gear slot.
 
+Discrete `skill_level` values are retained on skill-rank properties rather than
+being reduced to mere stat presence. When otherwise-identical leveled records
+contain different rank values, `skill_level` follows the catalog's current
+max-level assumption and `skill_level_min` / `skill_level_max` preserve the
+observed range for later level-aware scoring.
+
 ## Item catalog
 
 Schema version 2 added one logical `ItemCatalog` stored in six files. Schema
-version 3 adds structured atomic applicability to affix variants. Splitting
-the files keeps large equipment data separate from smaller attachment and
-consumable families without forcing callers to manage six unrelated models:
+version 3 added structured atomic applicability to affix variants. Schema
+version 4 adds affix rarity and skill-rank magnitudes plus mastery tier, order,
+and curated parent links. Splitting the files keeps large equipment data
+separate from smaller attachment and consumable families without forcing
+callers to manage six unrelated models:
 
 - `equipment.json`: common and magical bases, Monster Infrequents, ordinary
   rares, crafted and faction equipment, epics, legendaries, awakened variants,

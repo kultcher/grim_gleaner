@@ -209,6 +209,7 @@ the existing generated marker instead of stacking another one.
   --localization-root game_data\gdx2\text_en `
   --localization-root game_data\gdx1\text_en `
   --localization-root game_data\base\text_en `
+  --mastery-tree-root artifacts\mastery-trees `
   --game-version unknown `
   --output-dir artifacts\catalog
 ```
@@ -218,7 +219,7 @@ the first definition wins. The compiler applies DBR sources in the opposite
 direction (base through the newest expansion), so newer records replace older
 records at the same logical path.
 
-The deterministic schema-version-3 bundle contains all structurally reachable
+The deterministic schema-version-4 bundle contains all structurally reachable
 magic/rare affix variants; named player/mastery, pet, and item-granted skill
 DBRs; and split item catalogs for equipment, components, augments, relics,
 runes, and consumables. Equipment includes common/magical bases, Monster
@@ -233,6 +234,11 @@ records are retained. The application can load these JSON files without
 requiring end users to extract game archives. See
 [`docs/catalog-schema.md`](docs/catalog-schema.md) for scope and extension
 points.
+
+Affix definitions retain Magical/Rare classification and discrete skill-rank
+values. Mastery skills retain their DBR tier and class-tree order; curated
+parent/child links are loaded from `artifacts/mastery-trees` when that optional
+compiler argument is supplied.
 
 The item-catalog compiler needs only `records/items` plus the
 player, pet, and item-granted definitions it follows into `records/skills`.

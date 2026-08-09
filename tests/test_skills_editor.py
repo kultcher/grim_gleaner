@@ -23,6 +23,10 @@ def _skill(
     category: str = "player",
     is_mastery: bool = False,
     required: int = 1,
+    skill_tier: int = 1,
+    tree_order: int = 1,
+    parent_skill_id: str = "",
+    max_level: int = 12,
 ) -> SkillDefinition:
     return SkillDefinition(
         skill_id=skill_id,
@@ -35,8 +39,11 @@ def _skill(
         mastery_id=mastery_id,
         mastery_name=mastery_name,
         mastery_level_required=required,
-        max_level=12,
+        max_level=max_level,
         is_mastery=is_mastery,
+        skill_tier=skill_tier,
+        tree_order=tree_order,
+        parent_skill_id=parent_skill_id,
     )
 
 
@@ -50,12 +57,15 @@ def _catalog() -> SkillCatalog:
                 "Soldier",
                 is_mastery=True,
                 required=0,
+                skill_tier=0,
+                tree_order=0,
             ),
             _skill(
                 "records/skills/playerclass01/cadence1.dbr",
                 "Cadence",
                 "playerclass01",
                 "Soldier",
+                tree_order=2,
             ),
             _skill(
                 "records/skills/playerclass01/pets/internal.dbr",
@@ -63,6 +73,8 @@ def _catalog() -> SkillCatalog:
                 "playerclass01",
                 "Soldier",
                 category="pet",
+                skill_tier=0,
+                tree_order=0,
             ),
             _skill(
                 "records/skills/playerclass02/_classtraining_class02.dbr",
@@ -71,12 +83,15 @@ def _catalog() -> SkillCatalog:
                 "Demolitionist",
                 is_mastery=True,
                 required=0,
+                skill_tier=0,
+                tree_order=0,
             ),
             _skill(
                 "records/skills/playerclass02/flamestrike1.dbr",
                 "Fire Strike",
                 "playerclass02",
                 "Demolitionist",
+                tree_order=2,
             ),
             _skill(
                 "records/skills/playerclass03/_classtraining_class03.dbr",
@@ -85,12 +100,15 @@ def _catalog() -> SkillCatalog:
                 "Occultist",
                 is_mastery=True,
                 required=0,
+                skill_tier=0,
+                tree_order=0,
             ),
             _skill(
                 "records/skills/playerclass03/doombolt1.dbr",
                 "Doom Bolt",
                 "playerclass03",
                 "Occultist",
+                tree_order=2,
             ),
         )
     )
@@ -105,6 +123,67 @@ def test_mastery_groups_exclude_headers_and_internal_pet_skills() -> None:
         "Occultist",
     ]
     assert [skill.display_name for skill in masteries[0].skills] == ["Cadence"]
+
+
+def test_mastery_skills_sort_by_tier_with_children_after_their_parent() -> None:
+    cadence_id = "records/skills/playerclass01/cadence1.dbr"
+    catalog = SkillCatalog(
+        _catalog().skills
+        + (
+            _skill(
+                "records/skills/playerclass01/fightingform.dbr",
+                "Fighting Form",
+                "playerclass01",
+                "Soldier",
+                skill_tier=4,
+                tree_order=4,
+                parent_skill_id=cadence_id,
+            ),
+            _skill(
+                "records/skills/playerclass01/forcewave.dbr",
+                "Forcewave",
+                "playerclass01",
+                "Soldier",
+                skill_tier=1,
+                tree_order=11,
+            ),
+            _skill(
+                "records/skills/playerclass01/militaryconditioning.dbr",
+                "Military Conditioning",
+                "playerclass01",
+                "Soldier",
+                skill_tier=2,
+                tree_order=6,
+            ),
+            _skill(
+                "records/skills/playerclass01/tremor.dbr",
+                "Tremor",
+                "playerclass01",
+                "Soldier",
+                skill_tier=2,
+                tree_order=12,
+                max_level=1,
+            ),
+        )
+    )
+
+    soldier = build_mastery_skills(catalog)[0]
+
+    assert [skill.display_name for skill in soldier.skills] == [
+        "Cadence",
+        "Fighting Form",
+        "Forcewave",
+        "Military Conditioning",
+    ]
+
+    _application()
+    editor = SkillsEditor(
+        BuildProfile(masteries=("playerclass01", "")), catalog
+    )
+    assert [
+        editor.panels[0].available_list.item(index).text()
+        for index in range(editor.panels[0].available_list.count())
+    ] == ["Cadence", "└ Fighting Form", "Forcewave", "Military Conditioning"]
 
 
 def test_skills_editor_adds_weights_and_excludes_duplicate_mastery() -> None:
@@ -125,6 +204,11 @@ def test_skills_editor_adds_weights_and_excludes_duplicate_mastery() -> None:
 
     skill_id = "records/skills/playerclass01/cadence1.dbr"
     assert profile.skill_weights == {skill_id: 0}
+    assert editor.panels[0].available_list.count() == 1
+    disabled_item = editor.panels[0].available_list.item(0)
+    assert disabled_item.text() == "Cadence"
+    assert not disabled_item.flags() & Qt.ItemFlag.ItemIsEnabled
+    assert not disabled_item.flags() & Qt.ItemFlag.ItemIsSelectable
     editor.panels[0].rows[skill_id].weight_control.set_value(4)
     assert profile.skill_weights == {skill_id: 4}
 

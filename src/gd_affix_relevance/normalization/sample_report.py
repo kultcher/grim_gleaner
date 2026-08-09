@@ -58,6 +58,7 @@ class AffixSampleCandidate:
     gear_slot: str
     stat_lines: tuple[str, ...]
     representative_source: str
+    rarity: str = ""
     variant_count: int = 1
     level_requirements: tuple[int, ...] = ()
     stat_layout_count: int = 1
@@ -73,11 +74,15 @@ class _CandidateGroup:
     affix_kind: str
     gear_slot: str
     applicable_slots: tuple[str, ...]
+    rarity: str
     semantic_fingerprint: tuple[tuple[str, str, str], ...]
     preferred_source: str
     representative_record: RawDbrRecord
     sources: set[str] = field(default_factory=set)
     level_requirements: set[int] = field(default_factory=set)
+    preserved_values: dict[tuple[str, str], set[str]] = field(
+        default_factory=dict
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -154,6 +159,7 @@ def build_sample_candidates(
         display_name = plain_display_name(localization_entry.value)
         semantic_fingerprint = record_semantic_fingerprint(record)
         kind = supported_affix_kind(record) or ""
+        rarity = (record.first_value("itemClassification") or "").strip()
         key = (localization_tag, kind, gear_slot, semantic_fingerprint)
         group = grouped.setdefault(
             key,
@@ -163,12 +169,20 @@ def build_sample_candidates(
                 affix_kind=kind,
                 gear_slot=gear_slot,
                 applicable_slots=applicable_slots,
+                rarity=rarity,
                 semantic_fingerprint=semantic_fingerprint,
                 preferred_source=source_name,
                 representative_record=record,
             ),
         )
+        if group.rarity != rarity:
+            raise ValueError(
+                f"affix layout {localization_tag!r} crosses rarities: "
+                f"{group.rarity!r} and {rarity!r}"
+            )
         group.sources.add(f"{source_name}:{logical_path}")
+        for key_and_role, value in _preserved_semantic_values(record):
+            group.preserved_values.setdefault(key_and_role, set()).add(value)
         if level_requirement := _parse_level_requirement(record):
             group.level_requirements.add(level_requirement)
 
@@ -225,6 +239,7 @@ def build_sample_candidates(
                 gear_slot=group.gear_slot,
                 stat_lines=stat_lines,
                 representative_source=min(group.sources),
+                rarity=group.rarity,
                 variant_count=len(group.sources),
                 level_requirements=tuple(sorted(group.level_requirements)),
                 stat_layout_count=layout_counts[
@@ -233,7 +248,10 @@ def build_sample_candidates(
                 semantic_properties=_semantic_properties(
                     group.semantic_fingerprint
                 ),
-                semantic_components=group.semantic_fingerprint,
+                semantic_components=_semantic_components_with_values(
+                    group.semantic_fingerprint,
+                    group.preserved_values,
+                ),
                 applicable_slots=group.applicable_slots,
             )
         )
@@ -669,6 +687,48 @@ def record_semantic_fingerprint(
         components.append(
             (proposal.bundle_key, proposal.value_role, distinguishing_value)
         )
+    return tuple(sorted(components))
+
+
+def _preserved_semantic_values(
+    record: RawDbrRecord,
+) -> tuple[tuple[tuple[str, str], str], ...]:
+    """Retain discrete magnitudes that relevance scoring can compare safely."""
+
+    values: list[tuple[tuple[str, str], str]] = []
+    for raw_field in fields_for_semantic_analysis(record):
+        if active_value_kind(raw_field.value) is None:
+            continue
+        proposal = propose_field_mapping(raw_field.key)
+        if proposal is None or proposal.value_role != "skill_level":
+            continue
+        try:
+            normalized = str(int(float(raw_field.value)))
+        except ValueError:
+            continue
+        values.append(((proposal.bundle_key, proposal.value_role), normalized))
+    return tuple(values)
+
+
+def _semantic_components_with_values(
+    fingerprint: tuple[tuple[str, str, str], ...],
+    preserved_values: dict[tuple[str, str], set[str]],
+) -> tuple[tuple[str, str, str], ...]:
+    components: list[tuple[str, str, str]] = []
+    for bundle_key, role, value in fingerprint:
+        candidates = preserved_values.get((bundle_key, role), set())
+        if not candidates:
+            components.append((bundle_key, role, value))
+            continue
+        numeric = sorted({int(candidate) for candidate in candidates})
+        components.append((bundle_key, role, str(numeric[-1])))
+        if len(numeric) > 1:
+            components.extend(
+                (
+                    (bundle_key, f"{role}_min", str(numeric[0])),
+                    (bundle_key, f"{role}_max", str(numeric[-1])),
+                )
+            )
     return tuple(sorted(components))
 
 

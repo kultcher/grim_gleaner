@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from PySide6.QtCore import QSettings, Qt
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QListWidget,
@@ -157,6 +158,12 @@ class MainWindow(QMainWindow):
                 "profiles/active_path", str(Path(path).resolve())
             )
         self.settings.sync()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if self.profile_editor.confirm_close():
+            event.accept()
+        else:
+            event.ignore()
 
 
 def _load_development_catalog() -> tuple[CatalogBundle | None, str]:

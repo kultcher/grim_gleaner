@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATALOG_SCHEMA_VERSION = 3
+CATALOG_SCHEMA_VERSION = 4
 
 ITEM_CATALOG_FILES = (
     "equipment.json",
@@ -55,6 +55,9 @@ class SkillDefinition:
     mastery_level_required: int
     max_level: int
     is_mastery: bool
+    skill_tier: int = 0
+    tree_order: int = 0
+    parent_skill_id: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,6 +94,7 @@ class AffixDefinition:
     display_name: str
     kind: str
     variants: tuple[AffixVariantDefinition, ...]
+    rarity: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -322,6 +326,9 @@ def _skill_from_dict(payload: dict[str, Any]) -> SkillDefinition:
         mastery_level_required=int(payload.get("mastery_level_required", 0)),
         max_level=int(payload.get("max_level", 0)),
         is_mastery=bool(payload.get("is_mastery", False)),
+        skill_tier=int(payload.get("skill_tier", 0)),
+        tree_order=int(payload.get("tree_order", 0)),
+        parent_skill_id=str(payload.get("parent_skill_id", "")),
     )
 
 
@@ -355,6 +362,7 @@ def _affix_from_dict(payload: dict[str, Any]) -> AffixDefinition:
         display_name=payload["display_name"],
         kind=payload["kind"],
         variants=tuple(_variant_from_dict(variant) for variant in payload["variants"]),
+        rarity=str(payload.get("rarity", "")),
     )
 
 

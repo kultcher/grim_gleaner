@@ -78,6 +78,8 @@ DETAIL_TITLE_COLORS = {
     "monster_infrequent": "#28613a",
     "epic": "#315b88",
     "legendary": "#60427f",
+    "affix_rare": "#28613a",
+    "affix_magical": "#786019",
     "affix": "#3a404b",
 }
 
@@ -790,10 +792,17 @@ class TopMatchesPage(QWidget):
             for stat_id in match.semantic_stat_ids
             if stat_id not in matched_ids
         ]
+        rarity = match.affix.rarity.strip()
+        affix_type = " ".join(
+            part for part in (rarity, match.affix.kind.title()) if part
+        )
+        rarity_color = DETAIL_TITLE_COLORS.get(
+            f"affix_{rarity.casefold()}", DETAIL_TITLE_COLORS["affix"]
+        )
         self.affix_detail_pane.set_title(
             f"{match.marker}{match.affix.display_name} · "
-            f"{SLOT_LABELS[slot_id]} · {match.affix.kind.title()}",
-            DETAIL_TITLE_COLORS["affix"],
+            f"{SLOT_LABELS[slot_id]} · {affix_type}",
+            rarity_color,
         )
         html = [
             _html_line(
