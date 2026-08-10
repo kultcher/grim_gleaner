@@ -114,15 +114,17 @@ def _item(
                 completion_bonus_reference="",
                 properties=(
                     ItemProperty("health", "health", {}),
+                    ItemProperty("offensive_ability", "offensive_ability", {}),
                     *(
-                        (ItemProperty("offensive_ability", "offensive_ability", {}),)
+                        (ItemProperty("defensive_ability", "defensive_ability", {}),)
                         if emphasized
                         else ()
                     ),
                 ),
                 stat_lines=(
                     "+[x] Health",
-                    *(("+[x] Offensive Ability",) if emphasized else ()),
+                    "+[x] Offensive Ability",
+                    *(("+[x] Defensive Ability",) if emphasized else ()),
                 ),
                 skill_modifiers=(),
                 acquisition_source=source,
@@ -177,7 +179,7 @@ def test_slot_tables_separate_prefixes_and_suffixes_and_track_profile() -> None:
     suffix_table = page.tables[(SLOT_RING, "suffix")]
     assert prefix_table.item(0, 1).text() == "Tough"
     assert suffix_table.item(0, 1).text() == "of Fortitude"
-    assert prefix_table.item(0, 0).text() == "[B1]"
+    assert prefix_table.item(0, 0).text() == "[C1]"
     assert [
         prefix_table.horizontalHeaderItem(column).text()
         for column in range(prefix_table.columnCount())
@@ -277,7 +279,7 @@ def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
 
     table = window.top_matches_page.tables[(SLOT_RING, "prefix")]
     assert table.rowCount() == 1
-    assert table.item(0, 0).text() == "[B1]"
+    assert table.item(0, 0).text() == "[C1]"
     assert "+2 to Cadence: weight 4" in (
         window.top_matches_page.details.toPlainText()
     )
@@ -370,7 +372,13 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
         (),
     )
     window = MainWindow(
-        BuildProfile(weights={"health": 4, "offensive_ability": 4}),
+        BuildProfile(
+            weights={
+                "health": 4,
+                "offensive_ability": 4,
+                "defensive_ability": 4,
+            }
+        ),
         catalog=AffixCatalog(()),
         items=items,
     )
@@ -378,6 +386,10 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
     table = page.unique_tables["head"]
 
     assert page.minimum_grade.currentText() == "A"
+    assert [
+        page.minimum_grade.itemText(index)
+        for index in range(page.minimum_grade.count())
+    ] == ["S++", "S+", "S", "A", "B"]
     assert table.rowCount() == 3
     assert [
         table.horizontalHeaderItem(column).text()
@@ -494,12 +506,13 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
                     ItemProperty(
                         "fire_resistance", "fire_resistance", {}
                     ),
+                    ItemProperty("health", "health", {}),
                 ),
-                stat_lines=("+[x]% Fire Resistance",),
+                stat_lines=("+[x]% Fire Resistance", "+[x] Health"),
             ),
         ),
     )
-    profile = BuildProfile(weights={"fire_resistance": 4})
+    profile = BuildProfile(weights={"fire_resistance": 4, "health": 4})
     window = MainWindow(
         profile,
         catalog=AffixCatalog((affix,)),
@@ -535,14 +548,14 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
     ].weight_control
     fire_control.set_value(2)
     assert component_table.rowCount() == 1
-    assert component_table.matches[0].score.effective_score == 4
-    assert affix_table.matches[0].score.effective_score == 4
-    assert unique_table.matches[0].score.effective_score == 4
+    assert component_table.matches[0].score.effective_score == 3.8
+    assert affix_table.matches[0].score.effective_score == 3.8
+    assert unique_table.matches[0].score.effective_score == 7.6
 
     fire_control.set_value(4)
     component_table.selectRow(0)
     app.processEvents()
-    assert component_table.matches[0].score.effective_score == 16
+    assert component_table.matches[0].score.effective_score == 15.2
     assert component_table.item(0, 0).text().startswith("[S")
     assert "cap weight 4 (amplified to 8)" in (
         page.addon_details.toPlainText()
@@ -568,9 +581,9 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
 
     page.resistance_cap_toggle.setChecked(False)
     assert page.resistance_cap_button.property("active") is False
-    assert component_table.matches[0].score.effective_score == 4
-    assert affix_table.matches[0].score.effective_score == 4
-    assert unique_table.matches[0].score.effective_score == 4
+    assert component_table.matches[0].score.effective_score == 3.8
+    assert affix_table.matches[0].score.effective_score == 3.8
+    assert unique_table.matches[0].score.effective_score == 7.6
 
 
 def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> None:
@@ -655,6 +668,7 @@ def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> No
         items=ItemCatalog((rank_item, modifier_item), (), (), (), (), ()),
     )
     window.show()
+    window.top_matches_page.minimum_grade.setCurrentText("B")
 
     affix_table = window.top_matches_page.tables[(SLOT_RING, "prefix")]
     assert affix_table.item(0, 0).background().color().name() == (

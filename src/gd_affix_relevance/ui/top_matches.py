@@ -696,7 +696,7 @@ class TopMatchesPage(QWidget):
         type_layout.addWidget(QLabel("Minimum grade:", type_frame))
         self.minimum_grade = QComboBox(type_frame)
         self.minimum_grade.setObjectName("minimumGradeSelector")
-        self.minimum_grade.addItems(("S", "A", "B"))
+        self.minimum_grade.addItems(("S++", "S+", "S", "A", "B"))
         self.minimum_grade.setCurrentText("A")
         self.minimum_grade.currentTextChanged.connect(
             self._minimum_grade_changed
@@ -1167,6 +1167,8 @@ class TopMatchesPage(QWidget):
         html = [
             _html_line(
                 f"Effective score: {_format_score(score.effective_score)} "
+                f"· Base score: {_format_score(score.base_effective_score)} "
+                f"(profile x{score.profile_adjustment:.3f}) "
                 f"· Raw weight total: {score.weighted_match} "
                 f"· Coverage: "
                 f"{score.matched_count}/{score.total_category_count} "
@@ -1251,6 +1253,8 @@ class TopMatchesPage(QWidget):
         html = [
             _html_line(
                 f"Effective score: {_format_score(score.effective_score)} "
+                f"· Base score: {_format_score(score.base_effective_score)} "
+                f"(profile x{score.profile_adjustment:.3f}) "
                 f"· Raw weight total: {score.weighted_match} "
                 f"· Coverage: "
                 f"{score.matched_count}/{score.total_category_count} "
@@ -1378,6 +1382,8 @@ class TopMatchesPage(QWidget):
         html = [
             _html_line(
                 f"Effective score: {_format_score(score.effective_score)} "
+                f"\u00b7 Base score: {_format_score(score.base_effective_score)} "
+                f"(profile x{score.profile_adjustment:.3f}) "
                 f"\u00b7 "
                 f"{'Amplified' if self.resistance_cap_enabled else 'Raw'} "
                 f"weight total: {score.weighted_match} "

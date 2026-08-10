@@ -16,7 +16,9 @@ from gd_affix_relevance.scoring import (
 
 UTF8_BOM = b"\xef\xbb\xbf"
 COLOR_CODE_PATTERN = re.compile(r"\{\^[^}]+\}")
-GENERATED_MARKER_PATTERN = re.compile(r"\((?:S|A|B|C|D|-|—)\*?\d+\)")
+GENERATED_MARKER_PATTERN = re.compile(
+    r"\((?:S\+\+|S\+|S|A|B|C|D|-|—)\*?\d+\)"
+)
 
 
 @dataclass(frozen=True, slots=True)

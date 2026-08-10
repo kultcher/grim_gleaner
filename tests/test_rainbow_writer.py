@@ -72,8 +72,8 @@ def test_writer_clones_complete_folder_and_changes_exact_affix_tags_only(
     generated = (output / "tags_items.txt").read_bytes()
     assert generated.startswith(b"\xef\xbb\xbf")
     text = generated.decode("utf-8-sig")
-    assert "tagAffix=(B*1){^G}Affix Name\r\n" in text
-    assert "tagSpecial=X(B1){^O}Special Name\r\n" in text
+    assert "tagAffix=(C*1){^G}Affix Name\r\n" in text
+    assert "tagSpecial=X(C1){^O}Special Name\r\n" in text
     assert "tagBaseItem={^B}Base Item\r\n" in text
     assert (output / "readme.bin").read_bytes() == b"untouched"
     assert (source / "tags_items.txt").read_bytes() == original
@@ -88,7 +88,7 @@ def test_writer_replaces_its_marker_and_is_idempotent(tmp_path: Path) -> None:
     first_source = tmp_path / "first"
     first_source.mkdir()
     (first_source / "tags_items.txt").write_text(
-        "tagAffix=(D1){^G}Affix Name\n",
+        "tagAffix=(S++1){^G}Affix Name\n",
         encoding="utf-8",
     )
     catalog = AffixCatalog(
@@ -106,7 +106,7 @@ def test_writer_replaces_its_marker_and_is_idempotent(tmp_path: Path) -> None:
     assert (first_output / "tags_items.txt").read_bytes() == (
         second_output / "tags_items.txt"
     ).read_bytes()
-    assert "(B1)(D1)" not in (second_output / "tags_items.txt").read_text(
+    assert "(C1)(S++1)" not in (second_output / "tags_items.txt").read_text(
         encoding="utf-8"
     )
 
@@ -146,6 +146,6 @@ def test_marker_scoring_respects_conversion_source_filters() -> None:
     catalog = AffixCatalog((_affix("tagConversion", "Converted", variant),))
     profile = BuildProfile(weights={"damage_conversion_to_fire": 4})
 
-    assert build_affix_markers(catalog, profile)["tagConversion"] == "(B1)"
+    assert build_affix_markers(catalog, profile)["tagConversion"] == "(C1)"
     profile.set_conversion_source_enabled("fire", "physical", False)
     assert build_affix_markers(catalog, profile)["tagConversion"] == "(-0)"

@@ -225,10 +225,13 @@ Affixes, unique items, components, and augments share the same nonlinear
 relevance formula. Weight
 `w` contributes `w² / 4` points, and the sum is multiplied by
 `0.70 + 0.30 × coverage`, where coverage is matched categories divided by all
-gradeable categories on that affix or item. Grade floors are S 10, A 6.5, B 4,
-C 1, and D above zero. A one-stat affix therefore receives full coverage: a
-core match is B, a useful or emphasized match is C, and an incidental match is
-D. The detail pane retains the raw linear weight total for diagnosis.
+gradeable categories on that affix or item. The base score then receives a
+profile-style adjustment based on the average quadratic contribution of all
+nonzero ordinary-stat and selected-skill weights. The square-root correction is
+bounded to 0.80-1.25 and blended toward 1.0 until the profile has eight nonzero
+ratings. Grade floors are S++ 24, S+ 18, S 14, A 10, B 6, C 3, and D 1. The
+detail pane shows the adjusted effective score, base score, adjustment factor,
+raw linear weight total, and coverage.
 
 ## Generate Output staging view
 
@@ -242,9 +245,9 @@ containers, doors, and every unrelated line remain byte-for-byte equivalent
 apart from deliberately edited lines.
 
 The generated marker is inserted immediately before the first Rainbow color
-code. Its form is `(S6)`: grade plus matched stat count. If semantic properties
+code. Its form is `(S++6)`: grade plus matched stat count. If semantic properties
 differ between the localization tag's compiled variants, the writer scores the
-intersection and marks that conservative result as `(S*5)`. The writer detects
+intersection and marks that conservative result as `(S++*5)`. The writer detects
 and replaces its own existing marker, making generation idempotent.
 
 The page shows a changed-line preview and reports catalog tags missing from the

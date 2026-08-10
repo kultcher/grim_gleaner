@@ -184,9 +184,12 @@ part of scoring.
 This is deliberately a category-presence relevance grade. Each matched weight
 contributes `weight² / 4` points, then receives a soft multiplier from 70% to
 100% based on the share of that affix or item's stat categories that matched.
-This makes core and emphasized stats increasingly valuable without imposing a
-hard core-stat requirement. It ignores numeric roll magnitude and does not
-estimate whether an item is an upgrade.
+The resulting base score receives a bounded profile-style adjustment derived
+from the average intensity of all nonzero stat and selected-skill ratings. This
+keeps predominantly 2- or 3-star profiles in a similar scoring range without
+changing match order or rewarding zero-weight fields. Grade floors are S++ 24,
+S+ 18, S 14, A 10, B 6, C 3, and D 1. The scorer ignores numeric roll magnitude
+and does not estimate whether an item is an upgrade.
 
 ## Generate Rainbow staging output
 
@@ -210,8 +213,8 @@ to retain its existing colors, but it is not required by catalog compilation or
 name resolution. Unannotated equipment, containers, breakables, doors, and
 other labels are preserved verbatim from whichever complete source is selected.
 
-Markers use `(S6)`, where the letter is the relevance grade and the number is
-the matched profile-stat count. `(S*5)` means variant layouts differ and the
+Markers use `(S++6)`, where the grade is followed by the matched profile-stat
+count. `(S++*5)` means variant layouts differ and the
 grade conservatively uses only stats shared by every layout. Rerunning replaces
 the existing generated marker instead of stacking another one.
 

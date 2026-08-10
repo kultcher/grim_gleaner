@@ -83,14 +83,16 @@ def test_unique_ranking_uses_highest_variant_and_flags_selected_skill_modifier()
         skill_weights={selected_skill_id: 0},
     )
 
-    matches = rank_unique_items_for_slot(catalog, profile, slot_id=SLOT_HEAD)
+    matches = rank_unique_items_for_slot(
+        catalog, profile, slot_id=SLOT_HEAD, minimum_grade="C"
+    )
 
     assert len(matches) == 1
     assert matches[0].variant.level_requirement == 84
     assert matches[0].item_type == "monster_infrequent"
     assert matches[0].variant.acquisition_source == "Specific Monster Drop"
     assert matches[0].has_selected_skill_modifier
-    assert matches[0].marker == "[B†1]"
+    assert matches[0].marker == "[C†1]"
 
 
 def test_unique_ranking_filters_types_and_excludes_items_below_b_grade() -> None:
@@ -108,15 +110,34 @@ def test_unique_ranking_filters_types_and_excludes_items_below_b_grade() -> None
     )
     catalog = ItemCatalog((epic, legendary), (), (), (), (), ())
 
+    qualifying_properties = (
+        ItemProperty("health", "health", {}),
+        ItemProperty("offensive_ability", "offensive_ability", {}),
+    )
+    epic = replace(
+        epic,
+        variants=(replace(epic.variants[0], properties=qualifying_properties),),
+    )
+    legendary = replace(
+        legendary,
+        variants=(
+            replace(legendary.variants[0], properties=qualifying_properties),
+        ),
+    )
+    catalog = ItemCatalog((epic, legendary), (), (), (), (), ())
+    qualifying_profile = BuildProfile(
+        weights={"health": 4, "offensive_ability": 4}
+    )
+
     assert rank_unique_items_for_slot(
         catalog,
-        BuildProfile(weights={"health": 4}),
+        qualifying_profile,
         slot_id=SLOT_HEAD,
         enabled_types=frozenset({"legendary"}),
     )[0].item.display_name == "Legendary Helm"
     assert not rank_unique_items_for_slot(
         catalog,
-        BuildProfile(weights={"health": 4}),
+        qualifying_profile,
         slot_id=SLOT_HEAD,
         enabled_types=frozenset({"legendary"}),
         minimum_grade="A",
@@ -146,6 +167,7 @@ def test_selected_mastery_bonus_is_treated_as_core_weight() -> None:
         catalog,
         BuildProfile(masteries=("playerclass01", "playerclass02")),
         slot_id=SLOT_HEAD,
+        minimum_grade="C",
     )
 
     assert matches[0].score.weighted_match == 4
@@ -203,6 +225,7 @@ def test_item_semantics_ignore_base_attack_speed_and_alias_buff_skill_ranks() ->
         catalog,
         BuildProfile(skill_weights={selected_buff: 4}),
         slot_id=SLOT_HEAD,
+        minimum_grade="C",
     )
     assert matches[0].score.matched_count == 1
     assert matches[0].score.total_category_count == 1
@@ -229,6 +252,7 @@ def test_armor_piercing_uses_the_normal_profile_weight_path() -> None:
         catalog,
         BuildProfile(weights={"armor_piercing_percent": 4}),
         slot_id=SLOT_HEAD,
+        minimum_grade="C",
     )
 
     assert matches[0].score.matched_stat_ids == ("armor_piercing_percent",)
@@ -256,11 +280,11 @@ def test_unique_conversion_respects_selected_source_types() -> None:
     profile = BuildProfile(weights={"damage_conversion_to_fire": 4})
 
     assert rank_unique_items_for_slot(
-        catalog, profile, slot_id=SLOT_HEAD
+        catalog, profile, slot_id=SLOT_HEAD, minimum_grade="C"
     )
     profile.set_conversion_source_enabled("fire", "physical", False)
     assert not rank_unique_items_for_slot(
-        catalog, profile, slot_id=SLOT_HEAD
+        catalog, profile, slot_id=SLOT_HEAD, minimum_grade="C"
     )
 
 
@@ -349,7 +373,10 @@ def test_resistance_cap_weights_override_and_amplify_addons_only() -> None:
 
     assert cap_two.score.effective_score == ordinary.score.effective_score
     assert cap_two.score.weighted_match == ordinary.score.weighted_match == 4
-    assert cap_four.score.effective_score == 16
+    assert ordinary.score.base_effective_score == 4
+    assert ordinary.score.profile_adjustment == 0.975
+    assert cap_four.score.base_effective_score == 16
+    assert cap_four.score.effective_score == 15.6
     assert cap_four.score.weighted_match == 8
     assert not rank_addons_for_slot(
         catalog,

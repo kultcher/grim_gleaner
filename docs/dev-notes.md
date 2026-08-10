@@ -1,13 +1,8 @@
 TO DO:
-- add-ons view
-- resistance-focus mode for add-ons view
-
 - coverage should probably exclude 1-rated items
 - app-level: include an "Ungrade" standalone script
 
-- robust conversion filtering
-- skill mastery work
-
+- skill mastery weight assignments
 - add bonus weight to skill rank bonuses higher than 1?
 
 - stretch: implement build support calculations (remember: important to also classify slot diversity)

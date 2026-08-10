@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -21,6 +22,8 @@ class RelevanceScore:
     grade: str
     weighted_match: int
     relevance_points: float
+    base_effective_score: float
+    profile_adjustment: float
     effective_score: float
     matched_count: int
     total_category_count: int
@@ -43,12 +46,20 @@ class RelevanceScore:
 
 
 GRADE_THRESHOLDS = {
-    "S": 10.0,
-    "A": 6.5,
-    "B": 4.0,
-    "C": 1.0,
-    "D": 0.0,
+    "S++": 24.0,
+    "S+": 18.0,
+    "S": 14.0,
+    "A": 10.0,
+    "B": 6.0,
+    "C": 3.0,
+    "D": 1.0,
 }
+
+# An even mix of the four nonzero ratings under the quadratic point curve.
+REFERENCE_PROFILE_INTENSITY = 1.875
+MIN_PROFILE_ADJUSTMENT = 0.80
+MAX_PROFILE_ADJUSTMENT = 1.25
+FULL_ADJUSTMENT_WEIGHT_COUNT = 8
 
 
 @dataclass(frozen=True, slots=True)
@@ -185,11 +196,15 @@ def score_semantic_stat_ids(
         for stat_id in matched
     )
     coverage_multiplier = 0.70 + 0.30 * coverage_ratio
-    effective_score = relevance_points * coverage_multiplier
+    base_effective_score = relevance_points * coverage_multiplier
+    profile_adjustment = profile_score_adjustment(profile)
+    effective_score = base_effective_score * profile_adjustment
     return RelevanceScore(
         grade=_grade_for_effective_score(effective_score),
         weighted_match=weighted_match,
         relevance_points=relevance_points,
+        base_effective_score=base_effective_score,
+        profile_adjustment=profile_adjustment,
         effective_score=effective_score,
         matched_count=matched_count,
         total_category_count=total_category_count,
@@ -326,6 +341,8 @@ def format_ranked_catalog_report(
                 f"   Gear slot: {match.variant.gear_slot}",
                 f"   Weighted match: {score.weighted_match}",
                 f"   Effective score: {score.effective_score:.2f}",
+                f"   Base score: {score.base_effective_score:.2f}",
+                f"   Profile adjustment: x{score.profile_adjustment:.3f}",
                 "   Coverage: "
                 f"{score.matched_count}/{score.total_category_count} "
                 f"({score.coverage_ratio:.0%})",
@@ -396,8 +413,8 @@ def minimum_score_for_grade(grade: str) -> float:
     """Return the effective-score floor for a display-grade cutoff."""
 
     normalized = grade.upper()
-    if normalized not in GRADE_THRESHOLDS or normalized in {"C", "D"}:
-        raise ValueError("minimum grade must be S, A, or B")
+    if normalized not in GRADE_THRESHOLDS:
+        raise ValueError("minimum grade must be S++, S+, S, A, B, C, or D")
     return GRADE_THRESHOLDS[normalized]
 
 
@@ -405,17 +422,35 @@ def _points_for_weight(weight: int) -> float:
     return (weight * weight) / 4
 
 
+def profile_score_adjustment(profile: BuildProfile) -> float:
+    """Return a bounded correction for different nonzero rating styles.
+
+    Zeroes are omitted so a deliberately sparse profile is not inflated merely
+    for rating fewer things. Small nonzero samples blend back toward 1.0 because
+    their average intensity is a weak signal of the user's general style.
+    """
+
+    weights = [
+        weight
+        for weight in (*profile.weights.values(), *profile.skill_weights.values())
+        if weight > 0
+    ]
+    if not weights:
+        return 1.0
+    intensity = sum(_points_for_weight(weight) for weight in weights) / len(weights)
+    raw_adjustment = math.sqrt(REFERENCE_PROFILE_INTENSITY / intensity)
+    bounded_adjustment = min(
+        MAX_PROFILE_ADJUSTMENT,
+        max(MIN_PROFILE_ADJUSTMENT, raw_adjustment),
+    )
+    confidence = min(len(weights) / FULL_ADJUSTMENT_WEIGHT_COUNT, 1.0)
+    return 1.0 + (bounded_adjustment - 1.0) * confidence
+
+
 def _grade_for_effective_score(effective_score: float) -> str:
-    if effective_score >= GRADE_THRESHOLDS["S"]:
-        return "S"
-    if effective_score >= GRADE_THRESHOLDS["A"]:
-        return "A"
-    if effective_score >= GRADE_THRESHOLDS["B"]:
-        return "B"
-    if effective_score >= GRADE_THRESHOLDS["C"]:
-        return "C"
-    if effective_score > GRADE_THRESHOLDS["D"]:
-        return "D"
+    for grade, threshold in GRADE_THRESHOLDS.items():
+        if effective_score >= threshold:
+            return grade
     return "-"
 
 

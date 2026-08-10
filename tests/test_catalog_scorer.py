@@ -9,6 +9,8 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.scoring import (
     affix_common_stat_ids,
+    minimum_score_for_grade,
+    profile_score_adjustment,
     rank_affix_catalog,
     rank_affixes_for_slot,
     score_affix_variant,
@@ -67,12 +69,14 @@ def test_catalog_scorer_uses_editable_profile_stat_ids_directly() -> None:
 
     assert score.weighted_match == 10
     assert score.relevance_points == 9
-    assert score.effective_score == pytest.approx(8.325)
+    assert score.base_effective_score == pytest.approx(8.325)
+    assert score.profile_adjustment == pytest.approx(0.925)
+    assert score.effective_score == pytest.approx(7.700625)
     assert score.matched_count == 3
     assert score.total_category_count == 4
     assert score.coverage_ratio == 0.75
-    assert score.grade == "A"
-    assert score.marker == "[A3]"
+    assert score.grade == "B"
+    assert score.marker == "[B3]"
 
 
 def test_conversion_property_maps_its_destination_to_profile_id() -> None:
@@ -146,8 +150,32 @@ def test_nonlinear_score_softly_penalizes_low_item_coverage() -> None:
     assert score.weighted_match == 5
     assert score.relevance_points == 3.25
     assert score.coverage_ratio == 0.25
-    assert score.effective_score == pytest.approx(2.51875)
-    assert score.grade == "C"
+    assert score.base_effective_score == pytest.approx(2.51875)
+    assert score.profile_adjustment == pytest.approx(1.0185430778)
+    assert score.effective_score == pytest.approx(2.5654553771)
+    assert score.grade == "D"
+
+
+def test_profile_adjustment_is_bounded_and_ignores_zero_weights() -> None:
+    mostly_useful = BuildProfile(
+        weights={f"stat_{index}": 2 for index in range(8)},
+        skill_weights={"ignored_skill": 0},
+    )
+    all_core = BuildProfile(weights={f"stat_{index}": 4 for index in range(8)})
+
+    assert profile_score_adjustment(mostly_useful) == pytest.approx(1.25)
+    assert profile_score_adjustment(all_core) == pytest.approx(0.80)
+    assert profile_score_adjustment(BuildProfile()) == 1.0
+
+
+def test_stretched_grade_thresholds_include_extended_s_ranks() -> None:
+    assert minimum_score_for_grade("S++") == 24
+    assert minimum_score_for_grade("S+") == 18
+    assert minimum_score_for_grade("S") == 14
+    assert minimum_score_for_grade("A") == 10
+    assert minimum_score_for_grade("B") == 6
+    assert minimum_score_for_grade("C") == 3
+    assert minimum_score_for_grade("D") == 1
 
 
 def test_catalog_ranking_orders_variants_and_applies_limit() -> None:
