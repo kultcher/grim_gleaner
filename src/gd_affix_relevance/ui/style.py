@@ -39,13 +39,43 @@ QToolButton#resistanceCapButton {
     padding: 7px 16px;
 }
 QToolButton#resistanceCapButton:hover { background: #39404c; }
+QToolButton#resistanceCapButton[active="true"] {
+    background: #24575d;
+    border-color: #52a9ad;
+    color: #f2ffff;
+}
+QToolButton#resistanceCapButton[active="true"]:hover {
+    background: #2c6870;
+}
 QFrame#resistanceCapBody {
     background: #1b2027;
     border: 1px solid #3a4654;
     border-radius: 6px;
 }
-QCheckBox#resistanceCapToggle { font-weight: 600; color: #edf3f7; }
-QLabel#resistanceCapHint { color: #9eabb9; padding-bottom: 3px; }
+QCheckBox#resistanceCapToggle {
+    background: transparent;
+    font-weight: 600;
+    color: #edf3f7;
+}
+QCheckBox#resistanceCapToggle::indicator {
+    width: 16px;
+    height: 16px;
+    background-color: #f4f7fa;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+}
+QCheckBox#resistanceCapToggle::indicator:hover {
+    border-color: #8fe4e4;
+}
+QCheckBox#resistanceCapToggle::indicator:checked {
+    background-color: #53aeb2;
+    border: 2px solid #d9ffff;
+}
+QLabel#resistanceCapHint {
+    background: transparent;
+    color: #9eabb9;
+    padding-bottom: 3px;
+}
 QLabel#weightLegend {
     background: #242831;
     border: 1px solid #343a46;

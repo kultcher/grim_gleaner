@@ -211,7 +211,10 @@ ranking only; Affixes and Uniques continue to use the profile. Non-resistance
 profile weights continue contributing to Add-ons. Cap-mode weights are treated
 as double their displayed value before the ordinary quadratic scoring curve, so
 two cap stars equal an ordinary four-star contribution and four cap stars
-contribute 16 relevance points before coverage.
+contribute 16 relevance points before coverage. The header changes color while
+the mode is active. Wheel input over the expanded controls is forwarded to the
+Add-ons results scroller so the table list remains navigable without first
+collapsing the section.
 
 Fixed item stats, selected-mastery bonuses, and ordinary selected-skill rank
 bonuses participate in grading. `†` flags an item that modifies a skill in the

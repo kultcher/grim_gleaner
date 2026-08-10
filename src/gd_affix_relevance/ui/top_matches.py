@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from html import escape
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import QEvent, QObject, Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -778,15 +778,15 @@ class TopMatchesPage(QWidget):
             self._resistance_cap_toggled
         )
         mode_layout.addWidget(self.resistance_cap_toggle)
-        mode_hint = QLabel(
+        self.resistance_cap_hint = QLabel(
             "Overrides profile resistance weights for Add-ons only. "
             "Two stars score like an ordinary four-star weight; higher "
             "ratings are strongly amplified.",
             self.resistance_cap_body,
         )
-        mode_hint.setObjectName("resistanceCapHint")
-        mode_hint.setWordWrap(True)
-        mode_layout.addWidget(mode_hint)
+        self.resistance_cap_hint.setObjectName("resistanceCapHint")
+        self.resistance_cap_hint.setWordWrap(True)
+        mode_layout.addWidget(self.resistance_cap_hint)
         self.resistance_cap_rows_widget = QWidget(self.resistance_cap_body)
         rows_layout = QGridLayout(self.resistance_cap_rows_widget)
         rows_layout.setContentsMargins(0, 2, 0, 0)
@@ -799,16 +799,19 @@ class TopMatchesPage(QWidget):
             self.resistance_cap_rows[definition.stat_id] = row
         self.resistance_cap_rows_widget.setEnabled(False)
         mode_layout.addWidget(self.resistance_cap_rows_widget)
+        self.resistance_cap_body.installEventFilter(self)
+        for child in self.resistance_cap_body.findChildren(QWidget):
+            child.installEventFilter(self)
         mode_body_row.addWidget(self.resistance_cap_body, 1)
         mode_body_row.addStretch()
         layout.addLayout(mode_body_row)
         self._set_resistance_cap_expanded(False)
 
         splitter = QSplitter(Qt.Orientation.Vertical, tab)
-        scroll = QScrollArea(splitter)
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.Shape.NoFrame)
-        content = QWidget(scroll)
+        self.addon_scroll = QScrollArea(splitter)
+        self.addon_scroll.setWidgetResizable(True)
+        self.addon_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        content = QWidget(self.addon_scroll)
         content_layout = QVBoxLayout(content)
         content_layout.setContentsMargins(2, 4, 8, 8)
         content_layout.setSpacing(10)
@@ -833,8 +836,8 @@ class TopMatchesPage(QWidget):
                 self.addon_slot_rows[slot_id] = row
                 content_layout.addWidget(row)
         content_layout.addStretch()
-        scroll.setWidget(content)
-        splitter.addWidget(scroll)
+        self.addon_scroll.setWidget(content)
+        splitter.addWidget(self.addon_scroll)
         self.addon_detail_pane = MatchDetailPane(
             "Select a component or augment to inspect its matched stats.",
             splitter,
@@ -853,6 +856,40 @@ class TopMatchesPage(QWidget):
         self.resistance_cap_button.setText(
             f"{indicator} Resistance Cap Mode{active}"
         )
+        self.resistance_cap_button.setProperty(
+            "active", self.resistance_cap_enabled
+        )
+        self.resistance_cap_button.style().unpolish(
+            self.resistance_cap_button
+        )
+        self.resistance_cap_button.style().polish(
+            self.resistance_cap_button
+        )
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if (
+            event.type() == QEvent.Type.Wheel
+            and (
+                watched is self.resistance_cap_body
+                or self.resistance_cap_body.isAncestorOf(watched)
+            )
+        ):
+            pixel_delta = event.pixelDelta().y()
+            angle_delta = event.angleDelta().y()
+            delta = pixel_delta
+            if not delta and angle_delta:
+                steps = angle_delta / 120
+                delta = round(
+                    steps
+                    * self.addon_scroll.verticalScrollBar().singleStep()
+                    * 3
+                )
+            if delta:
+                scrollbar = self.addon_scroll.verticalScrollBar()
+                scrollbar.setValue(scrollbar.value() - delta)
+                event.accept()
+                return True
+        return super().eventFilter(watched, event)
 
     def _resistance_cap_toggled(self, enabled: bool) -> None:
         self.resistance_cap_enabled = enabled

@@ -3,6 +3,8 @@ from dataclasses import replace
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from PySide6.QtCore import QPoint, QPointF, Qt
+from PySide6.QtGui import QWheelEvent
 from PySide6.QtWidgets import QApplication, QFrame
 
 from gd_affix_relevance.catalog import (
@@ -520,6 +522,8 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
     page.resistance_cap_button.click()
     assert not page.resistance_cap_body.isHidden()
     page.resistance_cap_toggle.setChecked(True)
+    assert page.resistance_cap_button.property("active") is True
+    assert page.resistance_cap_button.text().endswith("(On)")
     assert page.resistance_cap_rows_widget.isEnabled()
     assert component_table.rowCount() == 0
     assert affix_table.rowCount() == 1
@@ -545,7 +549,25 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
     )
     assert "Resistance Cap Mode is enabled" in page.status.text()
 
+    page.tabs.setCurrentIndex(2)
+    app.processEvents()
+    scrollbar = page.addon_scroll.verticalScrollBar()
+    scrollbar.setValue(0)
+    wheel = QWheelEvent(
+        QPointF(5, 5),
+        QPointF(5, 5),
+        QPoint(0, 0),
+        QPoint(0, -120),
+        Qt.MouseButton.NoButton,
+        Qt.KeyboardModifier.NoModifier,
+        Qt.ScrollPhase.ScrollUpdate,
+        False,
+    )
+    QApplication.sendEvent(page.resistance_cap_hint, wheel)
+    assert scrollbar.value() > 0
+
     page.resistance_cap_toggle.setChecked(False)
+    assert page.resistance_cap_button.property("active") is False
     assert component_table.matches[0].score.effective_score == 4
     assert affix_table.matches[0].score.effective_score == 4
     assert unique_table.matches[0].score.effective_score == 4
