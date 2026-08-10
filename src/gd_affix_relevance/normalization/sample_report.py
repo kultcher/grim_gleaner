@@ -570,7 +570,7 @@ def _format_granted_skill(
     skill_name = resolver.resolve_skill_name(
         reference, preferred_source, localization_lookup
     )
-    return f"Granted Skill: {skill_name}"
+    return f"*Granted Skill: {skill_name}"
 
 
 def _format_pet_bonus(

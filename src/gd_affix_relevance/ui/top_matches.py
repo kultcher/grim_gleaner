@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from html import escape
 
-from PySide6.QtCore import QEvent, QObject, Qt, Signal
+from PySide6.QtCore import QEvent, QObject, QSignalBlocker, Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -152,6 +152,8 @@ def _html_line(text: str, *, color: str = "", bold: bool = False) -> str:
 def _semantic_stat_color(stat_id: str, *, matched: bool) -> str:
     """Return a Rainbow-inspired color without changing semantic scoring data."""
 
+    if stat_id.startswith("skill_modifier:"):
+        return SKILL_MODIFIER_STAT_COLOR
     if stat_id.startswith(("skill_bonus:", "mastery_bonus:")):
         return SKILL_RANK_STAT_COLOR
 
@@ -515,6 +517,8 @@ class UniqueSlotRow(QFrame):
 
 
 class TopMatchesPage(QWidget):
+    profile_state_changed = Signal()
+
     def __init__(
         self,
         catalog: AffixCatalog | None,
@@ -562,9 +566,12 @@ class TopMatchesPage(QWidget):
         self._selected_table: AffixSlotTable | None = None
         self._selected_unique_table: UniqueSlotTable | None = None
         self._selected_addon_table: AddonSlotTable | None = None
-        self.resistance_cap_enabled = False
+        self.resistance_cap_enabled = profile.resistance_cap_enabled
         self.resistance_cap_weights = {
-            definition.stat_id: 0 for definition in RESISTANCE_STATS
+            definition.stat_id: profile.resistance_cap_weight_for(
+                definition.stat_id
+            )
+            for definition in RESISTANCE_STATS
         }
         self.resistance_cap_rows: dict[str, StatRow] = {}
 
@@ -774,6 +781,7 @@ class TopMatchesPage(QWidget):
             "Enable Resistance Cap Mode", self.resistance_cap_body
         )
         self.resistance_cap_toggle.setObjectName("resistanceCapToggle")
+        self.resistance_cap_toggle.setChecked(self.resistance_cap_enabled)
         self.resistance_cap_toggle.toggled.connect(
             self._resistance_cap_toggled
         )
@@ -781,7 +789,9 @@ class TopMatchesPage(QWidget):
         self.resistance_cap_hint = QLabel(
             "Overrides profile resistance weights for Add-ons only. "
             "Two stars score like an ordinary four-star weight; higher "
-            "ratings are strongly amplified.",
+            "ratings are strongly amplified."
+            "\nUntouched weights inherit from the main profile. Changes here "
+            "are saved separately and never write back to the main weights.",
             self.resistance_cap_body,
         )
         self.resistance_cap_hint.setObjectName("resistanceCapHint")
@@ -793,11 +803,17 @@ class TopMatchesPage(QWidget):
         rows_layout.setHorizontalSpacing(12)
         rows_layout.setVerticalSpacing(0)
         for index, definition in enumerate(RESISTANCE_STATS):
-            row = StatRow(definition, 0, self.resistance_cap_rows_widget)
+            row = StatRow(
+                definition,
+                self.resistance_cap_weights[definition.stat_id],
+                self.resistance_cap_rows_widget,
+            )
             row.value_changed.connect(self._resistance_cap_weight_changed)
             rows_layout.addWidget(row, index // 2, index % 2)
             self.resistance_cap_rows[definition.stat_id] = row
-        self.resistance_cap_rows_widget.setEnabled(False)
+        self.resistance_cap_rows_widget.setEnabled(
+            self.resistance_cap_enabled
+        )
         mode_layout.addWidget(self.resistance_cap_rows_widget)
         self.resistance_cap_body.installEventFilter(self)
         for child in self.resistance_cap_body.findChildren(QWidget):
@@ -893,6 +909,7 @@ class TopMatchesPage(QWidget):
 
     def _resistance_cap_toggled(self, enabled: bool) -> None:
         self.resistance_cap_enabled = enabled
+        self.profile.resistance_cap_enabled = enabled
         self.resistance_cap_rows_widget.setEnabled(enabled)
         self._set_resistance_cap_expanded(
             self.resistance_cap_button.isChecked()
@@ -902,11 +919,14 @@ class TopMatchesPage(QWidget):
         self._refresh_addons()
         self._update_status()
         self._select_first_visible_addon()
+        self.profile_state_changed.emit()
 
     def _resistance_cap_weight_changed(
         self, stat_id: str, weight: int
     ) -> None:
         self.resistance_cap_weights[stat_id] = weight
+        self.profile.set_resistance_cap_weight(stat_id, weight)
+        self.profile_state_changed.emit()
         if not self.resistance_cap_enabled:
             return
         self.addon_detail_pane.clear()
@@ -933,6 +953,7 @@ class TopMatchesPage(QWidget):
         self.refresh()
 
     def refresh(self, _value: int | bool = False) -> None:
+        self._sync_resistance_cap_from_profile()
         self.affix_detail_pane.clear()
         self.unique_detail_pane.clear()
         self.addon_detail_pane.clear()
@@ -984,6 +1005,27 @@ class TopMatchesPage(QWidget):
         self._select_first_visible_match()
         self._select_first_visible_unique()
         self._select_first_visible_addon()
+
+    def _sync_resistance_cap_from_profile(self) -> None:
+        """Refresh saved cap-mode state without writing into main weights."""
+
+        self.resistance_cap_enabled = self.profile.resistance_cap_enabled
+        toggle_blocker = QSignalBlocker(self.resistance_cap_toggle)
+        self.resistance_cap_toggle.setChecked(self.resistance_cap_enabled)
+        del toggle_blocker
+        self.resistance_cap_rows_widget.setEnabled(
+            self.resistance_cap_enabled
+        )
+        for definition in RESISTANCE_STATS:
+            stat_id = definition.stat_id
+            weight = self.profile.resistance_cap_weight_for(stat_id)
+            self.resistance_cap_weights[stat_id] = weight
+            self.resistance_cap_rows[stat_id].weight_control.set_value(
+                weight, emit=False
+            )
+        self._set_resistance_cap_expanded(
+            self.resistance_cap_button.isChecked()
+        )
 
     def _refresh_uniques(self) -> None:
         enabled_types = frozenset(
@@ -1332,13 +1374,14 @@ class TopMatchesPage(QWidget):
                 (
                     _html_line(""),
                     _html_line(
-                        "†: Modifies selected build skill(s): "
+                        "!: Modifies selected build skill(s): "
                         + ", ".join(selected_modifiers),
                         color=SKILL_MODIFIER_STAT_COLOR,
                     ),
                     _html_line(
-                        "Skill modifiers and their conversions are flagged but are "
-                        "not yet included in the numeric grade."
+                        "The selected skill's profile weight is included once for "
+                        "each modified skill. The modifier's actual effects, values, "
+                        "and conversions are not yet evaluated."
                     ),
                 )
             )
@@ -1472,22 +1515,37 @@ class TopMatchesPage(QWidget):
         self, stat_id: str, properties: tuple[object, ...] = ()
     ) -> str:
         rank = _skill_rank_for_stat(properties, stat_id)
+        property_display_name = _property_display_name_for_stat(
+            properties, stat_id
+        )
         for prefix, label in (
             ("skill_bonus:", "+Ranks to"),
+            ("skill_modifier:", "Skill modifier for"),
             ("mastery_bonus:", "+Ranks to all skills in"),
+            ("granted_item_skill:", "Granted Skill:"),
         ):
             if stat_id.startswith(prefix):
                 reference = stat_id[len(prefix) :]
-                if prefix == "skill_bonus:":
+                if prefix in {
+                    "skill_bonus:",
+                    "skill_modifier:",
+                    "granted_item_skill:",
+                }:
                     reference = self.skill_labels.get(
                         reference,
                         self.canonical_skill_labels.get(
-                            canonical_skill_reference(reference), reference
+                            canonical_skill_reference(reference),
+                            property_display_name or reference,
                         ),
                     )
                 else:
-                    reference = self.mastery_labels.get(reference, reference)
-                if rank:
+                    reference = self.mastery_labels.get(
+                        reference, property_display_name or reference
+                    )
+                if rank and prefix not in {
+                    "skill_modifier:",
+                    "granted_item_skill:",
+                }:
                     label = (
                         f"+{rank} to"
                         if prefix == "skill_bonus:"
@@ -1510,3 +1568,17 @@ def _skill_rank_for_stat(
         except (TypeError, ValueError):
             continue
     return str(max(ranks)) if ranks else ""
+
+
+def _property_display_name_for_stat(
+    properties: tuple[object, ...], stat_id: str
+) -> str:
+    for property_ in properties:
+        if semantic_stat_id(property_) != stat_id:
+            continue
+        display_name = getattr(property_, "attributes", {}).get(
+            "display_name", ""
+        )
+        if isinstance(display_name, str) and display_name.strip():
+            return display_name.strip()
+    return ""

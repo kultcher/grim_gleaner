@@ -204,22 +204,36 @@ tables are present in the compiler inputs; otherwise the broad source label
 remains available.
 
 Add-ons also provide a centered, collapsed Resistance Cap Mode section. Its
-enable checkbox and local copy of the primary Resistances package are temporary
-view state rather than saved profile data. While enabled, all local resistance
-weights replace the main profile's resistance weights for component and augment
-ranking only; Affixes and Uniques continue to use the profile. Non-resistance
-profile weights continue contributing to Add-ons. Cap-mode weights are treated
-as double their displayed value before the ordinary quadratic scoring curve, so
-two cap stars equal an ordinary four-star contribution and four cap stars
-contribute 16 relevance points before coverage. The header changes color while
-the mode is active. Wheel input over the expanded controls is forwarded to the
-Add-ons results scroller so the table list remains navigable without first
-collapsing the section.
+enable checkbox and explicit local resistance overrides are saved with the
+build profile. An untouched local row inherits its current main-profile
+resistance weight; editing the local row creates an independent saved override,
+including an explicit zero, without writing back to the main weight. While
+enabled, the resolved local resistance weights replace the main profile's
+resistance weights for component and augment ranking only; Affixes and Uniques
+continue to use the main profile. Non-resistance profile weights continue
+contributing to Add-ons. Cap-mode weights are treated as double their displayed
+value before the ordinary quadratic scoring curve, so two cap stars equal an
+ordinary four-star contribution and four cap stars contribute 16 relevance
+points before coverage. The header changes color while the mode is active.
+Wheel input over the expanded controls is forwarded to the Add-ons results
+scroller so the table list remains navigable without first collapsing the
+section.
 
 Fixed item stats, selected-mastery bonuses, and ordinary selected-skill rank
-bonuses participate in grading. `†` flags an item that modifies a skill in the
-build-relevant skill list. Skill-modifier mechanics, including conversions, are
-not yet included in the numeric grade and are called out in the detail pane.
+bonuses participate in grading. `!` flags an item that modifies a skill in the
+build-relevant skill list. Each distinct selected skill modified by an item adds
+that skill's profile weight to the grade. The modifier's actual mechanics,
+values, and conversions are not yet evaluated and are called out in the detail
+pane.
+Item-granted skills on affixes and fixed items are shown by localized name but
+do not count as gradeable or unmatched stat categories; their presence is
+always flagged with `*`, regardless of selected skills. Combined flags use
+`*!` order.
+
+When Rainbow-localized item names use `(S)` to identify set pieces, output
+generation rewrites that indicator as `{^E}($)`. This distinguishes it from the
+relevance grade and restores the default text color between the cyan grade and
+Rainbow's item-name color.
 
 Affixes, unique items, components, and augments share the same nonlinear
 relevance formula. Weight
@@ -244,12 +258,14 @@ localization tags from compiled scoring catalogs are modified; base-item names,
 containers, doors, and every unrelated line remain byte-for-byte equivalent
 apart from deliberately edited lines.
 
-The generated marker is inserted immediately before the first Rainbow color
-code. Its form is `(S++6)`: grade plus matched stat count. If semantic properties
-differ between the localization tag's compiled variants, the writer scores the
-intersection and marks that conservative result as `(S++*5)`. The writer detects
-and replaces its own existing marker, making generation idempotent.
+Generated markers use cyan `{^C}`. Prefixes and MI/epic/legendary names place
+the marker first, then retain an existing Rainbow color or add `{^E}` before an
+uncolored name. Suffixes place the cyan marker at the end of the line. Grades
+through S include matched count; S+ and S++ omit it. `*` means the item or affix
+grants a skill and `!` means it modifies a selected build skill. The writer
+scores affix intersections conservatively, uses highest-level fixed variants
+for unique equipment, and replaces its own existing marker on reruns.
 
 The page shows a changed-line preview and reports catalog tags missing from the
-Rainbow source. Installation and backup/restore are deliberately not automated
+selected source. Installation and backup/restore are deliberately not automated
 yet; the user manually copies the inspected staging folder into the game.

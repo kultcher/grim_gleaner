@@ -127,7 +127,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     generate = subparsers.add_parser(
         "generate-output",
-        help="clone Rainbow text files and add profile-grade affix markers",
+        help="clone item text files and add profile-grade affix and unique markers",
     )
     generate.add_argument("--catalog-root", type=Path, required=True)
     generate.add_argument("--profile-file", type=Path, required=True)
@@ -294,6 +294,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.output_dir,
             bundle.affixes,
             profile,
+            items=bundle.items,
         )
         print(
             json.dumps(
@@ -302,9 +303,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "files_written": result.files_written,
                     "affix_tags_scored": result.affix_tags_scored,
                     "affix_tags_found": result.affix_tags_found,
+                    "unique_tags_scored": result.unique_tags_scored,
+                    "unique_tags_found": result.unique_tags_found,
                     "annotated_lines": result.annotated_lines,
                     "missing_affix_tag_count": len(result.missing_affix_tags),
                     "missing_affix_tags": result.missing_affix_tags,
+                    "missing_unique_tag_count": len(result.missing_unique_tags),
+                    "missing_unique_tags": result.missing_unique_tags,
                     "output_dir": str(result.output_root),
                 },
                 indent=2,

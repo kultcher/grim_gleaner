@@ -8,8 +8,8 @@ from typing import Any
 
 from gd_affix_relevance.domain import BuildProfile
 
-PROFILE_FILE_SCHEMA_VERSION = 3
-SUPPORTED_PROFILE_FILE_SCHEMA_VERSIONS = frozenset({1, 2, 3})
+PROFILE_FILE_SCHEMA_VERSION = 4
+SUPPORTED_PROFILE_FILE_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4})
 
 
 class ProfileFormatError(ValueError):

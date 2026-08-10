@@ -288,6 +288,41 @@ def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
     ) == "+Ranks to all skills in Soldier"
 
 
+def test_detail_labels_use_resolved_property_names_for_skill_wrappers() -> None:
+    _application()
+    squall_reference = "records/skills/playerclass06/squall2.dbr"
+    granted_reference = (
+        "records/skills/itemskills/item_lightningorbnova.dbr"
+    )
+    properties = (
+        AffixProperty(
+            "skill_bonus",
+            "skill_bonus:1",
+            {
+                "display_name": "Raging Tempest",
+                "skill_level": "2",
+                "skill_reference": squall_reference,
+            },
+        ),
+        AffixProperty(
+            "granted_item_skill",
+            "granted_item_skill",
+            {
+                "display_name": "Lightning Barrage",
+                "skill_reference": granted_reference,
+            },
+        ),
+    )
+    page = MainWindow(
+        BuildProfile(), catalog=AffixCatalog(()), skills=SkillCatalog(())
+    ).top_matches_page
+
+    assert page._label_for(
+        f"skill_bonus:{squall_reference}", properties
+    ) == "+2 to Raging Tempest"
+    assert page._label_for(
+        f"granted_item_skill:{granted_reference}", properties
+    ) == "Granted Skill: Lightning Barrage"
 def test_weapon_filters_compose_handedness_and_weapon_style() -> None:
     _application()
     window = MainWindow(
@@ -528,6 +563,10 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
     assert page.resistance_cap_body.isHidden()
     assert not page.resistance_cap_toggle.isChecked()
     assert not page.resistance_cap_rows_widget.isEnabled()
+    assert (
+        page.resistance_cap_rows["fire_resistance"].weight_control.value
+        == 4
+    )
     assert component_table.rowCount() == 1
     assert affix_table.rowCount() == 1
     assert unique_table.rowCount() == 1
@@ -538,15 +577,20 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
     assert page.resistance_cap_button.property("active") is True
     assert page.resistance_cap_button.text().endswith("(On)")
     assert page.resistance_cap_rows_widget.isEnabled()
-    assert component_table.rowCount() == 0
+    assert component_table.rowCount() == 1
+    assert component_table.matches[0].score.effective_score == 15.2
     assert affix_table.rowCount() == 1
     assert unique_table.rowCount() == 1
     assert profile.weight_for("fire_resistance") == 4
+    assert profile.resistance_cap_enabled
+    assert profile.resistance_cap_weights == {}
+    assert window.profile_editor.is_dirty
 
     fire_control = page.resistance_cap_rows[
         "fire_resistance"
     ].weight_control
     fire_control.set_value(2)
+    assert profile.resistance_cap_weights == {"fire_resistance": 2}
     assert component_table.rowCount() == 1
     assert component_table.matches[0].score.effective_score == 3.8
     assert affix_table.matches[0].score.effective_score == 3.8
@@ -581,6 +625,7 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
 
     page.resistance_cap_toggle.setChecked(False)
     assert page.resistance_cap_button.property("active") is False
+    assert not profile.resistance_cap_enabled
     assert component_table.matches[0].score.effective_score == 3.8
     assert affix_table.matches[0].score.effective_score == 3.8
     assert unique_table.matches[0].score.effective_score == 7.6

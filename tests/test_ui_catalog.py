@@ -50,10 +50,33 @@ def test_reachable_chance_damage_families_have_distinct_profile_rows() -> None:
         for package in DAMAGE_TAB.packages
     }
 
-    assert "chance_flat_fire_damage" in stats_by_package["damage_fire"]
-    assert "chance_flat_burn_damage" in stats_by_package["damage_fire"]
-    assert "chance_flat_physical_damage" in stats_by_package["damage_physical"]
-    assert "chance_flat_pierce_damage" in stats_by_package["damage_pierce"]
+    expected_by_package = {
+        "damage_elemental": {"chance_flat_elemental_damage"},
+        "damage_acid": {"chance_flat_poison_damage"},
+        "damage_bleeding": {"chance_flat_bleeding_damage"},
+        "damage_fire": {
+            "chance_flat_fire_damage",
+            "chance_flat_burn_damage",
+        },
+        "damage_chaos": {"chance_flat_chaos_damage"},
+        "damage_cold": {"chance_flat_frostburn_damage"},
+        "damage_lightning": {"chance_flat_electrocute_damage"},
+        "damage_physical": {
+            "chance_flat_physical_damage",
+            "chance_flat_internal_trauma_damage",
+        },
+        "damage_pierce": {"chance_flat_pierce_damage"},
+        "damage_vitality": {"chance_flat_vitality_decay_damage"},
+    }
+    for package_id, expected_ids in expected_by_package.items():
+        assert expected_ids <= stats_by_package[package_id]
+
+    electrocute = next(
+        definition
+        for definition in all_stat_definitions()
+        if definition.stat_id == "chance_flat_electrocute_damage"
+    )
+    assert electrocute.label == "Chance to Deal Flat Electrocute Damage"
     assert "armor_piercing_percent" in stats_by_package["damage_pierce"]
     armor_piercing = next(
         definition

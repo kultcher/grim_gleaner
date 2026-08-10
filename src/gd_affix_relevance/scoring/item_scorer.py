@@ -58,9 +58,12 @@ class RankedItemVariant:
 
     @property
     def marker(self) -> str:
+        flags = ""
+        if self.variant.granted_skill_reference or self.variant.granted_skill_name:
+            flags += "*"
         if self.has_selected_skill_modifier:
-            return f"[{self.score.grade}†{self.score.matched_count}]"
-        return self.score.marker
+            flags += "!"
+        return f"[{self.score.marker_body}{flags}]"
 
 
 @dataclass(frozen=True, slots=True)
@@ -74,9 +77,12 @@ class RankedAddonVariant:
 
     @property
     def marker(self) -> str:
+        flags = ""
+        if self.variant.granted_skill_reference or self.variant.granted_skill_name:
+            flags += "*"
         if self.has_selected_skill_modifier:
-            return f"[{self.score.grade}†{self.score.matched_count}]"
-        return self.score.marker
+            flags += "!"
+        return f"[{self.score.marker_body}{flags}]"
 
 
 def item_semantic_stat_ids(
@@ -86,9 +92,24 @@ def item_semantic_stat_ids(
     stat_ids = {
         semantic_stat_id(property_)
         for property_ in variant.properties
-        if property_.property_id != "base_attack_speed"
+        if property_.property_id not in {"base_attack_speed", "granted_item_skill"}
         and property_enabled_for_profile(property_, profile)
     }
+    if profile is not None:
+        selected_skills = {
+            canonical_skill_reference(skill_id)
+            for skill_id in profile.skill_weights
+        }
+        stat_ids.update(
+            f"skill_modifier:{modified_skill}"
+            for modifier in variant.skill_modifiers
+            if (
+                modified_skill := canonical_skill_reference(
+                    modifier.modified_skill_reference
+                )
+            )
+            in selected_skills
+        )
     if (
         equipment_class_slot_id(variant.item_class) in WEAPON_SLOTS
         and not any(

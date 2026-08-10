@@ -20,6 +20,8 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
         {"health": 2, "bleeding_damage_percent": 4},
     )
     profile.set_conversion_source_enabled("fire", "physical", False)
+    profile.resistance_cap_enabled = True
+    profile.set_resistance_cap_weight("fire_resistance", 0)
 
     destination = save_profile(profile, tmp_path / "bleed-werewolf")
     first_bytes = destination.read_bytes()
@@ -33,6 +35,8 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
         "excluded_conversion_sources": {"fire": ["physical"]},
         "masteries": ["", ""],
         "name": "Bleed Werewolf",
+        "resistance_cap_enabled": True,
+        "resistance_cap_weights": {"fire_resistance": 0},
         "skill_weights": {},
         "weights": {
             "bleeding_damage_percent": 4,

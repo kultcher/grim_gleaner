@@ -60,7 +60,7 @@ def test_generate_page_writes_staging_folder_and_shows_preview(
     page.generate()
 
     assert page.last_result is not None
-    assert "tagHealthy=(C1){^G}Healthy" in (
+    assert "tagHealthy={^C}(C1){^G}Healthy" in (
         output / "tags_items.txt"
     ).read_text(encoding="utf-8")
     assert "tagBase={^B}Base Item" in (

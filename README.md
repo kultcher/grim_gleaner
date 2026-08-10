@@ -41,15 +41,17 @@ minimum-grade-filtered table per slot with basic acquisition-source labels.
 Add-ons use paired component/augment tables per slot, including component
 acquisition and localized augment-faction columns.
 Their fold-down Resistance Cap Mode can temporarily override resistance weights
-for add-on ranking without changing the saved profile or the Affixes/Uniques
-results.
+for add-on ranking without changing the main resistance weights or the
+Affixes/Uniques results. Its enabled state and independently edited overrides
+are saved with the profile; untouched rows inherit their main-profile weights.
 Build profiles can be saved to and loaded from user-selected JSON files.
 The Generate Output page creates a complete, graded Rainbow `text_en` staging
 folder for manual installation.
 
 Profile files are versioned, human-readable JSON. Ordinary stats with weight 0
-are omitted, while selected build-relevant skills are retained even at weight 0
-so adding a skill and weighting it remain separate choices. Conversion sources,
+are omitted, while selected build-relevant skills and explicit Resistance Cap
+Mode overrides are retained even at weight 0, so adding or overriding and
+weighting remain separate choices. Conversion sources,
 including the future-facing `Specific Skill` selector, default to enabled;
 profiles store only sources the user explicitly unchecks.
 For example:
@@ -61,12 +63,16 @@ For example:
     "playerclass04"
   ],
   "name": "Bleed Werewolf",
-  "schema_version": 3,
+  "schema_version": 4,
   "excluded_conversion_sources": {
     "fire": [
       "aether",
       "chaos"
     ]
+  },
+  "resistance_cap_enabled": true,
+  "resistance_cap_weights": {
+    "fire_resistance": 2
   },
   "skill_weights": {
     "records/skills/playerclass06/savagery1.dbr": 4
@@ -213,10 +219,18 @@ to retain its existing colors, but it is not required by catalog compilation or
 name resolution. Unannotated equipment, containers, breakables, doors, and
 other labels are preserved verbatim from whichever complete source is selected.
 
-Markers use `(S++6)`, where the grade is followed by the matched profile-stat
-count. `(S++*5)` means variant layouts differ and the
-grade conservatively uses only stats shared by every layout. Rerunning replaces
-the existing generated marker instead of stacking another one.
+Generated grades are cyan. Prefix and unique-item markers precede the name and
+preserve an existing Rainbow color, or reset to `{^E}` when the source name has
+no color. Suffix markers appear at the end of the name. Marker bodies include
+the matched profile-stat count through S, while S+ and S++ omit it. `*` flags a
+granted skill on every item that has one, and `!` flags a modifier for a
+selected build skill, so a combined marker may look like `(A5*!)`. A relevant
+modifier contributes the selected skill's profile weight, but its actual
+mechanics are not yet evaluated. Affix tags are scored conservatively from
+stats shared by their compiled variants; unique items use their highest-level
+fixed variant. Rerunning replaces existing markers instead of stacking another
+one. Rainbow's leading `(S)` set indicator is rewritten as `{^E}($)` so it
+cannot be confused with an S grade and does not inherit the cyan grade color.
 
 ## Compile the runtime catalog
 

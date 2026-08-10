@@ -178,6 +178,19 @@ def test_stretched_grade_thresholds_include_extended_s_ranks() -> None:
     assert minimum_score_for_grade("D") == 1
 
 
+def test_high_s_markers_omit_matched_count() -> None:
+    profile = BuildProfile(
+        weights={f"stat_{index}": 4 for index in range(8)}
+    )
+
+    score = score_semantic_stat_ids(
+        tuple(f"stat_{index}" for index in range(6)), profile
+    )
+
+    assert score.grade == "S+"
+    assert score.marker == "[S+]"
+
+
 def test_catalog_ranking_orders_variants_and_applies_limit() -> None:
     profile = BuildProfile("Health", {"health": 4, "movement_speed": 1})
     catalog = AffixCatalog(

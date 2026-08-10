@@ -37,6 +37,8 @@ class BuildProfile:
     excluded_conversion_sources: dict[str, set[str]] = field(
         default_factory=dict
     )
+    resistance_cap_enabled: bool = False
+    resistance_cap_weights: dict[str, int] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         supplied_weights = dict(self.weights)
@@ -61,6 +63,12 @@ class BuildProfile:
         for destination, sources in supplied_exclusions.items():
             for source in sources:
                 self.set_conversion_source_enabled(destination, source, False)
+        if not isinstance(self.resistance_cap_enabled, bool):
+            raise TypeError("resistance cap enabled state must be a boolean")
+        supplied_cap_weights = dict(self.resistance_cap_weights)
+        self.resistance_cap_weights.clear()
+        for stat_id, weight in supplied_cap_weights.items():
+            self.set_resistance_cap_weight(stat_id, weight)
 
     def weight_for(self, stat_id: str) -> int:
         return self.weights.get(stat_id, MIN_STAT_WEIGHT)
@@ -81,6 +89,25 @@ class BuildProfile:
 
     def nonzero_count(self, stat_ids: tuple[str, ...]) -> int:
         return sum(self.weight_for(stat_id) > 0 for stat_id in stat_ids)
+
+    def resistance_cap_weight_for(self, stat_id: str) -> int:
+        """Return an explicit cap-mode override or inherit the main weight."""
+
+        return self.resistance_cap_weights.get(stat_id, self.weight_for(stat_id))
+
+    def set_resistance_cap_weight(self, stat_id: str, weight: int) -> None:
+        """Store an independent cap-mode weight, including an explicit zero."""
+
+        if not isinstance(stat_id, str) or not stat_id.strip():
+            raise ValueError("resistance cap stat_id must not be blank")
+        if isinstance(weight, bool) or not isinstance(weight, int):
+            raise TypeError("resistance cap weight must be an integer")
+        if not MIN_STAT_WEIGHT <= weight <= MAX_STAT_WEIGHT:
+            raise ValueError(
+                "resistance cap weight must be between "
+                f"{MIN_STAT_WEIGHT} and {MAX_STAT_WEIGHT}"
+            )
+        self.resistance_cap_weights[stat_id] = weight
 
     def set_mastery(self, slot: int, mastery_id: str) -> None:
         if slot not in (0, 1):
@@ -175,6 +202,10 @@ class BuildProfile:
             "masteries": list(self.masteries),
             "skill_weights": dict(sorted(self.skill_weights.items())),
             "weights": dict(sorted(self.weights.items())),
+            "resistance_cap_enabled": self.resistance_cap_enabled,
+            "resistance_cap_weights": dict(
+                sorted(self.resistance_cap_weights.items())
+            ),
             "excluded_conversion_sources": {
                 destination: sorted(sources)
                 for destination, sources in sorted(
@@ -192,6 +223,12 @@ class BuildProfile:
         raw_conversion_exclusions = payload.get(
             "excluded_conversion_sources", {}
         )
+        raw_resistance_cap_enabled = payload.get(
+            "resistance_cap_enabled", False
+        )
+        raw_resistance_cap_weights = payload.get(
+            "resistance_cap_weights", {}
+        )
         if not isinstance(name, str):
             raise TypeError("profile name must be a string")
         if not isinstance(raw_weights, dict):
@@ -204,8 +241,16 @@ class BuildProfile:
             raise TypeError("profile skill weights must be an object")
         if not isinstance(raw_conversion_exclusions, dict):
             raise TypeError("profile conversion exclusions must be an object")
+        if not isinstance(raw_resistance_cap_enabled, bool):
+            raise TypeError("profile resistance cap enabled state must be boolean")
+        if not isinstance(raw_resistance_cap_weights, dict):
+            raise TypeError("profile resistance cap weights must be an object")
 
-        profile = cls(name=name, masteries=tuple(raw_masteries))
+        profile = cls(
+            name=name,
+            masteries=tuple(raw_masteries),
+            resistance_cap_enabled=raw_resistance_cap_enabled,
+        )
         for stat_id, weight in raw_weights.items():
             if not isinstance(stat_id, str):
                 raise TypeError("profile stat IDs must be strings")
@@ -214,6 +259,10 @@ class BuildProfile:
             if not isinstance(skill_id, str):
                 raise TypeError("profile skill IDs must be strings")
             profile.set_skill_weight(skill_id, weight)
+        for stat_id, weight in raw_resistance_cap_weights.items():
+            if not isinstance(stat_id, str):
+                raise TypeError("profile resistance cap stat IDs must be strings")
+            profile.set_resistance_cap_weight(stat_id, weight)
         for destination, sources in raw_conversion_exclusions.items():
             if not isinstance(destination, str):
                 raise TypeError("conversion destinations must be strings")

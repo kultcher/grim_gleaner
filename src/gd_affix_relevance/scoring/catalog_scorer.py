@@ -31,8 +31,13 @@ class RelevanceScore:
     matched_stat_ids: tuple[str, ...]
 
     @property
+    def marker_body(self) -> str:
+        count = "" if self.grade in {"S+", "S++"} else str(self.matched_count)
+        return f"{self.grade}{count}"
+
+    @property
     def marker(self) -> str:
-        return f"[{self.grade}{self.matched_count}]"
+        return f"[{self.marker_body}]"
 
     @property
     def rank_key(self) -> tuple[float, ...]:
@@ -72,7 +77,11 @@ class RankedAffixVariant:
 
     @property
     def marker(self) -> str:
-        return self.score.marker
+        granted_flag = "*" if any(
+            property_.property_id == "granted_item_skill"
+            for property_ in self.variant.properties
+        ) else ""
+        return f"[{self.score.marker_body}{granted_flag}]"
 
 
 def semantic_stat_id(property_: AffixProperty) -> str:
@@ -120,7 +129,8 @@ def variant_semantic_stat_ids(
             {
                 semantic_stat_id(property_)
                 for property_ in variant.properties
-                if property_enabled_for_profile(property_, profile)
+                if property_.property_id != "granted_item_skill"
+                and property_enabled_for_profile(property_, profile)
             }
         )
     )
@@ -365,18 +375,18 @@ def profile_weight_for_semantic_id(
 ) -> int:
     """Read ordinary stat weights or exact selected-skill weights."""
 
-    prefix = "skill_bonus:"
-    if semantic_stat_id.startswith(prefix):
-        reference = semantic_stat_id[len(prefix) :]
-        canonical = canonical_skill_reference(reference)
-        return max(
-            (
-                weight
-                for skill_id, weight in profile.skill_weights.items()
-                if canonical_skill_reference(skill_id) == canonical
-            ),
-            default=0,
-        )
+    for prefix in ("skill_bonus:", "skill_modifier:"):
+        if semantic_stat_id.startswith(prefix):
+            reference = semantic_stat_id[len(prefix) :]
+            canonical = canonical_skill_reference(reference)
+            return max(
+                (
+                    weight
+                    for skill_id, weight in profile.skill_weights.items()
+                    if canonical_skill_reference(skill_id) == canonical
+                ),
+                default=0,
+            )
     mastery_prefix = "mastery_bonus:"
     if semantic_stat_id.startswith(mastery_prefix):
         mastery_id = semantic_stat_id[len(mastery_prefix) :]

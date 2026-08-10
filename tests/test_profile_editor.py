@@ -38,6 +38,8 @@ def test_editor_saves_and_loads_profile_into_existing_controls(
         },
     )
     loaded_profile.set_conversion_source_enabled("fire", "physical", False)
+    loaded_profile.resistance_cap_enabled = True
+    loaded_profile.set_resistance_cap_weight("fire_resistance", 2)
     loaded_path = save_profile(loaded_profile, tmp_path / "loaded.json")
     returned = editor.load_from_path(loaded_path)
 
@@ -49,6 +51,8 @@ def test_editor_saves_and_loads_profile_into_existing_controls(
         "movement_speed": 2,
         "damage_conversion_to_fire": 4,
     }
+    assert original.resistance_cap_enabled
+    assert original.resistance_cap_weights == {"fire_resistance": 2}
     assert (
         editor.accordions["core_health"].rows["health"].weight_control.value
         == 4
@@ -81,6 +85,8 @@ def test_new_profile_can_cancel_or_clear_every_profile_field() -> None:
         skill_weights={skill_id: 3},
     )
     profile.set_conversion_source_enabled("fire", "physical", False)
+    profile.resistance_cap_enabled = True
+    profile.set_resistance_cap_weight("fire_resistance", 2)
     editor = ProfileEditor(profile)
     editor.name_edit.setText("Changed")
     assert editor.is_dirty
@@ -102,6 +108,8 @@ def test_new_profile_can_cancel_or_clear_every_profile_field() -> None:
     assert profile.masteries == ("", "")
     assert profile.skill_weights == {}
     assert profile.excluded_conversion_sources == {}
+    assert not profile.resistance_cap_enabled
+    assert profile.resistance_cap_weights == {}
     assert editor.current_profile_path is None
     assert not editor.is_dirty
     assert editor.accordions["core_health"].rows[

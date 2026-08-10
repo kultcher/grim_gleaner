@@ -116,6 +116,7 @@ class MainWindow(QMainWindow):
         self.generate_output_page = GenerateOutputPage(
             catalog,
             self.profile_editor.profile,
+            items=items,
             source_root=source_root,
             output_root=output_root,
             catalog_status=catalog_status,
@@ -128,6 +129,9 @@ class MainWindow(QMainWindow):
         )
 
         self.profile_editor.profile_changed.connect(self.top_matches_page.refresh)
+        self.top_matches_page.profile_state_changed.connect(
+            self.profile_editor.mark_external_change
+        )
         self.profile_editor.profile_path_changed.connect(
             self._remember_profile_path
         )

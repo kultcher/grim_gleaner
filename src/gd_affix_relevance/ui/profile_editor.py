@@ -219,6 +219,10 @@ class ProfileEditor(QWidget):
                 self.profile.set_conversion_source_enabled(
                     destination, source, False
                 )
+        self.profile.resistance_cap_enabled = loaded.resistance_cap_enabled
+        self.profile.resistance_cap_weights.clear()
+        for stat_id, weight in loaded.resistance_cap_weights.items():
+            self.profile.set_resistance_cap_weight(stat_id, weight)
 
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
@@ -251,6 +255,8 @@ class ProfileEditor(QWidget):
         self.profile.masteries = baseline.masteries
         self.profile.skill_weights.clear()
         self.profile.excluded_conversion_sources.clear()
+        self.profile.resistance_cap_enabled = baseline.resistance_cap_enabled
+        self.profile.resistance_cap_weights.clear()
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
         del blocker
@@ -356,3 +362,8 @@ class ProfileEditor(QWidget):
                 f"Unsaved changes: {self.current_profile_path.name}"
             )
             self.file_status.setToolTip(str(self.current_profile_path))
+
+    def mark_external_change(self) -> None:
+        """Mark profile state changed by a control outside this editor page."""
+
+        self._mark_unsaved()

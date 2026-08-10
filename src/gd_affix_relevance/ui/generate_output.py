@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gd_affix_relevance.catalog import AffixCatalog
+from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.output import RainbowGenerationResult, generate_rainbow_output
 
@@ -28,6 +28,7 @@ class GenerateOutputPage(QWidget):
         catalog: AffixCatalog | None,
         profile: BuildProfile,
         *,
+        items: ItemCatalog | None = None,
         source_root: Path,
         output_root: Path,
         catalog_status: str = "",
@@ -35,6 +36,7 @@ class GenerateOutputPage(QWidget):
     ) -> None:
         super().__init__(parent)
         self.catalog = catalog
+        self.items = items or ItemCatalog((), (), (), (), (), ())
         self.profile = profile
         self.catalog_status = catalog_status
         self.last_result: RainbowGenerationResult | None = None
@@ -47,8 +49,9 @@ class GenerateOutputPage(QWidget):
         heading.setObjectName("pageTitle")
         layout.addWidget(heading)
         hint = QLabel(
-            "Create a complete staging copy of Rainbow's text files with affix "
-            "markers for the active profile. This does not write to the game folder.",
+            "Create a complete staging copy of item-localization files with affix "
+            "and unique-item markers for the active profile. This does not write "
+            "to the game folder.",
             self,
         )
         hint.setObjectName("pageHint")
@@ -58,7 +61,7 @@ class GenerateOutputPage(QWidget):
         form = QFormLayout()
         self.source_edit = QLineEdit(str(source_root), self)
         self.source_edit.setObjectName("outputPath")
-        form.addRow("Rainbow text_en source", self._path_row(self.source_edit, True))
+        form.addRow("Item text_en source", self._path_row(self.source_edit, True))
         self.output_edit = QLineEdit(str(output_root), self)
         self.output_edit.setObjectName("outputPath")
         form.addRow("Staging output folder", self._path_row(self.output_edit, False))
@@ -99,6 +102,7 @@ class GenerateOutputPage(QWidget):
                 Path(self.output_edit.text()),
                 self.catalog,
                 self.profile,
+                items=self.items,
             )
         except (OSError, UnicodeError, ValueError) as error:
             QMessageBox.critical(self, "Could Not Generate Output", str(error))
@@ -107,7 +111,8 @@ class GenerateOutputPage(QWidget):
         self.status.setText(
             f"Generated {result.files_written} files in {result.output_root}. "
             f"Annotated {result.annotated_lines} lines for "
-            f"{result.affix_tags_found}/{result.affix_tags_scored} catalog tags."
+            f"{result.affix_tags_found}/{result.affix_tags_scored} affix tags and "
+            f"{result.unique_tags_found}/{result.unique_tags_scored} unique tags."
         )
         self.preview.setPlainText(_format_preview(result, self.profile.name))
 
@@ -148,8 +153,10 @@ def _format_preview(result: RainbowGenerationResult, profile_name: str) -> str:
         f"Output: {result.output_root}",
         f"Files copied: {result.files_written}",
         f"Affix tags found: {result.affix_tags_found}/{result.affix_tags_scored}",
+        f"Unique tags found: {result.unique_tags_found}/{result.unique_tags_scored}",
         f"Localization lines changed: {result.annotated_lines}",
-        f"Catalog tags missing from source: {len(result.missing_affix_tags)}",
+        "Catalog tags missing from source: "
+        f"{len(result.missing_affix_tags) + len(result.missing_unique_tags)}",
     ]
     if result.changes:
         lines.extend(["", "Changed-line sample:"])
@@ -158,6 +165,9 @@ def _format_preview(result: RainbowGenerationResult, profile_name: str) -> str:
                 f"{change.relative_path}:{change.line_number}  {change.after}"
             )
     if result.missing_affix_tags:
-        lines.extend(["", "Missing-tag sample:"])
+        lines.extend(["", "Missing affix-tag sample:"])
         lines.extend(f"- {tag}" for tag in result.missing_affix_tags[:20])
+    if result.missing_unique_tags:
+        lines.extend(["", "Missing unique-tag sample:"])
+        lines.extend(f"- {tag}" for tag in result.missing_unique_tags[:20])
     return "\n".join(lines)

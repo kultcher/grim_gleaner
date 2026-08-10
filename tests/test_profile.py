@@ -77,3 +77,20 @@ def test_profile_masteries_are_exclusive_and_zero_weight_skills_persist() -> Non
     }
     with pytest.raises(ValueError, match="same mastery"):
         profile.set_mastery(1, "playerclass01")
+
+
+def test_resistance_cap_weights_inherit_until_explicitly_overridden() -> None:
+    profile = BuildProfile(weights={"fire_resistance": 4})
+
+    assert profile.resistance_cap_weight_for("fire_resistance") == 4
+    assert profile.resistance_cap_weights == {}
+
+    profile.resistance_cap_enabled = True
+    profile.set_resistance_cap_weight("fire_resistance", 0)
+    assert profile.weight_for("fire_resistance") == 4
+    assert profile.resistance_cap_weight_for("fire_resistance") == 0
+
+    restored = BuildProfile.from_dict(profile.to_dict())
+    assert restored.resistance_cap_enabled
+    assert restored.resistance_cap_weights == {"fire_resistance": 0}
+    assert restored.resistance_cap_weight_for("fire_resistance") == 0

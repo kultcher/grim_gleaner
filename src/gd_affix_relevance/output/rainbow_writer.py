@@ -7,18 +7,32 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-from gd_affix_relevance.catalog import AffixCatalog
+from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.scoring import (
+    canonical_skill_reference,
+    item_semantic_stat_ids,
     score_semantic_stat_ids,
+    unique_item_type,
     variant_semantic_stat_ids,
 )
 
 UTF8_BOM = b"\xef\xbb\xbf"
 COLOR_CODE_PATTERN = re.compile(r"\{\^[^}]+\}")
 GENERATED_MARKER_PATTERN = re.compile(
-    r"\((?:S\+\+|S\+|S|A|B|C|D|-|—)\*?\d+\)"
+    r"\((?:S\+\+|S\+|S|A|B|C|D|-|—)[*!]{0,2}\d*[*!]{0,2}\)"
 )
+RAINBOW_SET_MARKER_PATTERN = re.compile(
+    r"^(?P<leading>\s*)(?:\{\^E\})?\((?:S|\$)\)"
+)
+MARKER_COLOR = "{^C}"
+DEFAULT_COLOR = "{^E}"
+
+
+@dataclass(frozen=True, slots=True)
+class _MarkerInstruction:
+    marker: str
+    placement: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,8 +51,11 @@ class RainbowGenerationResult:
     files_written: int
     affix_tags_scored: int
     affix_tags_found: int
+    unique_tags_scored: int
+    unique_tags_found: int
     annotated_lines: int
     missing_affix_tags: tuple[str, ...]
+    missing_unique_tags: tuple[str, ...]
     changes: tuple[LocalizationChange, ...]
 
 
@@ -48,25 +65,96 @@ def build_affix_markers(
 ) -> dict[str, str]:
     """Build one conservative marker for each exact affix localization tag."""
 
-    variant_sets_by_tag: dict[str, list[set[str]]] = defaultdict(list)
+    return {
+        tag: instruction.marker
+        for tag, instruction in _build_affix_instructions(catalog, profile).items()
+    }
+
+
+def _build_affix_instructions(
+    catalog: AffixCatalog,
+    profile: BuildProfile,
+) -> dict[str, _MarkerInstruction]:
+    variants_by_tag: dict[str, list[tuple[str, object]]] = defaultdict(list)
     for affix in catalog.affixes:
         for variant in affix.variants:
-            variant_sets_by_tag[affix.localization_tag].append(
-                set(variant_semantic_stat_ids(variant, profile))
-            )
+            variants_by_tag[affix.localization_tag].append((affix.kind, variant))
 
-    markers: dict[str, str] = {}
-    for localization_tag, variant_sets in sorted(variant_sets_by_tag.items()):
+    instructions: dict[str, _MarkerInstruction] = {}
+    for localization_tag, tagged_variants in sorted(variants_by_tag.items()):
+        variant_sets = [
+            set(variant_semantic_stat_ids(variant, profile))
+            for _, variant in tagged_variants
+        ]
         common_stat_ids = tuple(sorted(set.intersection(*variant_sets)))
         score = score_semantic_stat_ids(common_stat_ids, profile)
-        has_variant_difference = any(
-            variant_set != variant_sets[0] for variant_set in variant_sets[1:]
+        has_granted_skill = any(
+            property_.property_id == "granted_item_skill"
+            for _, variant in tagged_variants
+            for property_ in variant.properties
         )
-        ambiguity_marker = "*" if has_variant_difference else ""
-        markers[localization_tag] = (
-            f"({score.grade}{ambiguity_marker}{score.matched_count})"
+        flags = "*" if has_granted_skill else ""
+        kinds = {kind for kind, _ in tagged_variants}
+        placement = "suffix" if kinds == {"suffix"} else "prefix"
+        instructions[localization_tag] = _MarkerInstruction(
+            f"({score.marker_body}{flags})", placement
         )
-    return markers
+    return instructions
+
+
+def build_unique_item_markers(
+    catalog: ItemCatalog,
+    profile: BuildProfile,
+) -> dict[str, str]:
+    """Build markers for MI, epic, and legendary equipment name tags."""
+
+    return {
+        tag: instruction.marker
+        for tag, instruction in _build_unique_instructions(catalog, profile).items()
+    }
+
+
+def _build_unique_instructions(
+    catalog: ItemCatalog,
+    profile: BuildProfile,
+) -> dict[str, _MarkerInstruction]:
+    selected_skills = {
+        canonical_skill_reference(skill_id) for skill_id in profile.skill_weights
+    }
+    instructions: dict[str, _MarkerInstruction] = {}
+    for item in catalog.equipment:
+        candidates = tuple(
+            variant for variant in item.variants if unique_item_type(variant)
+        )
+        if not candidates:
+            continue
+        variant = max(
+            candidates,
+            key=lambda candidate: (
+                candidate.level_requirement,
+                candidate.item_level,
+                score_semantic_stat_ids(
+                    item_semantic_stat_ids(candidate, profile), profile
+                ).rank_key,
+                candidate.record_path,
+            ),
+        )
+        score = score_semantic_stat_ids(
+            item_semantic_stat_ids(variant, profile), profile
+        )
+        flags = ""
+        if variant.granted_skill_reference or variant.granted_skill_name:
+            flags += "*"
+        if any(
+            canonical_skill_reference(modifier.modified_skill_reference)
+            in selected_skills
+            for modifier in variant.skill_modifiers
+        ):
+            flags += "!"
+        instructions[item.localization_tag] = _MarkerInstruction(
+            f"({score.marker_body}{flags})", "prefix"
+        )
+    return instructions
 
 
 def generate_rainbow_output(
@@ -74,8 +162,10 @@ def generate_rainbow_output(
     output_root: Path,
     catalog: AffixCatalog,
     profile: BuildProfile,
+    *,
+    items: ItemCatalog | None = None,
 ) -> RainbowGenerationResult:
-    """Clone a complete localization folder and annotate exact affix tags only."""
+    """Clone complete localization and annotate affix and unique-item tags."""
 
     source = Path(source_root).resolve()
     destination = Path(output_root).resolve()
@@ -88,7 +178,11 @@ def generate_rainbow_output(
     if not source_files:
         raise ValueError(f"localization source contains no files: {source}")
 
-    markers = build_affix_markers(catalog, profile)
+    affix_instructions = _build_affix_instructions(catalog, profile)
+    unique_instructions = _build_unique_instructions(
+        items or ItemCatalog((), (), (), (), (), ()), profile
+    )
+    instructions = {**affix_instructions, **unique_instructions}
     found_tags: set[str] = set()
     changes: list[LocalizationChange] = []
     for source_path in source_files:
@@ -98,7 +192,7 @@ def generate_rainbow_output(
         if source_path.suffix.casefold() == ".txt":
             output_bytes, file_changes, file_found_tags = _annotate_text_bytes(
                 raw_bytes,
-                markers,
+                instructions,
                 relative.as_posix(),
             )
             changes.extend(file_changes)
@@ -107,22 +201,32 @@ def generate_rainbow_output(
             output_bytes = raw_bytes
         _write_bytes_atomically(destination_path, output_bytes)
 
-    missing = tuple(sorted(set(markers) - found_tags, key=str.casefold))
+    found_affix_tags = found_tags & set(affix_instructions)
+    found_unique_tags = found_tags & set(unique_instructions)
+    missing_affixes = tuple(
+        sorted(set(affix_instructions) - found_tags, key=str.casefold)
+    )
+    missing_uniques = tuple(
+        sorted(set(unique_instructions) - found_tags, key=str.casefold)
+    )
     return RainbowGenerationResult(
         source_root=source,
         output_root=destination,
         files_written=len(source_files),
-        affix_tags_scored=len(markers),
-        affix_tags_found=len(found_tags),
+        affix_tags_scored=len(affix_instructions),
+        affix_tags_found=len(found_affix_tags),
+        unique_tags_scored=len(unique_instructions),
+        unique_tags_found=len(found_unique_tags),
         annotated_lines=len(changes),
-        missing_affix_tags=missing,
+        missing_affix_tags=missing_affixes,
+        missing_unique_tags=missing_uniques,
         changes=tuple(changes),
     )
 
 
 def _annotate_text_bytes(
     raw_bytes: bytes,
-    markers: dict[str, str],
+    instructions: dict[str, _MarkerInstruction],
     relative_path: str,
 ) -> tuple[bytes, tuple[LocalizationChange, ...], set[str]]:
     has_bom = raw_bytes.startswith(UTF8_BOM)
@@ -137,14 +241,14 @@ def _annotate_text_bytes(
             output_lines.append(line)
             continue
         tag = body[:separator]
-        marker = markers.get(tag)
-        if marker is None:
+        instruction = instructions.get(tag)
+        if instruction is None:
             output_lines.append(line)
             continue
 
         found_tags.add(tag)
         value = body[separator + 1 :]
-        annotated_value = _replace_generated_marker(value, marker)
+        annotated_value = _replace_generated_marker(value, instruction)
         annotated_body = f"{tag}={annotated_value}"
         output_lines.append(annotated_body + ending)
         if annotated_body != body:
@@ -164,21 +268,49 @@ def _annotate_text_bytes(
     return output, tuple(changes), found_tags
 
 
-def _replace_generated_marker(value: str, marker: str) -> str:
-    color_match = COLOR_CODE_PATTERN.search(value)
-    if color_match is not None:
-        leading = value[: color_match.start()]
-        existing = GENERATED_MARKER_PATTERN.search(leading)
-        if existing is not None:
-            value = value[: existing.start()] + value[existing.end() :]
-            color_match = COLOR_CODE_PATTERN.search(value)
-        insertion_index = color_match.start() if color_match is not None else 0
-        return value[:insertion_index] + marker + value[insertion_index:]
+def _replace_generated_marker(
+    value: str, instruction: _MarkerInstruction
+) -> str:
+    clean_value = _normalize_rainbow_set_marker(
+        _strip_generated_marker(value)
+    )
+    if instruction.placement == "suffix":
+        return f"{clean_value}{MARKER_COLOR}{instruction.marker}"
+    reset = "" if COLOR_CODE_PATTERN.search(clean_value) else DEFAULT_COLOR
+    return f"{MARKER_COLOR}{instruction.marker}{reset}{clean_value}"
 
-    existing = GENERATED_MARKER_PATTERN.match(value)
-    if existing is not None:
-        value = value[existing.end() :]
-    return marker + value
+
+def _strip_generated_marker(value: str) -> str:
+    existing = next(
+        (
+            match
+            for match in GENERATED_MARKER_PATTERN.finditer(value)
+            if match.group() != "(S)"
+            or value[
+                max(0, match.start() - len(MARKER_COLOR)) : match.start()
+            ]
+            == MARKER_COLOR
+        ),
+        None,
+    )
+    if existing is None:
+        return value
+    start, end = existing.span()
+    if value[max(0, start - len(MARKER_COLOR)) : start] == MARKER_COLOR:
+        start -= len(MARKER_COLOR)
+    if value[end : end + len(DEFAULT_COLOR)] == DEFAULT_COLOR:
+        end += len(DEFAULT_COLOR)
+    return value[:start] + value[end:]
+
+
+def _normalize_rainbow_set_marker(value: str) -> str:
+    """Disambiguate Rainbow's set marker and restore its default color."""
+
+    return RAINBOW_SET_MARKER_PATTERN.sub(
+        lambda match: f"{match.group('leading')}{DEFAULT_COLOR}($)",
+        value,
+        count=1,
+    )
 
 
 def _split_line_ending(line: str) -> tuple[str, str]:

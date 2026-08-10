@@ -44,7 +44,7 @@ def base_weapon_damage_stat(damage_type: str, label: str) -> StatDefinition:
 def chance_damage_stat(damage_type: str, label: str) -> StatDefinition:
     return stat(
         f"chance_flat_{damage_type}_damage",
-        f"Chance of {label} Damage",
+        f"Chance to Deal Flat {label} Damage",
     )
 
 
@@ -74,6 +74,7 @@ DAMAGE_TAB = TabDefinition(
             "Elemental",
             (
                 stat("flat_elemental_damage", "Elemental Damage (Flat)"),
+                chance_damage_stat("elemental", "Elemental"),
                 stat("elemental_damage_percent", "Elemental Damage (+%)"),
                 base_weapon_damage_stat("elemental", "Elemental"),
                 conversion_stat("elemental", "Elemental"),
@@ -87,6 +88,7 @@ DAMAGE_TAB = TabDefinition(
                 stat("acid_damage_percent", "Acid Damage (+%)"),
                 base_weapon_damage_stat("acid", "Acid"),
                 stat("flat_poison_damage", "Poison Damage (Flat DoT)"),
+                chance_damage_stat("poison", "Poison"),
                 stat("poison_damage_percent", "Poison Damage (+% DoT)"),
                 conversion_stat("acid", "Acid"),
             ),
@@ -106,6 +108,7 @@ DAMAGE_TAB = TabDefinition(
             "Bleeding",
             (
                 stat("flat_bleeding_damage", "Bleeding Damage (Flat DoT)"),
+                chance_damage_stat("bleeding", "Bleeding"),
                 stat("bleeding_damage_percent", "Bleeding Damage (+% DoT)"),
             ),
         ),
@@ -128,6 +131,7 @@ DAMAGE_TAB = TabDefinition(
             "Chaos",
             (
                 stat("flat_chaos_damage", "Chaos Damage (Flat)"),
+                chance_damage_stat("chaos", "Chaos"),
                 stat("chaos_damage_percent", "Chaos Damage (+%)"),
                 base_weapon_damage_stat("chaos", "Chaos"),
                 conversion_stat("chaos", "Chaos"),
@@ -141,6 +145,7 @@ DAMAGE_TAB = TabDefinition(
                 stat("cold_damage_percent", "Cold Damage (+%)"),
                 base_weapon_damage_stat("cold", "Cold"),
                 stat("flat_frostburn_damage", "Frostburn Damage (Flat DoT)"),
+                chance_damage_stat("frostburn", "Frostburn"),
                 stat("frostburn_damage_percent", "Frostburn Damage (+% DoT)"),
                 conversion_stat("cold", "Cold"),
             ),
@@ -153,6 +158,7 @@ DAMAGE_TAB = TabDefinition(
                 stat("lightning_damage_percent", "Lightning Damage (+%)"),
                 base_weapon_damage_stat("lightning", "Lightning"),
                 stat("flat_electrocute_damage", "Electrocute Damage (Flat DoT)"),
+                chance_damage_stat("electrocute", "Electrocute"),
                 stat("electrocute_damage_percent", "Electrocute Damage (+% DoT)"),
                 conversion_stat("lightning", "Lightning"),
             ),
@@ -166,6 +172,7 @@ DAMAGE_TAB = TabDefinition(
                 stat("physical_damage_percent", "Physical Damage (+%)"),
                 base_weapon_damage_stat("physical", "Physical"),
                 stat("flat_internal_trauma_damage", "Internal Trauma (Flat DoT)"),
+                chance_damage_stat("internal_trauma", "Internal Trauma"),
                 stat("internal_trauma_damage_percent", "Internal Trauma (+% DoT)"),
                 conversion_stat("physical", "Physical"),
             ),
@@ -190,6 +197,7 @@ DAMAGE_TAB = TabDefinition(
                 stat("vitality_damage_percent", "Vitality Damage (+%)"),
                 base_weapon_damage_stat("vitality", "Vitality"),
                 stat("flat_vitality_decay_damage", "Vitality Decay (Flat DoT)"),
+                chance_damage_stat("vitality_decay", "Vitality Decay"),
                 stat("vitality_decay_damage_percent", "Vitality Decay (+% DoT)"),
                 conversion_stat("vitality", "Vitality"),
             ),

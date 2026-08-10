@@ -70,6 +70,8 @@ def test_unique_ranking_uses_highest_variant_and_flags_selected_skill_modifier()
         record_path="records/items/gearhead/b001b_head.dbr",
         item_level=94,
         level_requirement=84,
+        granted_skill_reference="records/skills/itemskills/granted.dbr",
+        granted_skill_name="Granted Skill",
         skill_modifiers=(
             ItemSkillModifier(
                 modifier_skill_id, "Cadence", "modifier.dbr", (), ()
@@ -92,7 +94,44 @@ def test_unique_ranking_uses_highest_variant_and_flags_selected_skill_modifier()
     assert matches[0].item_type == "monster_infrequent"
     assert matches[0].variant.acquisition_source == "Specific Monster Drop"
     assert matches[0].has_selected_skill_modifier
-    assert matches[0].marker == "[C†1]"
+    assert matches[0].marker == "[C1*!]"
+
+
+def test_selected_skill_modifier_uses_skill_weight_and_ignores_unselected() -> None:
+    selected_skill = "records/skills/playerclass01/cadence1_buff.dbr"
+    selected_modifier = "records/skills/playerclass01/cadence1.dbr"
+    unused_modifier = "records/skills/playerclass02/firestrike1.dbr"
+    variant = _variant(
+        skill_modifiers=(
+            ItemSkillModifier(
+                selected_modifier, "Cadence", "cadence_modifier.dbr", (), ()
+            ),
+            ItemSkillModifier(
+                unused_modifier, "Fire Strike", "fire_modifier.dbr", (), ()
+            ),
+        ),
+    )
+    profile = BuildProfile(skill_weights={selected_skill: 3})
+
+    semantic_ids = item_semantic_stat_ids(variant, profile)
+
+    assert f"skill_modifier:{selected_modifier}" in semantic_ids
+    assert f"skill_modifier:{unused_modifier}" not in semantic_ids
+
+    matches = rank_unique_items_for_slot(
+        ItemCatalog((_item("Modifier Helm", variant),), (), (), (), (), ()),
+        profile,
+        slot_id=SLOT_HEAD,
+        minimum_grade="D",
+    )
+
+    assert len(matches) == 1
+    assert matches[0].score.weighted_match == 3
+    assert matches[0].score.matched_stat_ids == (
+        f"skill_modifier:{selected_modifier}",
+    )
+    assert matches[0].has_selected_skill_modifier
+    assert matches[0].marker.endswith("!]")
 
 
 def test_unique_ranking_filters_types_and_excludes_items_below_b_grade() -> None:
@@ -211,6 +250,14 @@ def test_item_semantics_ignore_base_attack_speed_and_alias_buff_skill_ranks() ->
         properties=(
             ItemProperty("base_attack_speed", "base_attack_speed", {}),
             ItemProperty(
+                "granted_item_skill",
+                "granted_item_skill",
+                {
+                    "skill_reference": "records/skills/itemskills/example.dbr",
+                    "display_name": "Example Skill",
+                },
+            ),
+            ItemProperty(
                 "skill_bonus",
                 "skill_bonus:1",
                 {"skill_reference": base_skill},
@@ -219,6 +266,9 @@ def test_item_semantics_ignore_base_attack_speed_and_alias_buff_skill_ranks() ->
     )
     semantic_ids = item_semantic_stat_ids(variant)
     assert "base_attack_speed" not in semantic_ids
+    assert not any(
+        stat_id.startswith("granted_item_skill:") for stat_id in semantic_ids
+    )
 
     catalog = ItemCatalog((_item("Storm Item", variant),), (), (), (), (), ())
     matches = rank_unique_items_for_slot(
