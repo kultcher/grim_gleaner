@@ -192,6 +192,55 @@ def test_writer_rejects_overlapping_source_and_output(tmp_path: Path) -> None:
         )
 
 
+def test_writer_prefers_primary_files_and_fills_missing_files_from_fallback(
+    tmp_path: Path,
+) -> None:
+    installed = tmp_path / "game" / "settings" / "text_en"
+    bundled = tmp_path / "app" / "tags"
+    installed.mkdir(parents=True)
+    bundled.mkdir(parents=True)
+    (installed / "tags_items.txt").write_text(
+        "tagAffix={^G}Rainbow Name\n",
+        encoding="utf-8",
+    )
+    (installed / "rainbow-extra.txt").write_text(
+        "tagExtra=Keep Me\n",
+        encoding="utf-8",
+    )
+    (bundled / "tags_items.txt").write_text(
+        "tagAffix=Bundled Name\n",
+        encoding="utf-8",
+    )
+    (bundled / "tagsgdx3_items.txt").write_text(
+        "tagExpansion=Expansion Name\n",
+        encoding="utf-8",
+    )
+    catalog = AffixCatalog(
+        (_affix("tagAffix", "Affix Name", _variant("health")),)
+    )
+    output = tmp_path / "output"
+
+    result = generate_rainbow_output(
+        installed,
+        output,
+        catalog,
+        BuildProfile("Health", {"health": 4}),
+        fallback_source_root=bundled,
+    )
+
+    assert "{^G}Rainbow Name" in (output / "tags_items.txt").read_text(
+        encoding="utf-8"
+    )
+    assert "Bundled Name" not in (output / "tags_items.txt").read_text(
+        encoding="utf-8"
+    )
+    assert (output / "tagsgdx3_items.txt").is_file()
+    assert (output / "rainbow-extra.txt").is_file()
+    assert result.files_written == 3
+    assert result.source_root == installed.resolve()
+    assert result.fallback_source_root == bundled.resolve()
+
+
 def test_marker_scoring_respects_conversion_source_filters() -> None:
     conversion = AffixProperty(
         "damage_conversion",
@@ -215,7 +264,7 @@ def test_marker_scoring_respects_conversion_source_filters() -> None:
 
     assert build_affix_markers(catalog, profile)["tagConversion"] == "(C1)"
     profile.set_conversion_source_enabled("fire", "physical", False)
-    assert build_affix_markers(catalog, profile)["tagConversion"] == "(-0)"
+    assert build_affix_markers(catalog, profile)["tagConversion"] == "(F0)"
 
 
 def test_markers_omit_high_s_counts_and_flag_granted_affix_skills() -> None:

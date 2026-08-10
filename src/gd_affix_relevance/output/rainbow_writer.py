@@ -20,7 +20,7 @@ from gd_affix_relevance.scoring import (
 UTF8_BOM = b"\xef\xbb\xbf"
 COLOR_CODE_PATTERN = re.compile(r"\{\^[^}]+\}")
 GENERATED_MARKER_PATTERN = re.compile(
-    r"\((?:S\+\+|S\+|S|A|B|C|D|-|—)[*!]{0,2}\d*[*!]{0,2}\)"
+    r"\((?:S\+\+|S\+|S|A|B|C|D|F|-|—)[*!]{0,2}\d*[*!]{0,2}\)"
 )
 RAINBOW_SET_MARKER_PATTERN = re.compile(
     r"^(?P<leading>\s*)(?:\{\^E\})?\((?:S|\$)\)"
@@ -57,6 +57,7 @@ class RainbowGenerationResult:
     missing_affix_tags: tuple[str, ...]
     missing_unique_tags: tuple[str, ...]
     changes: tuple[LocalizationChange, ...]
+    fallback_source_root: Path | None = None
 
 
 def build_affix_markers(
@@ -164,8 +165,14 @@ def generate_rainbow_output(
     profile: BuildProfile,
     *,
     items: ItemCatalog | None = None,
+    fallback_source_root: Path | None = None,
 ) -> RainbowGenerationResult:
-    """Clone complete localization and annotate affix and unique-item tags."""
+    """Clone merged localization and annotate affix and unique-item tags.
+
+    Files from ``source_root`` take precedence. The optional fallback supplies
+    only relative paths absent from the primary source, allowing an installed
+    Rainbow setup to override the bundled clean-install item tags per file.
+    """
 
     source = Path(source_root).resolve()
     destination = Path(output_root).resolve()
@@ -174,9 +181,22 @@ def generate_rainbow_output(
     if _paths_overlap(source, destination):
         raise ValueError("source and output directories must not overlap")
 
-    source_files = tuple(sorted(path for path in source.rglob("*") if path.is_file()))
+    fallback = (
+        Path(fallback_source_root).resolve()
+        if fallback_source_root is not None
+        else None
+    )
+    if fallback is not None:
+        if not fallback.is_dir():
+            raise ValueError(
+                f"fallback localization source is not a directory: {fallback}"
+            )
+        if _paths_overlap(fallback, destination):
+            raise ValueError("fallback source and output directories must not overlap")
+
+    source_files = _merged_source_files(source, fallback)
     if not source_files:
-        raise ValueError(f"localization source contains no files: {source}")
+        raise ValueError("localization sources contain no files")
 
     affix_instructions = _build_affix_instructions(catalog, profile)
     unique_instructions = _build_unique_instructions(
@@ -185,8 +205,7 @@ def generate_rainbow_output(
     instructions = {**affix_instructions, **unique_instructions}
     found_tags: set[str] = set()
     changes: list[LocalizationChange] = []
-    for source_path in source_files:
-        relative = source_path.relative_to(source)
+    for source_path, relative in source_files:
         destination_path = destination / relative
         raw_bytes = source_path.read_bytes()
         if source_path.suffix.casefold() == ".txt":
@@ -221,7 +240,22 @@ def generate_rainbow_output(
         missing_affix_tags=missing_affixes,
         missing_unique_tags=missing_uniques,
         changes=tuple(changes),
+        fallback_source_root=fallback,
     )
+
+
+def _merged_source_files(
+    primary: Path,
+    fallback: Path | None,
+) -> tuple[tuple[Path, Path], ...]:
+    selected: dict[str, tuple[Path, Path]] = {}
+    for root in (fallback, primary):
+        if root is None:
+            continue
+        for path in sorted(candidate for candidate in root.rglob("*") if candidate.is_file()):
+            relative = path.relative_to(root)
+            selected[relative.as_posix().casefold()] = (path, relative)
+    return tuple(selected[key] for key in sorted(selected))
 
 
 def _annotate_text_bytes(

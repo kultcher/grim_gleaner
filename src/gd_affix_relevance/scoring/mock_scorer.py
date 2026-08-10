@@ -196,4 +196,4 @@ def _grade_for_weighted_match(weighted_match: int) -> str:
         return "C"
     if weighted_match >= 1:
         return "D"
-    return "—"
+    return "F"

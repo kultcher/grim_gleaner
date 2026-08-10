@@ -17,7 +17,10 @@ by what you might want to change, rather than by the program's architecture.
 | Skills page layout or mastery-change warning | `src/gd_affix_relevance/ui/skills_editor.py` | `MasteryPanel`, `SkillsEditor` |
 | Profile toolbar, Save/Load/New, or page hints | `src/gd_affix_relevance/ui/profile_editor.py` | `ProfileEditor` |
 | Main left navigation or page ordering | `src/gd_affix_relevance/ui/main_window.py` | `MainWindow.__init__()`, `_add_navigation_item()` |
-| Generate Output screen text or preview | `src/gd_affix_relevance/ui/generate_output.py` | `GenerateOutputPage`, `_format_preview()` |
+| In-app usage or limitations copy | `src/gd_affix_relevance/ui/guide.py` | `GuidePage` |
+| Export Grades screen text or confirmations | `src/gd_affix_relevance/ui/generate_output.py` | `GenerateOutputPage.generate()`, `restore_backup()` |
+| Export installation, backup, or restore behavior | `src/gd_affix_relevance/grade_export.py` | `export_grades_to_game()`, `restore_game_backup()` |
+| Settings fields and persistence | `src/gd_affix_relevance/ui/settings.py` | `SettingsPage`, `GAME_FOLDER_SETTING` |
 | Actual `tags*_items.txt` annotation behavior | `src/gd_affix_relevance/output/rainbow_writer.py` | `generate_rainbow_output()` |
 | Grades, coverage, and weight math | `src/gd_affix_relevance/scoring/catalog_scorer.py` | `GRADE_THRESHOLDS`, `score_semantic_stat_ids()`, `_points_for_weight()` |
 | Which fixed items enter the Uniques results | `src/gd_affix_relevance/scoring/item_scorer.py` | `unique_item_type()`, `rank_unique_items_for_slot()` |

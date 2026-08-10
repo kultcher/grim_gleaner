@@ -1,9 +1,11 @@
 TO DO:
-- Resist cap mode: automatically changing eval even when nothing is rated?
-- add sidebar entries for subtabs
-- fix up output screen
-- app-level: include an "Ungrade" standalone script
+- maybe just bundle rarity colors anyway
 - coverage should probably exclude 1-rated items
+- use tags_uimain to modify tagRDifficultyTitles to maybe display current profile info
+- check idempotence protections
+- maybe some kind of notifier if files changed externally?
+- finalize recommendation text for weights
+- somehow track unwanted negative conversions?
 
 STRETCH:
 - stretch: properly evaluated skill modifiers weight assignments (currently naive)
@@ -18,6 +20,9 @@ STRETCH:
 LOW PRIORITY:
 - save item slot visibility prefs with profile save
 - re-evaluate approach to Rainbow's (S)
+- app-level: include an "Ungrade" standalone script instead of just backup?
+- If no actual changes, skip "Exported grades to..."
+- maintainability organization and planning
 
 NOTES/EXPLORATIONS: 
 - start considering distribution concerns

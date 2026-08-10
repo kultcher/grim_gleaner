@@ -335,7 +335,7 @@ class AddonSlotTable(QTableWidget):
         self._updating = False
         self.setObjectName("addonSlotTable")
         metadata_label = (
-            "Source" if addon_type == ADDON_COMPONENT else "Faction"
+            "Faction / Source" if addon_type == ADDON_COMPONENT else "Faction"
         )
         self.setHorizontalHeaderLabels(
             (
@@ -370,13 +370,29 @@ class AddonSlotTable(QTableWidget):
                 if match.has_selected_skill_modifier
                 else "rank" if has_rank_bonus else ""
             )
-            metadata = (
-                match.variant.acquisition_source
-                if match.addon_type == ADDON_COMPONENT
-                else match.variant.faction_name
-                or match.variant.faction_source
-                or "Unknown"
-            )
+            if match.addon_type == ADDON_COMPONENT:
+                factions = tuple(
+                    dict.fromkeys(
+                        source.faction_name or source.faction_source
+                        for source in match.variant.vendor_sources
+                        if source.faction_name or source.faction_source
+                    )
+                )
+                faction_text = ", ".join(factions)
+                source = match.variant.acquisition_source
+                if faction_text and "Random Blueprint" in source:
+                    extras = ["Random Blueprint"]
+                    if "Special Vendor" in source:
+                        extras.append("Special Vendor")
+                    metadata = f"{faction_text} / {' / '.join(extras)}"
+                else:
+                    metadata = faction_text or source
+            else:
+                metadata = (
+                    match.variant.faction_name
+                    or match.variant.faction_source
+                    or "Unknown"
+                )
             values = (
                 match.marker,
                 match.item.display_name,
@@ -580,7 +596,7 @@ class TopMatchesPage(QWidget):
         layout.setSpacing(12)
 
         heading_row = QHBoxLayout()
-        heading = QLabel("Top Gear Matches", self)
+        heading = QLabel("Gear Grades", self)
         heading.setObjectName("pageTitle")
         heading_row.addWidget(heading)
         heading_row.addStretch()
@@ -1408,6 +1424,7 @@ class TopMatchesPage(QWidget):
             for other in self.addon_tables.values():
                 if other is not table:
                     other.clearSelection()
+                    other.setCurrentCell(-1, -1)
             self._selected_addon_table = table
         score = match.score
         matched_ids = set(score.matched_stat_ids)
@@ -1485,7 +1502,7 @@ class TopMatchesPage(QWidget):
                 f"{source.faction_name} ({source.reputation})"
                 for source in match.variant.vendor_sources
             )
-            html.append(_html_line(f"Faction vendor: {vendors}"))
+            html.append(_html_line(f"Recipe sold by: {vendors}"))
         html.extend(
             (
                 _html_line(f"Source: {match.variant.acquisition_source}"),

@@ -139,6 +139,9 @@ def compile_item_payloads(
 
     records = _discover_records(root, source_names)
     crafted_item_paths = _discover_crafted_item_paths(root, source_names)
+    random_blueprint_item_paths, special_vendor_blueprint_item_paths = (
+        _discover_component_blueprint_distribution(root, source_names, resolver)
+    )
     faction_vendor_sources = _discover_faction_vendor_sources(
         root, source_names, resolver
     )
@@ -292,6 +295,10 @@ def compile_item_payloads(
                     crafted_item_paths,
                     faction_source,
                     bool(vendor_sources) and family == "components",
+                    family == "components"
+                    and logical_path in random_blueprint_item_paths,
+                    family == "components"
+                    and logical_path in special_vendor_blueprint_item_paths,
                 ),
                 "faction_source": faction_source,
                 "faction_name": faction_name,
@@ -369,19 +376,90 @@ def _discover_crafted_item_paths(
     return frozenset(targets)
 
 
+def _discover_component_blueprint_distribution(
+    data_root: Path,
+    source_names: tuple[str, ...],
+    resolver: RecordResolver,
+) -> tuple[frozenset[str], frozenset[str]]:
+    """Find component recipes distributed as drops or by special vendors.
+
+    Every blacksmith recipe has a blueprint record, including recipes known by
+    default.  Placement of that record in a blueprint loot table distinguishes
+    discoverable recipes from the default recipe list.  Non-faction vendor
+    tables are retained separately so they are not reported as random drops.
+    """
+
+    random_targets: set[str] = set()
+    vendor_targets: set[str] = set()
+    for source in source_names:
+        table_root = (
+            data_root
+            / source
+            / "records"
+            / "items"
+            / "loottables"
+            / "blueprints"
+        )
+        if not table_root.is_dir():
+            continue
+        for path in table_root.rglob("*.dbr"):
+            destination = (
+                vendor_targets
+                if "vendor" in path.stem.casefold()
+                else random_targets
+            )
+            table = parse_dbr_file(path)
+            for field in table.fields:
+                for raw_reference in field.value.split(";"):
+                    reference = raw_reference.strip().lower().replace("\\", "/")
+                    if (
+                        "/crafting/blueprints/component/" not in reference
+                        or not reference.endswith(".dbr")
+                    ):
+                        continue
+                    resolved = resolver.resolve(reference, source)
+                    if resolved is None:
+                        continue
+                    _, blueprint = resolved
+                    target = (
+                        blueprint.first_value("artifactName")
+                        or blueprint.first_value("forcedRandomArtifactName")
+                        or ""
+                    ).strip().lower().replace("\\", "/")
+                    if target.startswith("records/items/") and target.endswith(
+                        ".dbr"
+                    ):
+                        destination.add(target)
+    return frozenset(random_targets), frozenset(vendor_targets)
+
+
 def _acquisition_source(
     logical_path: str,
     category: str,
     crafted_item_paths: frozenset[str],
     faction_source: str = "",
     faction_component_vendor: bool = False,
+    random_component_blueprint: bool = False,
+    special_vendor_component_blueprint: bool = False,
 ) -> str:
     if category == "faction" or faction_source:
         return "Purchased"
+    if random_component_blueprint and special_vendor_component_blueprint:
+        if faction_component_vendor:
+            return "Random Blueprint / Special Vendor / Faction Vendor"
+        return "Random Blueprint / Special Vendor"
+    if random_component_blueprint and faction_component_vendor:
+        return "Random Blueprint / Faction Vendor"
+    if random_component_blueprint:
+        return "Random Blueprint"
+    if special_vendor_component_blueprint:
+        return "Special Vendor Blueprint"
     if faction_component_vendor and logical_path in crafted_item_paths:
-        return "Crafted / Faction Vendor"
+        return "Faction Vendor Blueprint"
     if faction_component_vendor:
         return "Faction Vendor"
+    if category == "component" and logical_path in crafted_item_paths:
+        return "Default Recipe"
     if category == "crafted" or logical_path in crafted_item_paths:
         return "Crafted"
     if category == "monster_infrequent":

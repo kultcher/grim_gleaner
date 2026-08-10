@@ -36,6 +36,8 @@ from gd_affix_relevance.normalization.affix_reachability import (
 )
 from gd_affix_relevance.profile_store import load_profile
 from gd_affix_relevance.output import generate_rainbow_output
+from gd_affix_relevance.release_assembly import assemble_release
+from gd_affix_relevance.runtime_paths import resolve_runtime_paths
 from gd_affix_relevance.scoring import (
     format_ranked_catalog_report,
     rank_affix_catalog,
@@ -132,6 +134,11 @@ def build_parser() -> argparse.ArgumentParser:
     generate.add_argument("--catalog-root", type=Path, required=True)
     generate.add_argument("--profile-file", type=Path, required=True)
     generate.add_argument("--source-root", type=Path, required=True)
+    generate.add_argument(
+        "--fallback-source-root",
+        type=Path,
+        help="optional bundled source used for files absent from source-root",
+    )
     generate.add_argument("--output-dir", type=Path, required=True)
 
     item_audit = subparsers.add_parser(
@@ -178,6 +185,25 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional directory containing complete files to compare by tag key",
     )
     item_tags.add_argument("--output-dir", type=Path, required=True)
+
+    paths = subparsers.add_parser(
+        "show-runtime-paths",
+        help="show the resource paths used in development or a staged release",
+    )
+    paths.add_argument(
+        "--application-root",
+        type=Path,
+        help="use the packaged layout rooted at this directory",
+    )
+
+    release = subparsers.add_parser(
+        "assemble-release",
+        help="validate and copy runtime resources into a release directory",
+    )
+    release.add_argument("--project-root", type=Path, default=Path.cwd())
+    release.add_argument("--output-dir", type=Path)
+    release.add_argument("--catalog-root", type=Path)
+    release.add_argument("--data-root", type=Path)
     return parser
 
 
@@ -295,6 +321,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             bundle.affixes,
             profile,
             items=bundle.items,
+            fallback_source_root=args.fallback_source_root,
         )
         print(
             json.dumps(
@@ -369,6 +396,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                 indent=2,
             )
         )
+        return 0
+    if args.command == "show-runtime-paths":
+        runtime_paths = resolve_runtime_paths(application_root=args.application_root)
+        print(json.dumps(runtime_paths.as_dict(), indent=2))
+        return 0
+    if args.command == "assemble-release":
+        result = assemble_release(
+            args.project_root,
+            output_root=args.output_dir,
+            catalog_root=args.catalog_root,
+            data_root=args.data_root,
+        )
+        print(json.dumps(result.as_dict(), indent=2))
         return 0
     return 2
 

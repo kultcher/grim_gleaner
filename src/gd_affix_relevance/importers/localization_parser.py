@@ -10,6 +10,7 @@ from gd_affix_relevance.domain import LocalizationEntry
 
 COLOR_CODE_PATTERN = re.compile(r"\{\^[^}]+\}")
 RAINBOW_LEADING_MARKER_PATTERN = re.compile(r"^(?:XY|X|Y)(?=\{\^[^}]+\})")
+LEGACY_CONTROL_CODE_PATTERN = re.compile(r"\^[A-Za-z]")
 
 
 def parse_localization_text(
@@ -77,8 +78,8 @@ def first_entry_lookup(
 
 
 def plain_display_name(value: str) -> str:
-    """Remove Rainbow control prefixes and color codes for report display only."""
+    """Remove game and Rainbow control codes for report display only."""
 
     without_marker = RAINBOW_LEADING_MARKER_PATTERN.sub("", value, count=1)
-    return COLOR_CODE_PATTERN.sub("", without_marker).strip()
-
+    without_colors = COLOR_CODE_PATTERN.sub("", without_marker)
+    return LEGACY_CONTROL_CODE_PATTERN.sub("", without_colors).strip()

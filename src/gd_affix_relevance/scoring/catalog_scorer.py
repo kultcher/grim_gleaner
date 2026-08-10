@@ -461,7 +461,7 @@ def _grade_for_effective_score(effective_score: float) -> str:
     for grade, threshold in GRADE_THRESHOLDS.items():
         if effective_score >= threshold:
             return grade
-    return "-"
+    return "F"
 
 
 def _humanize(stat_id: str) -> str:

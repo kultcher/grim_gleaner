@@ -140,9 +140,11 @@ Drop`, and other equipment defaults to `Random Drop`. Referenced pet-bonus
 records are expanded into individual `pet_*` properties so unique-equipment
 scoring can reuse the same pet weights as affix scoring.
 
-Component variants use the same broad source field: records referenced by a
-blueprint are `Crafted`, while the remainder currently default to `Random
-Drop`. When faction merchant tables are present, direct component offers and
+Component recipes distinguish `Default Recipe`, `Random Blueprint`, `Special
+Vendor Blueprint`, and faction-vendor blueprint availability. This requires
+checking where each recipe blueprint is referenced: blueprint-record existence
+alone is insufficient because recipes known by default also use blueprint
+records. When faction merchant tables are present, direct component offers and
 offered blueprints compile to structured faction and reputation sources.
 Augments retain their raw DBR
 `factionSource`, its official localized faction name, and `Purchased`

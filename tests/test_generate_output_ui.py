@@ -3,7 +3,8 @@ from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QSettings
+from PySide6.QtWidgets import QApplication, QMessageBox
 
 from gd_affix_relevance.catalog import (
     AffixCatalog,
@@ -19,16 +20,7 @@ def _application() -> QApplication:
     return QApplication.instance() or QApplication([])
 
 
-def test_generate_page_writes_staging_folder_and_shows_preview(
-    tmp_path: Path,
-) -> None:
-    _application()
-    source = tmp_path / "source"
-    source.mkdir()
-    (source / "tags_items.txt").write_text(
-        "tagHealthy={^G}Healthy\ntagBase={^B}Base Item\n",
-        encoding="utf-8",
-    )
+def _catalog() -> AffixCatalog:
     variant = AffixVariantDefinition(
         gear_slot="Ring",
         level_requirements=(5,),
@@ -38,7 +30,7 @@ def test_generate_page_writes_staging_folder_and_shows_preview(
         source_record_count=1,
         stat_layout_count=1,
     )
-    catalog = AffixCatalog(
+    return AffixCatalog(
         (
             AffixDefinition(
                 affix_id="prefix:healthy",
@@ -49,21 +41,117 @@ def test_generate_page_writes_staging_folder_and_shows_preview(
             ),
         )
     )
-    output = tmp_path / "generated" / "text_en"
-    page = GenerateOutputPage(
-        catalog,
-        BuildProfile("Health", {"health": 4}),
-        source_root=source,
-        output_root=output,
+
+
+def _page(tmp_path: Path, game: Path, bundled: Path) -> GenerateOutputPage:
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
     )
+    settings.setValue("paths/grim_dawn_folder", str(game))
+    return GenerateOutputPage(
+        _catalog(),
+        BuildProfile("Health", {"health": 4}),
+        source_root=bundled,
+        output_root=tmp_path / "staging" / "text_en",
+        backups_root=tmp_path / "backups",
+        settings=settings,
+    )
+
+
+def test_export_page_installs_grades_and_restores_original(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    _application()
+    bundled = tmp_path / "app" / "tags"
+    bundled.mkdir(parents=True)
+    (bundled / "tags_items.txt").write_text(
+        "tagHealthy=Bundled Healthy\n",
+        encoding="utf-8",
+    )
+    game = tmp_path / "Grim Dawn"
+    installed = game / "settings" / "text_en"
+    installed.mkdir(parents=True)
+    original = "tagHealthy={^G}Rainbow Healthy\ntagOther=Keep Me\n"
+    (installed / "tags_items.txt").write_text(original, encoding="utf-8")
+    page = _page(tmp_path, game, bundled)
+    assert page.last_exported_profile.text() == "None"
+    questions: list[str] = []
+
+    def confirm(_parent, _title, message, *_args):
+        questions.append(message)
+        return QMessageBox.StandardButton.Yes
+
+    monkeypatch.setattr(QMessageBox, "question", confirm)
 
     page.generate()
 
     assert page.last_result is not None
-    assert "tagHealthy={^C}(C1){^G}Healthy" in (
-        output / "tags_items.txt"
+    assert "About to apply grade tags to 1 affix and 0 unique item entries" in questions[0]
+    assert "tagHealthy={^C}(C1){^G}Rainbow Healthy" in (
+        installed / "tags_items.txt"
     ).read_text(encoding="utf-8")
-    assert "tagBase={^B}Base Item" in (
-        output / "tags_items.txt"
+    assert page.restore_button.isEnabled()
+    assert "Created the original-state backup" in page.status.text()
+    assert page.last_exported_profile.text() == "Health"
+    assert page.settings.value("export/last_profile_name") == "Health"
+
+    page.restore_backup()
+
+    assert questions[1].startswith(
+        "Restoring Grim Dawn/settings/text_en folder to original state."
+    )
+    assert (installed / "tags_items.txt").read_text(encoding="utf-8") == original
+    assert not page.restore_button.isEnabled()
+
+
+def test_export_page_uses_bundled_tags_for_clean_install(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    _application()
+    bundled = tmp_path / "app" / "tags"
+    bundled.mkdir(parents=True)
+    (bundled / "tags_items.txt").write_text(
+        "tagHealthy=Bundled Healthy\n",
+        encoding="utf-8",
+    )
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    page = _page(tmp_path, game, bundled)
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *_args: QMessageBox.StandardButton.Yes,
+    )
+
+    page.generate()
+
+    installed = game / "settings" / "text_en"
+    assert "tagHealthy={^C}(C1){^E}Bundled Healthy" in (
+        installed / "tags_items.txt"
     ).read_text(encoding="utf-8")
-    assert "Localization lines changed: 1" in page.preview.toPlainText()
+
+    page.restore_backup()
+
+    assert not installed.exists()
+    assert "clean-install state" in page.status.text()
+
+
+def test_export_page_requires_configured_game_folder(tmp_path: Path) -> None:
+    _application()
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
+    )
+    page = GenerateOutputPage(
+        _catalog(),
+        BuildProfile(),
+        source_root=tmp_path / "tags",
+        output_root=tmp_path / "staging" / "text_en",
+        backups_root=tmp_path / "backups",
+        settings=settings,
+    )
+
+    assert not page.generate_button.isEnabled()
+    assert not page.restore_button.isEnabled()
+    assert "Set a valid Grim Dawn folder" in page.target_label.text()

@@ -30,11 +30,50 @@ until redistribution terms and the release packaging policy are settled.
 .\.venv\Scripts\grim-gleaner-ui.exe
 ```
 
+## Assemble the release staging folder
+
+The application resolves development resources from `artifacts/`. A packaged
+executable instead resolves `catalog/`, `tags/`, `Profiles/`,
+`staging/text_en/`, and `backups/` relative to the directory containing the
+executable, regardless of the user's current working directory.
+
+Inspect either layout with:
+
+```powershell
+.\.venv\Scripts\python.exe -m gd_affix_relevance.cli show-runtime-paths
+.\.venv\Scripts\python.exe -m gd_affix_relevance.cli show-runtime-paths `
+  --application-root "dist\Grim Gleaner"
+```
+
+Validate the compiled catalog and all four official item-tag files, then copy
+the runtime resources into the default `dist/Grim Gleaner` directory with:
+
+```powershell
+.\.venv\Scripts\python.exe -m gd_affix_relevance.cli assemble-release `
+  --project-root .
+```
+
+The destination can be overridden with `--output-dir`; `--catalog-root` and
+`--data-root` are also available for nonstandard source layouts. Reassembly
+replaces only `catalog/`, `tags/`, the release README, optional license/notice
+files, and `release-manifest.json`. It preserves a built executable, its
+dependency directory, `Profiles/`, `staging/`, `backups/`, and any other
+unmanaged paths.
+
+To launch the ordinary Python UI against the assembled resources before an
+executable exists:
+
+```powershell
+$env:GRIM_GLEANER_APP_ROOT = (Resolve-Path "dist\Grim Gleaner")
+.\.venv\Scripts\python.exe -m gd_affix_relevance.ui.app
+Remove-Item Env:GRIM_GLEANER_APP_ROOT
+```
+
 The current UI provides the data-driven profile editor with 0–4 star weights,
 package-wide weight controls, discoverable package accordions, three pet-stat
 packages, and a two-mastery Skills editor. It remembers the last saved or loaded
 profile, supports a fully blank New Profile action, and provides a direct View
-Matches button. Its Top Matches view ranks both affixes and fixed unique-item
+Matches button. Its Gear Grades view ranks both affixes and fixed unique-item
 stats against the active profile for every atomic gear slot. Affixes use paired
 prefix/suffix tables; Monster Infrequents, epics, and legendaries use a single
 minimum-grade-filtered table per slot with basic acquisition-source labels.
@@ -44,9 +83,23 @@ Their fold-down Resistance Cap Mode can temporarily override resistance weights
 for add-on ranking without changing the main resistance weights or the
 Affixes/Uniques results. Its enabled state and independently edited overrides
 are saved with the profile; untouched rows inherit their main-profile weights.
-Build profiles can be saved to and loaded from user-selected JSON files.
-The Generate Output page creates a complete, graded Rainbow `text_en` staging
-folder for manual installation.
+Build profiles can be saved to and loaded from user-selected JSON files. Gear
+Grades provides indented navigation shortcuts for its Affixes, Uniques, and
+Add-ons tabs. The Export Grades page applies a complete graded localization
+directly to the configured Grim Dawn installation and can restore the original
+state from its automatic backup. Application Settings retain the configured
+Grim Dawn folder separately from build profiles. Save and Load dialogs default
+to Grim Gleaner's `Profiles` directory. The in-app Guide summarizes the basic
+workflow, grade notation, export behavior, and current limitations.
+
+When exporting grades, Grim Gleaner first checks the configured Grim Dawn
+folder's `settings/text_en` directory for `tags_items.txt` and the expansion
+equivalents. Existing files take precedence individually, preserving an
+installed Rainbow setup; bundled tag files fill any missing base or expansion
+files. If no installed item-tag files exist, the bundled clean-install set is
+used in full. Before the first export for a game installation, Grim Gleaner
+backs up its complete `settings/text_en` state. Re-exports preserve that first
+snapshot, and Restore Backups returns the folder to that state.
 
 Profile files are versioned, human-readable JSON. Ordinary stats with weight 0
 are omitted, while selected build-relevant skills and explicit Resistance Cap

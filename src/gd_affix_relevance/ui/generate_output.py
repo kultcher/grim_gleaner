@@ -1,17 +1,14 @@
-"""Staging-folder generation page for Rainbow-derived localization output."""
+"""Install and restore graded Grim Dawn item localization."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
+from PySide6.QtCore import QSettings
 from PySide6.QtWidgets import (
-    QFileDialog,
-    QFormLayout,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QMessageBox,
-    QPlainTextEdit,
     QPushButton,
     QVBoxLayout,
     QWidget,
@@ -19,7 +16,17 @@ from PySide6.QtWidgets import (
 
 from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import BuildProfile
-from gd_affix_relevance.output import RainbowGenerationResult, generate_rainbow_output
+from gd_affix_relevance.grade_export import (
+    GradeExportResult,
+    backup_available,
+    export_grades_to_game,
+    grim_dawn_text_root,
+    restore_game_backup,
+)
+from gd_affix_relevance.output import build_affix_markers, build_unique_item_markers
+from gd_affix_relevance.ui.settings import GAME_FOLDER_SETTING
+
+LAST_EXPORTED_PROFILE_SETTING = "export/last_profile_name"
 
 
 class GenerateOutputPage(QWidget):
@@ -31,7 +38,9 @@ class GenerateOutputPage(QWidget):
         items: ItemCatalog | None = None,
         source_root: Path,
         output_root: Path,
+        backups_root: Path,
         catalog_status: str = "",
+        settings: QSettings | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -39,40 +48,48 @@ class GenerateOutputPage(QWidget):
         self.items = items or ItemCatalog((), (), (), (), (), ())
         self.profile = profile
         self.catalog_status = catalog_status
-        self.last_result: RainbowGenerationResult | None = None
+        self.settings = settings
+        self.bundled_source_root = Path(source_root)
+        self.staging_root = Path(output_root)
+        self.backups_root = Path(backups_root)
+        self.last_result: GradeExportResult | None = None
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(32, 28, 32, 28)
-        layout.setSpacing(14)
+        layout.setSpacing(16)
 
-        heading = QLabel("Generate Output", self)
+        heading = QLabel("Export Grades", self)
         heading.setObjectName("pageTitle")
         layout.addWidget(heading)
-        hint = QLabel(
-            "Create a complete staging copy of item-localization files with affix "
-            "and unique-item markers for the active profile. This does not write "
-            "to the game folder.",
+
+        explanation = QLabel(
+            "Export Grades applies the active profile's affix and unique-item "
+            "grades directly to Grim Dawn's item names. Existing Rainbow item "
+            "files are retained as the source, while Grim Gleaner's bundled "
+            "files supply anything missing. Before the first export, the "
+            "current text_en folder is backed up so it can be restored here.",
             self,
         )
-        hint.setObjectName("pageHint")
-        hint.setWordWrap(True)
-        layout.addWidget(hint)
+        explanation.setObjectName("pageHint")
+        explanation.setWordWrap(True)
+        layout.addWidget(explanation)
 
-        form = QFormLayout()
-        self.source_edit = QLineEdit(str(source_root), self)
-        self.source_edit.setObjectName("outputPath")
-        form.addRow("Item text_en source", self._path_row(self.source_edit, True))
-        self.output_edit = QLineEdit(str(output_root), self)
-        self.output_edit.setObjectName("outputPath")
-        form.addRow("Staging output folder", self._path_row(self.output_edit, False))
-        layout.addLayout(form)
+        self.target_label = QLabel(self)
+        self.target_label.setObjectName("fieldLabel")
+        self.target_label.setWordWrap(True)
+        layout.addWidget(self.target_label)
 
         action_row = QHBoxLayout()
-        self.generate_button = QPushButton("Generate Staging Folder", self)
+        self.generate_button = QPushButton("Export Grades", self)
         self.generate_button.setObjectName("primaryAction")
         self.generate_button.setEnabled(catalog is not None)
         self.generate_button.clicked.connect(self.generate)
         action_row.addWidget(self.generate_button)
+
+        self.restore_button = QPushButton("Restore Backups", self)
+        self.restore_button.setObjectName("profileAction")
+        self.restore_button.clicked.connect(self.restore_backup)
+        action_row.addWidget(self.restore_button)
         action_row.addStretch()
         layout.addLayout(action_row)
 
@@ -80,94 +97,154 @@ class GenerateOutputPage(QWidget):
         self.status.setObjectName("pageHint")
         self.status.setWordWrap(True)
         if catalog is None:
-            self.status.setText(catalog_status or "No compiled affix catalog is available.")
+            self.status.setText(catalog_status or "No compiled catalog is available.")
         else:
             self.status.setText(catalog_status)
         layout.addWidget(self.status)
 
-        self.preview = QPlainTextEdit(self)
-        self.preview.setObjectName("outputPreview")
-        self.preview.setReadOnly(True)
-        self.preview.setPlaceholderText(
-            "A summary and sample of changed localization lines will appear here."
-        )
-        layout.addWidget(self.preview, 1)
+        last_export_row = QHBoxLayout()
+        last_export_label = QLabel("Last Exported Profile:", self)
+        last_export_label.setObjectName("fieldLabel")
+        last_export_row.addWidget(last_export_label)
+        self.last_exported_profile = QLabel(self._last_exported_profile_name(), self)
+        self.last_exported_profile.setObjectName("lastExportedProfile")
+        last_export_row.addWidget(self.last_exported_profile)
+        last_export_row.addStretch()
+        layout.addLayout(last_export_row)
+        layout.addStretch()
+        self.refresh_game_location()
 
     def generate(self, _checked: bool = False) -> None:
         if self.catalog is None:
             return
         try:
-            result = generate_rainbow_output(
-                Path(self.source_edit.text()),
-                Path(self.output_edit.text()),
+            game_folder = self._configured_game_folder()
+            grim_dawn_text_root(game_folder)
+        except (OSError, ValueError) as error:
+            QMessageBox.critical(self, "Could Not Export Grades", str(error))
+            return
+
+        affix_count = len(build_affix_markers(self.catalog, self.profile))
+        unique_count = len(build_unique_item_markers(self.items, self.profile))
+        choice = QMessageBox.question(
+            self,
+            "Export Grades",
+            "About to apply grade tags to "
+            f"{affix_count} affix and {unique_count} unique item entries. "
+            "Proceed?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Cancel,
+        )
+        if choice != QMessageBox.StandardButton.Yes:
+            return
+
+        try:
+            result = export_grades_to_game(
+                game_folder,
+                self.bundled_source_root,
+                self.staging_root,
+                self.backups_root,
                 self.catalog,
                 self.profile,
                 items=self.items,
             )
         except (OSError, UnicodeError, ValueError) as error:
-            QMessageBox.critical(self, "Could Not Generate Output", str(error))
+            QMessageBox.critical(self, "Could Not Export Grades", str(error))
             return
+
         self.last_result = result
+        backup_status = (
+            "Created the original-state backup."
+            if result.backup_created
+            else "Preserved the existing original-state backup."
+        )
         self.status.setText(
-            f"Generated {result.files_written} files in {result.output_root}. "
-            f"Annotated {result.annotated_lines} lines for "
-            f"{result.affix_tags_found}/{result.affix_tags_scored} affix tags and "
-            f"{result.unique_tags_found}/{result.unique_tags_scored} unique tags."
+            f"{backup_status}"
+            f"\nExported grades to {result.target_root}. "
+            f"\nUpdated {result.generation.annotated_lines} localization entries. "
         )
-        self.preview.setPlainText(_format_preview(result, self.profile.name))
+        exported_name = self.profile.name.strip() or "Unnamed Profile"
+        self.last_exported_profile.setText(exported_name)
+        if self.settings is not None:
+            self.settings.setValue(LAST_EXPORTED_PROFILE_SETTING, exported_name)
+            self.settings.sync()
+        self.refresh_game_location(update_status=False)
 
-    def _path_row(self, line_edit: QLineEdit, require_existing: bool) -> QWidget:
-        row = QWidget(self)
-        layout = QHBoxLayout(row)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(line_edit, 1)
-        button = QPushButton("Browse...", row)
-        button.setObjectName("profileAction")
-        button.clicked.connect(
-            lambda: self._browse_directory(line_edit, require_existing)
-        )
-        layout.addWidget(button)
-        return row
+    def restore_backup(self, _checked: bool = False) -> None:
+        try:
+            game_folder = self._configured_game_folder()
+            if not backup_available(game_folder, self.backups_root):
+                raise ValueError(
+                    "No original-state backup exists for the configured Grim Dawn folder."
+                )
+        except (OSError, ValueError) as error:
+            QMessageBox.critical(self, "Could Not Restore Backup", str(error))
+            return
 
-    def _browse_directory(
-        self,
-        line_edit: QLineEdit,
-        require_existing: bool,
-    ) -> None:
-        current = Path(line_edit.text())
-        starting = current if current.is_dir() else current.parent
-        selected = QFileDialog.getExistingDirectory(
+        choice = QMessageBox.question(
             self,
-            "Select Folder",
-            str(starting),
+            "Restore Backup",
+            "Restoring Grim Dawn/settings/text_en folder to original state.\n\n"
+            "Proceed?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Cancel,
         )
-        if selected:
-            line_edit.setText(selected)
-        elif not require_existing:
-            line_edit.setText(line_edit.text())
+        if choice != QMessageBox.StandardButton.Yes:
+            return
 
-
-def _format_preview(result: RainbowGenerationResult, profile_name: str) -> str:
-    lines = [
-        f"Profile: {profile_name}",
-        f"Output: {result.output_root}",
-        f"Files copied: {result.files_written}",
-        f"Affix tags found: {result.affix_tags_found}/{result.affix_tags_scored}",
-        f"Unique tags found: {result.unique_tags_found}/{result.unique_tags_scored}",
-        f"Localization lines changed: {result.annotated_lines}",
-        "Catalog tags missing from source: "
-        f"{len(result.missing_affix_tags) + len(result.missing_unique_tags)}",
-    ]
-    if result.changes:
-        lines.extend(["", "Changed-line sample:"])
-        for change in result.changes[:30]:
-            lines.append(
-                f"{change.relative_path}:{change.line_number}  {change.after}"
+        try:
+            result = restore_game_backup(game_folder, self.backups_root)
+        except (OSError, ValueError) as error:
+            QMessageBox.critical(self, "Could Not Restore Backup", str(error))
+            return
+        if result.original_existed:
+            message = f"Restored {result.restored_files} files to {result.target_root}."
+        else:
+            message = (
+                "Restored the clean-install state by removing Grim Gleaner's "
+                f"generated folder at {result.target_root}."
             )
-    if result.missing_affix_tags:
-        lines.extend(["", "Missing affix-tag sample:"])
-        lines.extend(f"- {tag}" for tag in result.missing_affix_tags[:20])
-    if result.missing_unique_tags:
-        lines.extend(["", "Missing unique-tag sample:"])
-        lines.extend(f"- {tag}" for tag in result.missing_unique_tags[:20])
-    return "\n".join(lines)
+        self.status.setText(message)
+        self.last_result = None
+        self.refresh_game_location(update_status=False)
+
+    def refresh_game_location(
+        self,
+        _game_folder: str = "",
+        *,
+        update_status: bool = False,
+    ) -> None:
+        try:
+            game_folder = self._configured_game_folder()
+            target = grim_dawn_text_root(game_folder)
+        except (OSError, ValueError):
+            self.target_label.setText(
+                "Target: Set a valid Grim Dawn folder on the Settings page."
+            )
+            self.generate_button.setEnabled(False)
+            self.restore_button.setEnabled(False)
+            if update_status:
+                self.status.setText("A valid Grim Dawn folder is required.")
+            return
+        self.target_label.setText(f"Target: {target}")
+        self.generate_button.setEnabled(self.catalog is not None)
+        self.restore_button.setEnabled(
+            backup_available(game_folder, self.backups_root)
+        )
+
+    def _configured_game_folder(self) -> Path:
+        if self.settings is None:
+            raise ValueError("Set the Grim Dawn folder on the Settings page first.")
+        raw_path = self.settings.value(GAME_FOLDER_SETTING, "", type=str).strip()
+        if not raw_path:
+            raise ValueError("Set the Grim Dawn folder on the Settings page first.")
+        return Path(raw_path)
+
+    def _last_exported_profile_name(self) -> str:
+        if self.settings is None:
+            return "None"
+        return self.settings.value(
+            LAST_EXPORTED_PROFILE_SETTING,
+            "None",
+            type=str,
+        )

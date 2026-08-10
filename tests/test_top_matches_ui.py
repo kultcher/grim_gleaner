@@ -16,6 +16,7 @@ from gd_affix_relevance.catalog import (
     ItemDefinition,
     ItemProperty,
     ItemSkillModifier,
+    ItemVendorSource,
     ItemVariantDefinition,
     SkillCatalog,
     SkillDefinition,
@@ -139,6 +140,7 @@ def _addon(
     family: str,
     acquisition_source: str,
     faction_name: str = "",
+    recipe_factions: tuple[ItemVendorSource, ...] = (),
 ) -> ItemDefinition:
     base = _item(
         name,
@@ -152,6 +154,7 @@ def _addon(
         applicable_slots=("Head",),
         faction_source="User7" if faction_name else "",
         faction_name=faction_name,
+        vendor_sources=recipe_factions,
     )
     return replace(base, family=family, variants=(variant,))
 
@@ -457,7 +460,10 @@ def test_addon_tables_rank_components_and_augments_per_slot() -> None:
     component = _addon(
         "Living Armor",
         family="components",
-        acquisition_source="Crafted",
+        acquisition_source="Faction Vendor Blueprint",
+        recipe_factions=(
+            ItemVendorSource("User2", "Homestead", "Respected"),
+        ),
     )
     augment = _addon(
         "Mankind's Vigil",
@@ -479,13 +485,13 @@ def test_addon_tables_rank_components_and_augments_per_slot() -> None:
     component_table = page.addon_tables[("head", "component")]
     augment_table = page.addon_tables[("head", "augment")]
     assert component_table.item(0, 1).text() == "Living Armor"
-    assert component_table.item(0, 2).text() == "Crafted"
+    assert component_table.item(0, 2).text() == "Homestead"
     assert augment_table.item(0, 1).text() == "Mankind's Vigil"
     assert augment_table.item(0, 2).text() == "The Black Legion"
     assert [
         component_table.horizontalHeaderItem(column).text()
         for column in range(component_table.columnCount())
-    ] == ["Grade", "Component", "Source", "Score", "Coverage"]
+    ] == ["Grade", "Component", "Faction / Source", "Score", "Coverage"]
     assert [
         augment_table.horizontalHeaderItem(column).text()
         for column in range(augment_table.columnCount())
@@ -496,6 +502,12 @@ def test_addon_tables_rank_components_and_augments_per_slot() -> None:
     assert "Faction: The Black Legion" in page.addon_details.toPlainText()
     assert "Source: Purchased" in page.addon_details.toPlainText()
     assert "Matched stats" in page.addon_details.toPlainText()
+
+    component_table.selectRow(0)
+    app.processEvents()
+    assert "Recipe sold by: Homestead (Respected)" in (
+        page.addon_details.toPlainText()
+    )
 
 
 def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:

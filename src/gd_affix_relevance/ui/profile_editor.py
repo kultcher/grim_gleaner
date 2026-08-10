@@ -39,12 +39,19 @@ class ProfileEditor(QWidget):
         *,
         skills: SkillCatalog | None = None,
         profile_path: Path | None = None,
+        profiles_root: Path | None = None,
         startup_notice: str = "",
     ) -> None:
         super().__init__(parent)
         self.profile = profile or BuildProfile()
         self.accordions: dict[str, PackageAccordion] = {}
         self.current_profile_path = Path(profile_path) if profile_path else None
+        self.profiles_root = (
+            Path(profiles_root).expanduser().resolve()
+            if profiles_root is not None
+            else Path.cwd()
+        )
+        self.profiles_root.mkdir(parents=True, exist_ok=True)
         self.is_dirty = False
 
         layout = QVBoxLayout(self)
@@ -318,7 +325,8 @@ class ProfileEditor(QWidget):
     def _choose_profile_to_save(self) -> bool:
         suggested = str(
             self.current_profile_path
-            or Path(f"{self.profile.name.strip() or 'build-profile'}.json")
+            or self.profiles_root
+            / f"{self.profile.name.strip() or 'build-profile'}.json"
         )
         selected, _ = QFileDialog.getSaveFileName(
             self,
@@ -336,7 +344,7 @@ class ProfileEditor(QWidget):
         return True
 
     def _choose_profile_to_load(self) -> bool:
-        starting_path = str(self.current_profile_path or Path.cwd())
+        starting_path = str(self.current_profile_path or self.profiles_root)
         selected, _ = QFileDialog.getOpenFileName(
             self,
             "Load Build Profile",

@@ -29,6 +29,13 @@ QLabel#pageTitle { font-size: 19pt; font-weight: 650; color: #ffffff; }
 QLabel#placeholderTitle { font-size: 16pt; font-weight: 600; }
 QLabel#fieldLabel { color: #c9ced8; font-weight: 600; }
 QLabel#pageHint { color: #a7adb8; }
+QLabel#lastExportedProfile { color: #78d9e8; font-weight: 650; }
+QLabel#guideSectionTitle {
+    color: #d4a843;
+    font-size: 13pt;
+    font-weight: 650;
+}
+QLabel#guideBody { color: #c9ced8; }
 QLabel#matchHighlightLegend { color: #9eb5ca; padding-left: 2px; }
 QToolButton#resistanceCapButton {
     background: #292e37;

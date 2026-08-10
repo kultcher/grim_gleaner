@@ -28,6 +28,10 @@ def test_plain_display_name_removes_rainbow_controls_for_reports() -> None:
     assert plain_display_name("XY{^O}Charged") == "Charged"
     assert plain_display_name("{^G}Thunderstruck") == "Thunderstruck"
     assert plain_display_name("{^O}[A2] {^Y}Charged") == "[A2] Charged"
+    assert plain_display_name("^kSearing Ember") == "Searing Ember"
+    assert plain_display_name("^w^nComponent description") == (
+        "Component description"
+    )
 
 
 def test_first_duplicate_localization_definition_wins_deterministically() -> None:

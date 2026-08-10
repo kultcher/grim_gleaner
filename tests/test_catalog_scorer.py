@@ -178,6 +178,13 @@ def test_stretched_grade_thresholds_include_extended_s_ranks() -> None:
     assert minimum_score_for_grade("D") == 1
 
 
+def test_zero_relevance_uses_f_grade() -> None:
+    score = score_semantic_stat_ids(("health",), BuildProfile())
+
+    assert score.grade == "F"
+    assert score.marker == "[F0]"
+
+
 def test_high_s_markers_omit_matched_count() -> None:
     profile = BuildProfile(
         weights={f"stat_{index}": 4 for index in range(8)}

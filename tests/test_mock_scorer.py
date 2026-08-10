@@ -35,3 +35,12 @@ def test_mock_scorer_uses_weight_then_breadth_then_coverage_for_ranking() -> Non
     health = score_semantic_properties(("health",), profile)
 
     assert focused.rank_key > diluted.rank_key > health.rank_key
+
+
+def test_mock_scorer_uses_f_for_no_relevance() -> None:
+    score = score_semantic_properties(
+        ("fire_resistance",), MOCK_BUILD_PROFILES["bleed-melee"]
+    )
+
+    assert score.grade == "F"
+    assert score.marker == "[F0]"

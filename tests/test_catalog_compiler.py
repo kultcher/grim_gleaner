@@ -2,7 +2,12 @@ import json
 from pathlib import Path
 
 from gd_affix_relevance.catalog import CatalogBundle, compile_catalog_bundle
+from gd_affix_relevance.catalog.item_compiler import (
+    _acquisition_source,
+    _discover_component_blueprint_distribution,
+)
 from gd_affix_relevance.importers.localization_parser import parse_localization_text
+from gd_affix_relevance.normalization.sample_report import RecordResolver
 from gd_affix_relevance.slots import SLOT_RING
 
 
@@ -12,6 +17,72 @@ def _write_dbr(path: Path, fields: list[tuple[str, str]]) -> None:
         "".join(f"{key},{value},\n" for key, value in fields),
         encoding="utf-8",
     )
+
+
+def test_component_recipe_sources_follow_blueprint_distribution(
+    tmp_path: Path,
+) -> None:
+    data_root = tmp_path / "game_data"
+    blueprint_root = (
+        data_root / "base/records/items/crafting/blueprints/component"
+    )
+    for recipe in ("default", "random", "vendor"):
+        _write_dbr(
+            blueprint_root / f"craft_{recipe}.dbr",
+            [("artifactName", f"records/items/materia/comp_{recipe}.dbr")],
+        )
+    table_root = data_root / "base/records/items/loottables/blueprints"
+    _write_dbr(
+        table_root / "tdyn_random.dbr",
+        [
+            (
+                "lootName1",
+                "records/items/crafting/blueprints/component/craft_random.dbr",
+            )
+        ],
+    )
+    _write_dbr(
+        table_root / "tdyn_specialvendor.dbr",
+        [
+            (
+                "lootName1",
+                "records/items/crafting/blueprints/component/craft_vendor.dbr",
+            )
+        ],
+    )
+
+    random_paths, vendor_paths = _discover_component_blueprint_distribution(
+        data_root, ("base",), RecordResolver(data_root, ("base",))
+    )
+
+    assert random_paths == frozenset(
+        {"records/items/materia/comp_random.dbr"}
+    )
+    assert vendor_paths == frozenset(
+        {"records/items/materia/comp_vendor.dbr"}
+    )
+    crafted = frozenset(
+        {
+            "records/items/materia/comp_default.dbr",
+            "records/items/materia/comp_random.dbr",
+            "records/items/materia/comp_vendor.dbr",
+        }
+    )
+    assert _acquisition_source(
+        "records/items/materia/comp_default.dbr", "component", crafted
+    ) == "Default Recipe"
+    assert _acquisition_source(
+        "records/items/materia/comp_random.dbr",
+        "component",
+        crafted,
+        random_component_blueprint=True,
+    ) == "Random Blueprint"
+    assert _acquisition_source(
+        "records/items/materia/comp_vendor.dbr",
+        "component",
+        crafted,
+        special_vendor_component_blueprint=True,
+    ) == "Special Vendor Blueprint"
 
 
 def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
@@ -618,9 +689,7 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     assert component.description == "Component description"
     assert component.variants[0].applicable_slots == ("Head",)
     assert component.variants[0].properties[0].property_id == "fire_resistance"
-    assert component.variants[0].acquisition_source == (
-        "Crafted / Faction Vendor"
-    )
+    assert component.variants[0].acquisition_source == "Faction Vendor Blueprint"
     assert len(component.variants[0].vendor_sources) == 1
     assert component.variants[0].vendor_sources[0].faction_name == (
         "The Black Legion"

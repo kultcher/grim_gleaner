@@ -5,7 +5,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QSettings, Qt
 from PySide6.QtGui import QCloseEvent
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QLabel
 
 from gd_affix_relevance.catalog import AffixCatalog
 from gd_affix_relevance.domain import BuildProfile
@@ -126,14 +126,23 @@ def test_conversion_row_folds_sources_and_persists_unchecked_types() -> None:
     assert changes == [("fire", "physical", False)]
 
 
-def test_main_window_reserves_top_matches_navigation() -> None:
+def test_main_window_exposes_gear_grade_subnavigation_and_settings() -> None:
     _application()
     window = MainWindow(catalog=AffixCatalog(()))
 
-    assert window.navigation.count() == 3
+    assert window.navigation.count() == 8
     assert window.navigation.item(0).text() == "Build Profile"
-    assert window.navigation.item(1).text() == "Top Matches"
-    assert window.navigation.item(2).text() == "Generate Output"
+    assert window.navigation.item(1).text() == "Gear Grades"
+    assert window.navigation.item(2).text().strip() == "Affixes"
+    assert window.navigation.item(3).text().strip() == "Uniques"
+    assert window.navigation.item(4).text().strip() == "Add-ons"
+    assert window.navigation.item(5).text() == "Export Grades"
+    assert window.navigation.item(6).text() == "Settings"
+    assert window.navigation.item(7).text() == "Guide"
+    assert (
+        window.navigation.item(2).font().pointSizeF()
+        < window.navigation.item(1).font().pointSizeF()
+    )
     assert window.profile_editor.tabs.count() == 6
     assert window.profile_editor.tabs.tabText(4) == "Pets"
     assert window.profile_editor.tabs.tabText(5) == "Skills"
@@ -150,6 +159,38 @@ def test_main_window_reserves_top_matches_navigation() -> None:
 
     window.profile_editor.view_matches_button.click()
     assert window.navigation.currentRow() == 1
+    assert window.pages.currentWidget() is window.top_matches_page
+
+    window.navigation.setCurrentRow(3)
+    assert window.pages.currentWidget() is window.top_matches_page
+    assert window.top_matches_page.tabs.currentIndex() == 1
+
+    window.top_matches_page.tabs.setCurrentIndex(2)
+    assert window.navigation.currentRow() == 4
+
+    window.navigation.setCurrentRow(5)
+    assert window.pages.currentWidget() is window.generate_output_page
+    window.navigation.setCurrentRow(6)
+    assert window.pages.currentWidget() is window.settings_page
+    window.navigation.setCurrentRow(7)
+    assert window.pages.currentWidget() is window.guide_page
+    assert window.guide_page.findChild(QLabel, "pageTitle").text() == "Guide"
+
+
+def test_settings_page_persists_grim_dawn_folder(tmp_path: Path) -> None:
+    _application()
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
+    )
+    window = MainWindow(catalog=AffixCatalog(()), settings=settings)
+    game_folder = str(tmp_path / "Grim Dawn")
+
+    window.settings_page.game_folder_edit.setText(game_folder)
+    window.settings_page.game_folder_edit.editingFinished.emit()
+
+    assert settings.value("paths/grim_dawn_folder") == game_folder
+    restored = MainWindow(catalog=AffixCatalog(()), settings=settings)
+    assert restored.settings_page.game_folder_edit.text() == game_folder
 
 
 def test_main_window_close_honors_profile_confirmation() -> None:
