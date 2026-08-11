@@ -5,10 +5,9 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import Path
 import re
-from typing import Any, Iterable
+from typing import Any
 
 from gd_affix_relevance.domain import LocalizationEntry, RawDbrRecord
-from gd_affix_relevance.importers.dbr_parser import parse_dbr_file
 from gd_affix_relevance.importers.localization_parser import plain_display_name
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
 from gd_affix_relevance.normalization.field_policy import fields_for_semantic_analysis
@@ -22,10 +21,10 @@ from gd_affix_relevance.normalization.mapping_proposals import (
     propose_field_mapping,
 )
 from gd_affix_relevance.normalization.sample_report import (
-    RecordResolver,
     normalize_record_stat_lines,
     record_semantic_fingerprint,
 )
+from gd_affix_relevance.records import RecordLocation, RecordRepository
 
 
 ITEM_SCOPE = "named_equipment_components_augments_relics_runes_and_consumables"
@@ -123,28 +122,24 @@ ITEM_REFERENCE_FIELDS = frozenset(
 
 
 def compile_item_payloads(
-    data_root: Path,
-    source_names: tuple[str, ...],
+    repository: RecordRepository,
     exact_names: dict[str, LocalizationEntry],
     folded_names: dict[str, LocalizationEntry],
     strings: dict[str, str],
 ) -> tuple[dict[str, list[dict[str, Any]]], int, int]:
     """Compile requested concrete item families and return coverage counts."""
 
-    root = Path(data_root)
-    resolver = RecordResolver(root, source_names)
+    resolver = repository
     localization_lookup = dict(exact_names)
     for folded, entry in folded_names.items():
         localization_lookup.setdefault(folded, entry)
 
-    records = _discover_records(root, source_names)
-    crafted_item_paths = _discover_crafted_item_paths(root, source_names)
+    records = _discover_records(resolver)
+    crafted_item_paths = _discover_crafted_item_paths(resolver)
     random_blueprint_item_paths, special_vendor_blueprint_item_paths = (
-        _discover_component_blueprint_distribution(root, source_names, resolver)
+        _discover_component_blueprint_distribution(resolver)
     )
-    faction_vendor_sources = _discover_faction_vendor_sources(
-        root, source_names, resolver
-    )
+    faction_vendor_sources = _discover_faction_vendor_sources(resolver)
     grouped: dict[str, dict[str, list[dict[str, Any]]]] = {
         family: defaultdict(list) for family in ITEM_FAMILIES
     }
@@ -152,8 +147,10 @@ def compile_item_payloads(
     unresolved_names = 0
 
     for family in ITEM_FAMILIES:
-        for source, logical_path, path in records[family]:
-            record = parse_dbr_file(path)
+        for location in records[family]:
+            source = location.source
+            logical_path = location.logical_path
+            record = resolver.load(location)
             name_tag = _name_tag(record, family)
             if not name_tag:
                 continue
@@ -177,7 +174,6 @@ def compile_item_payloads(
 
             properties = _property_payloads(
                 record,
-                source=source,
                 resolver=resolver,
                 localization_lookup=localization_lookup,
             )
@@ -185,18 +181,17 @@ def compile_item_payloads(
                 line
                 for line in normalize_record_stat_lines(
                     record,
-                    preferred_source=source,
                     resolver=resolver,
                     localization_lookup=localization_lookup,
                 )
                 if not line.startswith("[Needs mapping]")
             )
             mastery_lines = _mastery_stat_lines(
-                record, source, resolver, localization_lookup
+                record, resolver, localization_lookup
             )
             lines.extend(mastery_lines)
             skill_modifiers = _skill_modifier_payloads(
-                record, source, resolver, localization_lookup
+                record, resolver, localization_lookup
             )
             for modifier in skill_modifiers:
                 lines.extend(
@@ -207,7 +202,7 @@ def compile_item_payloads(
             granted_reference = (record.first_value("itemSkillName") or "").strip()
             granted_name = (
                 resolver.resolve_skill_name(
-                    granted_reference, source, localization_lookup
+                    granted_reference, localization_lookup
                 )
                 if granted_reference
                 else ""
@@ -218,14 +213,13 @@ def compile_item_payloads(
             effect_stat_lines: tuple[str, ...] = ()
             if effect_reference:
                 effect_name = resolver.resolve_skill_name(
-                    effect_reference, source, localization_lookup
+                    effect_reference, localization_lookup
                 )
-                resolved_effect = resolver.resolve(effect_reference, source)
+                resolved_effect = resolver.resolve(effect_reference)
                 if resolved_effect is not None:
-                    effect_source, effect_record = resolved_effect
+                    _, effect_record = resolved_effect
                     effect_properties = _property_payloads(
                         effect_record,
-                        source=effect_source,
                         resolver=resolver,
                         localization_lookup=localization_lookup,
                         modifier=True,
@@ -234,7 +228,6 @@ def compile_item_payloads(
                         line
                         for line in normalize_record_stat_lines(
                             effect_record,
-                            preferred_source=effect_source,
                             resolver=resolver,
                             localization_lookup=localization_lookup,
                         )
@@ -243,7 +236,7 @@ def compile_item_payloads(
             set_reference = (record.first_value("itemSetName") or "").strip()
             set_name = ""
             if set_reference:
-                resolved_set = resolver.resolve(set_reference, source)
+                resolved_set = resolver.resolve(set_reference)
                 if resolved_set is not None:
                     _, set_record = resolved_set
                     set_tag = (set_record.first_value("setName") or "").strip()
@@ -353,33 +346,23 @@ def compile_item_payloads(
 
 
 def _discover_crafted_item_paths(
-    data_root: Path,
-    source_names: tuple[str, ...],
+    repository: RecordRepository,
 ) -> frozenset[str]:
     targets: set[str] = set()
-    for source in source_names:
-        blueprints = (
-            data_root
-            / source
-            / "records"
-            / "items"
-            / "crafting"
-            / "blueprints"
+    for location in repository.iter_overlaid(
+        "records/items/crafting/blueprints"
+    ):
+        reference = (
+            repository.load(location).first_value("artifactName") or ""
         )
-        if not blueprints.is_dir():
-            continue
-        for path in blueprints.rglob("*.dbr"):
-            reference = (parse_dbr_file(path).first_value("artifactName") or "")
-            logical = reference.strip().lower().replace("\\", "/")
-            if logical.startswith("records/items/") and logical.endswith(".dbr"):
-                targets.add(logical)
+        logical = reference.strip().lower().replace("\\", "/")
+        if logical.startswith("records/items/") and logical.endswith(".dbr"):
+            targets.add(logical)
     return frozenset(targets)
 
 
 def _discover_component_blueprint_distribution(
-    data_root: Path,
-    source_names: tuple[str, ...],
-    resolver: RecordResolver,
+    repository: RecordRepository,
 ) -> tuple[frozenset[str], frozenset[str]]:
     """Find component recipes distributed as drops or by special vendors.
 
@@ -391,45 +374,36 @@ def _discover_component_blueprint_distribution(
 
     random_targets: set[str] = set()
     vendor_targets: set[str] = set()
-    for source in source_names:
-        table_root = (
-            data_root
-            / source
-            / "records"
-            / "items"
-            / "loottables"
-            / "blueprints"
+    for location in repository.iter_overlaid(
+        "records/items/loottables/blueprints"
+    ):
+        destination = (
+            vendor_targets
+            if "vendor" in location.path.stem.casefold()
+            else random_targets
         )
-        if not table_root.is_dir():
-            continue
-        for path in table_root.rglob("*.dbr"):
-            destination = (
-                vendor_targets
-                if "vendor" in path.stem.casefold()
-                else random_targets
-            )
-            table = parse_dbr_file(path)
-            for field in table.fields:
-                for raw_reference in field.value.split(";"):
-                    reference = raw_reference.strip().lower().replace("\\", "/")
-                    if (
-                        "/crafting/blueprints/component/" not in reference
-                        or not reference.endswith(".dbr")
-                    ):
-                        continue
-                    resolved = resolver.resolve(reference, source)
-                    if resolved is None:
-                        continue
-                    _, blueprint = resolved
-                    target = (
-                        blueprint.first_value("artifactName")
-                        or blueprint.first_value("forcedRandomArtifactName")
-                        or ""
-                    ).strip().lower().replace("\\", "/")
-                    if target.startswith("records/items/") and target.endswith(
-                        ".dbr"
-                    ):
-                        destination.add(target)
+        table = repository.load(location)
+        for field in table.fields:
+            for raw_reference in field.value.split(";"):
+                reference = raw_reference.strip().lower().replace("\\", "/")
+                if (
+                    "/crafting/blueprints/component/" not in reference
+                    or not reference.endswith(".dbr")
+                ):
+                    continue
+                resolved = repository.resolve(reference)
+                if resolved is None:
+                    continue
+                _, blueprint = resolved
+                target = (
+                    blueprint.first_value("artifactName")
+                    or blueprint.first_value("forcedRandomArtifactName")
+                    or ""
+                ).strip().lower().replace("\\", "/")
+                if target.startswith("records/items/") and target.endswith(
+                    ".dbr"
+                ):
+                    destination.add(target)
     return frozenset(random_targets), frozenset(vendor_targets)
 
 
@@ -517,21 +491,9 @@ def _vendor_source_payloads(
 
 
 def _discover_faction_vendor_sources(
-    data_root: Path,
-    source_names: tuple[str, ...],
-    resolver: RecordResolver,
+    repository: RecordRepository,
 ) -> dict[str, tuple[tuple[str, str], ...]]:
     """Trace faction merchant tiers to direct items or blueprint outputs."""
-
-    merchants: dict[str, tuple[str, Path]] = {}
-    for source in source_names:
-        source_root = data_root / source
-        merchant_root = source_root / "records/creatures/npcs/merchants"
-        if not merchant_root.is_dir():
-            continue
-        for path in merchant_root.rglob("*.dbr"):
-            logical = path.relative_to(source_root).as_posix().lower()
-            merchants[logical] = (source, path)
 
     tier_fields = (
         ("friendlyNormalTable", "Friendly"),
@@ -540,18 +502,20 @@ def _discover_faction_vendor_sources(
         ("reveredNormalTable", "Revered"),
     )
     discovered: dict[str, set[tuple[str, str]]] = defaultdict(set)
-    for source, path in merchants.values():
-        merchant = parse_dbr_file(path)
+    for location in repository.iter_overlaid(
+        "records/creatures/npcs/merchants"
+    ):
+        merchant = repository.load(location)
         market_reference = (merchant.first_value("marketFileName") or "").strip()
         faction_reference = (merchant.first_value("factions") or "").strip()
         if not market_reference or not faction_reference:
             continue
-        resolved_faction = resolver.resolve(faction_reference, source)
-        resolved_market = resolver.resolve(market_reference, source)
+        resolved_faction = repository.resolve(faction_reference)
+        resolved_market = repository.resolve(market_reference)
         if resolved_faction is None or resolved_market is None:
             continue
         _, faction_record = resolved_faction
-        market_source, market_record = resolved_market
+        _, market_record = resolved_market
         faction_source = (faction_record.first_value("myFaction") or "").strip()
         if not faction_source:
             continue
@@ -559,10 +523,10 @@ def _discover_faction_vendor_sources(
             tier_reference = (market_record.first_value(field) or "").strip()
             if not tier_reference:
                 continue
-            resolved_tier = resolver.resolve(tier_reference, market_source)
+            resolved_tier = repository.resolve(tier_reference)
             if resolved_tier is None:
                 continue
-            tier_source, tier_record = resolved_tier
+            _, tier_record = resolved_tier
             static_items = (tier_record.first_value("marketStaticItems") or "")
             for offered_reference in static_items.split(";"):
                 offered_reference = offered_reference.strip().lower().replace(
@@ -572,9 +536,7 @@ def _discover_faction_vendor_sources(
                     continue
                 target = offered_reference
                 if "/crafting/blueprints/" in offered_reference:
-                    resolved_blueprint = resolver.resolve(
-                        offered_reference, tier_source
-                    )
+                    resolved_blueprint = repository.resolve(offered_reference)
                     if resolved_blueprint is None:
                         continue
                     _, blueprint = resolved_blueprint
@@ -594,65 +556,39 @@ def _discover_faction_vendor_sources(
 
 
 def _discover_records(
-    data_root: Path, source_names: tuple[str, ...]
-) -> dict[str, tuple[tuple[str, str, Path], ...]]:
-    overlaid: dict[str, dict[str, tuple[str, Path]]] = {
+    repository: RecordRepository,
+) -> dict[str, tuple[RecordLocation, ...]]:
+    overlaid: dict[str, dict[str, RecordLocation]] = {
         family: {} for family in ITEM_FAMILIES
     }
-    for source in source_names:
-        items_root = data_root / source / "records" / "items"
-        if not items_root.is_dir():
-            continue
-        for branch in EQUIPMENT_BRANCHES:
-            branch_root = items_root / branch
-            if not branch_root.is_dir():
-                continue
-            paths: Iterable[Path]
-            if branch == "crafting":
-                paths = branch_root.glob("*.dbr")
-            else:
-                paths = branch_root.rglob("*.dbr")
-            for path in paths:
-                _overlay_candidate(overlaid["equipment"], source, items_root, path)
-
-        for family, branch in (
-            ("components", "materia"),
-            ("relics", "gearrelic"),
-            ("augments", "enchants"),
-            ("runes", "enchants/runes"),
+    for branch in EQUIPMENT_BRANCHES:
+        for location in repository.iter_overlaid(
+            f"records/items/{branch}", recursive=branch != "crafting"
         ):
-            branch_root = items_root / branch
-            if not branch_root.is_dir():
-                continue
-            for path in branch_root.rglob("*.dbr"):
-                _overlay_candidate(overlaid[family], source, items_root, path)
+            overlaid["equipment"][location.logical_path] = location
 
-        for branch in ("crafting/consumables", "misc", "faction/booster"):
-            branch_root = items_root / branch
-            if not branch_root.is_dir():
-                continue
-            for path in branch_root.rglob("*.dbr"):
-                _overlay_candidate(overlaid["consumables"], source, items_root, path)
+    for family, branch in (
+        ("components", "materia"),
+        ("relics", "gearrelic"),
+        ("augments", "enchants"),
+        ("runes", "enchants/runes"),
+    ):
+        for location in repository.iter_overlaid(f"records/items/{branch}"):
+            overlaid[family][location.logical_path] = location
 
-    discovered: dict[str, tuple[tuple[str, str, Path], ...]] = {}
+    for branch in ("crafting/consumables", "misc", "faction/booster"):
+        for location in repository.iter_overlaid(f"records/items/{branch}"):
+            overlaid["consumables"][location.logical_path] = location
+
+    discovered: dict[str, tuple[RecordLocation, ...]] = {}
     for family, candidates in overlaid.items():
-        selected: list[tuple[str, str, Path]] = []
-        for logical_path, (source, path) in sorted(candidates.items()):
-            record = parse_dbr_file(path)
+        selected: list[RecordLocation] = []
+        for logical_path, location in sorted(candidates.items()):
+            record = repository.load(location)
             if _belongs_to_family(record, family, logical_path):
-                selected.append((source, logical_path, path))
+                selected.append(location)
         discovered[family] = tuple(selected)
     return discovered
-
-
-def _overlay_candidate(
-    destination: dict[str, tuple[str, Path]],
-    source: str,
-    items_root: Path,
-    path: Path,
-) -> None:
-    logical = "records/items/" + path.relative_to(items_root).as_posix().lower()
-    destination[logical] = (source, path)
 
 
 def _belongs_to_family(
@@ -732,13 +668,31 @@ def _integer_field(record: RawDbrRecord, field: str) -> int:
 def _property_payloads(
     record: RawDbrRecord,
     *,
-    source: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
     modifier: bool = False,
 ) -> list[dict[str, Any]]:
     bundles: dict[str, dict[str, str]] = defaultdict(dict)
     property_ids: dict[str, str] = {}
+    racial_fields = frozenset(
+        {
+            "racialBonusRace",
+            "racialBonusPercentDamage",
+            "racialBonusPercentDefense",
+        }
+    )
+    race_reference = (record.first_value("racialBonusRace") or "").strip()
+    for property_id, raw_field in (
+        ("racial_damage_bonus", "racialBonusPercentDamage"),
+        ("racial_defense_bonus", "racialBonusPercentDefense"),
+    ):
+        value = (record.first_value(raw_field) or "").strip()
+        if active_value_kind(value) is None:
+            continue
+        property_ids[property_id] = property_id
+        bundles[property_id]["percent"] = value
+        if race_reference:
+            bundles[property_id]["race_reference"] = race_reference
     chance_bundles = chance_damage_bundle_keys(
         proposal
         for field in fields_for_semantic_analysis(record)
@@ -747,6 +701,8 @@ def _property_payloads(
     )
     for field in fields_for_semantic_analysis(record):
         if active_value_kind(field.value) is None:
+            continue
+        if field.key in racial_fields:
             continue
         if re.fullmatch(r"(?:modifiedSkillName|modifierSkillName)\d+", field.key):
             continue
@@ -780,7 +736,7 @@ def _property_payloads(
     pet_attributes = bundles.get("pet_bonus")
     if pet_attributes is not None:
         pet_reference = pet_attributes.get("record_reference", "")
-        resolved_pet = resolver.resolve(pet_reference, source)
+        resolved_pet = resolver.resolve(pet_reference)
         if resolved_pet is not None:
             del bundles["pet_bonus"]
             del property_ids["pet_bonus"]
@@ -804,7 +760,7 @@ def _property_payloads(
         )
         if reference:
             attributes["display_name"] = resolver.resolve_skill_name(
-                reference, source, localization_lookup
+                reference, localization_lookup
             )
         payloads.append(
             {
@@ -818,8 +774,7 @@ def _property_payloads(
 
 def _mastery_stat_lines(
     record: RawDbrRecord,
-    source: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> tuple[str, ...]:
     lines: list[str] = []
@@ -828,7 +783,7 @@ def _mastery_stat_lines(
         if match is None or not field.value:
             continue
         level = record.first_value(f"augmentMasteryLevel{match.group(1)}") or ""
-        name = resolver.resolve_skill_name(field.value, source, localization_lookup)
+        name = resolver.resolve_skill_name(field.value, localization_lookup)
         lines.append(
             f"+{int(float(level))} to All Skills in {name}"
             if level
@@ -839,8 +794,7 @@ def _mastery_stat_lines(
 
 def _skill_modifier_payloads(
     record: RawDbrRecord,
-    source: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> list[dict[str, Any]]:
     payloads: list[dict[str, Any]] = []
@@ -852,16 +806,15 @@ def _skill_modifier_payloads(
             record.first_value(f"modifierSkillName{match.group(1)}") or ""
         ).strip()
         modified_name = resolver.resolve_skill_name(
-            field.value, source, localization_lookup
+            field.value, localization_lookup
         )
         properties: list[dict[str, Any]] = []
         stat_lines: tuple[str, ...] = ()
-        resolved = resolver.resolve(modifier_reference, source)
+        resolved = resolver.resolve(modifier_reference)
         if resolved is not None:
-            modifier_source, modifier_record = resolved
+            _, modifier_record = resolved
             properties = _property_payloads(
                 modifier_record,
-                source=modifier_source,
                 resolver=resolver,
                 localization_lookup=localization_lookup,
                 modifier=True,
@@ -870,7 +823,6 @@ def _skill_modifier_payloads(
                 line
                 for line in normalize_record_stat_lines(
                     modifier_record,
-                    preferred_source=modifier_source,
                     resolver=resolver,
                     localization_lookup=localization_lookup,
                 )

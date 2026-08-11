@@ -268,15 +268,23 @@ def test_marker_scoring_respects_conversion_source_filters() -> None:
 
 
 def test_markers_omit_high_s_counts_and_flag_granted_affix_skills() -> None:
-    profile = BuildProfile(
-        weights={f"stat_{index}": 4 for index in range(8)}
+    stat_ids = (
+        "health",
+        "defensive_ability",
+        "offensive_ability",
+        "attack_speed",
+        "casting_speed",
+        "movement_speed",
     )
-    high_variant = _variant(*(f"stat_{index}" for index in range(6)))
+    profile = BuildProfile(
+        weights={stat_id: 4 for stat_id in stat_ids}
+    )
+    high_variant = _variant(*stat_ids)
     granted_variant = AffixVariantDefinition(
         gear_slot="Ring",
         level_requirements=(5,),
         properties=(
-            AffixProperty("stat_0", "stat_0", {}),
+            AffixProperty("health", "health", {}),
             AffixProperty(
                 "granted_item_skill",
                 "granted_item_skill",
@@ -306,9 +314,18 @@ def test_writer_grades_unique_items_and_flags_only_relevant_modifiers(
     tmp_path: Path,
 ) -> None:
     selected_skill = "records/skills/playerclass01/cadence1.dbr"
+    stat_ids = (
+        "health",
+        "defensive_ability",
+        "offensive_ability",
+        "attack_speed",
+        "casting_speed",
+        "movement_speed",
+        "elemental_resistance",
+        "total_damage_percent",
+    )
     properties = tuple(
-        ItemProperty(f"stat_{index}", f"stat_{index}", {})
-        for index in range(8)
+        ItemProperty(stat_id, stat_id, {}) for stat_id in stat_ids
     )
     relevant_modifier = ItemSkillModifier(
         selected_skill, "Cadence", "modifier.dbr", (), ()
@@ -335,7 +352,7 @@ def test_writer_grades_unique_items_and_flags_only_relevant_modifiers(
     )
     items = ItemCatalog((relevant, unused), (), (), (), (), ())
     profile = BuildProfile(
-        weights={f"stat_{index}": 4 for index in range(8)},
+        weights={stat_id: 4 for stat_id in stat_ids},
         skill_weights={selected_skill: 0},
     )
 

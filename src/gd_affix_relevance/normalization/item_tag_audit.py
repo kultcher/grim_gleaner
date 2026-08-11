@@ -7,6 +7,8 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
+from gd_affix_relevance.records import RecordRepository
+
 
 DEFAULT_ITEM_TAG_FILES = {
     "base": "tags_items.txt",
@@ -93,20 +95,18 @@ def build_item_tag_audit(
     references: dict[str, list[ItemTagReference]] = defaultdict(list)
     files_scanned = 0
     sought_tags = frozenset(by_tag)
+    repository = RecordRepository(root, scan_sources)
     for source in scan_sources:
-        source_root = root / source
-        if not source_root.is_dir():
-            continue
-        for path in source_root.rglob("*.dbr"):
+        for location in repository.iter_source(source, ""):
             files_scanned += 1
-            record_path = path.relative_to(source_root).as_posix()
-            for field, value in _read_dbr_fields(path):
-                if value in sought_tags:
-                    references[value].append(
+            record = repository.load(location)
+            for field in record.fields:
+                if field.value in sought_tags:
+                    references[field.value].append(
                         ItemTagReference(
                             source=source,
-                            record_path=record_path,
-                            field=field,
+                            record_path=location.logical_path,
+                            field=field.key,
                         )
                     )
 
@@ -297,23 +297,6 @@ def _read_sectioned_item_tags(
             )
         )
     return tuple(definitions)
-
-
-def _read_dbr_fields(path: Path) -> tuple[tuple[str, str], ...]:
-    try:
-        text = path.read_text(encoding="utf-8-sig")
-    except UnicodeError:
-        return ()
-    fields: list[tuple[str, str]] = []
-    for raw_line in text.splitlines():
-        separator = raw_line.find(",")
-        if separator < 1:
-            continue
-        value = raw_line[separator + 1 :]
-        if value.endswith(","):
-            value = value[:-1]
-        fields.append((raw_line[:separator], value))
-    return tuple(fields)
 
 
 def _build_comparisons(

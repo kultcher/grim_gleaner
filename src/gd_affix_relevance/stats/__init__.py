@@ -1,12 +1,9 @@
-"""Compatibility exports for profile stat presentation definitions."""
+"""Semantic stat definitions shared by scoring and presentation."""
 
 from gd_affix_relevance.stats.registry import (
-    ADVANCED_TAB,
-    CORE_TAB,
-    DAMAGE_TAB,
-    DEFENSES_TAB,
-    PETS_TAB,
     PROFILE_TABS,
+    RACE_STAT_SUFFIXES,
+    RACE_DISPLAY_NAMES,
     RESISTANCE_STATS,
     PackageDefinition,
     StatDefinition,
@@ -15,17 +12,18 @@ from gd_affix_relevance.stats.registry import (
     base_weapon_damage_stat,
     chance_damage_stat,
     conversion_stat,
+    registered_stat_definitions,
     stat,
+    stat_definition,
+    stat_is_scoreable,
+    stat_is_registered,
     validate_catalog,
 )
 
 __all__ = [
-    "ADVANCED_TAB",
-    "CORE_TAB",
-    "DAMAGE_TAB",
-    "DEFENSES_TAB",
-    "PETS_TAB",
     "PROFILE_TABS",
+    "RACE_STAT_SUFFIXES",
+    "RACE_DISPLAY_NAMES",
     "RESISTANCE_STATS",
     "PackageDefinition",
     "StatDefinition",
@@ -34,6 +32,10 @@ __all__ = [
     "base_weapon_damage_stat",
     "chance_damage_stat",
     "conversion_stat",
+    "registered_stat_definitions",
     "stat",
+    "stat_definition",
+    "stat_is_scoreable",
+    "stat_is_registered",
     "validate_catalog",
 ]

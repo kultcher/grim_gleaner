@@ -164,19 +164,19 @@ class ProfileEditor(QWidget):
         scroll.setWidget(content)
         return scroll
 
-    def _placeholder(self, title: str, message: str) -> QWidget:
-        page = QWidget(self)
-        layout = QVBoxLayout(page)
-        layout.setContentsMargins(36, 44, 36, 44)
-        title_label = QLabel(title, page)
-        title_label.setObjectName("placeholderTitle")
-        layout.addWidget(title_label)
-        message_label = QLabel(message, page)
-        message_label.setObjectName("pageHint")
-        message_label.setWordWrap(True)
-        layout.addWidget(message_label)
-        layout.addStretch()
-        return page
+    # def _placeholder(self, title: str, message: str) -> QWidget:
+    #     page = QWidget(self)
+    #     layout = QVBoxLayout(page)
+    #     layout.setContentsMargins(36, 44, 36, 44)
+    #     title_label = QLabel(title, page)
+    #     title_label.setObjectName("placeholderTitle")
+    #     layout.addWidget(title_label)
+    #     message_label = QLabel(message, page)
+    #     message_label.setObjectName("pageHint")
+    #     message_label.setWordWrap(True)
+    #     layout.addWidget(message_label)
+    #     layout.addStretch()
+    #     return page
 
     def _name_changed(self, name: str) -> None:
         self.profile.name = name

@@ -20,6 +20,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from gd_affix_relevance.stats import stat_definition
+from gd_affix_relevance.ui.widgets import StatRow
 
 from gd_affix_relevance.catalog import SkillCatalog, SkillDefinition
 from gd_affix_relevance.domain import BuildProfile
@@ -356,6 +358,20 @@ class SkillsEditor(QWidget):
         hint.setWordWrap(True)
         layout.addWidget(hint)
 
+        all_skills_definition = stat_definition("all_skills_bonus")
+        if all_skills_definition is None:
+            raise ValueError("all_skills_bonus is missing from the stat registry")
+        global_label = QLabel("Global Skill Bonuses", self)
+        global_label.setObjectName("sectionTitle")
+        layout.addWidget(global_label)
+        self.all_skills_row = StatRow(
+            all_skills_definition,
+            self.profile.weight_for("all_skills_bonus"),
+            self,
+        )
+        self.all_skills_row.value_changed.connect(self._set_global_weight)
+        layout.addWidget(self.all_skills_row)
+
         if not self.masteries:
             unavailable = QLabel(
                 "No compiled player-skill catalog is available.", self
@@ -373,6 +389,9 @@ class SkillsEditor(QWidget):
         self.refresh_from_profile()
 
     def refresh_from_profile(self) -> None:
+        self.all_skills_row.weight_control.set_value(
+            self.profile.weight_for("all_skills_bonus"), emit=False
+        )
         for slot, panel in enumerate(self.panels):
             other_mastery = self.profile.masteries[1 - slot]
             choices = tuple(
@@ -439,6 +458,10 @@ class SkillsEditor(QWidget):
 
     def _set_skill_weight(self, skill_id: str, weight: int) -> None:
         self.profile.set_skill_weight(skill_id, weight)
+        self.changed.emit()
+
+    def _set_global_weight(self, stat_id: str, weight: int) -> None:
+        self.profile.set_weight(stat_id, weight)
         self.changed.emit()
 
 

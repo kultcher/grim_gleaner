@@ -8,7 +8,6 @@ from pathlib import Path
 import re
 
 from gd_affix_relevance.domain import LocalizationEntry, RawDbrRecord
-from gd_affix_relevance.importers.dbr_parser import parse_dbr_file
 from gd_affix_relevance.importers.localization_parser import (
     first_entry_lookup,
     plain_display_name,
@@ -16,9 +15,9 @@ from gd_affix_relevance.importers.localization_parser import (
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
 from gd_affix_relevance.normalization.mapping_proposals import propose_field_mapping
 from gd_affix_relevance.normalization.sample_report import (
-    RecordResolver,
     normalize_record_stat_lines,
 )
+from gd_affix_relevance.records import DEFAULT_DATA_SOURCES, RecordRepository
 
 
 TARGET_GROUPS = frozenset(
@@ -84,13 +83,6 @@ ITEM_METADATA_SUFFIXES = (
 
 SPECIAL_GAMEPLAY_FIELDS = {
     "characterDeflectProjectile": "projectile_deflection",
-    "offensiveSlowTotalSpeedChance": "total_speed_reduction",
-    "offensiveSlowTotalSpeedDurationMin": "total_speed_reduction",
-    "offensiveSlowTotalSpeedMin": "total_speed_reduction",
-    "racialBonusPercentDefense": "racial_defense_bonus",
-    "retaliationConfusionMin": "confusion_retaliation",
-    "retaliationSlowManaLeachDurationMin": "energy_burn_retaliation",
-    "retaliationSlowManaLeachMin": "energy_burn_retaliation",
 }
 
 MODIFIER_SPECIAL_FIELDS = {
@@ -137,7 +129,7 @@ def build_item_audit(
     source_name: str = "base",
     item_directory: str = "gearhead",
     affix_property_ids: set[str] | frozenset[str] = frozenset(),
-    source_names: tuple[str, ...] = ("base", "gdx1", "gdx2", "gdx3"),
+    source_names: tuple[str, ...] = DEFAULT_DATA_SOURCES,
 ) -> ItemAuditResult:
     """Audit one extracted item directory without compiling an ItemCatalog."""
 
@@ -147,36 +139,38 @@ def build_item_audit(
         raise FileNotFoundError(f"item directory not found: {item_root}")
 
     localization_lookup = first_entry_lookup(localization_entries)
-    resolver = RecordResolver(root, source_names)
+    resolver = RecordRepository(root, source_names)
     records: list[ItemAuditRecord] = []
-    for path in sorted(item_root.glob("*.dbr")):
-        raw = parse_dbr_file(path)
+    for location in resolver.iter_source(
+        source_name,
+        f"records/items/{item_directory}",
+        recursive=False,
+    ):
+        path = location.path
+        raw = resolver.load(location)
         group = _classify_item(path, raw)
         mapped, new, skill_pairs, unknown, failures = _semantic_details(
             raw,
-            source_name=source_name,
             resolver=resolver,
             affix_property_ids=affix_property_ids,
         )
         raw_lines = normalize_record_stat_lines(
             raw,
-            preferred_source=source_name,
             resolver=resolver,
             localization_lookup=localization_lookup,
         )
         lines = [line for line in raw_lines if not line.startswith("[Needs mapping]")]
         for modified_skill, modifier_record in skill_pairs:
             skill_name = resolver.resolve_skill_name(
-                modified_skill, source_name, localization_lookup
+                modified_skill, localization_lookup
             )
-            resolved = resolver.resolve(modifier_record, source_name)
+            resolved = resolver.resolve(modifier_record)
             if resolved is None:
                 lines.append(f"Skill Modifier for {skill_name}: [unresolved record]")
                 continue
-            modifier_source, modifier = resolved
+            _, modifier = resolved
             nested = normalize_record_stat_lines(
                 modifier,
-                preferred_source=modifier_source,
                 resolver=resolver,
                 localization_lookup=localization_lookup,
             )
@@ -383,8 +377,7 @@ def _classify_item(path: Path, record: RawDbrRecord) -> str:
 def _semantic_details(
     record: RawDbrRecord,
     *,
-    source_name: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     affix_property_ids: set[str] | frozenset[str],
 ) -> tuple[set[str], set[str], list[tuple[str, str]], set[str], set[str]]:
     mapped: set[str] = set()
@@ -439,7 +432,7 @@ def _semantic_details(
     if skill_pairs:
         new.add("skill_modifier")
     for _, modifier_reference in skill_pairs:
-        resolved = resolver.resolve(modifier_reference, source_name)
+        resolved = resolver.resolve(modifier_reference)
         if resolved is None:
             failures.add(modifier_reference)
             continue

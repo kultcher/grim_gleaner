@@ -192,6 +192,9 @@ def test_skills_editor_adds_weights_and_excludes_duplicate_mastery() -> None:
     editor = SkillsEditor(profile, _catalog())
     editor.show()
 
+    editor.all_skills_row.weight_control.set_value(3)
+    assert profile.weight_for("all_skills_bonus") == 3
+
     soldier_index = editor.panels[0].mastery_combo.findData("playerclass01")
     editor.panels[0].mastery_combo.setCurrentIndex(soldier_index)
 

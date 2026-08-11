@@ -52,11 +52,13 @@ from gd_affix_relevance.slots import (
     SLOT_LABELS,
     WEAPON_SLOTS,
 )
-from gd_affix_relevance.ui.catalog import RESISTANCE_STATS, all_stat_definitions
+from gd_affix_relevance.ui.catalog import RESISTANCE_STATS
+from gd_affix_relevance.stats import registered_stat_definitions
 from gd_affix_relevance.ui.widgets import StatRow
 
 STAT_LABELS = {
-    definition.stat_id: definition.label for definition in all_stat_definitions()
+    definition.stat_id: definition.label
+    for definition in registered_stat_definitions()
 }
 RESULTS_PER_AFFIX_TABLE = 5
 SKILL_RANK_HIGHLIGHT = QColor("#8bded7")

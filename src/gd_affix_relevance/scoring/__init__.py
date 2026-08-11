@@ -16,6 +16,7 @@ from gd_affix_relevance.scoring.catalog_scorer import (
     score_affix_variant,
     score_semantic_stat_ids,
     semantic_stat_id,
+    semantic_stat_ids,
     variant_semantic_stat_ids,
 )
 from gd_affix_relevance.scoring.item_scorer import (
@@ -53,6 +54,7 @@ __all__ = [
     "score_affix_variant",
     "score_semantic_stat_ids",
     "semantic_stat_id",
+    "semantic_stat_ids",
     "variant_semantic_stat_ids",
     "item_semantic_stat_ids",
     "unique_item_type",

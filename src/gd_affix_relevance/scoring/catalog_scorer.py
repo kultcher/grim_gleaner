@@ -15,6 +15,11 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.conversions import canonical_damage_type
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.slots import slot_ids_from_legacy_label
+from gd_affix_relevance.stats import (
+    RACE_STAT_SUFFIXES,
+    stat_is_registered,
+    stat_is_scoreable,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,6 +125,30 @@ def semantic_stat_id(property_: AffixProperty) -> str:
     return property_.property_id
 
 
+def semantic_stat_ids(property_: AffixProperty) -> tuple[str, ...]:
+    """Expand one compiled property into profile-weightable semantic IDs."""
+
+    if property_.property_id in {
+        "racial_damage_bonus",
+        "racial_defense_bonus",
+    }:
+        references = property_.attributes.get("race_reference", "")
+        return tuple(
+            f"{property_.property_id}_vs_{suffix}"
+            for reference in references.split(";")
+            if (suffix := RACE_STAT_SUFFIXES.get(reference.strip().casefold()))
+        )
+    if property_.property_id == "pet_damage_conversion":
+        destination = property_.attributes.get(
+            "destination_damage_type", "unknown"
+        )
+        destination = {"life": "vitality", "poison": "acid"}.get(
+            destination.casefold(), destination.casefold()
+        )
+        return (f"pet_damage_conversion_to_{destination}",)
+    return (semantic_stat_id(property_),)
+
+
 def variant_semantic_stat_ids(
     variant: AffixVariantDefinition,
     profile: BuildProfile | None = None,
@@ -127,13 +156,45 @@ def variant_semantic_stat_ids(
     return tuple(
         sorted(
             {
-                semantic_stat_id(property_)
+                stat_id
                 for property_ in variant.properties
                 if property_.property_id != "granted_item_skill"
                 and property_enabled_for_profile(property_, profile)
+                for stat_id in semantic_stat_ids(property_)
+                if stat_is_scoreable(stat_id)
             }
         )
     )
+
+
+def unregistered_catalog_stat_ids(bundle: object) -> tuple[str, ...]:
+    """Return score-relevant compiled IDs missing from the central registry."""
+
+    unknown: set[str] = set()
+    for affix in bundle.affixes.affixes:  # type: ignore[attr-defined]
+        for variant in affix.variants:
+            for property_ in variant.properties:
+                if property_.property_id == "granted_item_skill":
+                    continue
+                unknown.update(
+                    stat_id
+                    for stat_id in semantic_stat_ids(property_)
+                    if not stat_is_registered(stat_id)
+                )
+    for item in bundle.items.all_items():  # type: ignore[attr-defined]
+        for variant in item.variants:
+            for property_ in variant.properties:
+                if property_.property_id in {
+                    "base_attack_speed",
+                    "granted_item_skill",
+                }:
+                    continue
+                unknown.update(
+                    stat_id
+                    for stat_id in semantic_stat_ids(property_)
+                    if not stat_is_registered(stat_id)
+                )
+    return tuple(sorted(unknown))
 
 
 def score_affix_variant(
@@ -177,6 +238,9 @@ def score_semantic_stat_ids(
     *,
     weight_for: Callable[[str], int] | None = None,
 ) -> RelevanceScore:
+    stat_ids = tuple(
+        stat_id for stat_id in stat_ids if stat_is_scoreable(stat_id)
+    )
     resolve_weight = weight_for or (
         lambda stat_id: profile_weight_for_semantic_id(profile, stat_id)
     )
@@ -441,9 +505,12 @@ def profile_score_adjustment(profile: BuildProfile) -> float:
     """
 
     weights = [
-        weight
-        for weight in (*profile.weights.values(), *profile.skill_weights.values())
-        if weight > 0
+        *(
+            weight
+            for stat_id, weight in profile.weights.items()
+            if weight > 0 and stat_is_scoreable(stat_id)
+        ),
+        *(weight for weight in profile.skill_weights.values() if weight > 0),
     ]
     if not weights:
         return 1.0

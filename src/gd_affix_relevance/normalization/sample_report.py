@@ -12,11 +12,17 @@ from pathlib import Path
 
 from gd_affix_relevance.domain import LocalizationEntry, RawDbrRecord
 from gd_affix_relevance.importers.affix_discovery import supported_affix_kind
-from gd_affix_relevance.importers.dbr_parser import parse_dbr_file
 from gd_affix_relevance.importers.localization_parser import (
     first_entry_lookup,
     plain_display_name,
 )
+from gd_affix_relevance.records import (
+    DEFAULT_DATA_SOURCES,
+    RecordLocation,
+    RecordRepository,
+    normalize_record_path,
+)
+from gd_affix_relevance.stats import RACE_DISPLAY_NAMES
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
 from gd_affix_relevance.normalization.field_policy import fields_for_semantic_analysis
 from gd_affix_relevance.normalization.mapping_proposals import (
@@ -48,7 +54,6 @@ from gd_affix_relevance.slots import (
     slot_sort_key,
 )
 
-DEFAULT_DATA_SOURCES = ("base", "gdx1", "gdx2", "gdx3")
 PLACEHOLDER_PATTERN = re.compile(r"\{([^{}]+)\}")
 
 
@@ -78,7 +83,6 @@ class _CandidateGroup:
     applicable_slots: tuple[str, ...]
     rarity: str
     semantic_fingerprint: tuple[tuple[str, str, str], ...]
-    preferred_source: str
     representative_record: RawDbrRecord
     sources: set[str] = field(default_factory=set)
     level_requirements: set[int] = field(default_factory=set)
@@ -104,6 +108,7 @@ def build_sample_candidates(
     count: int | None = None,
     seed: int | None = None,
     rank_key: Callable[[tuple[str, ...]], tuple[float, ...]] | None = None,
+    repository: RecordRepository | None = None,
 ) -> SampleBuildResult:
     """Build reachable name/slot/stat-fingerprint candidates.
 
@@ -112,27 +117,22 @@ def build_sample_candidates(
     """
 
     root = Path(data_root)
+    records = repository or RecordRepository(root, source_names)
     localization_lookup = first_entry_lookup(localization_entries)
     edges: dict[str, set[str]] = defaultdict(set)
     affix_records: dict[str, tuple[str, RawDbrRecord]] = {}
 
-    for source_name in source_names:
-        source_root = root / source_name
-        items_root = source_root / "records" / "items"
-        if not items_root.exists():
-            continue
-
-        for source_path in _relevant_item_paths(items_root):
-            logical_path = _logical_path(source_path.relative_to(source_root))
-            record = parse_dbr_file(source_path)
-            record_edges: set[str] = set()
-            for raw_field in record.fields:
-                reference = _referenced_item_dbr(raw_field.value)
-                if reference is not None:
-                    record_edges.add(reference)
-            edges[logical_path] = record_edges
-            if supported_affix_kind(record) is not None:
-                affix_records[logical_path] = (source_name, record)
+    for location in _relevant_item_locations(records):
+        logical_path = location.logical_path
+        record = records.load(location)
+        record_edges: set[str] = set()
+        for raw_field in record.fields:
+            reference = _referenced_item_dbr(raw_field.value)
+            if reference is not None:
+                record_edges.add(reference)
+        edges[logical_path] = record_edges
+        if supported_affix_kind(record) is not None:
+            affix_records[logical_path] = (location.source, record)
 
     slots_by_record = _propagate_gear_slots(edges)
     grouped: dict[
@@ -173,7 +173,6 @@ def build_sample_candidates(
                 applicable_slots=applicable_slots,
                 rarity=rarity,
                 semantic_fingerprint=semantic_fingerprint,
-                preferred_source=source_name,
                 representative_record=record,
             ),
         )
@@ -222,7 +221,6 @@ def build_sample_candidates(
             )
         chosen_groups = random.Random(actual_seed).sample(pool, count)
 
-    resolver = RecordResolver(root, source_names)
     candidates: list[AffixSampleCandidate] = []
     for group in chosen_groups:
         value_overrides = {
@@ -232,8 +230,7 @@ def build_sample_candidates(
         }
         stat_lines = normalize_record_stat_lines(
             group.representative_record,
-            preferred_source=group.preferred_source,
-            resolver=resolver,
+            resolver=records,
             localization_lookup=localization_lookup,
             value_overrides=value_overrides,
         )
@@ -338,8 +335,7 @@ def format_sample_report(
 def normalize_record_stat_lines(
     record: RawDbrRecord,
     *,
-    preferred_source: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
     value_overrides: dict[tuple[str, str], str] | None = None,
 ) -> tuple[str, ...]:
@@ -352,6 +348,12 @@ def normalize_record_stat_lines(
 
     for raw_field in fields_for_semantic_analysis(record):
         if active_value_kind(raw_field.value) is None:
+            continue
+        if raw_field.key in {
+            "racialBonusRace",
+            "racialBonusPercentDamage",
+            "racialBonusPercentDefense",
+        }:
             continue
         proposal = propose_field_mapping(raw_field.key)
         if proposal is None:
@@ -375,27 +377,21 @@ def normalize_record_stat_lines(
             order.append(proposal.bundle_key)
         bundles[proposal.bundle_key].append((proposal, value))
 
-    lines: list[str] = []
+    lines: list[str] = list(_format_racial_record_lines(record))
     for bundle_key in order:
         components = bundles[bundle_key]
         property_id = components[0][0].property_id
         if property_id == "skill_bonus":
             lines.append(
-                _format_skill_bonus(
-                    components, preferred_source, resolver, localization_lookup
-                )
+                _format_skill_bonus(components, resolver, localization_lookup)
             )
         elif property_id == "granted_item_skill":
             lines.append(
-                _format_granted_skill(
-                    components, preferred_source, resolver, localization_lookup
-                )
+                _format_granted_skill(components, resolver, localization_lookup)
             )
         elif property_id == "pet_bonus":
             lines.extend(
-                _format_pet_bonus(
-                    components, preferred_source, resolver, localization_lookup
-                )
+                _format_pet_bonus(components, resolver, localization_lookup)
             )
         elif property_id == "damage_conversion":
             lines.append(_format_damage_conversion(components))
@@ -404,6 +400,26 @@ def normalize_record_stat_lines(
 
     lines.extend(f"[Needs mapping] {raw_field}" for raw_field in unresolved_fields)
     return tuple(dict.fromkeys(lines))
+
+
+def _format_racial_record_lines(record: RawDbrRecord) -> tuple[str, ...]:
+    references = (record.first_value("racialBonusRace") or "").split(";")
+    names = tuple(
+        RACE_DISPLAY_NAMES.get(reference.strip().casefold(), "")
+        for reference in references
+        if reference.strip()
+    )
+    target = ", ".join(name for name in names if name) or "Creature Type"
+    lines: list[str] = []
+    if active_value_kind(
+        record.first_value("racialBonusPercentDamage") or ""
+    ) is not None:
+        lines.append(f"+[x]% Damage to {target}")
+    if active_value_kind(
+        record.first_value("racialBonusPercentDefense") or ""
+    ) is not None:
+        lines.append(f"+[x]% Less Damage from {target}")
+    return tuple(lines)
 
 
 def format_gear_slots(slots: set[str] | frozenset[str]) -> str:
@@ -522,8 +538,7 @@ def _display_damage_type(raw_damage_type: str) -> str:
 
 def _format_skill_bonus(
     components: list[tuple[FieldMappingProposal, str]],
-    preferred_source: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> str:
     reference = next(
@@ -534,9 +549,7 @@ def _format_skill_bonus(
         ),
         "",
     )
-    skill_name = resolver.resolve_skill_name(
-        reference, preferred_source, localization_lookup
-    )
+    skill_name = resolver.resolve_skill_name(reference, localization_lookup)
     level = next(
         (
             value
@@ -559,145 +572,60 @@ def _format_discrete_number(value: str) -> str:
 
 def _format_granted_skill(
     components: list[tuple[FieldMappingProposal, str]],
-    preferred_source: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> str:
     reference = next(
         (value for proposal, value in components if proposal.value_role == "skill_reference"),
         "",
     )
-    skill_name = resolver.resolve_skill_name(
-        reference, preferred_source, localization_lookup
-    )
+    skill_name = resolver.resolve_skill_name(reference, localization_lookup)
     return f"*Granted Skill: {skill_name}"
 
 
 def _format_pet_bonus(
     components: list[tuple[FieldMappingProposal, str]],
-    preferred_source: str,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> tuple[str, ...]:
     reference = next((value for _, value in components), "")
-    resolved = resolver.resolve(reference, preferred_source)
+    resolved = resolver.resolve(reference)
     if resolved is None:
         return (f"Bonus to All Pets: [unresolved {reference}]",)
-    source_name, pet_record = resolved
+    _, pet_record = resolved
     nested = normalize_record_stat_lines(
         pet_record,
-        preferred_source=source_name,
         resolver=resolver,
         localization_lookup=localization_lookup,
     )
     return tuple(f"Bonus to All Pets: {line}" for line in nested)
 
 
-class RecordResolver:
-    def __init__(self, data_root: Path, source_names: tuple[str, ...]) -> None:
-        self.data_root = Path(data_root)
-        self.source_names = source_names
-        self._cache: dict[tuple[str, str], tuple[str, RawDbrRecord] | None] = {}
-
-    def resolve(
-        self, reference: str, preferred_source: str
-    ) -> tuple[str, RawDbrRecord] | None:
-        logical = _logical_path(reference)
-        cache_key = (preferred_source, logical)
-        if cache_key in self._cache:
-            return self._cache[cache_key]
-        if not logical.endswith(".dbr"):
-            self._cache[cache_key] = None
-            return None
-
-        search_order = [preferred_source]
-        search_order.extend(
-            source
-            for source in reversed(self.source_names)
-            if source != preferred_source
-        )
-        for source_name in search_order:
-            source_path = self.data_root / source_name / Path(logical)
-            if source_path.is_file():
-                result = (source_name, parse_dbr_file(source_path))
-                self._cache[cache_key] = result
-                return result
-        self._cache[cache_key] = None
-        return None
-
-    def resolve_skill_name(
-        self,
-        reference: str,
-        preferred_source: str,
-        localization_lookup: dict[str, LocalizationEntry],
-    ) -> str:
-        pending: deque[tuple[str, str, int]] = deque(
-            [(reference, preferred_source, 0)]
-        )
-        seen: set[str] = set()
-        fallback_description = ""
-        while pending:
-            current_reference, current_source, depth = pending.popleft()
-            logical = _logical_path(current_reference)
-            if logical in seen or depth > 4:
-                continue
-            seen.add(logical)
-            resolved = self.resolve(current_reference, current_source)
-            if resolved is None:
-                continue
-            resolved_source, record = resolved
-            display_tag = record.first_value("skillDisplayName")
-            if display_tag:
-                entry = localization_lookup.get(display_tag) or localization_lookup.get(
-                    display_tag.casefold()
-                )
-                if entry is not None:
-                    return plain_display_name(entry.value)
-                return f"[{display_tag}]"
-            description = record.first_value("FileDescription") or ""
-            if description and not fallback_description:
-                fallback_description = description
-            for raw_field in record.fields:
-                if raw_field.value.lower().startswith("records/skills/") and raw_field.value.lower().endswith(".dbr"):
-                    pending.append((raw_field.value, resolved_source, depth + 1))
-
-        if fallback_description:
-            concise = re.split(r"\s+with\s+", fallback_description, maxsplit=1, flags=re.IGNORECASE)[0]
-            return concise.strip().title()
-        return f"[unresolved skill: {reference}]"
-
-
-def _logical_path(path: Path | str) -> str:
-    return str(path).replace("\\", "/").strip().lower()
-
-
 def _referenced_item_dbr(value: str) -> str | None:
-    normalized = _logical_path(value)
+    normalized = normalize_record_path(value)
     if not normalized.startswith("records/items/") or not normalized.endswith(".dbr"):
         return None
     return normalized
 
 
-def _relevant_item_paths(items_root: Path) -> tuple[Path, ...]:
+def _relevant_item_locations(
+    repository: RecordRepository,
+) -> tuple[RecordLocation, ...]:
     """Return only DBRs needed for affix reachability and sampling."""
 
-    paths: set[Path] = set()
-    loottables = items_root / "loottables"
-    if loottables.exists():
-        paths.update(loottables.rglob("*.dbr"))
-    affix_root = items_root / "lootaffixes"
-    for kind, table_directory in (
-        ("prefix", "prefixtables"),
-        ("suffix", "suffixtables"),
+    locations = {}
+    for relative_root, recursive in (
+        ("records/items/loottables", True),
+        ("records/items/lootaffixes/prefix", False),
+        ("records/items/lootaffixes/prefix/prefixtables", True),
+        ("records/items/lootaffixes/suffix", False),
+        ("records/items/lootaffixes/suffix/suffixtables", True),
     ):
-        kind_root = affix_root / kind
-        if not kind_root.exists():
-            continue
-        paths.update(kind_root.glob("*.dbr"))
-        tables = kind_root / table_directory
-        if tables.exists():
-            paths.update(tables.rglob("*.dbr"))
-    return tuple(sorted(paths))
+        for location in repository.iter_overlaid(
+            relative_root, recursive=recursive
+        ):
+            locations[location.logical_path] = location
+    return tuple(locations[key] for key in sorted(locations))
 
 
 def record_semantic_fingerprint(
@@ -728,11 +656,14 @@ def record_semantic_fingerprint(
             "skill_reference",
             "source_damage_type",
             "destination_damage_type",
+            "race_reference",
         }:
-            distinguishing_value = _logical_path(raw_value)
+            distinguishing_value = normalize_record_path(raw_value)
         elif proposal.property_id == "pet_bonus":
             distinguishing_value = re.sub(
-                r"_\d+(?=\.dbr$)", "_[tier]", _logical_path(raw_value)
+                r"_\d+(?=\.dbr$)",
+                "_[tier]",
+                normalize_record_path(raw_value),
             )
         components.append(
             (proposal.bundle_key, proposal.value_role, distinguishing_value)

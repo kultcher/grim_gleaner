@@ -16,9 +16,10 @@ from gd_affix_relevance.scoring.catalog_scorer import (
     minimum_score_for_grade,
     profile_weight_for_semantic_id,
     score_semantic_stat_ids,
-    semantic_stat_id,
+    semantic_stat_ids,
     property_enabled_for_profile,
 )
+from gd_affix_relevance.stats import stat_is_scoreable
 from gd_affix_relevance.slots import (
     WEAPON_SLOTS,
     equipment_class_slot_id,
@@ -90,10 +91,12 @@ def item_semantic_stat_ids(
     profile: BuildProfile | None = None,
 ) -> tuple[str, ...]:
     stat_ids = {
-        semantic_stat_id(property_)
+        stat_id
         for property_ in variant.properties
         if property_.property_id not in {"base_attack_speed", "granted_item_skill"}
         and property_enabled_for_profile(property_, profile)
+        for stat_id in semantic_stat_ids(property_)
+        if stat_is_scoreable(stat_id)
     }
     if profile is not None:
         selected_skills = {

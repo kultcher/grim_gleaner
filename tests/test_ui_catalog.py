@@ -91,14 +91,17 @@ def test_pet_tab_surfaces_every_current_affix_pet_stat_by_default() -> None:
     assert [package.label for package in PETS_TAB.packages] == [
         "Damage",
         "Defenses",
+        "Damage Conversions",
+        "Retaliation",
         "Utility / Other",
     ]
     assert all(package.default_expanded for package in PETS_TAB.packages)
-    assert {
+    surfaced = {
         definition.stat_id
         for package in PETS_TAB.packages
         for definition in package.stats
-    } == {
+    }
+    assert {
         "pet_total_damage_percent",
         "pet_offensive_ability_percent",
         "pet_critical_damage",
@@ -116,4 +119,19 @@ def test_pet_tab_surfaces_every_current_affix_pet_stat_by_default() -> None:
         "pet_freeze_resistance",
         "pet_slow_resistance",
         "pet_total_speed",
-    }
+    } <= surfaced
+    assert {
+        f"pet_damage_conversion_to_{damage_type}"
+        for damage_type in (
+            "acid",
+            "aether",
+            "chaos",
+            "cold",
+            "elemental",
+            "fire",
+            "lightning",
+            "physical",
+            "pierce",
+            "vitality",
+        )
+    } <= surfaced

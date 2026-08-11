@@ -12,7 +12,7 @@ by what you might want to change, rather than by the program's architecture.
 | Detail-view content or line ordering | `src/gd_affix_relevance/ui/top_matches.py` | `_show_match()`, `_show_unique()`, `_show_addon()` |
 | Affix, unique, or add-on table columns | `src/gd_affix_relevance/ui/top_matches.py` | `AffixSlotTable`, `UniqueSlotTable`, `AddonSlotTable` |
 | Gear-slot labels, grouping, or filter rules | `src/gd_affix_relevance/slots.py` | `SLOT_LABELS`, `SLOT_GROUPS`, `SLOT_FILTERS`, `FILTER_LABELS` |
-| Profile tabs, packages, stat labels, or ordering | `src/gd_affix_relevance/ui/catalog.py` | `DAMAGE_TAB`, `DEFENSES_TAB`, `CORE_TAB`, `ADVANCED_TAB`, `PETS_TAB` |
+| Profile tabs, packages, stat labels, scoring eligibility, or ordering | `src/gd_affix_relevance/stats/registry.py` | `DAMAGE_TAB`, `DEFENSES_TAB`, `CORE_TAB`, `ADVANCED_TAB`, `PETS_TAB`, `NON_SCOREABLE_STAT_DEFINITIONS` |
 | Stars, arrows, stat rows, or accordion headers | `src/gd_affix_relevance/ui/widgets.py` | `WeightControl`, `StatRow`, `PackageAccordion` |
 | Skills page layout or mastery-change warning | `src/gd_affix_relevance/ui/skills_editor.py` | `MasteryPanel`, `SkillsEditor` |
 | Profile toolbar, Save/Load/New, or page hints | `src/gd_affix_relevance/ui/profile_editor.py` | `ProfileEditor` |
@@ -124,8 +124,9 @@ normally keeps all three tabs aligned.
 
 ### Tabs, packages, and stat order
 
-`ui/catalog.py` is the presentation catalog for the weighting UI. It does not
-contain extracted game records.
+`stats/registry.py` is the shared semantic and presentation catalog for profile
+weights. `ui/catalog.py` only preserves the older import path for UI callers.
+Neither file contains extracted game records.
 
 Each `TabDefinition` contains ordered `PackageDefinition` objects, and each
 package contains ordered `StatDefinition` objects. Therefore:
@@ -139,6 +140,11 @@ package contains ordered `StatDefinition` objects. Therefore:
 Be cautious with the first `stat_id` argument. It is the stable key used by
 profiles and scoring. Changing only the label is cosmetic; changing the ID can
 break existing profile weights unless a migration is added.
+
+`NON_SCOREABLE_STAT_DEFINITIONS` lists recognized properties that should appear
+in compiled details but must not affect coverage, such as base shield values and
+unresolved placeholders. The compiler validates that every other static
+semantic ID has an explicit registry entry.
 
 `ui/widgets.py` owns the reusable visual controls. Look there for star glyphs,
 arrow behavior, `Modify All`, nonzero summaries, and accordion header text.

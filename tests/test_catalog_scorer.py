@@ -16,6 +16,7 @@ from gd_affix_relevance.scoring import (
     score_affix_variant,
     score_semantic_stat_ids,
     semantic_stat_id,
+    semantic_stat_ids,
 )
 from gd_affix_relevance.slots import SLOT_RING
 
@@ -130,6 +131,38 @@ def test_item_base_weapon_damage_maps_separately_from_flat_damage() -> None:
     assert semantic_stat_id(property_) == "base_weapon_damage_as_lightning"
 
 
+def test_racial_and_pet_conversion_properties_expand_to_registered_ids() -> None:
+    racial = AffixProperty(
+        "racial_damage_bonus",
+        "racial_damage_bonus",
+        {"race_reference": "Race003;Race005"},
+    )
+    pet_conversion = AffixProperty(
+        "pet_damage_conversion",
+        "pet_damage_conversion:1",
+        {"source_damage_type": "life", "destination_damage_type": "cold"},
+    )
+
+    assert semantic_stat_ids(racial) == (
+        "racial_damage_bonus_vs_aetherial",
+        "racial_damage_bonus_vs_aether_corruption",
+    )
+    assert semantic_stat_ids(pet_conversion) == (
+        "pet_damage_conversion_to_cold",
+    )
+
+
+def test_non_scoreable_and_unknown_stats_do_not_reduce_coverage() -> None:
+    variant = _variant("health", "base_shield_block_amount", "future_stat")
+    profile = BuildProfile(weights={"health": 2})
+
+    score = score_affix_variant(variant, profile)
+
+    assert score.matched_count == 1
+    assert score.total_category_count == 1
+    assert score.coverage_ratio == 1.0
+
+
 def test_nonlinear_score_softly_penalizes_low_item_coverage() -> None:
     stat_ids = (
         "defensive_ability",
@@ -149,19 +182,33 @@ def test_nonlinear_score_softly_penalizes_low_item_coverage() -> None:
 
     assert score.weighted_match == 5
     assert score.relevance_points == 3.25
-    assert score.coverage_ratio == 0.25
-    assert score.base_effective_score == pytest.approx(2.51875)
+    assert score.coverage_ratio == pytest.approx(2 / 7)
+    assert score.base_effective_score == pytest.approx(
+        3.25 * (0.70 + 0.30 * (2 / 7))
+    )
     assert score.profile_adjustment == pytest.approx(1.0185430778)
-    assert score.effective_score == pytest.approx(2.5654553771)
+    assert score.effective_score == pytest.approx(
+        score.base_effective_score * score.profile_adjustment
+    )
     assert score.grade == "D"
 
 
 def test_profile_adjustment_is_bounded_and_ignores_zero_weights() -> None:
+    stat_ids = (
+        "health",
+        "defensive_ability",
+        "offensive_ability",
+        "attack_speed",
+        "casting_speed",
+        "movement_speed",
+        "elemental_resistance",
+        "total_damage_percent",
+    )
     mostly_useful = BuildProfile(
-        weights={f"stat_{index}": 2 for index in range(8)},
+        weights={stat_id: 2 for stat_id in stat_ids},
         skill_weights={"ignored_skill": 0},
     )
-    all_core = BuildProfile(weights={f"stat_{index}": 4 for index in range(8)})
+    all_core = BuildProfile(weights={stat_id: 4 for stat_id in stat_ids})
 
     assert profile_score_adjustment(mostly_useful) == pytest.approx(1.25)
     assert profile_score_adjustment(all_core) == pytest.approx(0.80)
@@ -186,13 +233,19 @@ def test_zero_relevance_uses_f_grade() -> None:
 
 
 def test_high_s_markers_omit_matched_count() -> None:
+    stat_ids = (
+        "health",
+        "defensive_ability",
+        "offensive_ability",
+        "attack_speed",
+        "casting_speed",
+        "movement_speed",
+    )
     profile = BuildProfile(
-        weights={f"stat_{index}": 4 for index in range(8)}
+        weights={stat_id: 4 for stat_id in stat_ids}
     )
 
-    score = score_semantic_stat_ids(
-        tuple(f"stat_{index}" for index in range(6)), profile
-    )
+    score = score_semantic_stat_ids(stat_ids, profile)
 
     assert score.grade == "S+"
     assert score.marker == "[S+]"

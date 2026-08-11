@@ -594,9 +594,71 @@ def propose_field_mapping(raw_field: str) -> FieldMappingProposal | None:
             confidence="confirmed",
         )
 
-    if raw_field in {"racialBonusRace", "racialBonusPercentDamage"}:
-        role = "race_reference" if raw_field.endswith("Race") else "percent"
-        return _proposal(raw_field, "racial_damage_bonus", "Damage to Creature Type", role)
+    if raw_field in {
+        "racialBonusRace",
+        "racialBonusPercentDamage",
+        "racialBonusPercentDefense",
+    }:
+        if raw_field.endswith("Race"):
+            return _proposal(
+                raw_field,
+                "racial_damage_bonus",
+                "Damage to Creature Type",
+                "race_reference",
+            )
+        property_id = (
+            "racial_defense_bonus"
+            if raw_field.endswith("Defense")
+            else "racial_damage_bonus"
+        )
+        label = (
+            "Less Damage from Creature Type"
+            if property_id == "racial_defense_bonus"
+            else "Damage to Creature Type"
+        )
+        return _proposal(raw_field, property_id, label, "percent")
+
+    if raw_field in {
+        "offensiveSlowTotalSpeedDurationMin",
+        "offensiveSlowTotalSpeedMin",
+    }:
+        role = (
+            "duration_min" if raw_field.endswith("DurationMin") else "reduction_percent"
+        )
+        return _proposal(
+            raw_field,
+            "target_total_speed_reduction",
+            "Reduced Target Total Speed",
+            role,
+            display_template=(
+                "{reduction_percent}% Reduced Target Total Speed for "
+                "{duration_min} Seconds"
+            ),
+        )
+
+    if raw_field == "retaliationConfusionMin":
+        return _proposal(
+            raw_field,
+            "confusion_retaliation",
+            "Confuse Retaliation",
+            "duration_min",
+            display_template="{duration_min} Seconds of Confuse Retaliation",
+        )
+
+    if raw_field in {
+        "retaliationSlowManaLeachDurationMin",
+        "retaliationSlowManaLeachMin",
+    }:
+        role = "duration_min" if raw_field.endswith("DurationMin") else "percent"
+        return _proposal(
+            raw_field,
+            "energy_leech_retaliation",
+            "Energy Leech Retaliation",
+            role,
+            display_template=(
+                "{percent}% Energy Leech Retaliation over {duration_min} Seconds"
+            ),
+        )
 
     if raw_field == "skillCooldownReduction":
         return _proposal(

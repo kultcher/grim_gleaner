@@ -12,6 +12,7 @@ lightning.json
 .vscode/
 forum-pitch.md
 testing.md
+refactor-notes.md
 
 # Locally extracted proprietary Grim Dawn data.
 game_data/

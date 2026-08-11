@@ -1,5 +1,26 @@
 # Grim Gleaner
 
+Grim Gleaner is a utility to help Grim Dawn players quickly and conveniently
+identify and evaluate affixes and items that are most relevant to their build.
+
+It has two layers:
+- a standalone UI where users can assign weights to relevant stats and see detailed
+reports on best-fit affixes, items and components/augments with grades from F-S++
+- and an in-game notation system that adds the grades for affixes, epics, legendaries
+and MI items directly to the item's tooltip
+
+# Installation
+
+1. Download the latest .zip file from the releases section
+2. Unzip the files to their own folder
+3. Run grim_gleaner.exe to launch the utility
+
+# Setup
+
+1. First thing 
+
+
+# Usage
 Grim Gleaner analyzes Grim Dawn item properties and proposes build-relevance
 annotations for their localization tags. Its first scoring catalog covers magic
 and rare affixes; its compiled item data also covers base items, Monster
@@ -7,67 +28,6 @@ Infrequents, epics, legendaries, components, augments, relics, runes, and
 consumables. The current UI scores affixes, unique equipment, components, and
 augments; it does not attempt to determine whether an entire dropped item is an
 upgrade over the player's current equipment.
-
-## Development setup
-
-The project currently targets Python 3.14 on Windows.
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
-.\.venv\Scripts\python.exe -m pytest
-```
-
-Extracted proprietary game data belongs under `game_data/` and is intentionally
-ignored by Git.
-
-Compiled development catalogs belong under `artifacts/`, which is also ignored
-until redistribution terms and the release packaging policy are settled.
-
-## Run the profile editor UI
-
-```powershell
-.\.venv\Scripts\grim-gleaner-ui.exe
-```
-
-## Assemble the release staging folder
-
-The application resolves development resources from `artifacts/`. A packaged
-executable instead resolves `catalog/`, `tags/`, `Profiles/`,
-`staging/text_en/`, and `backups/` relative to the directory containing the
-executable, regardless of the user's current working directory.
-
-Inspect either layout with:
-
-```powershell
-.\.venv\Scripts\python.exe -m gd_affix_relevance.cli show-runtime-paths
-.\.venv\Scripts\python.exe -m gd_affix_relevance.cli show-runtime-paths `
-  --application-root "dist\Grim Gleaner"
-```
-
-Validate the compiled catalog and all four official item-tag files, then copy
-the runtime resources into the default `dist/Grim Gleaner` directory with:
-
-```powershell
-.\.venv\Scripts\python.exe -m gd_affix_relevance.cli assemble-release `
-  --project-root .
-```
-
-The destination can be overridden with `--output-dir`; `--catalog-root` and
-`--data-root` are also available for nonstandard source layouts. Reassembly
-replaces only `catalog/`, `tags/`, the release README, optional license/notice
-files, and `release-manifest.json`. It preserves a built executable, its
-dependency directory, `Profiles/`, `staging/`, `backups/`, and any other
-unmanaged paths.
-
-To launch the ordinary Python UI against the assembled resources before an
-executable exists:
-
-```powershell
-$env:GRIM_GLEANER_APP_ROOT = (Resolve-Path "dist\Grim Gleaner")
-.\.venv\Scripts\python.exe -m gd_affix_relevance.ui.app
-Remove-Item Env:GRIM_GLEANER_APP_ROOT
-```
 
 The current UI provides the data-driven profile editor with 0–4 star weights,
 package-wide weight controls, discoverable package accordions, three pet-stat
@@ -334,3 +294,64 @@ resolve names and seed safe optional `tags*_items.txt` output. World-data DBRs
 outside those branches are not required unless Grim Gleaner later begins
 interpreting or annotating doors, map interactables, or quest objects rather
 than simply preserving their localization entries.
+
+## Development setup
+
+The project currently targets Python 3.14 on Windows.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+.\.venv\Scripts\python.exe -m pytest
+```
+
+Extracted proprietary game data belongs under `game_data/` and is intentionally
+ignored by Git.
+
+Compiled development catalogs belong under `artifacts/`, which is also ignored
+until redistribution terms and the release packaging policy are settled.
+
+## Run the profile editor UI
+
+```powershell
+.\.venv\Scripts\grim-gleaner-ui.exe
+```
+
+## Assemble the release staging folder
+
+The application resolves development resources from `artifacts/`. A packaged
+executable instead resolves `catalog/`, `tags/`, `Profiles/`,
+`staging/text_en/`, and `backups/` relative to the directory containing the
+executable, regardless of the user's current working directory.
+
+Inspect either layout with:
+
+```powershell
+.\.venv\Scripts\python.exe -m gd_affix_relevance.cli show-runtime-paths
+.\.venv\Scripts\python.exe -m gd_affix_relevance.cli show-runtime-paths `
+  --application-root "dist\Grim Gleaner"
+```
+
+Validate the compiled catalog and all four official item-tag files, then copy
+the runtime resources into the default `dist/Grim Gleaner` directory with:
+
+```powershell
+.\.venv\Scripts\python.exe -m gd_affix_relevance.cli assemble-release `
+  --project-root .
+```
+
+The destination can be overridden with `--output-dir`; `--catalog-root` and
+`--data-root` are also available for nonstandard source layouts. Reassembly
+replaces only `catalog/`, `tags/`, the release README, optional license/notice
+files, and `release-manifest.json`. It preserves a built executable, its
+dependency directory, `Profiles/`, `staging/`, `backups/`, and any other
+unmanaged paths.
+
+To launch the ordinary Python UI against the assembled resources before an
+executable exists:
+
+```powershell
+$env:GRIM_GLEANER_APP_ROOT = (Resolve-Path "dist\Grim Gleaner")
+.\.venv\Scripts\python.exe -m gd_affix_relevance.ui.app
+Remove-Item Env:GRIM_GLEANER_APP_ROOT
+```

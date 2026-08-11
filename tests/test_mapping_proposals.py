@@ -297,3 +297,26 @@ def test_item_only_base_damage_numbered_conversions_and_max_resists_map() -> Non
     )
     assert maximum_resistance is not None
     assert maximum_resistance.property_id == "maximum_fire_resistance"
+
+
+def test_item_only_retaliation_and_total_speed_fields_form_bundles() -> None:
+    total_speed = propose_field_mapping("offensiveSlowTotalSpeedMin")
+    total_speed_duration = propose_field_mapping(
+        "offensiveSlowTotalSpeedDurationMin"
+    )
+    confusion = propose_field_mapping("retaliationConfusionMin")
+    leech = propose_field_mapping("retaliationSlowManaLeachMin")
+    leech_duration = propose_field_mapping(
+        "retaliationSlowManaLeachDurationMin"
+    )
+
+    assert total_speed is not None and total_speed_duration is not None
+    assert total_speed.bundle_key == total_speed_duration.bundle_key == (
+        "target_total_speed_reduction"
+    )
+    assert confusion is not None
+    assert confusion.property_id == "confusion_retaliation"
+    assert leech is not None and leech_duration is not None
+    assert leech.bundle_key == leech_duration.bundle_key == (
+        "energy_leech_retaliation"
+    )

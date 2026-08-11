@@ -11,7 +11,6 @@ from pathlib import Path
 
 from gd_affix_relevance.domain import LocalizationEntry, RawDbrRecord
 from gd_affix_relevance.importers.affix_discovery import supported_affix_kind
-from gd_affix_relevance.importers.dbr_parser import parse_dbr_file
 from gd_affix_relevance.importers.localization_parser import (
     first_entry_lookup,
     plain_display_name,
@@ -23,8 +22,8 @@ from gd_affix_relevance.normalization.mapping_proposals import (
     FieldMappingProposal,
     propose_field_mapping,
 )
+from gd_affix_relevance.records import DEFAULT_DATA_SOURCES, RecordRepository
 
-DEFAULT_DATA_SOURCES = ("base", "gdx1", "gdx2", "gdx3")
 MAX_EXAMPLES_PER_FIELD = 5
 
 
@@ -90,6 +89,7 @@ def build_field_inventory(
     """Inventory active fields from supported affixes across database sources."""
 
     localization_lookup = first_entry_lookup(localization_entries)
+    repository = RecordRepository(data_root, source_names)
     summaries: dict[str, FieldSummary] = {}
     records_scanned = 0
     supported_records = 0
@@ -97,17 +97,14 @@ def build_field_inventory(
     unresolved_tags: dict[str, Counter[str]] = {}
 
     for source_name in source_names:
-        lootaffix_root = (
-            Path(data_root) / source_name / "records" / "items" / "lootaffixes"
-        )
         for kind in ("prefix", "suffix"):
-            kind_root = lootaffix_root / kind
-            if not kind_root.exists():
-                continue
-
-            for source_path in sorted(kind_root.glob("*.dbr")):
+            for location in repository.iter_source(
+                source_name,
+                f"records/items/lootaffixes/{kind}",
+                recursive=False,
+            ):
                 records_scanned += 1
-                record = parse_dbr_file(source_path)
+                record = repository.load(location)
                 parse_warning_count += len(record.warnings)
                 if supported_affix_kind(record) is None:
                     continue

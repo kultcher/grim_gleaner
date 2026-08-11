@@ -20,18 +20,16 @@ from gd_affix_relevance.catalog.item_compiler import (
     compile_item_payloads,
 )
 from gd_affix_relevance.domain import LocalizationEntry
-from gd_affix_relevance.importers.dbr_parser import parse_dbr_file
 from gd_affix_relevance.importers.localization_parser import (
     first_entry_lookup,
     plain_display_name,
 )
 from gd_affix_relevance.normalization.sample_report import (
-    DEFAULT_DATA_SOURCES,
     AffixSampleCandidate,
-    RecordResolver,
     build_sample_candidates,
     record_semantic_fingerprint,
 )
+from gd_affix_relevance.records import DEFAULT_DATA_SOURCES, RecordRepository
 
 AFFIX_SCOPE = "structurally_reachable_magic_and_rare"
 SKILL_SCOPE = "named_player_pet_and_item_granted_with_mastery_tree_metadata"
@@ -69,6 +67,7 @@ def compile_catalog_bundle(
     """
 
     root = Path(data_root)
+    repository = RecordRepository(root, source_names)
     destination = Path(output_dir)
     exact_names = first_entry_lookup(localization_entries)
     folded_names: dict[str, LocalizationEntry] = {}
@@ -80,8 +79,7 @@ def compile_catalog_bundle(
         mastery_tree_root
     )
     skill_payloads, unresolved_skill_names = _compile_skills(
-        root,
-        source_names,
+        repository,
         exact_names,
         folded_names,
         strings,
@@ -93,11 +91,12 @@ def compile_catalog_bundle(
         localization_entries,
         source_names=source_names,
         count=None,
+        repository=repository,
     )
     affix_payloads = _compile_affixes(
         sample_result.candidates,
         strings,
-        RecordResolver(root, source_names),
+        repository,
         exact_names,
     )
     affix_variant_count = sum(
@@ -105,8 +104,7 @@ def compile_catalog_bundle(
     )
     item_payloads, item_variant_count, unresolved_item_names = (
         compile_item_payloads(
-            root,
-            source_names,
+            repository,
             exact_names,
             folded_names,
             strings,
@@ -167,6 +165,17 @@ def compile_catalog_bundle(
             "item_scope": ITEM_SCOPE,
         },
     )
+    from gd_affix_relevance.catalog.models import CatalogBundle
+    from gd_affix_relevance.scoring.catalog_scorer import (
+        unregistered_catalog_stat_ids,
+    )
+
+    unregistered = unregistered_catalog_stat_ids(CatalogBundle.load(destination))
+    if unregistered:
+        raise ValueError(
+            "compiled scoreable stats are missing from the registry: "
+            + ", ".join(unregistered)
+        )
     return CatalogCompileResult(
         output_dir=destination,
         affix_count=len(affix_payloads),
@@ -182,26 +191,15 @@ def compile_catalog_bundle(
 
 
 def _compile_skills(
-    data_root: Path,
-    source_names: tuple[str, ...],
+    repository: RecordRepository,
     exact_names: dict[str, LocalizationEntry],
     folded_names: dict[str, LocalizationEntry],
     strings: dict[str, str],
     mastery_tree_relationships: tuple[MasteryTreeRelationship, ...],
 ) -> tuple[list[dict[str, Any]], int]:
-    overlaid_paths: dict[str, tuple[str, Path]] = {}
-    for source_name in source_names:
-        source_root = data_root / source_name
-        skills_root = source_root / "records" / "skills"
-        if not skills_root.exists():
-            continue
-        for path in sorted(skills_root.rglob("*.dbr")):
-            logical_path = _logical_record_path(path.relative_to(source_root))
-            overlaid_paths[logical_path] = (source_name, path)
-
     records_by_path = {
-        logical_path: (source_name, parse_dbr_file(path))
-        for logical_path, (source_name, path) in sorted(overlaid_paths.items())
+        location.logical_path: (location.source, repository.load(location))
+        for location in repository.iter_overlaid("records/skills")
     }
     prepared: list[tuple[str, str, Any, str, str, str, str]] = []
     unresolved = 0
@@ -403,7 +401,7 @@ def _apply_curated_mastery_relationships(
 def _compile_affixes(
     candidates: tuple[AffixSampleCandidate, ...],
     strings: dict[str, str],
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> list[dict[str, Any]]:
     grouped: dict[tuple[str, str], list[AffixSampleCandidate]] = defaultdict(list)
@@ -453,7 +451,7 @@ def _compile_affixes(
 
 def _variant_payload(
     candidate: AffixSampleCandidate,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
 ) -> dict[str, Any]:
     components: dict[str, dict[str, str]] = {}
@@ -462,10 +460,8 @@ def _variant_payload(
         if value:
             attributes[role] = value
             if role == "skill_reference":
-                preferred_source = candidate.representative_source.split(":", 1)[0]
                 attributes["display_name"] = resolver.resolve_skill_name(
                     value,
-                    preferred_source,
                     localization_lookup,
                 )
     if "pet_bonus" in components:
@@ -495,19 +491,17 @@ def _variant_payload(
 
 def _pet_bonus_components(
     candidate: AffixSampleCandidate,
-    resolver: RecordResolver,
+    resolver: RecordRepository,
 ) -> dict[str, dict[str, str]]:
     """Expand an affix's referenced pet package into scoreable pet stats."""
 
-    preferred_source, record_path = candidate.representative_source.split(
-        ":", 1
-    )
-    resolved_affix = resolver.resolve(record_path, preferred_source)
+    _, record_path = candidate.representative_source.split(":", 1)
+    resolved_affix = resolver.resolve(record_path)
     if resolved_affix is None:
         return {}
-    affix_source, affix_record = resolved_affix
+    _, affix_record = resolved_affix
     pet_reference = (affix_record.first_value("petBonusName") or "").strip()
-    resolved_pet = resolver.resolve(pet_reference, affix_source)
+    resolved_pet = resolver.resolve(pet_reference)
     if resolved_pet is None:
         return {}
     _, pet_record = resolved_pet
@@ -530,10 +524,6 @@ def _property_id(property_key: str) -> str:
     if property_key.startswith("unmapped:"):
         return "unmapped"
     return property_key.split(":", maxsplit=1)[0]
-
-
-def _logical_record_path(path: Path) -> str:
-    return path.as_posix().lower()
 
 
 def _skill_category(logical_path: str) -> str | None:

@@ -7,7 +7,7 @@ from gd_affix_relevance.catalog.item_compiler import (
     _discover_component_blueprint_distribution,
 )
 from gd_affix_relevance.importers.localization_parser import parse_localization_text
-from gd_affix_relevance.normalization.sample_report import RecordResolver
+from gd_affix_relevance.records import RecordRepository
 from gd_affix_relevance.slots import SLOT_RING
 
 
@@ -52,7 +52,7 @@ def test_component_recipe_sources_follow_blueprint_distribution(
     )
 
     random_paths, vendor_paths = _discover_component_blueprint_distribution(
-        data_root, ("base",), RecordResolver(data_root, ("base",))
+        RecordRepository(data_root, ("base",))
     )
 
     assert random_paths == frozenset(

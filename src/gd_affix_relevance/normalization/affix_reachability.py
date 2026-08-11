@@ -14,13 +14,16 @@ from pathlib import Path
 
 from gd_affix_relevance.domain import LocalizationEntry
 from gd_affix_relevance.importers.affix_discovery import supported_affix_kind
-from gd_affix_relevance.importers.dbr_parser import parse_dbr_file
 from gd_affix_relevance.importers.localization_parser import (
     first_entry_lookup,
     plain_display_name,
 )
+from gd_affix_relevance.records import (
+    DEFAULT_DATA_SOURCES,
+    RecordRepository,
+    normalize_record_path,
+)
 
-DEFAULT_DATA_SOURCES = ("base", "gdx1", "gdx2", "gdx3")
 
 
 @dataclass(slots=True)
@@ -62,47 +65,43 @@ def build_affix_reference_statuses(
     """
 
     root = Path(data_root)
+    repository = RecordRepository(root, source_names)
     localization_lookup = first_entry_lookup(localization_entries)
     edges: dict[str, set[str]] = defaultdict(set)
     incoming: dict[str, set[str]] = defaultdict(set)
     affixes: dict[str, _AffixReferenceGroup] = {}
 
-    for source_name in source_names:
-        source_root = root / source_name
-        items_root = source_root / "records" / "items"
-        if not items_root.exists():
+    for location in repository.iter_overlaid("records/items"):
+        source_name = location.source
+        logical_path = location.logical_path
+        record = repository.load(location)
+        edges.setdefault(logical_path, set())
+
+        for raw_field in record.fields:
+            referenced_path = _referenced_item_dbr(raw_field.value)
+            if referenced_path is None:
+                continue
+            edges[logical_path].add(referenced_path)
+            incoming[referenced_path].add(logical_path)
+
+        kind = supported_affix_kind(record)
+        if kind is None:
             continue
 
-        for source_path in sorted(items_root.rglob("*.dbr")):
-            logical_path = _logical_path(source_path.relative_to(source_root))
-            record = parse_dbr_file(source_path)
-            edges.setdefault(logical_path, set())
-
-            for raw_field in record.fields:
-                referenced_path = _referenced_item_dbr(raw_field.value)
-                if referenced_path is None:
-                    continue
-                edges[logical_path].add(referenced_path)
-                incoming[referenced_path].add(logical_path)
-
-            kind = supported_affix_kind(record)
-            if kind is None:
-                continue
-
-            localization_tag = record.first_value("lootRandomizerName") or ""
-            localization_entry = localization_lookup.get(localization_tag)
-            display_name = (
-                plain_display_name(localization_entry.value)
-                if localization_entry is not None
-                else ""
-            )
-            group = affixes.setdefault(
-                localization_tag,
-                _AffixReferenceGroup(localization_tag, display_name),
-            )
-            group.kinds.add(kind)
-            group.logical_record_paths.add(logical_path)
-            group.source_records.add(f"{source_name}:{logical_path}")
+        localization_tag = record.first_value("lootRandomizerName") or ""
+        localization_entry = localization_lookup.get(localization_tag)
+        display_name = (
+            plain_display_name(localization_entry.value)
+            if localization_entry is not None
+            else ""
+        )
+        group = affixes.setdefault(
+            localization_tag,
+            _AffixReferenceGroup(localization_tag, display_name),
+        )
+        group.kinds.add(kind)
+        group.logical_record_paths.add(logical_path)
+        group.source_records.add(f"{source_name}:{logical_path}")
 
     reachable = _reachable_from_item_loottables(edges)
     rows: list[AffixReferenceStatus] = []
@@ -171,12 +170,8 @@ def write_affix_reference_report(
             )
 
 
-def _logical_path(path: Path | str) -> str:
-    return str(path).replace("\\", "/").strip().lower()
-
-
 def _referenced_item_dbr(value: str) -> str | None:
-    normalized = _logical_path(value)
+    normalized = normalize_record_path(value)
     if not normalized.startswith("records/items/") or not normalized.endswith(".dbr"):
         return None
     return normalized

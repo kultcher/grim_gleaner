@@ -1,4 +1,6 @@
 TO DO:
+- add check for Grim Dawn.exe
+- add warning if game location not configued
 - maybe just bundle rarity colors anyway
 - coverage should probably exclude 1-rated items
 - use tags_uimain to modify tagRDifficultyTitles to maybe display current profile info
