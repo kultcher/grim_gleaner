@@ -17,6 +17,7 @@ from gd_affix_relevance.runtime_paths import resolve_export_sources
 BACKUP_SCHEMA_VERSION = 1
 BACKUP_MANIFEST = "backup-manifest.json"
 BACKUP_CONTENTS = "text_en"
+GRIM_DAWN_EXECUTABLE = "Grim Dawn.exe"
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,10 +35,28 @@ class GradeRestoreResult:
     restored_files: int
 
 
-def grim_dawn_text_root(game_folder: Path) -> Path:
+def validate_grim_dawn_folder(game_folder: Path) -> Path:
+    """Return a confirmed Grim Dawn install root.
+
+    A directory alone is not sufficient: users commonly select the Steam
+    library or ``steamapps/common`` parent instead of the actual game folder.
+    The executable is the stable, inexpensive confirmation available at
+    runtime.
+    """
+
     game = Path(game_folder).expanduser().resolve()
     if not game.is_dir():
         raise ValueError(f"Grim Dawn folder does not exist: {game}")
+    executable = game / GRIM_DAWN_EXECUTABLE
+    if not executable.is_file():
+        raise ValueError(
+            f"Selected folder does not contain {GRIM_DAWN_EXECUTABLE}: {game}"
+        )
+    return game
+
+
+def grim_dawn_text_root(game_folder: Path) -> Path:
+    game = validate_grim_dawn_folder(game_folder)
     return game / "settings" / "text_en"
 
 

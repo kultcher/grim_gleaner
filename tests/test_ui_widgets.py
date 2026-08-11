@@ -193,6 +193,54 @@ def test_settings_page_persists_grim_dawn_folder(tmp_path: Path) -> None:
     assert restored.settings_page.game_folder_edit.text() == game_folder
 
 
+def test_game_folder_confirmation_controls_warning_and_export(
+    tmp_path: Path,
+) -> None:
+    _application()
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
+    )
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    settings.setValue("paths/grim_dawn_folder", str(game))
+
+    window = MainWindow(catalog=AffixCatalog(()), settings=settings)
+
+    assert not window.game_location_warning.isHidden()
+    assert not window.generate_output_page.generate_button.isEnabled()
+    assert window.settings_page.game_folder_status.objectName() == (
+        "gameFolderWarning"
+    )
+
+    (game / "Grim Dawn.exe").touch()
+    window.settings_page.game_folder_edit.editingFinished.emit()
+
+    assert window.game_location_warning.isHidden()
+    assert window.generate_output_page.generate_button.isEnabled()
+    assert window.settings_page.game_folder_status.objectName() == (
+        "gameFolderConfirmed"
+    )
+
+
+def test_startup_game_folder_prompt_runs_once_and_opens_settings(
+    tmp_path: Path,
+) -> None:
+    _application()
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
+    )
+    window = MainWindow(catalog=AffixCatalog(()), settings=settings)
+    prompts: list[bool] = []
+    window.settings_page.prompt_for_game_folder = lambda: prompts.append(True) or False
+
+    window.prompt_for_game_folder_if_needed()
+    window.prompt_for_game_folder_if_needed()
+
+    assert prompts == [True]
+    assert window.navigation.currentRow() == window.settings_navigation_row
+    assert not window.game_location_warning.isHidden()
+
+
 def test_main_window_close_honors_profile_confirmation() -> None:
     _application()
     window = MainWindow(catalog=AffixCatalog(()))

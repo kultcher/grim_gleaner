@@ -55,7 +55,7 @@ def compile_catalog_bundle(
     localization_entries: tuple[LocalizationEntry, ...],
     output_dir: Path,
     *,
-    game_version: str = "unknown",
+    game_version: str = "1.3.0.6",
     source_names: tuple[str, ...] = DEFAULT_DATA_SOURCES,
     mastery_tree_root: Path | None = None,
 ) -> CatalogCompileResult:

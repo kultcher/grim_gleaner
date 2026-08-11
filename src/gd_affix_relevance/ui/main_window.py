@@ -8,10 +8,12 @@ from PySide6.QtCore import QSettings, Qt
 from PySide6.QtGui import QCloseEvent, QFont
 from PySide6.QtWidgets import (
     QHBoxLayout,
+    QLabel,
     QListWidget,
     QListWidgetItem,
     QMainWindow,
     QStackedWidget,
+    QVBoxLayout,
     QWidget,
 )
 
@@ -52,6 +54,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(880, 620)
         self.settings = settings
         self.runtime_paths = runtime_paths or resolve_runtime_paths()
+        self._game_folder_prompted = False
 
         profile_path: Path | None = None
         startup_notice = ""
@@ -76,14 +79,28 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        self.navigation = QListWidget(central)
+        sidebar = QWidget(central)
+        sidebar.setObjectName("mainSidebar")
+        sidebar.setFixedWidth(210)
+        sidebar_layout = QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(0, 0, 0, 10)
+        sidebar_layout.setSpacing(0)
+
+        self.navigation = QListWidget(sidebar)
         self.navigation.setObjectName("mainNavigation")
-        self.navigation.setFixedWidth(190)
         self.navigation.setSpacing(2)
         self.navigation.setHorizontalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
-        layout.addWidget(self.navigation)
+        sidebar_layout.addWidget(self.navigation, 1)
+
+        self.game_location_warning = QLabel(
+            "Grim Dawn folder not confirmed.\nExports are disabled.", sidebar
+        )
+        self.game_location_warning.setObjectName("gameLocationWarning")
+        self.game_location_warning.setWordWrap(True)
+        sidebar_layout.addWidget(self.game_location_warning)
+        layout.addWidget(sidebar)
 
         self.pages = QStackedWidget(central)
         layout.addWidget(self.pages, 1)
@@ -161,9 +178,7 @@ class MainWindow(QMainWindow):
         )
 
         self.settings_page = SettingsPage(self.settings, self.pages)
-        self.settings_page.game_folder_changed.connect(
-            self.generate_output_page.refresh_game_location
-        )
+        self.settings_page.game_folder_changed.connect(self._game_folder_changed)
         self.settings_page_index = self.pages.addWidget(self.settings_page)
         self.settings_navigation_row = self._add_navigation_item(
             "Settings",
@@ -197,6 +212,7 @@ class MainWindow(QMainWindow):
         self.navigation.currentRowChanged.connect(self._navigation_changed)
         self.navigation.setCurrentRow(0)
         self.setCentralWidget(central)
+        self._update_game_location_state()
 
     def _add_navigation_item(
         self,
@@ -250,6 +266,25 @@ class MainWindow(QMainWindow):
                 "profiles/active_path", str(Path(path).resolve())
             )
         self.settings.sync()
+
+    def prompt_for_game_folder_if_needed(self) -> None:
+        """Prompt once at startup when no confirmed installation is stored."""
+
+        if self._game_folder_prompted or self.settings_page.has_valid_game_folder():
+            return
+        self._game_folder_prompted = True
+        self.navigation.setCurrentRow(self.settings_navigation_row)
+        self.settings_page.prompt_for_game_folder()
+        self._update_game_location_state()
+
+    def _game_folder_changed(self, game_folder: str = "") -> None:
+        self.generate_output_page.refresh_game_location(game_folder)
+        self._update_game_location_state()
+
+    def _update_game_location_state(self) -> None:
+        self.game_location_warning.setVisible(
+            not self.settings_page.has_valid_game_folder()
+        )
 
     def closeEvent(self, event: QCloseEvent) -> None:
         if self.profile_editor.confirm_close():

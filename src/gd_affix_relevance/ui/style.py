@@ -8,10 +8,13 @@ QWidget {
     font-size: 10pt;
 }
 QMainWindow { background: #111318; }
+QWidget#mainSidebar {
+    background: #111318;
+    border-right: 1px solid #2c3038;
+}
 QListWidget#mainNavigation {
     background: #111318;
     border: 0;
-    border-right: 1px solid #2c3038;
     padding: 16px 8px;
     outline: 0;
 }
@@ -29,6 +32,16 @@ QLabel#pageTitle { font-size: 19pt; font-weight: 650; color: #ffffff; }
 QLabel#placeholderTitle { font-size: 16pt; font-weight: 600; }
 QLabel#fieldLabel { color: #c9ced8; font-weight: 600; }
 QLabel#pageHint { color: #a7adb8; }
+QLabel#gameLocationWarning {
+    background: #3a2923;
+    border: 1px solid #8b5a3c;
+    border-radius: 6px;
+    color: #ffc898;
+    margin: 8px;
+    padding: 9px;
+}
+QLabel#gameFolderWarning { color: #f0a77b; }
+QLabel#gameFolderConfirmed { color: #81d5aa; }
 QLabel#lastExportedProfile { color: #78d9e8; font-weight: 650; }
 QLabel#guideSectionTitle {
     color: #d4a843;

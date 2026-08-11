@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 from collections.abc import Sequence
 
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtWidgets import QApplication
 
 from gd_affix_relevance.ui.main_window import MainWindow
@@ -28,6 +28,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     application = create_application(argv)
     window = MainWindow(settings=QSettings())
     window.show()
+    QTimer.singleShot(0, window.prompt_for_game_folder_if_needed)
     return application.exec()
 
 

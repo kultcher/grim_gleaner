@@ -13,6 +13,7 @@ from gd_affix_relevance.grade_export import (
     BACKUP_CONTENTS,
     backup_available,
     export_grades_to_game,
+    grim_dawn_text_root,
     restore_game_backup,
 )
 
@@ -54,12 +55,29 @@ def _bundled_tags(tmp_path: Path) -> Path:
     return bundled
 
 
+def test_game_folder_requires_grim_dawn_executable(tmp_path: Path) -> None:
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+
+    try:
+        grim_dawn_text_root(game)
+    except ValueError as error:
+        assert "does not contain Grim Dawn.exe" in str(error)
+    else:
+        raise AssertionError("folder without Grim Dawn.exe was accepted")
+
+    (game / "Grim Dawn.exe").touch()
+
+    assert grim_dawn_text_root(game) == game / "settings" / "text_en"
+
+
 def test_export_preserves_first_original_backup_across_reexports_and_restores(
     tmp_path: Path,
 ) -> None:
     game = tmp_path / "Grim Dawn"
     target = game / "settings" / "text_en"
     target.mkdir(parents=True)
+    (game / "Grim Dawn.exe").touch()
     original = b"tagHealthy={^G}Rainbow Healthy\r\ntagOther=Keep Me\r\n"
     (target / "tags_items.txt").write_bytes(original)
     (target / "rainbow-extra.txt").write_text("tagExtra=Extra\n", encoding="utf-8")
@@ -111,6 +129,7 @@ def test_restore_removes_generated_text_folder_for_clean_install(
 ) -> None:
     game = tmp_path / "Grim Dawn"
     game.mkdir()
+    (game / "Grim Dawn.exe").touch()
     bundled = _bundled_tags(tmp_path)
     staging = tmp_path / "app" / "staging" / "text_en"
     backups = tmp_path / "app" / "backups"

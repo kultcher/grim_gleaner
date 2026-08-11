@@ -11,10 +11,13 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
+
+from gd_affix_relevance.grade_export import validate_grim_dawn_folder
 
 GAME_FOLDER_SETTING = "paths/grim_dawn_folder"
 
@@ -69,6 +72,10 @@ class SettingsPage(QWidget):
         form.addRow("Grim Dawn folder location", path_row)
         layout.addLayout(form)
 
+        self.game_folder_status = QLabel(self)
+        self.game_folder_status.setWordWrap(True)
+        layout.addWidget(self.game_folder_status)
+
         note = QLabel(
             "Export Grades checks this folder's settings/text_en directory for "
             "existing item-tag files. Installed files take precedence and the "
@@ -80,6 +87,7 @@ class SettingsPage(QWidget):
         note.setWordWrap(True)
         layout.addWidget(note)
         layout.addStretch()
+        self._refresh_game_folder_status()
 
     def _saved_game_folder(self) -> str:
         if self.settings is None:
@@ -87,24 +95,69 @@ class SettingsPage(QWidget):
         return self.settings.value(GAME_FOLDER_SETTING, "", type=str)
 
     def _save_game_folder(self) -> None:
-        if self.settings is None:
-            return
         value = self.game_folder_edit.text().strip()
-        if value:
-            self.settings.setValue(GAME_FOLDER_SETTING, value)
-        else:
-            self.settings.remove(GAME_FOLDER_SETTING)
-        self.settings.sync()
+        if self.settings is not None:
+            if value:
+                self.settings.setValue(GAME_FOLDER_SETTING, value)
+            else:
+                self.settings.remove(GAME_FOLDER_SETTING)
+            self.settings.sync()
+        self._refresh_game_folder_status()
         self.game_folder_changed.emit(value)
 
-    def _browse_game_folder(self) -> None:
+    def prompt_for_game_folder(self) -> bool:
+        """Ask for an install root and return whether it was confirmed."""
+
         starting_path = self.game_folder_edit.text().strip() or str(Path.cwd())
         selected = QFileDialog.getExistingDirectory(
             self,
-            "Select Grim Dawn Folder",
+            "Select Grim Dawn Folder (contains Grim Dawn.exe)",
             starting_path,
         )
         if not selected:
-            return
+            return False
         self.game_folder_edit.setText(selected)
         self._save_game_folder()
+        if not self.has_valid_game_folder():
+            QMessageBox.warning(
+                self,
+                "Grim Dawn Not Found",
+                "That folder does not contain Grim Dawn.exe. Select the Grim "
+                "Dawn installation folder itself.",
+            )
+            return False
+        return True
+
+    def _browse_game_folder(self) -> None:
+        self.prompt_for_game_folder()
+
+    def has_valid_game_folder(self) -> bool:
+        value = self.game_folder_edit.text().strip()
+        if not value:
+            return False
+        try:
+            validate_grim_dawn_folder(Path(value))
+        except (OSError, ValueError):
+            return False
+        return True
+
+    def _refresh_game_folder_status(self) -> None:
+        value = self.game_folder_edit.text().strip()
+        if not value:
+            self.game_folder_status.setObjectName("gameFolderWarning")
+            self.game_folder_status.setText(
+                "Not configured. Select the folder containing Grim Dawn.exe."
+            )
+        else:
+            try:
+                game = validate_grim_dawn_folder(Path(value))
+            except (OSError, ValueError) as error:
+                self.game_folder_status.setObjectName("gameFolderWarning")
+                self.game_folder_status.setText(f"Not confirmed: {error}")
+            else:
+                self.game_folder_status.setObjectName("gameFolderConfirmed")
+                self.game_folder_status.setText(
+                    f"Confirmed Grim Dawn installation: {game}"
+                )
+        self.game_folder_status.style().unpolish(self.game_folder_status)
+        self.game_folder_status.style().polish(self.game_folder_status)

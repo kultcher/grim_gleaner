@@ -72,6 +72,7 @@ def test_export_page_installs_grades_and_restores_original(
     game = tmp_path / "Grim Dawn"
     installed = game / "settings" / "text_en"
     installed.mkdir(parents=True)
+    (game / "Grim Dawn.exe").touch()
     original = "tagHealthy={^G}Rainbow Healthy\ntagOther=Keep Me\n"
     (installed / "tags_items.txt").write_text(original, encoding="utf-8")
     page = _page(tmp_path, game, bundled)
@@ -118,6 +119,7 @@ def test_export_page_uses_bundled_tags_for_clean_install(
     )
     game = tmp_path / "Grim Dawn"
     game.mkdir()
+    (game / "Grim Dawn.exe").touch()
     page = _page(tmp_path, game, bundled)
     monkeypatch.setattr(
         QMessageBox,
@@ -155,3 +157,24 @@ def test_export_page_requires_configured_game_folder(tmp_path: Path) -> None:
     assert not page.generate_button.isEnabled()
     assert not page.restore_button.isEnabled()
     assert "Set a valid Grim Dawn folder" in page.target_label.text()
+
+
+def test_export_page_rejects_existing_folder_without_executable(
+    tmp_path: Path,
+) -> None:
+    _application()
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    bundled = tmp_path / "tags"
+    bundled.mkdir()
+    page = _page(tmp_path, game, bundled)
+
+    assert not page.generate_button.isEnabled()
+    assert not page.restore_button.isEnabled()
+    assert "Set a valid Grim Dawn folder" in page.target_label.text()
+
+    (game / "Grim Dawn.exe").touch()
+    page.refresh_game_location()
+
+    assert page.generate_button.isEnabled()
+    assert str(game / "settings" / "text_en") in page.target_label.text()
