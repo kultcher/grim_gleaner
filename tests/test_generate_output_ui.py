@@ -130,7 +130,7 @@ def test_export_page_uses_bundled_tags_for_clean_install(
     page.generate()
 
     installed = game / "settings" / "text_en"
-    assert "tagHealthy={^C}(C1){^E}Bundled Healthy" in (
+    assert "tagHealthy=(C1)Bundled Healthy" in (
         installed / "tags_items.txt"
     ).read_text(encoding="utf-8")
 

@@ -309,10 +309,12 @@ def _replace_generated_marker(
     clean_value = _normalize_rainbow_set_marker(
         _strip_generated_marker(value)
     )
+    has_explicit_color = COLOR_CODE_PATTERN.search(clean_value) is not None
     if instruction.placement == "suffix":
-        return f"{clean_value}{MARKER_COLOR}{instruction.marker}"
-    reset = "" if COLOR_CODE_PATTERN.search(clean_value) else DEFAULT_COLOR
-    return f"{MARKER_COLOR}{instruction.marker}{reset}{clean_value}"
+        marker_color = MARKER_COLOR if has_explicit_color else ""
+        return f"{clean_value}{marker_color}{instruction.marker}"
+    marker_color = MARKER_COLOR if has_explicit_color else ""
+    return f"{marker_color}{instruction.marker}{clean_value}"
 
 
 def _strip_generated_marker(value: str) -> str:

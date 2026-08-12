@@ -137,7 +137,7 @@ def test_writer_clones_complete_folder_and_changes_exact_affix_tags_only(
     text = generated.decode("utf-8-sig")
     assert "tagAffix={^C}(C1){^G}Affix Name\r\n" in text
     assert "tagSpecial={^C}(C1)X{^O}Special Name\r\n" in text
-    assert "tagPlain={^C}(C1){^E}Plain Name\r\n" in text
+    assert "tagPlain=(C1)Plain Name\r\n" in text
     assert "tagSuffix={^G}of Ending{^C}(C1)\r\n" in text
     assert "tagBaseItem={^B}Base Item\r\n" in text
     assert (output / "readme.bin").read_bytes() == b"untouched"
@@ -149,6 +149,59 @@ def test_writer_clones_complete_folder_and_changes_exact_affix_tags_only(
     assert result.unique_tags_found == 0
     assert result.annotated_lines == 4
     assert result.missing_affix_tags == ("tagMissing",)
+
+
+def test_writer_leaves_clean_vanilla_names_free_of_color_codes(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "clean"
+    source.mkdir()
+    (source / "tags_items.txt").write_text(
+        "tagPrefix=Charged\n"
+        "tagSuffix=of Ferocity\n"
+        "tagUnique=Stormrend\n",
+        encoding="utf-8",
+    )
+    catalog = AffixCatalog(
+        (
+            _affix("tagPrefix", "Charged", _variant("health")),
+            _affix(
+                "tagSuffix",
+                "of Ferocity",
+                _variant("health"),
+                kind="suffix",
+            ),
+        )
+    )
+    items = ItemCatalog(
+        (
+            _unique_item(
+                "tagUnique",
+                "Stormrend",
+                (ItemProperty("health", "health", {}),),
+            ),
+        ),
+        (),
+        (),
+        (),
+        (),
+        (),
+    )
+    output = tmp_path / "output"
+
+    generate_rainbow_output(
+        source,
+        output,
+        catalog,
+        BuildProfile("Health", {"health": 4}),
+        items=items,
+    )
+
+    text = (output / "tags_items.txt").read_text(encoding="utf-8")
+    assert "tagPrefix=(C1)Charged" in text
+    assert "tagSuffix=of Ferocity(C1)" in text
+    assert "tagUnique=(C1)Stormrend" in text
+    assert "{^" not in text
 
 
 def test_writer_replaces_its_marker_and_is_idempotent(tmp_path: Path) -> None:

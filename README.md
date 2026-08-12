@@ -23,11 +23,11 @@ AI (Codex) was used for data analysis data and coding to build this program.
 
 1. Download the latest .zip file from the [releases section](https://github.com/kultcher/grim_gleaner/releases)
 2. Unzip the files to their own folder
-3. Run grim_gleaner.exe to launch the utility
-4. Open the "Settings" section from the sidebar and set your Grim Dawn game location
-(Steam default: C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn)
+3. Run grim_gleaner.exe to launch the utility. (If you get the "Windows protected your machine" notification, click "More Info -> Run Anyway)
+4. Open the "Settings" section from the sidebar and set your Grim Dawn game location (you'll be prompted automatically the first time you open the program.)\
+(Steam default location: C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn)
 
-**NOTE**: This utility has only been tested using English localization. No promises that it will work for other languages!
+**NOTE**: This utility has only been tested using English localization on Windows 11. No promises that it will work for other languages and it will not work on x64 Windows machines!
 
 ### Usage
 
@@ -47,7 +47,12 @@ There are three tabbed subsections:
 - Uniques will do the same for Epics, Uniques and Monster Infrequents. You can set a minimum grade you want to appear in each list.
 - Add-ons will show your the 5 highest-graded Components and Augments for each item slot and their sources. It also has an optional "Resistance Cap Mode" that lets you easily target specific resistances that you need to cap.
 4. **Export to in-game tags**\
-Click over to the "Export Grades" sections from the sidebar, then click "Export Grades." This will automatically backup the files in your /Grim Dawn/settings/text_en folder, if they are there. (These files are used for things like Rainbow Filters). Grim Gleaner *should* be fully compatible and add it's tags while preserving any color/text changes from Rainbow Filters and similar mods. (**Note**: Since Grim Gleaner uses "S" in it's grading and Rainbow uses "S" for set items, Grim Gleaner will replace Rainbow's set notation with "$" for clarity.)
+**Important**: Any time you want to export grades, make sure the game is closed! Also, if you replace or remove the files in your /Grim Dawn/settings/text_en folder, you need to run the export again.\
+Click over to the "Export Grades" sections from the sidebar, then click "Export Grades." This will automatically backup the files in your /Grim Dawn/settings/text_en folder, if they are there. (These files are used for things like Rainbow Filter/gdse). Grim Gleaner *should* be fully compatible and add it's tags while preserving any color/text changes from Rainbow Filter and similar mods. (**Note**: Since Grim Gleaner uses "S" in it's grading and Rainbow uses "S" for set items, Grim Gleaner will replace Rainbow's set notation with "$" for clarity.)
+
+Rainbow Filter or gdse are recommended but not required. Find them below:\
+[Rainbow Filter](https://forums.crateentertainment.com/t/tool-rainbow-filter-item-highlighting/42765)\
+[gdse](https://forums.crateentertainment.com/t/tool-gdse-a-light-weight-fully-automated-alternative-to-rainbow-filter/156183)
 
 See the "Guide" section in the UI for more information.
 
@@ -73,7 +78,9 @@ Assign stars to each stat modifier based on how important the stat is to your bu
 Don't be too conservative in rating things at 3/4 if they are important. The more strong signals you provide, the more the surfaced results will reflect your preferences.
 
 #### Limitations
-- Grading is currently based on the max level of an item/affix. Higher-level versions of many affixes gain new stats in addition to increasing the roll ranges for existing stats. Prior to level 80, this may mean an item's grade my be artificially inflated by it's higher level version.
+- Grading is currently based on the max level of an item/affix. Higher-level versions of many items and affixes gain new stats in addition to increasing the roll ranges for existing stats. Prior to level 80, this may mean an item's grade my be artificially inflated based on it's higher level version.\
+> For example, Francis' Gun, which you find on a corpse in the opening area, has flat and fire damage at level 1, but gains Lightning Damage and Offensive Ability on the level 50 version, so profiles set up for Lightning Damage or OA may see a higher grade or "false positive."
 - Set Bonuses and Granted Skills are currently not graded at all, so items with these features may be graded slightly lower than you might expect. Items with granted skills are marked with an * so you can identify them easily.
 - Similarly, Skill Modifiers are graded only based on their existence, not their actual modifications. In other words, if you set the weight on Flame Strike to 4, items with Flame Strike modifiers will get higher grades, but it doesn't account for things like converting your damage to a different type that you aren't using, so use with caution.
 Items with modifiers to your chosen skills are marked with ! in the grade.
+- Magic affixes often have only one or two stat mods, which makes it unlikely for them to score above a C grade. However, since most "rare items" are technically ones with one rare and one magic affix, a C-grade magic affix may be stronger than that grade entails.
