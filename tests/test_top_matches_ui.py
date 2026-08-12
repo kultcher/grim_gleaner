@@ -236,6 +236,43 @@ def test_affix_detail_title_uses_compiled_rarity_and_color() -> None:
         assert DETAIL_TITLE_COLORS[color_key] in title.styleSheet()
 
 
+def test_affix_detail_displays_granted_skill_as_unevaluated() -> None:
+    app = _application()
+    affix = _affix("prefix:storm", "Stormcharged", "lightning_damage_percent")
+    variant = replace(
+        affix.variants[0],
+        properties=(
+            *affix.variants[0].properties,
+            AffixProperty(
+                "granted_item_skill",
+                "granted_item_skill",
+                {
+                    "display_name": "Lightning Bolt",
+                    "skill_reference": (
+                        "records/skills/itemskills/item_lightningbolt_01.dbr"
+                    ),
+                },
+            ),
+        ),
+    )
+    affix = replace(affix, variants=(variant,))
+    window = MainWindow(
+        BuildProfile(weights={"lightning_damage_percent": 4}),
+        catalog=AffixCatalog((affix,)),
+    )
+    table = window.top_matches_page.tables[(SLOT_RING, "prefix")]
+    table.selectRow(0)
+    app.processEvents()
+
+    details = window.top_matches_page.details.toPlainText()
+    assert table.item(0, 0).text().endswith("*]")
+    assert "Granted skill (not evaluated):\n- Lightning Bolt" in details
+    unmatched = details.split("Remaining unmatched stats:\n", 1)[1].split(
+        "\n\n", 1
+    )[0]
+    assert "Lightning Bolt" not in unmatched
+
+
 def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
     _application()
     skill_id = "records/skills/playerclass01/cadence1.dbr"

@@ -135,6 +135,25 @@ def _compact_named_source(
     return f"{first} +{remaining} {noun}"
 
 
+def _granted_skill_section(names: tuple[str, ...]) -> tuple[str, ...]:
+    distinct_names = tuple(dict.fromkeys(name for name in names if name))
+    if not distinct_names:
+        return ()
+    heading = (
+        "Granted skill (not evaluated):"
+        if len(distinct_names) == 1
+        else "Granted skills (not evaluated):"
+    )
+    return (
+        _html_line(""),
+        _html_line(heading, bold=True),
+        *(
+            _html_line(f"- {name}", color=SKILL_RANK_STAT_COLOR)
+            for name in distinct_names
+        ),
+    )
+
+
 def _has_selected_skill_bonus(
     semantic_stat_ids: tuple[str, ...], profile: BuildProfile
 ) -> bool:
@@ -1298,6 +1317,15 @@ class TopMatchesPage(QWidget):
             )
         else:
             html.append(_stat_html("", "None", matched=False))
+        html.extend(
+            _granted_skill_section(
+                tuple(
+                    property_.attributes.get("display_name", "").strip()
+                    for property_ in match.variant.properties
+                    if property_.property_id == "granted_item_skill"
+                )
+            )
+        )
         if match.variant.level_requirements:
             html.extend(
                 (
@@ -1386,15 +1414,9 @@ class TopMatchesPage(QWidget):
             html.append(_stat_html("", "None", matched=False))
         if match.variant.set_name:
             html.extend((_html_line(""), _html_line(f"Set: {match.variant.set_name}")))
-        if match.variant.granted_skill_name:
-            html.extend(
-                (
-                    _html_line(""),
-                    _html_line(
-                        f"Granted skill: {match.variant.granted_skill_name}"
-                    ),
-                )
-            )
+        html.extend(
+            _granted_skill_section((match.variant.granted_skill_name,))
+        )
         if match.variant.skill_modifiers:
             html.extend((_html_line(""), _html_line("Skill modifiers:", bold=True)))
             for modifier in match.variant.skill_modifiers:
@@ -1550,15 +1572,9 @@ class TopMatchesPage(QWidget):
             )
         else:
             html.append(_stat_html("", "None", matched=False))
-        if match.variant.granted_skill_name:
-            html.extend(
-                (
-                    _html_line(""),
-                    _html_line(
-                        f"Granted skill: {match.variant.granted_skill_name}"
-                    ),
-                )
-            )
+        html.extend(
+            _granted_skill_section((match.variant.granted_skill_name,))
+        )
         html.append(_html_line(""))
         if match.addon_type == ADDON_AUGMENT:
             faction = (

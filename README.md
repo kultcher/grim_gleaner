@@ -16,7 +16,7 @@ and MI items directly to the item's tooltip
 
 **NOTE:** Grading only assesses *relevance* of stats of an item, not their values. A high grade means "this item's synergizes well with your build" but it may still be a poorly rolled item, or include stats you have already capped, etc. (Sadly, Grim Dawn doesn't expose live values of gear modifiers by default, and digging them up is a much more difficult and invasive process).
 
-## Disclaimer
+### Disclaimer
 AI (Codex) was used for data analysis data and coding to build this program.
 
 ## Installation and Setup
