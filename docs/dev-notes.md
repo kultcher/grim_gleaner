@@ -1,6 +1,5 @@
 TO DO:
-- add check for Grim Dawn.exe
-- add warning if game location not configued
+- show list of leveled affixes
 - maybe just bundle rarity colors anyway
 - coverage should probably exclude 1-rated items
 - use tags_uimain to modify tagRDifficultyTitles to maybe display current profile info
@@ -27,7 +26,7 @@ LOW PRIORITY:
 - maintainability organization and planning
 
 NOTES/EXPLORATIONS: 
-- start considering distribution concerns
+- change to "commit changes" type of flow vs. automatic updates (add warning to matches screens if unsaved changes)
 - apply affix colors to profile view, maybe?
 - outport sorting: currently by weight. Alt: flat damage, % damage, damage conversion, core stats, health/energy mod, OA/DA, speed, damage resistances, other resistances, skill bonuses, misc, granted skills...
 - dig into _html_line stuff in scoring
@@ -37,3 +36,15 @@ POSSIBLE USER SETTINGS:
 - minimum stars for relevance
 - some value to change grading strictness
 - allow customizing elements of grading display, maybe grade-tag colors?
+
+
+______
+Important pre-release checks
+-The catalog still reports 119 unresolved item records and 2 unresolved skill names. My triage found 114 equipment records and 5 augments. Many look like generic/template DBRs such as c000, d000, and placeholder tags, so this probably is not 119 missing live items—but it deserves an explicit exclusion report or allowlist before release.
+- The catalog and release manifest still say game_version: "unknown". Record the actual supported Grim Dawn patch/FoA version so users can recognize stale data after an update.
+- Code signing would reduce Windows SmartScreen friction, but it is not required for an initial release.
+- CI is absent. Useful, but not a blocker if we retain a documented local release checklist.
+
+py -3.13 -m venv .venv-build
+.\.venv-build\Scripts\python.exe -m pip install -e ".[test,release]"
+.\scripts\package-release.ps1

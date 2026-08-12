@@ -40,6 +40,14 @@ QLabel#gameLocationWarning {
     margin: 8px;
     padding: 9px;
 }
+QLabel#catalogLoadWarning {
+    background: #442326;
+    border: 1px solid #a34f57;
+    border-radius: 6px;
+    color: #ffb6bc;
+    margin: 8px;
+    padding: 9px;
+}
 QLabel#gameFolderWarning { color: #f0a77b; }
 QLabel#gameFolderConfirmed { color: #81d5aa; }
 QLabel#lastExportedProfile { color: #78d9e8; font-weight: 650; }

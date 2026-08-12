@@ -19,7 +19,9 @@ from gd_affix_relevance.catalog.item_compiler import (
     ITEM_SCOPE,
     compile_item_payloads,
 )
+from gd_affix_relevance.catalog.value_parsing import integer_value
 from gd_affix_relevance.domain import LocalizationEntry
+from gd_affix_relevance.io_utils import atomic_write_text
 from gd_affix_relevance.importers.localization_parser import (
     first_entry_lookup,
     plain_display_name,
@@ -269,11 +271,11 @@ def _compile_skills(
                 ).strip(),
                 "mastery_id": mastery_id,
                 "mastery_name": mastery_names.get(mastery_id, ""),
-                "mastery_level_required": _integer_value(
+                "mastery_level_required": integer_value(
                     record.first_value("skillMasteryLevelRequired")
                 ),
-                "max_level": _integer_value(record.first_value("skillMaxLevel")),
-                "skill_tier": _integer_value(record.first_value("skillTier")),
+                "max_level": integer_value(record.first_value("skillMaxLevel")),
+                "skill_tier": integer_value(record.first_value("skillTier")),
                 "tree_order": tree_orders.get(logical_path, 0),
                 "parent_skill_id": "",
                 "is_mastery": Path(logical_path).stem.startswith(
@@ -551,17 +553,8 @@ def _mastery_id(logical_path: str) -> str:
     )
 
 
-def _integer_value(value: str | None) -> int:
-    try:
-        return int(float(value or "0"))
-    except ValueError:
-        return 0
-
-
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(
+    atomic_write_text(
+        path,
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
     )
-    temporary.replace(path)

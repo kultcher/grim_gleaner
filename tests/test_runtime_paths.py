@@ -67,6 +67,35 @@ def test_frozen_application_uses_executable_parent(tmp_path: Path) -> None:
     assert paths.application_root == executable.parent.resolve()
 
 
+def test_nuitka_application_uses_compiled_containing_directory(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "nuitka-output"
+    paths = resolve_runtime_paths(
+        frozen=False,
+        nuitka_application_root=root,
+        environment={},
+    )
+
+    assert paths.mode == "release"
+    assert paths.application_root == root.resolve()
+    assert paths.catalog_root == root.resolve() / "catalog"
+
+
+def test_explicit_application_root_overrides_nuitka_directory(
+    tmp_path: Path,
+) -> None:
+    explicit = tmp_path / "explicit"
+    paths = resolve_runtime_paths(
+        application_root=explicit,
+        nuitka_application_root=tmp_path / "nuitka-output",
+        frozen=False,
+        environment={},
+    )
+
+    assert paths.application_root == explicit.resolve()
+
+
 def test_export_sources_use_bundled_tags_when_game_has_none(tmp_path: Path) -> None:
     game = tmp_path / "Grim Dawn"
     text_root = game / "settings" / "text_en"

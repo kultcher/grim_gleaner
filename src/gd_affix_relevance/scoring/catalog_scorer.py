@@ -102,9 +102,7 @@ def semantic_stat_id(property_: AffixProperty) -> str:
         return f"base_weapon_damage_as_{damage_type}"
     if property_.property_id == "damage_conversion":
         destination = property_.attributes.get("destination_damage_type", "unknown")
-        destination = {"life": "vitality", "poison": "acid"}.get(
-            destination.casefold(), destination.casefold()
-        )
+        destination = canonical_damage_type(destination)
         return f"damage_conversion_to_{destination}"
     if property_.property_id in {"skill_bonus", "granted_item_skill"}:
         reference = property_.attributes.get("skill_reference", property_.property_key)
@@ -142,9 +140,7 @@ def semantic_stat_ids(property_: AffixProperty) -> tuple[str, ...]:
         destination = property_.attributes.get(
             "destination_damage_type", "unknown"
         )
-        destination = {"life": "vitality", "poison": "acid"}.get(
-            destination.casefold(), destination.casefold()
-        )
+        destination = canonical_damage_type(destination)
         return (f"pet_damage_conversion_to_{destination}",)
     return (semantic_stat_id(property_),)
 
@@ -310,11 +306,7 @@ def rank_affix_catalog(
             )
     ranked.sort(
         key=lambda match: (
-            -match.score.effective_score,
-            -match.score.relevance_points,
-            -match.score.weighted_match,
-            -match.score.matched_count,
-            -match.score.coverage_ratio,
+            *(-value for value in match.score.rank_key),
             match.affix.display_name.casefold(),
             match.variant.gear_slot.casefold(),
             match.affix.affix_id,
@@ -374,11 +366,7 @@ def rank_affixes_for_slot(
         )
     ranked.sort(
         key=lambda match: (
-            -match.score.effective_score,
-            -match.score.relevance_points,
-            -match.score.weighted_match,
-            -match.score.matched_count,
-            -match.score.coverage_ratio,
+            *(-value for value in match.score.rank_key),
             -max(match.variant.level_requirements, default=0),
             match.affix.display_name.casefold(),
             match.affix.localization_tag.casefold(),

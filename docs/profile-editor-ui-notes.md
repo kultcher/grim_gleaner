@@ -11,12 +11,12 @@ All Damage     ◀  ★ ★ ★ ☆  ▶
 - `0`: ☆ ☆ ☆ ☆ — Ignored
 - `1`: ★ ☆ ☆ ☆ — Incidental
 - `2`: ★ ★ ☆ ☆ — Useful
-- `3`: ★ ★ ★ ☆ — Emphasized
+- `3`: ★ ★ ★ ☆ — Important
 - `4`: ★ ★ ★ ★ — Core
 
 The left and right buttons decrement and increment the weight. Stars should also
 be directly clickable for faster entry. The control exposes an accessible value
-such as `Weight 3 of 4: Emphasized`; filled state must not depend on color alone.
+such as `Weight 3 of 4: Important`; filled state must not depend on color alone.
 The decrement button is disabled at 0 and the increment button is disabled at 4.
 
 ## Package accordions

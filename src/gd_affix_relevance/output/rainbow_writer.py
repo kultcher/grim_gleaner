@@ -9,6 +9,7 @@ from pathlib import Path
 
 from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.io_utils import atomic_write_bytes
 from gd_affix_relevance.scoring import (
     canonical_skill_reference,
     item_semantic_stat_ids,
@@ -364,11 +365,4 @@ def _paths_overlap(first: Path, second: Path) -> bool:
 
 
 def _write_bytes_atomically(path: Path, payload: bytes) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    try:
-        temporary.write_bytes(payload)
-        temporary.replace(path)
-    except Exception:
-        temporary.unlink(missing_ok=True)
-        raise
+    atomic_write_bytes(path, payload)

@@ -132,32 +132,30 @@ class SettingsPage(QWidget):
         self.prompt_for_game_folder()
 
     def has_valid_game_folder(self) -> bool:
-        value = self.game_folder_edit.text().strip()
-        if not value:
-            return False
-        try:
-            validate_grim_dawn_folder(Path(value))
-        except (OSError, ValueError):
-            return False
-        return True
+        game, _ = self._game_folder_validation()
+        return game is not None
 
     def _refresh_game_folder_status(self) -> None:
-        value = self.game_folder_edit.text().strip()
-        if not value:
+        game, error = self._game_folder_validation()
+        if game is None:
             self.game_folder_status.setObjectName("gameFolderWarning")
-            self.game_folder_status.setText(
-                "Not configured. Select the folder containing Grim Dawn.exe."
-            )
+            self.game_folder_status.setText(error)
         else:
-            try:
-                game = validate_grim_dawn_folder(Path(value))
-            except (OSError, ValueError) as error:
-                self.game_folder_status.setObjectName("gameFolderWarning")
-                self.game_folder_status.setText(f"Not confirmed: {error}")
-            else:
-                self.game_folder_status.setObjectName("gameFolderConfirmed")
-                self.game_folder_status.setText(
-                    f"Confirmed Grim Dawn installation: {game}"
-                )
+            self.game_folder_status.setObjectName("gameFolderConfirmed")
+            self.game_folder_status.setText(
+                f"Confirmed Grim Dawn installation: {game}"
+            )
         self.game_folder_status.style().unpolish(self.game_folder_status)
         self.game_folder_status.style().polish(self.game_folder_status)
+
+    def _game_folder_validation(self) -> tuple[Path | None, str]:
+        value = self.game_folder_edit.text().strip()
+        if not value:
+            return (
+                None,
+                "Not configured. Select the folder containing Grim Dawn.exe.",
+            )
+        try:
+            return validate_grim_dawn_folder(Path(value)), ""
+        except (OSError, ValueError) as error:
+            return None, f"Not confirmed: {error}"

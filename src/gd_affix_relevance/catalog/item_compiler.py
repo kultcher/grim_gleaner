@@ -24,6 +24,7 @@ from gd_affix_relevance.normalization.sample_report import (
     normalize_record_stat_lines,
     record_semantic_fingerprint,
 )
+from gd_affix_relevance.catalog.value_parsing import integer_value
 from gd_affix_relevance.records import RecordLocation, RecordRepository
 
 
@@ -265,8 +266,10 @@ def compile_item_payloads(
                 "rarity": (record.first_value("itemClassification") or "").strip(),
                 "item_class": (record.first_value("Class") or "").strip(),
                 "gear_slot": _gear_slot(record),
-                "item_level": _integer_field(record, "itemLevel"),
-                "level_requirement": _integer_field(record, "levelRequirement"),
+                "item_level": integer_value(record.first_value("itemLevel")),
+                "level_requirement": integer_value(
+                    record.first_value("levelRequirement")
+                ),
                 "applicable_slots": list(_applicable_slots(record)),
                 "set_reference": set_reference,
                 "set_name": set_name,
@@ -391,18 +394,8 @@ def _discover_component_blueprint_distribution(
                     or not reference.endswith(".dbr")
                 ):
                     continue
-                resolved = repository.resolve(reference)
-                if resolved is None:
-                    continue
-                _, blueprint = resolved
-                target = (
-                    blueprint.first_value("artifactName")
-                    or blueprint.first_value("forcedRandomArtifactName")
-                    or ""
-                ).strip().lower().replace("\\", "/")
-                if target.startswith("records/items/") and target.endswith(
-                    ".dbr"
-                ):
+                target = _resolve_blueprint_target(repository, reference)
+                if target:
                     destination.add(target)
     return frozenset(random_targets), frozenset(vendor_targets)
 
@@ -536,15 +529,9 @@ def _discover_faction_vendor_sources(
                     continue
                 target = offered_reference
                 if "/crafting/blueprints/" in offered_reference:
-                    resolved_blueprint = repository.resolve(offered_reference)
-                    if resolved_blueprint is None:
-                        continue
-                    _, blueprint = resolved_blueprint
-                    target = (
-                        blueprint.first_value("artifactName")
-                        or blueprint.first_value("forcedRandomArtifactName")
-                        or ""
-                    ).strip().lower().replace("\\", "/")
+                    target = _resolve_blueprint_target(
+                        repository, offered_reference
+                    )
                 if target.startswith("records/items/") and target.endswith(
                     ".dbr"
                 ):
@@ -553,6 +540,24 @@ def _discover_faction_vendor_sources(
         target: tuple(sorted(sources))
         for target, sources in sorted(discovered.items())
     }
+
+
+def _resolve_blueprint_target(
+    repository: RecordRepository,
+    blueprint_reference: str,
+) -> str:
+    resolved = repository.resolve(blueprint_reference)
+    if resolved is None:
+        return ""
+    _, blueprint = resolved
+    target = (
+        blueprint.first_value("artifactName")
+        or blueprint.first_value("forcedRandomArtifactName")
+        or ""
+    ).strip().lower().replace("\\", "/")
+    if target.startswith("records/items/") and target.endswith(".dbr"):
+        return target
+    return ""
 
 
 def _discover_records(
@@ -655,14 +660,6 @@ def _applicable_slots(record: RawDbrRecord) -> tuple[str, ...]:
         if active_value_kind(record.first_value(field) or "") is not None
     }
     return tuple(sorted(slots))
-
-
-def _integer_field(record: RawDbrRecord, field: str) -> int:
-    raw = (record.first_value(field) or "").strip()
-    try:
-        return int(float(raw))
-    except ValueError:
-        return 0
 
 
 def _property_payloads(

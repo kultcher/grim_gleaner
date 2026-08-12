@@ -57,9 +57,9 @@ class GuidePage(QWidget):
             "Assign stars to each stat modifier based on how important the stat is to your build. Use the following as a guideline:"
             "\n0 stars: Stats that are totally irrelevant to your build."
             "\n1 star: Stats that have minimal or only occasional impact, such as damage types that you deal only incidentally."
-            "\n2 stars: Baseline stats that are generally useful, but not core to your build.........."
+            "\n2 stars: Baseline stats that are generally useful, but not core to your build."
             "\n3 stars: Important stats you're always happy to have."
-            "\n4 stars: Vital stats that you want as much of as possible.",
+            "\n4 stars: Core stats that you want as much of as possible.",
             content,   
         )
         _add_section(

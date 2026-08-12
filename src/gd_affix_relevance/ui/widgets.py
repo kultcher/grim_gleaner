@@ -434,20 +434,19 @@ class PackageAccordion(QFrame):
         self._apply_bulk({stat_id: weight for stat_id in self.rows})
 
     def _apply_bulk(self, values: dict[str, int]) -> None:
-        changed = False
+        changed_values: list[tuple[str, int]] = []
         for stat_id, weight in values.items():
             row = self.rows[stat_id]
             if row.weight_control.value == weight:
                 continue
             self._set_weight(stat_id, weight)
             row.weight_control.set_value(weight, emit=False)
-            changed = True
+            changed_values.append((stat_id, weight))
         if any(weight > 0 for weight in values.values()):
             self.set_expanded(True)
         self._refresh_header()
-        if changed and self.stat_ids:
-            first = self.stat_ids[0]
-            self.weight_changed.emit(first, self._weight_for(first))
+        for stat_id, weight in changed_values:
+            self.weight_changed.emit(stat_id, weight)
 
     def _header_clicked(self, checked: bool) -> None:
         self.set_expanded(checked)

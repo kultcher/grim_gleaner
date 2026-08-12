@@ -189,7 +189,7 @@ def _replace_managed_paths(output: Path, stage: Path, previous: Path) -> None:
         for name in MANAGED_RELEASE_PATHS:
             staged = stage / name
             if staged.exists():
-                staged.replace(_managed_child(output, name))
+                _copy_managed_path(staged, _managed_child(output, name))
                 installed_new.append(name)
     except OSError:
         for name in reversed(installed_new):
@@ -201,6 +201,22 @@ def _replace_managed_paths(output: Path, stage: Path, previous: Path) -> None:
         for name in reversed(moved_old):
             (previous / name).replace(_managed_child(output, name))
         raise
+
+
+def _copy_managed_path(source: Path, target: Path) -> None:
+    """Install a staged path while inheriting the release root's ACL.
+
+    Temporary directories are intentionally private. Moving their children
+    into the release would preserve that private ACL on Windows, potentially
+    making packaged resources unreadable to the user who runs the application.
+    Creating fresh destination entries inherits the output directory's access
+    rules instead.
+    """
+
+    if source.is_dir():
+        shutil.copytree(source, target)
+    else:
+        shutil.copy2(source, target)
 
 
 def _managed_child(output: Path, name: str) -> Path:

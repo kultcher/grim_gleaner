@@ -89,9 +89,9 @@ def _order_skill_tree(
         else:
             roots.append(skill)
 
-    roots.sort(key=_root_skill_sort_key)
+    roots.sort(key=lambda skill: _skill_sort_key(skill, tier_first=True))
     for children in children_by_parent.values():
-        children.sort(key=_child_skill_sort_key)
+        children.sort(key=lambda skill: _skill_sort_key(skill, tier_first=False))
 
     ordered: list[SkillDefinition] = []
     emitted: set[str] = set()
@@ -109,24 +109,26 @@ def _order_skill_tree(
 
     # Malformed or cyclic relationships should not make otherwise valid skills
     # vanish from the editor.
-    for skill in sorted(skills, key=_root_skill_sort_key):
+    for skill in sorted(
+        skills, key=lambda skill: _skill_sort_key(skill, tier_first=True)
+    ):
         emit_branch(skill)
     return tuple(ordered)
 
 
-def _root_skill_sort_key(skill: SkillDefinition) -> tuple[int, int, str, str]:
-    return (
-        skill.skill_tier,
-        skill.tree_order,
-        skill.display_name.casefold(),
-        skill.skill_id,
+def _skill_sort_key(
+    skill: SkillDefinition,
+    *,
+    tier_first: bool,
+) -> tuple[int, int, str, str]:
+    first, second = (
+        (skill.skill_tier, skill.tree_order)
+        if tier_first
+        else (skill.tree_order, skill.skill_tier)
     )
-
-
-def _child_skill_sort_key(skill: SkillDefinition) -> tuple[int, int, str, str]:
     return (
-        skill.tree_order,
-        skill.skill_tier,
+        first,
+        second,
         skill.display_name.casefold(),
         skill.skill_id,
     )

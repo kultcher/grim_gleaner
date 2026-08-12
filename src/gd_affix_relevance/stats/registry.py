@@ -5,24 +5,22 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cache
 
+RACES = (
+    ("race001", "undead", "Undead"),
+    ("race002", "beastkin", "Beastkin"),
+    ("race003", "aetherial", "Aetherials"),
+    ("race004", "chthonic", "Chthonics"),
+    ("race005", "aether_corruption", "Aether Corruption"),
+    ("race009", "human", "Humans"),
+    ("race012", "beast", "Beasts"),
+)
 RACE_STAT_SUFFIXES = {
-    "race001": "undead",
-    "race002": "beastkin",
-    "race003": "aetherial",
-    "race004": "chthonic",
-    "race005": "aether_corruption",
-    "race009": "human",
-    "race012": "beast",
+    race_id: stat_suffix for race_id, stat_suffix, _ in RACES
 }
 RACE_DISPLAY_NAMES = {
-    "race001": "Undead",
-    "race002": "Beastkin",
-    "race003": "Aetherials",
-    "race004": "Chthonics",
-    "race005": "Aether Corruption",
-    "race009": "Humans",
-    "race012": "Beasts",
+    race_id: display_name for race_id, _, display_name in RACES
 }
+DYNAMIC_STAT_PREFIXES = ("skill_bonus:", "skill_modifier:", "mastery_bonus:")
 
 
 @dataclass(frozen=True, slots=True)
@@ -724,7 +722,7 @@ def stat_definition(stat_id: str) -> StatDefinition | None:
 
 @cache
 def stat_is_scoreable(stat_id: str) -> bool:
-    if stat_id.startswith(("skill_bonus:", "skill_modifier:", "mastery_bonus:")):
+    if stat_id.startswith(DYNAMIC_STAT_PREFIXES):
         return True
     definition = stat_definition(stat_id)
     return (
@@ -735,9 +733,7 @@ def stat_is_scoreable(stat_id: str) -> bool:
 
 @cache
 def stat_is_registered(stat_id: str) -> bool:
-    if stat_id.startswith(
-        ("skill_bonus:", "skill_modifier:", "mastery_bonus:")
-    ):
+    if stat_id.startswith(DYNAMIC_STAT_PREFIXES):
         return True
     return stat_definition(stat_id) is not None
 

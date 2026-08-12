@@ -86,6 +86,10 @@ def _project_fixture(tmp_path: Path) -> tuple[Path, Path]:
     project = tmp_path / "project"
     (project / "README.md").parent.mkdir(parents=True)
     (project / "README.md").write_text("# Test release\n", encoding="utf-8")
+    (project / "LICENSE.txt").write_text("Test license\n", encoding="utf-8")
+    (project / "THIRD_PARTY_NOTICES.txt").write_text(
+        "Test notices\n", encoding="utf-8"
+    )
     _write_minimal_catalog(project / "artifacts" / "catalog")
     _write_tag_sources(project / "game_data")
     output = project / "dist" / "Grim Gleaner"
@@ -114,6 +118,10 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
     assert (output / "catalog" / "manifest.json").is_file()
     assert (output / "tags" / "tagsgdx3_items.txt").is_file()
     assert (output / "README.txt").read_text(encoding="utf-8") == "# Test release\n"
+    assert (output / "LICENSE.txt").read_text(encoding="utf-8") == "Test license\n"
+    assert (output / "THIRD_PARTY_NOTICES.txt").read_text(
+        encoding="utf-8"
+    ) == "Test notices\n"
     assert (output / "release-manifest.json").is_file()
     assert (output / "Profiles").is_dir()
     assert (output / "grim_gleaner.exe").read_bytes() == b"exe"

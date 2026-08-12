@@ -97,6 +97,7 @@ def resolve_runtime_paths(
     project_root: Path | None = None,
     frozen: bool | None = None,
     executable: Path | None = None,
+    nuitka_application_root: Path | None = None,
     environment: Mapping[str, str] | None = None,
 ) -> RuntimePaths:
     """Return stable paths without depending on the process working directory.
@@ -112,6 +113,13 @@ def resolve_runtime_paths(
         configured_root = environment.get(APP_ROOT_ENVIRONMENT_VARIABLE, "").strip()
         if configured_root:
             explicit_root = Path(configured_root)
+
+    if explicit_root is None:
+        explicit_root = (
+            Path(nuitka_application_root)
+            if nuitka_application_root is not None
+            else _nuitka_application_root()
+        )
 
     is_frozen = bool(getattr(sys, "frozen", False)) if frozen is None else frozen
     if explicit_root is not None or is_frozen:
@@ -145,3 +153,19 @@ def resolve_runtime_paths(
         backups_root=root / "artifacts" / "backups",
         profiles_root=root / "artifacts" / "profiles",
     )
+
+
+def _nuitka_application_root() -> Path | None:
+    """Return the directory containing a Nuitka-built application.
+
+    Nuitka deliberately does not set ``sys.frozen``. Its injected
+    ``__compiled__.containing_dir`` value is stable for standalone and onefile
+    deployments and points to the directory where user-supplied resources
+    should live.
+    """
+
+    compiled = globals().get("__compiled__")
+    containing_dir = getattr(compiled, "containing_dir", None)
+    if not containing_dir:
+        return None
+    return Path(containing_dir).expanduser().resolve()

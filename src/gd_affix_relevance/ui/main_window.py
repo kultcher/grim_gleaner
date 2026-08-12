@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QMainWindow,
+    QMessageBox,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
@@ -55,6 +56,8 @@ class MainWindow(QMainWindow):
         self.settings = settings
         self.runtime_paths = runtime_paths or resolve_runtime_paths()
         self._game_folder_prompted = False
+        self._catalog_error_shown = False
+        self.catalog_load_error = ""
 
         profile_path: Path | None = None
         startup_notice = ""
@@ -100,18 +103,31 @@ class MainWindow(QMainWindow):
         self.game_location_warning.setObjectName("gameLocationWarning")
         self.game_location_warning.setWordWrap(True)
         sidebar_layout.addWidget(self.game_location_warning)
+
+        self.catalog_warning = QLabel(
+            "The packaged catalog could not be loaded.\n"
+            "Gear Grades and exports are unavailable.",
+            sidebar,
+        )
+        self.catalog_warning.setObjectName("catalogLoadWarning")
+        self.catalog_warning.setWordWrap(True)
+        sidebar_layout.addWidget(self.catalog_warning)
         layout.addWidget(sidebar)
 
         self.pages = QStackedWidget(central)
         layout.addWidget(self.pages, 1)
 
         catalog_status = ""
+        catalog_for_export = catalog
         if catalog is None and skills is None and items is None:
             bundle, catalog_status = _load_runtime_catalog(self.runtime_paths)
             if bundle is not None:
                 catalog = bundle.affixes
                 skills = bundle.skills
                 items = bundle.items
+                catalog_for_export = catalog
+            elif self.runtime_paths.mode == "release":
+                self.catalog_load_error = catalog_status
         catalog = catalog or AffixCatalog(())
         skills = skills or SkillCatalog(())
         items = items or ItemCatalog((), (), (), (), (), ())
@@ -158,7 +174,7 @@ class MainWindow(QMainWindow):
             )
 
         self.generate_output_page = GenerateOutputPage(
-            catalog,
+            catalog_for_export,
             self.profile_editor.profile,
             items=items,
             source_root=self.runtime_paths.tags_root,
@@ -213,6 +229,7 @@ class MainWindow(QMainWindow):
         self.navigation.setCurrentRow(0)
         self.setCentralWidget(central)
         self._update_game_location_state()
+        self.catalog_warning.setVisible(bool(self.catalog_load_error))
 
     def _add_navigation_item(
         self,
@@ -276,6 +293,20 @@ class MainWindow(QMainWindow):
         self.navigation.setCurrentRow(self.settings_navigation_row)
         self.settings_page.prompt_for_game_folder()
         self._update_game_location_state()
+
+    def show_startup_prompts(self) -> None:
+        """Show release-critical errors before ordinary first-run setup."""
+
+        if self.catalog_load_error and not self._catalog_error_shown:
+            self._catalog_error_shown = True
+            QMessageBox.critical(
+                self,
+                "Grim Gleaner Catalog Unavailable",
+                f"{self.catalog_load_error}\n\n"
+                "Gear grading and export are disabled. Reinstall or extract "
+                "the complete Grim Gleaner release before continuing.",
+            )
+        self.prompt_for_game_folder_if_needed()
 
     def _game_folder_changed(self, game_folder: str = "") -> None:
         self.generate_output_page.refresh_game_location(game_folder)

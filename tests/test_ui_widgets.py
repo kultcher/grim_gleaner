@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication, QLabel
 from gd_affix_relevance.catalog import AffixCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.profile_store import save_profile
+from gd_affix_relevance.runtime_paths import RuntimePaths
 from gd_affix_relevance.ui.catalog import PackageDefinition, stat
 from gd_affix_relevance.ui.main_window import MainWindow
 from gd_affix_relevance.ui.widgets import PackageAccordion, WeightControl
@@ -82,11 +83,19 @@ def test_package_modify_all_adjusts_every_stat_and_only_shows_when_expanded() ->
     assert not accordion.modify_all.isHidden()
     accordion.modify_all.increment_button.click()
     assert profile.weights == {"health": 1, "movement_speed": 1}
-    assert len(changes) == 1
+    assert changes == [("health", 1), ("movement_speed", 1)]
     accordion.modify_all.star_buttons[2].click()
     assert profile.weights == {"health": 3, "movement_speed": 3}
     accordion.modify_all.decrement_button.click()
     assert profile.weights == {"health": 2, "movement_speed": 2}
+    assert changes == [
+        ("health", 1),
+        ("movement_speed", 1),
+        ("health", 3),
+        ("movement_speed", 3),
+        ("health", 2),
+        ("movement_speed", 2),
+    ]
 
 
 def test_conversion_row_folds_sources_and_persists_unchecked_types() -> None:
@@ -239,6 +248,33 @@ def test_startup_game_folder_prompt_runs_once_and_opens_settings(
     assert prompts == [True]
     assert window.navigation.currentRow() == window.settings_navigation_row
     assert not window.game_location_warning.isHidden()
+
+
+def test_missing_packaged_catalog_is_prominent_and_disables_export(
+    tmp_path: Path,
+) -> None:
+    _application()
+    root = tmp_path / "release"
+    runtime_paths = RuntimePaths(
+        mode="release",
+        application_root=root,
+        project_root=None,
+        catalog_root=root / "catalog",
+        tags_root=root / "tags",
+        staging_output_root=root / "staging" / "text_en",
+        backups_root=root / "backups",
+        profiles_root=root / "Profiles",
+    )
+    settings = QSettings(
+        str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
+    )
+
+    window = MainWindow(settings=settings, runtime_paths=runtime_paths)
+
+    assert window.catalog_load_error
+    assert not window.catalog_warning.isHidden()
+    assert "packaged catalog is missing" in window.catalog_load_error
+    assert not window.generate_output_page.generate_button.isEnabled()
 
 
 def test_main_window_close_honors_profile_confirmation() -> None:

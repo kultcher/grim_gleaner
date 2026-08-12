@@ -164,20 +164,6 @@ class ProfileEditor(QWidget):
         scroll.setWidget(content)
         return scroll
 
-    # def _placeholder(self, title: str, message: str) -> QWidget:
-    #     page = QWidget(self)
-    #     layout = QVBoxLayout(page)
-    #     layout.setContentsMargins(36, 44, 36, 44)
-    #     title_label = QLabel(title, page)
-    #     title_label.setObjectName("placeholderTitle")
-    #     layout.addWidget(title_label)
-    #     message_label = QLabel(message, page)
-    #     message_label.setObjectName("pageHint")
-    #     message_label.setWordWrap(True)
-    #     layout.addWidget(message_label)
-    #     layout.addStretch()
-    #     return page
-
     def _name_changed(self, name: str) -> None:
         self.profile.name = name
         self._mark_unsaved()
@@ -291,21 +277,20 @@ class ProfileEditor(QWidget):
         return True
 
     def _prompt_unsaved_action(self) -> QMessageBox.StandardButton:
-        return QMessageBox.warning(
-            self,
-            "Unsaved Profile",
+        return self._prompt_unsaved(
             "Save changes to the current profile before starting a new one?",
-            QMessageBox.StandardButton.Save
-            | QMessageBox.StandardButton.Discard
-            | QMessageBox.StandardButton.Cancel,
-            QMessageBox.StandardButton.Save,
         )
 
     def _prompt_exit_unsaved_action(self) -> QMessageBox.StandardButton:
+        return self._prompt_unsaved(
+            "Save changes to the current profile before exiting?"
+        )
+
+    def _prompt_unsaved(self, message: str) -> QMessageBox.StandardButton:
         return QMessageBox.warning(
             self,
             "Unsaved Profile",
-            "Save changes to the current profile before exiting?",
+            message,
             QMessageBox.StandardButton.Save
             | QMessageBox.StandardButton.Discard
             | QMessageBox.StandardButton.Cancel,

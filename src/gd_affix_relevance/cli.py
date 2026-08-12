@@ -73,6 +73,204 @@ def _load_all_localization_entries(
     return localization_entries
 
 
+def _print_json_summary(payload: dict[str, object]) -> None:
+    print(json.dumps(payload, indent=2))
+
+
+def _write_report(report: str, output: Path | None) -> None:
+    if output is not None:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(report, encoding="utf-8")
+    sys.stdout.write(report)
+
+
+def _run_inventory(args: argparse.Namespace) -> int:
+    localization_entries = (
+        load_localization_directory(args.localization_root)
+        if args.localization_root is not None
+        else ()
+    )
+    result = build_field_inventory(args.data_root, localization_entries)
+    write_inventory_reports(result, args.output_dir)
+    reference_statuses = build_affix_reference_statuses(
+        args.data_root, localization_entries
+    )
+    write_affix_reference_report(
+        reference_statuses, args.output_dir / "affix_reference_status.csv"
+    )
+    _print_json_summary(
+        {
+            "records_scanned": result.records_scanned,
+            "supported_records": result.supported_records,
+            "parse_warning_count": result.parse_warning_count,
+            "unresolved_localization_tags": result.unresolved_localization_tags,
+            "active_raw_fields": len(result.fields),
+            "affix_reference_statuses": len(reference_statuses),
+            "output_dir": str(args.output_dir),
+        }
+    )
+    return 0
+
+
+def _run_sample(args: argparse.Namespace) -> int:
+    localization_entries = _load_all_localization_entries(args)
+    result = build_sample_candidates(
+        args.data_root,
+        localization_entries,
+        count=args.count,
+        seed=args.seed,
+    )
+    report = format_sample_report(
+        result.candidates,
+        seed=result.seed,
+        candidate_pool_size=result.candidate_pool_size,
+        unresolved_name_records_skipped=result.unresolved_name_records_skipped,
+        unknown_slot_records_skipped=result.unknown_slot_records_skipped,
+    )
+    _write_report(report, args.output)
+    return 0
+
+
+def _run_rank(args: argparse.Namespace) -> int:
+    bundle = CatalogBundle.load(args.catalog_root)
+    profile = load_profile(args.profile_file)
+    matches = rank_affix_catalog(bundle.affixes, profile, limit=args.limit)
+    candidate_pool_size = sum(
+        len(affix.variants) for affix in bundle.affixes.affixes
+    )
+    report = format_ranked_catalog_report(
+        matches,
+        profile=profile,
+        candidate_pool_size=candidate_pool_size,
+    )
+    _write_report(report, args.output)
+    return 0
+
+
+def _run_compile_catalog(args: argparse.Namespace) -> int:
+    localization_entries: tuple[LocalizationEntry, ...] = ()
+    for localization_root in args.localization_root:
+        localization_entries += load_localization_directory(localization_root)
+    result = compile_catalog_bundle(
+        args.data_root,
+        localization_entries,
+        args.output_dir,
+        game_version=args.game_version,
+        mastery_tree_root=args.mastery_tree_root,
+    )
+    _print_json_summary(
+        {
+            "affixes": result.affix_count,
+            "affix_variants": result.affix_variant_count,
+            "skills": result.skill_count,
+            "strings": result.string_count,
+            "unresolved_skill_names": result.unresolved_skill_name_count,
+            "unresolved_affix_records": result.unresolved_affix_record_count,
+            "items": result.item_counts,
+            "item_variants": result.item_variant_count,
+            "skipped_unresolved_item_records": result.unresolved_item_record_count,
+            "output_dir": str(result.output_dir),
+        }
+    )
+    return 0
+
+
+def _run_generate_output(args: argparse.Namespace) -> int:
+    bundle = CatalogBundle.load(args.catalog_root)
+    profile = load_profile(args.profile_file)
+    result = generate_rainbow_output(
+        args.source_root,
+        args.output_dir,
+        bundle.affixes,
+        profile,
+        items=bundle.items,
+        fallback_source_root=args.fallback_source_root,
+    )
+    _print_json_summary(
+        {
+            "profile": profile.name,
+            "files_written": result.files_written,
+            "affix_tags_scored": result.affix_tags_scored,
+            "affix_tags_found": result.affix_tags_found,
+            "unique_tags_scored": result.unique_tags_scored,
+            "unique_tags_found": result.unique_tags_found,
+            "annotated_lines": result.annotated_lines,
+            "missing_affix_tag_count": len(result.missing_affix_tags),
+            "missing_affix_tags": result.missing_affix_tags,
+            "missing_unique_tag_count": len(result.missing_unique_tags),
+            "missing_unique_tags": result.missing_unique_tags,
+            "output_dir": str(result.output_root),
+        }
+    )
+    return 0
+
+
+def _run_audit_items(args: argparse.Namespace) -> int:
+    localization_entries: tuple[LocalizationEntry, ...] = ()
+    for localization_root in args.localization_root:
+        localization_entries += load_localization_directory(localization_root)
+    affix_property_ids: set[str] = set()
+    if args.catalog_root is not None:
+        bundle = CatalogBundle.load(args.catalog_root)
+        affix_property_ids = {
+            property_.property_id
+            for affix in bundle.affixes.affixes
+            for variant in affix.variants
+            for property_ in variant.properties
+        }
+    result = build_item_audit(
+        args.data_root,
+        localization_entries,
+        source_name=args.source,
+        item_directory=args.item_directory,
+        affix_property_ids=affix_property_ids,
+    )
+    _write_report(format_item_audit_report(result), args.output)
+    return 0
+
+
+def _run_audit_item_tags(args: argparse.Namespace) -> int:
+    result = build_item_tag_audit(
+        args.data_root,
+        definition_sources=tuple(args.definition_source),
+        scan_sources=tuple(
+            args.scan_source or ("base", "gdx1", "gdx2", "gdx3")
+        ),
+        comparison_root=args.comparison_root,
+    )
+    write_item_tag_audit(result, args.output_dir)
+    _print_json_summary(
+        {
+            "localization_definitions": len(result.entries),
+            "unique_tags": len(result.unique_tags),
+            "dbr_referenced_unique_tags": len(result.referenced_unique_tags),
+            "unreferenced_unique_tags": len(
+                result.unique_tags - result.referenced_unique_tags
+            ),
+            "dbr_files_scanned": result.dbr_files_scanned,
+            "output_dir": str(args.output_dir),
+        }
+    )
+    return 0
+
+
+def _run_show_runtime_paths(args: argparse.Namespace) -> int:
+    runtime_paths = resolve_runtime_paths(application_root=args.application_root)
+    _print_json_summary(runtime_paths.as_dict())
+    return 0
+
+
+def _run_assemble_release(args: argparse.Namespace) -> int:
+    result = assemble_release(
+        args.project_root,
+        output_root=args.output_dir,
+        catalog_root=args.catalog_root,
+        data_root=args.data_root,
+    )
+    _print_json_summary(result.as_dict())
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="grim-gleaner")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -84,6 +282,7 @@ def build_parser() -> argparse.ArgumentParser:
     inventory.add_argument("--data-root", type=Path, required=True)
     inventory.add_argument("--localization-root", type=Path)
     inventory.add_argument("--output-dir", type=Path, required=True)
+    inventory.set_defaults(handler=_run_inventory)
 
     sample = subparsers.add_parser(
         "sample",
@@ -94,6 +293,7 @@ def build_parser() -> argparse.ArgumentParser:
     sample.add_argument("--count", type=int, choices=range(1, 11), default=5)
     sample.add_argument("--seed", type=int)
     sample.add_argument("--output", type=Path)
+    sample.set_defaults(handler=_run_sample)
 
     rank = subparsers.add_parser(
         "rank",
@@ -103,6 +303,7 @@ def build_parser() -> argparse.ArgumentParser:
     rank.add_argument("--profile-file", type=Path, required=True)
     rank.add_argument("--limit", type=_positive_int, default=20)
     rank.add_argument("--output", type=Path)
+    rank.set_defaults(handler=_run_rank)
 
     catalog = subparsers.add_parser(
         "compile-catalog",
@@ -126,6 +327,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="optional curated Markdown parent/child relationship directory",
     )
+    catalog.set_defaults(handler=_run_compile_catalog)
 
     generate = subparsers.add_parser(
         "generate-output",
@@ -140,6 +342,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional bundled source used for files absent from source-root",
     )
     generate.add_argument("--output-dir", type=Path, required=True)
+    generate.set_defaults(handler=_run_generate_output)
 
     item_audit = subparsers.add_parser(
         "audit-items",
@@ -161,6 +364,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional compiled affix catalog used to identify new property IDs",
     )
     item_audit.add_argument("--output", type=Path)
+    item_audit.set_defaults(handler=_run_audit_items)
 
     item_tags = subparsers.add_parser(
         "audit-item-tags",
@@ -185,6 +389,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional directory containing complete files to compare by tag key",
     )
     item_tags.add_argument("--output-dir", type=Path, required=True)
+    item_tags.set_defaults(handler=_run_audit_item_tags)
 
     paths = subparsers.add_parser(
         "show-runtime-paths",
@@ -195,6 +400,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="use the packaged layout rooted at this directory",
     )
+    paths.set_defaults(handler=_run_show_runtime_paths)
 
     release = subparsers.add_parser(
         "assemble-release",
@@ -204,213 +410,13 @@ def build_parser() -> argparse.ArgumentParser:
     release.add_argument("--output-dir", type=Path)
     release.add_argument("--catalog-root", type=Path)
     release.add_argument("--data-root", type=Path)
+    release.set_defaults(handler=_run_assemble_release)
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    if args.command == "inventory":
-        localization_entries = (
-            load_localization_directory(args.localization_root)
-            if args.localization_root is not None
-            else ()
-        )
-        result = build_field_inventory(args.data_root, localization_entries)
-        write_inventory_reports(result, args.output_dir)
-        reference_statuses = build_affix_reference_statuses(
-            args.data_root, localization_entries
-        )
-        write_affix_reference_report(
-            reference_statuses, args.output_dir / "affix_reference_status.csv"
-        )
-        print(
-            json.dumps(
-                {
-                    "records_scanned": result.records_scanned,
-                    "supported_records": result.supported_records,
-                    "parse_warning_count": result.parse_warning_count,
-                    "unresolved_localization_tags": result.unresolved_localization_tags,
-                    "active_raw_fields": len(result.fields),
-                    "affix_reference_statuses": len(reference_statuses),
-                    "output_dir": str(args.output_dir),
-                },
-                indent=2,
-            )
-        )
-        return 0
-    if args.command == "sample":
-        localization_entries = _load_all_localization_entries(args)
-        result = build_sample_candidates(
-            args.data_root,
-            localization_entries,
-            count=args.count,
-            seed=args.seed,
-        )
-        report = format_sample_report(
-            result.candidates,
-            seed=result.seed,
-            candidate_pool_size=result.candidate_pool_size,
-            unresolved_name_records_skipped=result.unresolved_name_records_skipped,
-            unknown_slot_records_skipped=result.unknown_slot_records_skipped,
-        )
-        if args.output is not None:
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            args.output.write_text(report, encoding="utf-8")
-        sys.stdout.write(report)
-        return 0
-    if args.command == "rank":
-        bundle = CatalogBundle.load(args.catalog_root)
-        profile = load_profile(args.profile_file)
-        matches = rank_affix_catalog(
-            bundle.affixes,
-            profile,
-            limit=args.limit,
-        )
-        candidate_pool_size = sum(
-            len(affix.variants) for affix in bundle.affixes.affixes
-        )
-        report = format_ranked_catalog_report(
-            matches,
-            profile=profile,
-            candidate_pool_size=candidate_pool_size,
-        )
-        if args.output is not None:
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            args.output.write_text(report, encoding="utf-8")
-        sys.stdout.write(report)
-        return 0
-    if args.command == "compile-catalog":
-        localization_entries: tuple[LocalizationEntry, ...] = ()
-        for localization_root in args.localization_root:
-            localization_entries += load_localization_directory(localization_root)
-        result = compile_catalog_bundle(
-            args.data_root,
-            localization_entries,
-            args.output_dir,
-            game_version=args.game_version,
-            mastery_tree_root=args.mastery_tree_root,
-        )
-        print(
-            json.dumps(
-                {
-                    "affixes": result.affix_count,
-                    "affix_variants": result.affix_variant_count,
-                    "skills": result.skill_count,
-                    "strings": result.string_count,
-                    "unresolved_skill_names": result.unresolved_skill_name_count,
-                    "unresolved_affix_records": (
-                        result.unresolved_affix_record_count
-                    ),
-                    "items": result.item_counts,
-                    "item_variants": result.item_variant_count,
-                    "skipped_unresolved_item_records": (
-                        result.unresolved_item_record_count
-                    ),
-                    "output_dir": str(result.output_dir),
-                },
-                indent=2,
-            )
-        )
-        return 0
-    if args.command == "generate-output":
-        bundle = CatalogBundle.load(args.catalog_root)
-        profile = load_profile(args.profile_file)
-        result = generate_rainbow_output(
-            args.source_root,
-            args.output_dir,
-            bundle.affixes,
-            profile,
-            items=bundle.items,
-            fallback_source_root=args.fallback_source_root,
-        )
-        print(
-            json.dumps(
-                {
-                    "profile": profile.name,
-                    "files_written": result.files_written,
-                    "affix_tags_scored": result.affix_tags_scored,
-                    "affix_tags_found": result.affix_tags_found,
-                    "unique_tags_scored": result.unique_tags_scored,
-                    "unique_tags_found": result.unique_tags_found,
-                    "annotated_lines": result.annotated_lines,
-                    "missing_affix_tag_count": len(result.missing_affix_tags),
-                    "missing_affix_tags": result.missing_affix_tags,
-                    "missing_unique_tag_count": len(result.missing_unique_tags),
-                    "missing_unique_tags": result.missing_unique_tags,
-                    "output_dir": str(result.output_root),
-                },
-                indent=2,
-            )
-        )
-        return 0
-    if args.command == "audit-items":
-        localization_entries: tuple[LocalizationEntry, ...] = ()
-        for localization_root in args.localization_root:
-            localization_entries += load_localization_directory(localization_root)
-        affix_property_ids: set[str] = set()
-        if args.catalog_root is not None:
-            bundle = CatalogBundle.load(args.catalog_root)
-            affix_property_ids = {
-                property_.property_id
-                for affix in bundle.affixes.affixes
-                for variant in affix.variants
-                for property_ in variant.properties
-            }
-        result = build_item_audit(
-            args.data_root,
-            localization_entries,
-            source_name=args.source,
-            item_directory=args.item_directory,
-            affix_property_ids=affix_property_ids,
-        )
-        report = format_item_audit_report(result)
-        if args.output is not None:
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            args.output.write_text(report, encoding="utf-8")
-        sys.stdout.write(report)
-        return 0
-    if args.command == "audit-item-tags":
-        result = build_item_tag_audit(
-            args.data_root,
-            definition_sources=tuple(args.definition_source),
-            scan_sources=tuple(
-                args.scan_source or ("base", "gdx1", "gdx2", "gdx3")
-            ),
-            comparison_root=args.comparison_root,
-        )
-        write_item_tag_audit(result, args.output_dir)
-        print(
-            json.dumps(
-                {
-                    "localization_definitions": len(result.entries),
-                    "unique_tags": len(result.unique_tags),
-                    "dbr_referenced_unique_tags": len(
-                        result.referenced_unique_tags
-                    ),
-                    "unreferenced_unique_tags": len(
-                        result.unique_tags - result.referenced_unique_tags
-                    ),
-                    "dbr_files_scanned": result.dbr_files_scanned,
-                    "output_dir": str(args.output_dir),
-                },
-                indent=2,
-            )
-        )
-        return 0
-    if args.command == "show-runtime-paths":
-        runtime_paths = resolve_runtime_paths(application_root=args.application_root)
-        print(json.dumps(runtime_paths.as_dict(), indent=2))
-        return 0
-    if args.command == "assemble-release":
-        result = assemble_release(
-            args.project_root,
-            output_root=args.output_dir,
-            catalog_root=args.catalog_root,
-            data_root=args.data_root,
-        )
-        print(json.dumps(result.as_dict(), indent=2))
-        return 0
-    return 2
+    return args.handler(args)
 
 
 if __name__ == "__main__":

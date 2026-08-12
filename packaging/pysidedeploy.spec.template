@@ -1,0 +1,46 @@
+[app]
+
+# This template is materialized by scripts/package-release.ps1. Keep the
+# placeholders portable; do not commit pyside6-deploy's generated absolute
+# paths.
+title = grim_gleaner
+project_dir = __PROJECT_ROOT__
+input_file = src\gd_affix_relevance\ui\app.py
+exec_directory = __DEPLOY_OUTPUT__
+project_file =
+icon =
+
+[python]
+
+python_path = __PYTHON_PATH__
+packages = Nuitka==__NUITKA_VERSION__
+android_packages = buildozer==1.5.0,cython==0.29.33
+
+[qt]
+
+qml_files =
+excluded_qml_plugins =
+modules = Core,Gui,Widgets
+plugins =
+
+[android]
+
+wheel_pyside =
+wheel_shiboken =
+plugins =
+
+[nuitka]
+
+macos.permissions =
+mode = onefile
+extra_args = --quiet --noinclude-qt-translations --windows-console-mode=disable
+
+[buildozer]
+
+mode = debug
+recipe_dir =
+jars_dir =
+ndk_path =
+sdk_path =
+local_libs =
+arch =

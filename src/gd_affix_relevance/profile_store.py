@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.io_utils import atomic_write_text
 
 PROFILE_FILE_SCHEMA_VERSION = 4
 SUPPORTED_PROFILE_FILE_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4})
@@ -25,16 +26,10 @@ def save_profile(profile: BuildProfile, path: Path) -> Path:
         "schema_version": PROFILE_FILE_SCHEMA_VERSION,
         **profile.to_dict(),
     }
-    temporary = destination.with_suffix(destination.suffix + ".tmp")
-    try:
-        temporary.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-        temporary.replace(destination)
-    except Exception:
-        temporary.unlink(missing_ok=True)
-        raise
+    atomic_write_text(
+        destination,
+        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+    )
     return destination
 
 

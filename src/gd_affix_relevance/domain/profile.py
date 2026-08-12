@@ -17,7 +17,7 @@ WEIGHT_LABELS = (
     "Ignored",
     "Incidental",
     "Useful",
-    "Emphasized",
+    "Important",
     "Core",
 )
 
