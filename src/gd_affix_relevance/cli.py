@@ -266,6 +266,7 @@ def _run_assemble_release(args: argparse.Namespace) -> int:
         output_root=args.output_dir,
         catalog_root=args.catalog_root,
         data_root=args.data_root,
+        profiles_root=args.profiles_root,
     )
     _print_json_summary(result.as_dict())
     return 0
@@ -410,6 +411,7 @@ def build_parser() -> argparse.ArgumentParser:
     release.add_argument("--output-dir", type=Path)
     release.add_argument("--catalog-root", type=Path)
     release.add_argument("--data-root", type=Path)
+    release.add_argument("--profiles-root", type=Path)
     release.set_defaults(handler=_run_assemble_release)
     return parser
 

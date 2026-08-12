@@ -167,7 +167,6 @@ class ProfileEditor(QWidget):
     def _name_changed(self, name: str) -> None:
         self.profile.name = name
         self._mark_unsaved()
-        self.profile_changed.emit()
 
     def _weights_changed(self, _stat_id: str, _weight: int) -> None:
         self._mark_unsaved()

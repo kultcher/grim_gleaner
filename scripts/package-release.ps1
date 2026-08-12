@@ -189,7 +189,8 @@ $requiredPaths = @(
     "tags\tagsgdx1_items.txt",
     "tags\tagsgdx2_items.txt",
     "tags\tagsgdx3_items.txt",
-    "Profiles"
+    "Profiles",
+    "Profiles\examples"
 )
 foreach ($relativePath in $requiredPaths) {
     $candidate = Join-Path $releaseRoot $relativePath

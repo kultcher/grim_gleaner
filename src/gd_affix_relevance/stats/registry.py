@@ -247,12 +247,6 @@ DEFENSES_TAB = TabDefinition(
     "Defenses",
     (
         PackageDefinition(
-            "defense_resistances",
-            "Resistances",
-            RESISTANCE_STATS,
-            default_expanded=True,
-        ),
-        PackageDefinition(
             "defense_ability",
             "Defensive Ability",
             (
@@ -263,19 +257,10 @@ DEFENSES_TAB = TabDefinition(
             default_expanded=True,
         ),
         PackageDefinition(
-            "defense_supplemental",
-            "Supplemental Defenses",
-            (
-                stat("armor", "Armor (Flat)"),
-                stat("armor_percent", "Armor (+%)"),
-                stat("armor_absorption_percent", "Armor Absorption (+%)"),
-                stat("dodge_chance", "Dodge Chance"),
-                stat("projectile_deflection", "Projectile Deflection"),
-                stat(
-                    "reflected_damage_reduction",
-                    "Reflected Damage Reduction",
-                ),
-            ),
+            "defense_resistances",
+            "Resistances",
+            RESISTANCE_STATS,
+            default_expanded=True,
         ),
         PackageDefinition(
             "defense_maximum_resistances",
@@ -297,6 +282,21 @@ DEFENSES_TAB = TabDefinition(
                     ),
                     ("maximum_vitality_resistance", "Maximum Vitality Resistance"),
                 )
+            ),
+        ),
+        PackageDefinition(
+            "defense_supplemental",
+            "Supplemental Defenses",
+            (
+                stat("armor", "Armor (Flat)"),
+                stat("armor_percent", "Armor (+%)"),
+                stat("armor_absorption_percent", "Armor Absorption (+%)"),
+                stat("dodge_chance", "Dodge Chance"),
+                stat("projectile_deflection", "Projectile Deflection"),
+                stat(
+                    "reflected_damage_reduction",
+                    "Reflected Damage Reduction",
+                ),
             ),
         ),
         PackageDefinition(

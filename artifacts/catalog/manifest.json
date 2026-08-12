@@ -1,0 +1,41 @@
+{
+  "affix_scope": "structurally_reachable_magic_and_rare",
+  "counts": {
+    "affix_variants": 909,
+    "affixes": 433,
+    "augments": 313,
+    "components": 107,
+    "consumables": 108,
+    "equipment": 2813,
+    "item_variants": 7748,
+    "items": 3495,
+    "relics": 91,
+    "runes": 63,
+    "skills": 1576,
+    "strings": 7668,
+    "unresolved_item_records": 119,
+    "unresolved_skill_names": 2
+  },
+  "files": [
+    "affixes.json",
+    "skills.json",
+    "strings.en.json",
+    "equipment.json",
+    "components.json",
+    "augments.json",
+    "relics.json",
+    "runes.json",
+    "consumables.json"
+  ],
+  "game_version": "unknown",
+  "item_scope": "named_equipment_components_augments_relics_runes_and_consumables",
+  "locale": "en",
+  "schema_version": 7,
+  "skill_scope": "named_player_pet_and_item_granted_with_mastery_tree_metadata",
+  "sources": [
+    "base",
+    "gdx1",
+    "gdx2",
+    "gdx3"
+  ]
+}

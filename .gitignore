@@ -11,15 +11,15 @@ __pycache__/
 
 build/
 dist/
-artifacts/
+docs/
 
-default.json
-lightning.json
-forum-pitch.md
-testing.md
-refactor-notes.md
-claude-review-notes.md
-glm-review.md
+artifacts/*
+!artifacts/profiles/
+artifacts/profiles/*
+!artifacts/profiles/examples/
+!artifacts/profiles/examples/**
+!artifacts/catalog/
+!artifacts/catalog/**
 
 # Locally extracted proprietary Grim Dawn data.
 game_data/

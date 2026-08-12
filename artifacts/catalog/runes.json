@@ -1,0 +1,3509 @@
+{
+  "items": [
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Emblem of Dreeg's Vector",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC204",
+      "localization_tag": "tagGDX2RuneC204",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Dreeg's Vector",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c204.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Dreeg's Vector",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c204.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c204_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Dreeg's Vector"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Witch God cults.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneBDesc",
+      "display_name": "Emblem of Focused Rage",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneB203",
+      "localization_tag": "tagGDX2RuneB203",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Cult of Dreeg",
+          "faction_source": "User14",
+          "gear_slot": "",
+          "granted_skill_name": "Charge",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/charge_00_basic.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Charge",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/charge_00_basic.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b203_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Charge"
+          ],
+          "vendor_sources": [
+            {
+              "faction_name": "Cult of Dreeg",
+              "faction_source": "User14",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneBDesc",
+      "display_name": "Emblem of Hranaakian Flight",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneB302",
+      "localization_tag": "tagGDX3RuneB302",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b302_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_b302_evade.dbr",
+              "properties": [],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Emblem of Korvan Swiftness",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC201",
+      "localization_tag": "tagGDX2RuneC201",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Korvan Swiftness",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_c201.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Korvan Swiftness",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_c201.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c201_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Korvan Swiftness"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneBDesc",
+      "display_name": "Emblem of Kurn Endurance",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneB303",
+      "localization_tag": "tagGDX3RuneB303",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b303_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_b303_evade.dbr",
+              "properties": [
+                {
+                  "attributes": {
+                    "value": "2.000000"
+                  },
+                  "property_id": "skill_modifier_cooldown",
+                  "property_key": "skill_modifier_cooldown"
+                }
+              ],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneBDesc",
+      "display_name": "Emblem of Kurn Guile",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneB301",
+      "localization_tag": "tagGDX3RuneB301",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b301_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_b301_evade.dbr",
+              "properties": [
+                {
+                  "attributes": {
+                    "value": "-0.500000"
+                  },
+                  "property_id": "skill_modifier_cooldown",
+                  "property_key": "skill_modifier_cooldown"
+                }
+              ],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Emblem of Rahn's Might",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC207",
+      "localization_tag": "tagGDX2RuneC207",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Rahn's Might",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_c207.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Rahn's Might",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_c207.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c207_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Rahn's Might"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Witch God cults.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneBDesc",
+      "display_name": "Emblem of the Agile Huntress",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneB206",
+      "localization_tag": "tagGDX2RuneB206",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Cult of Solael",
+          "faction_source": "User15",
+          "gear_slot": "",
+          "granted_skill_name": "Disengage",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_00_basic.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Disengage",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_00_basic.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b206_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Disengage"
+          ],
+          "vendor_sources": [
+            {
+              "faction_name": "Cult of Solael",
+              "faction_source": "User15",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Witch God cults.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneBDesc",
+      "display_name": "Emblem of the Charging Bull",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneB205",
+      "localization_tag": "tagGDX2RuneB205",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Cult of Solael",
+          "faction_source": "User15",
+          "gear_slot": "",
+          "granted_skill_name": "Rush",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_00_basic.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Rush",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_00_basic.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b205_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Rush"
+          ],
+          "vendor_sources": [
+            {
+              "faction_name": "Cult of Solael",
+              "faction_source": "User15",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Witch God cults.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneBDesc",
+      "display_name": "Emblem of the Leaping Mantis",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneB202",
+      "localization_tag": "tagGDX2RuneB202",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Cult of Bysmiel",
+          "faction_source": "User13",
+          "gear_slot": "",
+          "granted_skill_name": "Leap",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_00_basic.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Leap",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_00_basic.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b202_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Leap"
+          ],
+          "vendor_sources": [
+            {
+              "faction_name": "Cult of Bysmiel",
+              "faction_source": "User13",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Witch God cults.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneBDesc",
+      "display_name": "Emblem of the Riftstalker",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneB204",
+      "localization_tag": "tagGDX2RuneB204",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Cult of Dreeg",
+          "faction_source": "User14",
+          "gear_slot": "",
+          "granted_skill_name": "Rift Tear",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_00_basic.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Rift Tear",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_00_basic.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b204_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Rift Tear"
+          ],
+          "vendor_sources": [
+            {
+              "faction_name": "Cult of Dreeg",
+              "faction_source": "User14",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A common symbol of power used by the Witch God cults.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneBDesc",
+      "display_name": "Emblem of the Shadowy Assassin",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneB201",
+      "localization_tag": "tagGDX2RuneB201",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Cult of Bysmiel",
+          "faction_source": "User13",
+          "gear_slot": "",
+          "granted_skill_name": "Vanish",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_00_basic.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 1,
+          "level_requirement": 1,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Vanish",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_00_basic.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Magical",
+          "record_path": "records/items/enchants/runes/b201_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Vanish"
+          ],
+          "vendor_sources": [
+            {
+              "faction_name": "Cult of Bysmiel",
+              "faction_source": "User13",
+              "reputation": "Friendly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Arcane Insights",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC216",
+      "localization_tag": "tagGDX2RuneC216",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Arcane Rift",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c216.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Arcane Rift",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c216.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c216_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Arcane Rift"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Ashen Wastes",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC224",
+      "localization_tag": "tagGDX2RuneC224",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Chaos Strike",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_c224.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Chaos Strike",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_c224.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c224_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Chaos Strike"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Burning Rifts",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC217",
+      "localization_tag": "tagGDX2RuneC217",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Burning Rift",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c217.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Burning Rift",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c217.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c217_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Burning Rift"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Disorder",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC219",
+      "localization_tag": "tagGDX2RuneC219",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Disorder",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c219.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Disorder",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c219.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c219_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Disorder"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Dreeg's Vector",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC205",
+      "localization_tag": "tagGDX2RuneC205",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Empowered Dreeg's Vector",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c205.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Empowered Dreeg's Vector",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c205.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c205_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Empowered Dreeg's Vector"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Ghastly Retreats",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC222",
+      "localization_tag": "tagGDX2RuneC222",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Ghastly Retreat",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c222.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Ghastly Retreat",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c222.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c222_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Ghastly Retreat"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneCDesc",
+      "display_name": "Glyph of Hranaakian Flight",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneC302",
+      "localization_tag": "tagGDX3RuneC302",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c302_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_c302_evade.dbr",
+              "properties": [],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Honored"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Incorporeal Winds",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC212",
+      "localization_tag": "tagGDX2RuneC212",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Incorporeal Winds",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_c212.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Incorporeal Winds",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_c212.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c212_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Incorporeal Winds"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Korvan Swiftness",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC202",
+      "localization_tag": "tagGDX2RuneC202",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Empowered Korvan Swiftness",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_c202.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Empowered Korvan Swiftness",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_c202.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c202_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Empowered Korvan Swiftness"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneCDesc",
+      "display_name": "Glyph of Kurn Endurance",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneC303",
+      "localization_tag": "tagGDX3RuneC303",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c303_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_c303_evade.dbr",
+              "properties": [
+                {
+                  "attributes": {
+                    "value": "1.500000"
+                  },
+                  "property_id": "skill_modifier_cooldown",
+                  "property_key": "skill_modifier_cooldown"
+                }
+              ],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Honored"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneCDesc",
+      "display_name": "Glyph of Kurn Guile",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneC301",
+      "localization_tag": "tagGDX3RuneC301",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c301_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_c301_evade.dbr",
+              "properties": [
+                {
+                  "attributes": {
+                    "value": "-0.800000"
+                  },
+                  "property_id": "skill_modifier_cooldown",
+                  "property_key": "skill_modifier_cooldown"
+                }
+              ],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Honored"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Rahn's Might",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC208",
+      "localization_tag": "tagGDX2RuneC208",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Empowered Rahn's Might",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_c208.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Empowered Rahn's Might",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_c208.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c208_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Empowered Rahn's Might"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Seismic Strength",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC213",
+      "localization_tag": "tagGDX2RuneC213",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Seismic Leap",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_c213.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Seismic Leap",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_c213.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c213_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Seismic Leap"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Spontaneous Blades",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC218",
+      "localization_tag": "tagGDX2RuneC218",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Bladed Rift",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c218.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Bladed Rift",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c218.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c218_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Bladed Rift"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Sudden Strikes",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC225",
+      "localization_tag": "tagGDX2RuneC225",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Sudden Strike",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_c225.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Sudden Strike",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_c225.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c225_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Sudden Strike"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Elusive Assassin",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC223",
+      "localization_tag": "tagGDX2RuneC223",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Assassin's Evasion",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c223.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Assassin's Evasion",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c223.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c223_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Assassin's Evasion"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Northern Ram",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC211",
+      "localization_tag": "tagGDX2RuneC211",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Ramming Speed",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_c211.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Ramming Speed",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_c211.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c211_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Ramming Speed"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Pouncing Manticore",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC215",
+      "localization_tag": "tagGDX2RuneC215",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Manticore Pounce",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_c215.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Manticore Pounce",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_c215.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c215_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Manticore Pounce"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Ravenous Wendigo",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC210",
+      "localization_tag": "tagGDX2RuneC210",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Wendigo Rush",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_c210.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Wendigo Rush",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_c210.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c210_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Wendigo Rush"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Rising Phoenix",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC221",
+      "localization_tag": "tagGDX2RuneC221",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Phoenix Rise",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c221.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Phoenix Rise",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c221.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c221_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Phoenix Rise"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Scorpion Tail",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC226",
+      "localization_tag": "tagGDX2RuneC226",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Scorpion Strike",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/charge_c226.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Scorpion Strike",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/charge_c226.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c226_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Scorpion Strike"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Stormclap",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC214",
+      "localization_tag": "tagGDX2RuneC214",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Stormclap",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_c214.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Stormclap",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_c214.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c214_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Stormclap"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of the Winter Fox",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC220",
+      "localization_tag": "tagGDX2RuneC220",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Outfox",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c220.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Outfox",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_c220.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c220_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Outfox"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Glyph of Wayward Souls",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC227",
+      "localization_tag": "tagGDX2RuneC227",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Soul Strike",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/charge_c227.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 50,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Soul Strike",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/charge_c227.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c227_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Soul Strike"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Amatok's Breath",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD201",
+      "localization_tag": "tagGDX2RuneD201",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Amatok's Breath",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_d201.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Amatok's Breath",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_d201.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d201_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Amatok's Breath"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Astral Rifts",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD211",
+      "localization_tag": "tagGDX2RuneD211",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Astral Rift",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d211.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Astral Rift",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d211.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d211_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Astral Rift"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Blazing Ends",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD221",
+      "localization_tag": "tagGDX2RuneD221",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Blazing Charge",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/charge_d221.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Blazing Charge",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/charge_d221.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d221_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Blazing Charge"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Dark Desires",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD219",
+      "localization_tag": "tagGDX2RuneD219",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Dark Desires",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_d219.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Dark Desires",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_d219.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d219_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Dark Desires"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Displacement",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD212",
+      "localization_tag": "tagGDX2RuneD212",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Displacement",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d212.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Displacement",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d212.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d212_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Displacement"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Dread's Wake",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD207",
+      "localization_tag": "tagGDX2RuneD207",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Dread's Wake",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_d207.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Dread's Wake",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_d207.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d207_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Dread's Wake"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Rune of Dreeg's Vector",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC206",
+      "localization_tag": "tagGDX2RuneC206",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Masterful Dreeg's Vector",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c206.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Masterful Dreeg's Vector",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_c206.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c206_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Masterful Dreeg's Vector"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Dreeg's Wounds",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD208",
+      "localization_tag": "tagGDX2RuneD208",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Dreeg's Wounds",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_d208.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Dreeg's Wounds",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_d208.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d208_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Dreeg's Wounds"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Eldritch Instability",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD205",
+      "localization_tag": "tagGDX2RuneD205",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Eldritch Instability",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_d205.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Eldritch Instability",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_d205.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d205_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Eldritch Instability"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Fallen Kings",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD202",
+      "localization_tag": "tagGDX2RuneD202",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Will of the Fallen Kings",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_d202.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Will of the Fallen Kings",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_d202.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d202_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Will of the Fallen Kings"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneDDesc",
+      "display_name": "Rune of Hranaakian Flight",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneD302",
+      "localization_tag": "tagGDX3RuneD302",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 70,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d302_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_d302_evade.dbr",
+              "properties": [],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Revered"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Ishtak's Mercy",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD217",
+      "localization_tag": "tagGDX2RuneD217",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Ishtak's Mercy",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d217.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Ishtak's Mercy",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d217.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d217_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Ishtak's Mercy"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Rune of Korvan Swiftness",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC203",
+      "localization_tag": "tagGDX2RuneC203",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Masterful Korvan Swiftness",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_c203.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Masterful Korvan Swiftness",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_c203.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c203_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Masterful Korvan Swiftness"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneDDesc",
+      "display_name": "Rune of Kurn Endurance",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneD303",
+      "localization_tag": "tagGDX3RuneD303",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 70,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d303_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_d303_evade.dbr",
+              "properties": [
+                {
+                  "attributes": {
+                    "value": "1.000000"
+                  },
+                  "property_id": "skill_modifier_cooldown",
+                  "property_key": "skill_modifier_cooldown"
+                }
+              ],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Revered"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power used by the Kurn to enhance their combat prowess.\"(Applied to Medals)",
+      "description_tag": "tagGDX3RuneDDesc",
+      "display_name": "Rune of Kurn Guile",
+      "family": "runes",
+      "item_id": "runes:tagGDX3RuneD301",
+      "localization_tag": "tagGDX3RuneD301",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Purchased",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "Kurn",
+          "faction_source": "User17",
+          "gear_slot": "",
+          "granted_skill_name": "",
+          "granted_skill_reference": "",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 70,
+          "monster_sources": [],
+          "properties": [],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d301_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [
+            {
+              "modified_skill_name": "Evade",
+              "modified_skill_reference": "records/skills/default/defaultevade.dbr",
+              "modifier_reference": "records/skills/itemskillsgdx3/skillmodifiers/rune_d301_evade.dbr",
+              "properties": [
+                {
+                  "attributes": {
+                    "value": "-1.000000"
+                  },
+                  "property_id": "skill_modifier_cooldown",
+                  "property_key": "skill_modifier_cooldown"
+                }
+              ],
+              "stat_lines": []
+            }
+          ],
+          "source": "gdx3",
+          "stat_lines": [],
+          "vendor_sources": [
+            {
+              "faction_name": "Kurn",
+              "faction_source": "User17",
+              "reputation": "Revered"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Murmur's Kiss",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD216",
+      "localization_tag": "tagGDX2RuneD216",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Murmur's Kiss",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d216.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Murmur's Kiss",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d216.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d216_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Murmur's Kiss"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Nadaan's Strike",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD209",
+      "localization_tag": "tagGDX2RuneD209",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Nadaan's Strike",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d209.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Nadaan's Strike",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d209.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d209_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Nadaan's Strike"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"A formidable symbol of power found across the far reaches of Cairn.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneCDesc",
+      "display_name": "Rune of Rahn's Might",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneC209",
+      "localization_tag": "tagGDX2RuneC209",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Masterful Rahn's Might",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_c209.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 50,
+          "level_requirement": 33,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Masterful Rahn's Might",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_c209.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Epic",
+          "record_path": "records/items/enchants/runes/c209_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Masterful Rahn's Might"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of the Dark Progenitor",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD206",
+      "localization_tag": "tagGDX2RuneD206",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Upon Rylok Wings",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_d206.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Upon Rylok Wings",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_d206.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d206_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Upon Rylok Wings"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of the Stormtitan",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD220",
+      "localization_tag": "tagGDX2RuneD220",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Stormtitan's Charge",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/charge_d220.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Stormtitan's Charge",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/charge_d220.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d220_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Stormtitan's Charge"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of the Typhoon",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD213",
+      "localization_tag": "tagGDX2RuneD213",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Typhoon",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d213.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Typhoon",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d213.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d213_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Typhoon"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Ultos' Arrival",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD210",
+      "localization_tag": "tagGDX2RuneD210",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Ultos' Arrival",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d210.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Ultos' Arrival",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/teleport_d210.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d210_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Ultos' Arrival"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Ulzaad's Madness",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD214",
+      "localization_tag": "tagGDX2RuneD214",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Ulzaad's Madness",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d214.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Ulzaad's Madness",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d214.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d214_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Ulzaad's Madness"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Ulzuin's Fall",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD204",
+      "localization_tag": "tagGDX2RuneD204",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Ulzuin's Fall",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/leap_d204.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Ulzuin's Fall",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/leap_d204.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d204_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Ulzuin's Fall"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Vampiric Shadows",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD218",
+      "localization_tag": "tagGDX2RuneD218",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Vampiric Shadows",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_d218.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Vampiric Shadows",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/shadowstrike_d218.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d218_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Vampiric Shadows"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Violent Delights",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD203",
+      "localization_tag": "tagGDX2RuneD203",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Violent Delights",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/rush_d203.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Violent Delights",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/rush_d203.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d203_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Violent Delights"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    },
+    {
+      "description": "\"An ancient symbol of power thought lost to a shattered reality.\"(Applied to Medals)",
+      "description_tag": "tagGDX2RuneDDesc",
+      "display_name": "Rune of Wretched Desires",
+      "family": "runes",
+      "item_id": "runes:tagGDX2RuneD215",
+      "localization_tag": "tagGDX2RuneD215",
+      "name_resolution": "localized",
+      "variants": [
+        {
+          "acquisition_source": "Crafted",
+          "applicable_slots": [
+            "Medal"
+          ],
+          "category": "rune",
+          "completion_bonus_reference": "",
+          "container_sources": [],
+          "effect_properties": [],
+          "effect_skill_name": "",
+          "effect_skill_reference": "",
+          "effect_stat_lines": [],
+          "faction_name": "",
+          "faction_source": "",
+          "gear_slot": "",
+          "granted_skill_name": "Wretched Desires",
+          "granted_skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d215.dbr",
+          "item_class": "ItemEnchantment",
+          "item_level": 90,
+          "level_requirement": 90,
+          "monster_sources": [],
+          "properties": [
+            {
+              "attributes": {
+                "display_name": "Wretched Desires",
+                "level_equation": "1",
+                "skill_reference": "records/skills/itemskillsgdx2/runes/disengage_d215.dbr"
+              },
+              "property_id": "granted_item_skill",
+              "property_key": "granted_item_skill"
+            }
+          ],
+          "rarity": "Legendary",
+          "record_path": "records/items/enchants/runes/d215_rune.dbr",
+          "set_name": "",
+          "set_reference": "",
+          "skill_modifiers": [],
+          "source": "gdx2",
+          "stat_lines": [
+            "*Granted Skill: Wretched Desires"
+          ],
+          "vendor_sources": []
+        }
+      ]
+    }
+  ],
+  "schema_version": 7
+}

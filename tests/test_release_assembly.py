@@ -31,7 +31,7 @@ def _write_minimal_catalog(root: Path) -> None:
     counts = {
         "affixes": 0,
         "affix_variants": 0,
-        "skills": 0,
+        "skills": 2,
         "strings": 0,
         "equipment": 0,
         "components": 0,
@@ -62,7 +62,29 @@ def _write_minimal_catalog(root: Path) -> None:
     )
     _write_json(
         root / "skills.json",
-        {"schema_version": CATALOG_SCHEMA_VERSION, "skills": []},
+        {
+            "schema_version": CATALOG_SCHEMA_VERSION,
+            "skills": [
+                {
+                    "skill_id": "records/skills/playerclass01/test.dbr",
+                    "source": "base",
+                    "category": "player",
+                    "name_tag": "tagTestSkill",
+                    "display_name": "Test Skill",
+                    "mastery_id": "playerclass01",
+                    "mastery_name": "Soldier",
+                },
+                {
+                    "skill_id": "records/skills/playerclass02/test.dbr",
+                    "source": "base",
+                    "category": "player",
+                    "name_tag": "tagOtherSkill",
+                    "display_name": "Other Skill",
+                    "mastery_id": "playerclass02",
+                    "mastery_name": "Demolitionist",
+                },
+            ],
+        },
     )
     _write_json(
         root / "affixes.json",
@@ -82,6 +104,27 @@ def _write_tag_sources(data_root: Path, *, value: str = "Value") -> None:
         path.write_text(f"tag{source}={value}\n", encoding="utf-8")
 
 
+def _write_example_profiles(root: Path) -> None:
+    _write_json(
+        root / "Starter.json",
+        {
+            "schema_version": 4,
+            "name": "Starter",
+            "masteries": ["playerclass01", "playerclass02"],
+            "skill_weights": {
+                "records/skills/playerclass01/test.dbr": 4,
+            },
+            "weights": {"health": 2},
+            "resistance_cap_enabled": False,
+            "resistance_cap_weights": {},
+            "excluded_conversion_sources": {},
+        },
+    )
+    (root / "README.txt").write_text(
+        "Customize these starter profiles.\n", encoding="utf-8"
+    )
+
+
 def _project_fixture(tmp_path: Path) -> tuple[Path, Path]:
     project = tmp_path / "project"
     (project / "README.md").parent.mkdir(parents=True)
@@ -91,6 +134,7 @@ def _project_fixture(tmp_path: Path) -> tuple[Path, Path]:
         "Test notices\n", encoding="utf-8"
     )
     _write_minimal_catalog(project / "artifacts" / "catalog")
+    _write_example_profiles(project / "artifacts" / "profiles" / "examples")
     _write_tag_sources(project / "game_data")
     output = project / "dist" / "Grim Gleaner"
     output.mkdir(parents=True)
@@ -115,6 +159,7 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
     assert result.catalog_files == 10
     assert result.tag_files == 4
     assert result.tag_entries == 4
+    assert result.example_profiles == 1
     assert (output / "catalog" / "manifest.json").is_file()
     assert (output / "tags" / "tagsgdx3_items.txt").is_file()
     assert (output / "README.txt").read_text(encoding="utf-8") == "# Test release\n"
@@ -124,10 +169,16 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
     ) == "Test notices\n"
     assert (output / "release-manifest.json").is_file()
     assert (output / "Profiles").is_dir()
+    assert (output / "Profiles" / "examples" / "Starter.json").is_file()
+    assert (output / "Profiles" / "examples" / "README.txt").is_file()
     assert (output / "grim_gleaner.exe").read_bytes() == b"exe"
     assert (output / "_internal" / "runtime.dat").read_bytes() == b"runtime"
     assert (output / "backups" / "user-copy.txt").read_text(encoding="utf-8") == "keep"
     assert (output / "Profiles" / "lightning.json").read_text(encoding="utf-8") == "{}"
+    manifest = json.loads(
+        (output / "release-manifest.json").read_text(encoding="utf-8")
+    )
+    assert set(manifest["example_profiles"]) == {"Starter.json"}
 
 
 def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
@@ -135,6 +186,9 @@ def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
     assemble_release(project)
     (output / "catalog" / "stale.json").write_text("stale", encoding="utf-8")
     (output / "tags" / "stale.txt").write_text("stale", encoding="utf-8")
+    (output / "Profiles" / "examples" / "stale.json").write_text(
+        "stale", encoding="utf-8"
+    )
     (output / "staging").mkdir()
     (output / "staging" / "keep.txt").write_text("keep", encoding="utf-8")
     _write_tag_sources(project / "game_data", value="Updated")
@@ -143,6 +197,7 @@ def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
 
     assert not (output / "catalog" / "stale.json").exists()
     assert not (output / "tags" / "stale.txt").exists()
+    assert not (output / "Profiles" / "examples" / "stale.json").exists()
     assert "Updated" in (output / "tags" / "tags_items.txt").read_text(
         encoding="utf-8"
     )
@@ -157,6 +212,24 @@ def test_validation_failure_leaves_existing_release_untouched(tmp_path: Path) ->
     (project / "game_data" / "gdx3" / "text_en" / "tagsgdx3_items.txt").unlink()
 
     with pytest.raises(FileNotFoundError, match="tagsgdx3_items.txt"):
+        assemble_release(project)
+
+    assert sentinel.read_text(encoding="utf-8") == "keep"
+
+
+def test_invalid_example_profile_leaves_existing_release_untouched(
+    tmp_path: Path,
+) -> None:
+    project, output = _project_fixture(tmp_path)
+    sentinel = output / "Profiles" / "existing.json"
+    sentinel.parent.mkdir()
+    sentinel.write_text("keep", encoding="utf-8")
+    example = project / "artifacts" / "profiles" / "examples" / "Starter.json"
+    payload = json.loads(example.read_text(encoding="utf-8"))
+    payload["weights"]["not_a_real_stat"] = 4
+    _write_json(example, payload)
+
+    with pytest.raises(ValueError, match="unknown stats"):
         assemble_release(project)
 
     assert sentinel.read_text(encoding="utf-8") == "keep"
