@@ -109,7 +109,9 @@ Schema version 2 added one logical `ItemCatalog` stored in six files. Schema
 version 3 added structured atomic applicability to affix variants. Schema
 version 4 adds affix rarity and skill-rank magnitudes plus mastery tier, order,
 and curated parent links. Schema version 5 adds attachment acquisition and
-localized faction metadata. Splitting the files keeps large equipment data
+localized faction metadata. Schema version 6 adds reverse-resolved, localized
+monster drop sources. Schema version 7 adds reverse-resolved loot-container
+sources. Splitting the files keeps large equipment data
 separate from smaller attachment and consumable families without forcing
 callers to manage six unrelated models:
 
@@ -136,9 +138,23 @@ scoring remains category-presence based.
 Equipment variants also retain a broad acquisition-source classification for
 recommendation display. Faction equipment is `Purchased`, equipment referenced
 directly by a blueprint is `Crafted`, Monster Infrequents are `Specific Monster
-Drop`, and other equipment defaults to `Random Drop`. Referenced pet-bonus
+Drop`, and other equipment defaults to `Random Drop`. A bounded reverse loot
+graph can additionally classify epics and legendaries reached only through
+specific enemy loot tables. Each retained `monster_sources` entry contains the
+localized enemy name, localization tag, and monster classification. Physical
+enemy records sharing the same localized name are collapsed. Loot pools that
+fan out to more than 50 distinct localized enemy names are treated as global
+random pools and omitted from this metadata. Referenced pet-bonus
 records are expanded into individual `pet_*` properties so unique-equipment
 scoring can reuse the same pet weights as affix scoring.
+
+Localized records under `records/items/lootchests` are also traced through
+their chest loot tables. Concrete items reached through a bounded container
+source retain `container_sources` entries containing the localized container
+name and tag. A container-only specific item is classified as `Lootable
+Container`; the UI renders this as `Lootable Container: <name>`. Container
+pools exceeding 10 distinct localized names are treated as global loot rather
+than a useful specific source.
 
 Component recipes distinguish `Default Recipe`, `Random Blueprint`, `Special
 Vendor Blueprint`, and faction-vendor blueprint availability. This requires
@@ -160,8 +176,11 @@ and decorative equipment-class records are outside the item scope.
 The `records/items` and `records/skills` DBR branches are sufficient for item
 stats and scoring. Optional component faction-vendor attribution additionally
 uses `records/creatures/npcs/merchants` and the referenced faction-controller
-records. These branches are not a complete inventory of every consumer of an item
-localization tag: chests and corpses are usually under `records/items`, while
+records. Optional monster-drop attribution uses `records/creatures/enemies`.
+Map locations are not inferred because the extracted DBRs do not contain a
+reliable enemy-to-map relationship. These branches are not a complete inventory
+of every consumer of an item localization tag: chests and corpses are usually
+under `records/items`, while
 some doors, map interactables, and quest assets live under `records/level art`,
 `records/storyelements*`, or other world-data branches. Grim Gleaner does not
 need those extra DBRs to produce a safe override as long as it preserves the

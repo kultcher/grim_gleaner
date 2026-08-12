@@ -27,7 +27,14 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog, SkillCatalog
+from gd_affix_relevance.catalog import (
+    AffixCatalog,
+    ItemCatalog,
+    ItemContainerSource,
+    ItemMonsterSource,
+    ItemVariantDefinition,
+    SkillCatalog,
+)
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.scoring import (
     ADDON_AUGMENT,
@@ -99,6 +106,33 @@ DETAIL_TITLE_COLORS = {
 
 def _format_score(value: float) -> str:
     return f"{value:.2f}".rstrip("0").rstrip(".")
+
+
+def _item_source_label(variant: ItemVariantDefinition) -> str:
+    if (
+        variant.acquisition_source == "Specific Monster Drop"
+        and variant.monster_sources
+    ):
+        return _compact_named_source(variant.monster_sources)
+    if (
+        variant.acquisition_source == "Lootable Container"
+        and variant.container_sources
+    ):
+        return "Lootable Container: " + _compact_named_source(
+            variant.container_sources
+        )
+    return variant.acquisition_source
+
+
+def _compact_named_source(
+    sources: tuple[ItemMonsterSource | ItemContainerSource, ...],
+) -> str:
+    first = sources[0].name
+    remaining = len(sources) - 1
+    if not remaining:
+        return first
+    noun = "other" if remaining == 1 else "others"
+    return f"{first} +{remaining} {noun}"
 
 
 def _has_selected_skill_bonus(
@@ -493,7 +527,7 @@ class UniqueSlotTable(QTableWidget):
                 match.marker,
                 match.item.display_name,
                 UNIQUE_TYPE_LABELS[match.item_type],
-                match.variant.acquisition_source,
+                _item_source_label(match.variant),
                 _format_score(score.effective_score),
                 f"{score.matched_count}/{score.total_category_count}",
             )
@@ -1406,6 +1440,40 @@ class TopMatchesPage(QWidget):
         html.extend(
             (
                 _html_line(""),
+                _html_line(f"Source: {_item_source_label(match.variant)}"),
+            )
+        )
+        if (
+            match.variant.acquisition_source == "Specific Monster Drop"
+            and len(match.variant.monster_sources) > 1
+        ):
+            html.append(
+                _html_line(
+                    f"Drops from {len(match.variant.monster_sources)} enemies:",
+                    bold=True,
+                )
+            )
+            html.extend(
+                _html_line(f"- {source.name}")
+                for source in match.variant.monster_sources
+            )
+        if (
+            match.variant.acquisition_source == "Lootable Container"
+            and len(match.variant.container_sources) > 1
+        ):
+            html.append(
+                _html_line(
+                    "Found in "
+                    f"{len(match.variant.container_sources)} lootable containers:",
+                    bold=True,
+                )
+            )
+            html.extend(
+                _html_line(f"- {source.name}")
+                for source in match.variant.container_sources
+            )
+        html.extend(
+            (
                 _html_line(f"Required level: {match.variant.level_requirement}"),
                 _html_line("Grades assume the highest-level item variant."),
                 _html_line(f"Localization tag: {match.item.localization_tag}"),

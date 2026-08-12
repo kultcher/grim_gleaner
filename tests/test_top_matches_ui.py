@@ -13,7 +13,9 @@ from gd_affix_relevance.catalog import (
     AffixProperty,
     AffixVariantDefinition,
     ItemCatalog,
+    ItemContainerSource,
     ItemDefinition,
+    ItemMonsterSource,
     ItemProperty,
     ItemSkillModifier,
     ItemVendorSource,
@@ -39,6 +41,7 @@ from gd_affix_relevance.ui.top_matches import (
     SKILL_MODIFIER_STAT_COLOR,
     SKILL_RANK_STAT_COLOR,
     STAT_CATEGORY_COLORS,
+    _item_source_label,
     _semantic_stat_color,
 )
 
@@ -84,6 +87,7 @@ def _item(
     rarity: str,
     source: str,
     emphasized: bool = True,
+    monster_sources: tuple[ItemMonsterSource, ...] = (),
 ) -> ItemDefinition:
     return ItemDefinition(
         item_id=f"equipment:{name.casefold()}",
@@ -129,6 +133,7 @@ def _item(
                 ),
                 skill_modifiers=(),
                 acquisition_source=source,
+                monster_sources=monster_sources,
             ),
         ),
     )
@@ -382,6 +387,18 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
                 category="monster_infrequent",
                 rarity="Rare",
                 source="Specific Monster Drop",
+                monster_sources=(
+                    ItemMonsterSource(
+                        "Fleshwarped Commander",
+                        "tagFleshwarpedCommander",
+                        "Champion",
+                    ),
+                    ItemMonsterSource(
+                        "Fleshwarped Overseer",
+                        "tagFleshwarpedOverseer",
+                        "Hero",
+                    ),
+                ),
             ),
             _item(
                 "Crafted Crown",
@@ -438,6 +455,40 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
         "Epic",
         "Legendary",
     }
+    chosen_row = next(
+        row
+        for row in range(table.rowCount())
+        if table.item(row, 1).text() == "Chosen Visage"
+    )
+    assert table.item(chosen_row, 3).text() == (
+        "Fleshwarped Commander +1 other"
+    )
+    assert _item_source_label(table.matches[chosen_row].variant) == (
+        "Fleshwarped Commander +1 other"
+    )
+    assert _item_source_label(
+        replace(
+            table.matches[chosen_row].variant,
+            acquisition_source="Purchased",
+        )
+    ) == "Purchased"
+    assert _item_source_label(
+        replace(
+            table.matches[chosen_row].variant,
+            acquisition_source="Lootable Container",
+            monster_sources=(),
+            container_sources=(
+                ItemContainerSource("Rotting Corpse", "tagChestCorpseA01"),
+            ),
+        )
+    ) == "Lootable Container: Rotting Corpse"
+    table.selectRow(chosen_row)
+    app.processEvents()
+    unique_details = page.unique_details.toPlainText()
+    assert "Source: Fleshwarped Commander +1 other" in unique_details
+    assert "Drops from 2 enemies:" in unique_details
+    assert "- Fleshwarped Commander" in unique_details
+    assert "- Fleshwarped Overseer" in unique_details
     for row, match in enumerate(table.matches):
         table.selectRow(row)
         app.processEvents()

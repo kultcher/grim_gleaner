@@ -83,6 +83,18 @@ def test_component_recipe_sources_follow_blueprint_distribution(
         crafted,
         special_vendor_component_blueprint=True,
     ) == "Special Vendor Blueprint"
+    assert _acquisition_source(
+        "records/items/gearaccessories/rings/c019a_ring_alkamos.dbr",
+        "epic",
+        frozenset(),
+        specific_monster_drop=True,
+    ) == "Specific Monster Drop"
+    assert _acquisition_source(
+        "records/items/gearweapons/axe1h/b006a_axe.dbr",
+        "monster_infrequent",
+        frozenset(),
+        specific_container_drop=True,
+    ) == "Lootable Container"
 
 
 def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
@@ -521,6 +533,64 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
         [("artifactName", "records/items/gearhead/b001b_head.dbr")],
     )
     _write_dbr(
+        base_items / "loottables/gearhead/tdyn_test_helm.dbr",
+        [("lootName1", "records/items/gearhead/b001a_head.dbr")],
+    )
+    _write_dbr(
+        base_items / "lootchests/chestloottables/test_corpse_loot.dbr",
+        [
+            (
+                "loot1Name1",
+                "records/items/loottables/gearhead/tdyn_test_helm.dbr",
+            )
+        ],
+    )
+    _write_dbr(
+        base_items / "lootchests/test_corpse.dbr",
+        [
+            ("Class", "FixedItemContainer"),
+            ("description", "tagTestCorpse"),
+            (
+                "lootTable",
+                "records/items/lootchests/chestloottables/"
+                "test_corpse_loot.dbr",
+            ),
+        ],
+    )
+    _write_dbr(
+        data_root / "base/records/creatures/enemies/test_commander.dbr",
+        [
+            ("description", "tagTestCommander"),
+            ("monsterClassification", "Champion"),
+            (
+                "lootHeadItem1",
+                "records/items/loottables/gearhead/tdyn_test_helm.dbr",
+            ),
+        ],
+    )
+    _write_dbr(
+        data_root / "base/records/creatures/enemies/test_commander_alt.dbr",
+        [
+            ("description", "tagTestCommander"),
+            ("monsterClassification", "Hero"),
+            (
+                "lootHeadItem1",
+                "records/items/loottables/gearhead/tdyn_test_helm.dbr",
+            ),
+        ],
+    )
+    _write_dbr(
+        data_root / "base/records/creatures/enemies/test_overseer.dbr",
+        [
+            ("description", "tagTestOverseer"),
+            ("monsterClassification", "Hero"),
+            (
+                "lootHeadItem1",
+                "records/items/loottables/gearhead/tdyn_test_helm.dbr",
+            ),
+        ],
+    )
+    _write_dbr(
         base_items / "gearhead/c000_head.dbr",
         [
             ("Class", "ArmorProtective_Head"),
@@ -649,6 +719,9 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
                 "tagTestSkillName=Test Skill",
                 "tagTestConsumable=Test Consumable",
                 "tagTestConsumableSkill=Consumable Ward",
+                "tagTestCommander=Test Commander",
+                "tagTestOverseer=Test Overseer",
+                "tagTestCorpse=Test Corpse",
             )
         )
     )
@@ -677,6 +750,16 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     assert helm.variants[0].category == "monster_infrequent"
     assert helm.variants[0].gear_slot == "Head"
     assert helm.variants[0].acquisition_source == "Specific Monster Drop"
+    assert tuple(
+        (source.name, source.classification)
+        for source in helm.variants[0].monster_sources
+    ) == (
+        ("Test Commander", "Champion"),
+        ("Test Overseer", "Hero"),
+    )
+    assert tuple(
+        source.name for source in helm.variants[0].container_sources
+    ) == ("Test Corpse",)
     assert helm.variants[0].properties[0].property_id == "health"
     assert helm.variants[1].set_name == "Test Set"
     assert helm.variants[1].acquisition_source == "Crafted"

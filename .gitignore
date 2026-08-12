@@ -18,6 +18,8 @@ lightning.json
 forum-pitch.md
 testing.md
 refactor-notes.md
+claude-review-notes.md
+glm-review.md
 
 # Locally extracted proprietary Grim Dawn data.
 game_data/

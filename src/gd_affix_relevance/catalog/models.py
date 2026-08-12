@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATALOG_SCHEMA_VERSION = 5
+CATALOG_SCHEMA_VERSION = 7
 
 ITEM_CATALOG_FILES = (
     "equipment.json",
@@ -129,6 +129,19 @@ class ItemVendorSource:
 
 
 @dataclass(frozen=True, slots=True)
+class ItemMonsterSource:
+    name: str
+    localization_tag: str
+    classification: str
+
+
+@dataclass(frozen=True, slots=True)
+class ItemContainerSource:
+    name: str
+    localization_tag: str
+
+
+@dataclass(frozen=True, slots=True)
 class ItemVariantDefinition:
     source: str
     record_path: str
@@ -155,6 +168,8 @@ class ItemVariantDefinition:
     faction_source: str = ""
     faction_name: str = ""
     vendor_sources: tuple[ItemVendorSource, ...] = ()
+    monster_sources: tuple[ItemMonsterSource, ...] = ()
+    container_sources: tuple[ItemContainerSource, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -404,6 +419,23 @@ def _item_vendor_source_from_dict(payload: dict[str, Any]) -> ItemVendorSource:
     )
 
 
+def _item_monster_source_from_dict(payload: dict[str, Any]) -> ItemMonsterSource:
+    return ItemMonsterSource(
+        name=payload["name"],
+        localization_tag=payload.get("localization_tag", ""),
+        classification=payload.get("classification", ""),
+    )
+
+
+def _item_container_source_from_dict(
+    payload: dict[str, Any],
+) -> ItemContainerSource:
+    return ItemContainerSource(
+        name=payload["name"],
+        localization_tag=payload.get("localization_tag", ""),
+    )
+
+
 def _item_variant_from_dict(payload: dict[str, Any]) -> ItemVariantDefinition:
     return ItemVariantDefinition(
         source=payload["source"],
@@ -440,6 +472,14 @@ def _item_variant_from_dict(payload: dict[str, Any]) -> ItemVariantDefinition:
         vendor_sources=tuple(
             _item_vendor_source_from_dict(source)
             for source in payload.get("vendor_sources", ())
+        ),
+        monster_sources=tuple(
+            _item_monster_source_from_dict(source)
+            for source in payload.get("monster_sources", ())
+        ),
+        container_sources=tuple(
+            _item_container_source_from_dict(source)
+            for source in payload.get("container_sources", ())
         ),
     )
 

@@ -1,4 +1,6 @@
 TO DO:
+- add links to grimtools for everything
+- surface any error logs
 - show list of leveled affixes
 - maybe just bundle rarity colors anyway
 - coverage should probably exclude 1-rated items
@@ -17,6 +19,8 @@ STRETCH:
 - stretch: "resistance hunt" mode
 - stretch: add system tailoring affixes to given level, including numbers
 - stretch: per-slot filtering for profiles
+- add monster names and locations for drops
+- some kind of character import?
 
 LOW PRIORITY:
 - save item slot visibility prefs with profile save
@@ -40,8 +44,6 @@ POSSIBLE USER SETTINGS:
 
 ______
 Important pre-release checks
--The catalog still reports 119 unresolved item records and 2 unresolved skill names. My triage found 114 equipment records and 5 augments. Many look like generic/template DBRs such as c000, d000, and placeholder tags, so this probably is not 119 missing live items—but it deserves an explicit exclusion report or allowlist before release.
-- The catalog and release manifest still say game_version: "unknown". Record the actual supported Grim Dawn patch/FoA version so users can recognize stale data after an update.
 - Code signing would reduce Windows SmartScreen friction, but it is not required for an initial release.
 - CI is absent. Useful, but not a blocker if we retain a documented local release checklist.
 

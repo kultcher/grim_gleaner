@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 from typing import Any
 
+from gd_affix_relevance.catalog.drop_sources import discover_drop_sources
+from gd_affix_relevance.catalog.value_parsing import integer_value
 from gd_affix_relevance.domain import LocalizationEntry, RawDbrRecord
 from gd_affix_relevance.importers.localization_parser import plain_display_name
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
@@ -24,7 +26,6 @@ from gd_affix_relevance.normalization.sample_report import (
     normalize_record_stat_lines,
     record_semantic_fingerprint,
 )
-from gd_affix_relevance.catalog.value_parsing import integer_value
 from gd_affix_relevance.records import RecordLocation, RecordRepository
 
 
@@ -141,6 +142,9 @@ def compile_item_payloads(
         _discover_component_blueprint_distribution(resolver)
     )
     faction_vendor_sources = _discover_faction_vendor_sources(resolver)
+    drop_sources = discover_drop_sources(
+        resolver, exact_names, folded_names
+    )
     grouped: dict[str, dict[str, list[dict[str, Any]]]] = {
         family: defaultdict(list) for family in ITEM_FAMILIES
     }
@@ -259,6 +263,31 @@ def compile_item_payloads(
                 folded_names,
                 strings,
             )
+            discovered_monsters = drop_sources.monster_sources.get(
+                logical_path, ()
+            )
+            monster_sources = [
+                {
+                    "name": monster.name,
+                    "localization_tag": monster.localization_tag,
+                    "classification": monster.classification,
+                }
+                for monster in discovered_monsters
+            ]
+            for monster in discovered_monsters:
+                strings[monster.localization_tag] = monster.name
+            discovered_containers = drop_sources.container_sources.get(
+                logical_path, ()
+            )
+            container_sources = [
+                {
+                    "name": container.name,
+                    "localization_tag": container.localization_tag,
+                }
+                for container in discovered_containers
+            ]
+            for container in discovered_containers:
+                strings[container.localization_tag] = container.name
             variant = {
                 "source": source,
                 "record_path": logical_path,
@@ -295,10 +324,14 @@ def compile_item_payloads(
                     and logical_path in random_blueprint_item_paths,
                     family == "components"
                     and logical_path in special_vendor_blueprint_item_paths,
+                    specific_monster_drop=bool(monster_sources),
+                    specific_container_drop=bool(container_sources),
                 ),
                 "faction_source": faction_source,
                 "faction_name": faction_name,
                 "vendor_sources": vendor_sources,
+                "monster_sources": monster_sources,
+                "container_sources": container_sources,
             }
             grouped[family][name_tag].append(variant)
             identity[(family, name_tag)] = (
@@ -408,6 +441,8 @@ def _acquisition_source(
     faction_component_vendor: bool = False,
     random_component_blueprint: bool = False,
     special_vendor_component_blueprint: bool = False,
+    specific_monster_drop: bool = False,
+    specific_container_drop: bool = False,
 ) -> str:
     if category == "faction" or faction_source:
         return "Purchased"
@@ -429,6 +464,10 @@ def _acquisition_source(
         return "Default Recipe"
     if category == "crafted" or logical_path in crafted_item_paths:
         return "Crafted"
+    if specific_monster_drop:
+        return "Specific Monster Drop"
+    if specific_container_drop:
+        return "Lootable Container"
     if category == "monster_infrequent":
         return "Specific Monster Drop"
     return "Random Drop"
