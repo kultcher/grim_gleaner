@@ -57,12 +57,16 @@ Assign stars to each stat modifier based on how important the stat is to your bu
 
 0 stars: Stats that are totally irrelevant to your build.
 > Examples: Vitality damage in a pure Fire build; flat +damage on a caster build, energy regen for a WPS build
+
 1 star: Stats that have minimal or only occasional impact, such as damage types that you deal only incidentally.
 > Examples: +% modifiers for things you aren't stacking, flat elemental damage in a mono-element build, Health Regen
+
 2 stars: Baseline stats that are generally useful, but not core to your build.
 > Health, Physique, OA/DA, skills bonuses to secondary skills
+
 3 stars: Important stats you're always happy to have.
 > Examples: OA and Crit Damage for crit builds, attack/cast/move speed
+
 4 stars: Core stats that you want as much of as possible.
 > Examples: Main damage type, resist reduction, skill bonuses to core skills
 
