@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+from types import ModuleType, SimpleNamespace
 from pathlib import Path
 
 from gd_affix_relevance.runtime_paths import (
@@ -74,6 +76,25 @@ def test_nuitka_application_uses_compiled_containing_directory(
     paths = resolve_runtime_paths(
         frozen=False,
         nuitka_application_root=root,
+        environment={},
+    )
+
+    assert paths.mode == "release"
+    assert paths.application_root == root.resolve()
+    assert paths.catalog_root == root.resolve() / "catalog"
+
+
+def test_nuitka_marker_is_read_from_compiled_main_module(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    root = tmp_path / "standalone"
+    compiled_main = ModuleType("__main__")
+    compiled_main.__compiled__ = SimpleNamespace(containing_dir=str(root))
+    monkeypatch.setitem(sys.modules, "__main__", compiled_main)
+
+    paths = resolve_runtime_paths(
+        frozen=False,
         environment={},
     )
 

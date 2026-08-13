@@ -1,4 +1,4 @@
-# Grim Gleaner v.0.9.0-beta
+# Grim Gleaner v.0.9.1-beta
 
 Grim Gleaner is a utility to help Grim Dawn players quickly and conveniently
 identify and evaluate affixes and items that are most relevant to their build.
@@ -8,6 +8,8 @@ It has two layers:
 reports on best-fit affixes, items and components/augments with grades from F-S++
 - and an in-game notation system that adds the grades for affixes, epics, legendaries
 and MI items directly to the item's tooltip
+
+**UPDATE: 08/13/26**: The previous release was being flagged as a trojan due to a known issue the Nuitka Python Compiler in --onefile mode. It now builds in --standalone mode and should no longer cause issues with virus protection.
 
 ## Use Cases
 - **Better loot filtering**: In Grim Dawn's loot filter, if you click "Health" it will show you every item with health, even if Health is tied to an affix that has 5-6 other stats you don't care about. With Grim Gleaner, an item like that will still be shown, but will have a very low grade, quickly letting you know that it's not worth your time.
@@ -22,12 +24,24 @@ AI (Codex) was used for data analysis data and coding to build this program.
 ## Installation and Setup
 
 1. Download the latest .zip file from the [releases section](https://github.com/kultcher/grim_gleaner/releases)
-2. Unzip the files to their own folder
-3. Run grim_gleaner.exe to launch the utility. (If you get the "Windows protected your machine" notification, click "More Info -> Run Anyway)
+2. Extract the `Grim Gleaner` folder from the archive and place it wherever you
+   want.
+3. Run `grim_gleaner.exe` to launch the utility.
 4. Open the "Settings" section from the sidebar and set your Grim Dawn game location (you'll be prompted automatically the first time you open the program.)\
 (Steam default location: C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn)
 
-**NOTE**: This utility has only been tested using English localization on Windows 11. No promises that it will work for other languages and it will not work on x64 Windows machines!
+**NOTE**: This utility has only been tested using English localization on 64-bit
+Windows 11. No promises that it will work with other languages or on non-x64
+Windows systems.
+
+## Installing from Source
+
+I don't recommend doing this right now as I need to clean up some things. You can try:
+1. Clone the repo
+2. python -m pip install -e .
+3. run grim-gleaner-ui.exe
+
+but no guarantees it'll work properly this way. It *definitely* won't work properly if you don't use the -e flag.
 
 ### Usage
 

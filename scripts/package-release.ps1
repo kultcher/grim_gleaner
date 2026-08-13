@@ -16,9 +16,11 @@ $distRoot = Join-Path $projectRoot "dist"
 $releaseRoot = Join-Path $distRoot "Grim Gleaner"
 $buildWorkspace = Join-Path $projectRoot "build\release-package"
 $deployOutput = Join-Path $buildWorkspace "executable"
+$standaloneOutput = Join-Path $deployOutput "grim_gleaner.dist"
 $generatedSpec = Join-Path $buildWorkspace "pysidedeploy.spec"
 $specTemplate = Join-Path $projectRoot "packaging\pysidedeploy.spec.template"
-$archivePath = Join-Path $distRoot "Grim-Gleaner-0.1.0-win64.zip"
+$iconPath = Join-Path $projectRoot "packaging\gg_icon.ico"
+$archivePath = Join-Path $distRoot "Grim-Gleaner-0.9.1-beta-win64.zip"
 $temporaryRoot = [System.IO.Path]::GetFullPath(
     [System.IO.Path]::GetTempPath()
 )
@@ -104,6 +106,18 @@ if (-not (Test-Path -LiteralPath $deployTool -PathType Leaf)) {
 if (-not (Test-Path -LiteralPath $specTemplate -PathType Leaf)) {
     throw "Packaging template is missing: $specTemplate"
 }
+if (-not (Test-Path -LiteralPath $iconPath -PathType Leaf)) {
+    throw "Application icon is missing: $iconPath"
+}
+$iconBytes = [System.IO.File]::ReadAllBytes($iconPath)
+if (
+    $iconBytes.Length -lt 22 -or
+    [BitConverter]::ToUInt16($iconBytes, 0) -ne 0 -or
+    [BitConverter]::ToUInt16($iconBytes, 2) -ne 1 -or
+    [BitConverter]::ToUInt16($iconBytes, 4) -lt 1
+) {
+    throw "Application icon is not a valid ICO container: $iconPath"
+}
 
 if ((Test-Path -LiteralPath $releaseRoot) -and -not $Overwrite) {
     throw "Release folder already exists. Remove it or rerun with -Overwrite."
@@ -148,6 +162,7 @@ New-Item -ItemType Directory -Path $distRoot -Force | Out-Null
 $template = Get-Content -LiteralPath $specTemplate -Raw
 $spec = $template.Replace("__PROJECT_ROOT__", $projectRoot)
 $spec = $spec.Replace("__DEPLOY_OUTPUT__", $deployOutput)
+$spec = $spec.Replace("__ICON_PATH__", $iconPath)
 $spec = $spec.Replace("__PYTHON_PATH__", $BuildPython)
 $spec = $spec.Replace("__NUITKA_VERSION__", $NuitkaVersion)
 [System.IO.File]::WriteAllText(
@@ -161,15 +176,21 @@ if ($LASTEXITCODE -ne 0) {
     throw "pyside6-deploy failed."
 }
 
-$builtExecutable = Join-Path $deployOutput "grim_gleaner.exe"
+$builtExecutable = Join-Path $standaloneOutput "grim_gleaner.exe"
+if (-not (Test-Path -LiteralPath $standaloneOutput -PathType Container)) {
+    throw "Expected standalone distribution was not produced: $standaloneOutput"
+}
 if (-not (Test-Path -LiteralPath $builtExecutable -PathType Leaf)) {
     throw "Expected executable was not produced: $builtExecutable"
 }
-
-New-Item -ItemType Directory -Path $releaseRoot -Force | Out-Null
-Copy-Item -LiteralPath $builtExecutable -Destination (
-    Join-Path $releaseRoot "grim_gleaner.exe"
+$standaloneFiles = @(
+    Get-ChildItem -LiteralPath $standaloneOutput -Recurse -File
 )
+if ($standaloneFiles.Count -lt 2) {
+    throw "Standalone distribution does not contain its required dependencies."
+}
+
+Copy-Item -LiteralPath $standaloneOutput -Destination $releaseRoot -Recurse
 
 & $BuildPython -m gd_affix_relevance.cli assemble-release `
     --project-root $projectRoot `
@@ -199,7 +220,7 @@ foreach ($relativePath in $requiredPaths) {
     }
 }
 
-Compress-Archive -Path (Join-Path $releaseRoot "*") `
+Compress-Archive -LiteralPath $releaseRoot `
     -DestinationPath $archivePath
 
 Write-Host "Release folder: $releaseRoot"

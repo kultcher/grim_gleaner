@@ -1,0 +1,1195 @@
+
+tagStyleUniqueAwakened=Awakened 
+tagStyleAscended=Ascended 
+tagCraftingAwakened=^O(Can be upgraded by Ashes of Awakening.)
+
+#Weapons
+
+tagGDX3WeaponSwordB301=Dranghoul Savage Blade
+tagGDX3WeaponSwordB302=Dranghoul Frosted Blade
+tagGDX3WeaponSwordB303=Dranghoul Bloodied Blade
+
+tagGDX3WeaponSwordC301=Void's Lament
+
+tagGDX3WeaponSwordD301=Armaggedon
+tagGDX3WeaponSwordD301_Desc="Untethered destruction made manifest."
+tagGDX3WeaponSwordD302=Sincarver
+tagGDX3WeaponSwordD303=Bloodlust Blade
+tagGDX3WeaponSwordD303_Desc="Your skin tingles as you hold the blade. Your own blood rushes to meet it."
+tagGDX3WeaponSwordD304=Felrune
+tagGDX3WeaponSwordD305=Bloodwake
+
+tagGDX3WeaponSwordF301=Kurn Longsword
+tagGDX3WeaponSwordF302=Hrothnar's Claw
+tagGDX3WeaponSwordF302_Desc="First blade of Hrothnar, who would become king."
+
+
+tagGDX3WeaponBluntB301=Primordial Core
+tagGDX3WeaponBluntB301_Desc="Stone given life."
+tagGDX3WeaponBluntB302=Primordial Stone
+
+tagGDX3WeaponBluntC301=Chillgore
+
+tagGDX3WeaponBluntD301=Eternium
+tagGDX3WeaponBluntD302=Scion of Ruinous Crags
+tagGDX3WeaponBluntD302_Desc="Holding this weapon fills your mind with visions of untold ruin."
+tagGDX3WeaponBluntD303=Cinderborn Gavel
+tagGDX3WeaponBluntD305=Totally Normal Behemoth
+
+tagGDX3WeaponBluntF301=Kurn Bludgeon
+tagGDX3WeaponBluntF302=Durn's Skull
+tagGDX3WeaponBluntF302_Desc="Durn insisted that his own head was tough enough to break skulls. He was right."
+
+
+tagGDX3WeaponAxeB301=Gruldir's Tainted Cleaver
+tagGDX3WeaponAxeB301_Desc="Gruldir of the Dread Wastes had been slain in combat numerous times across history, yet an unyielding darkness within always brought him back to lead the Bloodbound once again."
+tagGDX3WeaponAxeB302=Gruldir's Blazing Cleaver
+tagGDX3WeaponAxeB303=Rinn'Valgoth's Slicer
+
+tagGDX3WeaponAxeC301=Viscerattus
+
+tagGDX3WeaponAxeD301=Sanguine Crescent
+tagGDX3WeaponAxeD302=Fang of Morkh
+tagGDX3WeaponAxeD302_Desc="Fang of the black wolf Morkh, servant to nothing."
+tagGDX3WeaponAxeD303=Fang of Fenris
+tagGDX3WeaponAxeD304=Flamerend
+tagGDX3WeaponAxeD305=Veilripper
+tagGDX3WeaponAxeD306=Arctis
+
+tagGDX3WeaponAxeF301=Kurn Cleaver
+tagGDX3WeaponAxeF302=Warp's Edge
+
+
+tagGDX3WeaponGun1hB301=Eldritch Storm Emitter
+tagGDX3WeaponGun1hB301_Desc="Attuned to the whims of the Eldritch Realm."
+tagGDX3WeaponGun1hB302=Eldritch Blaze Emitter
+
+tagGDX3WeaponGun1hC301=Voidpiercer
+
+tagGDX3WeaponGun1hD301=Ragefire
+tagGDX3WeaponGun1hD302=Vidurian's Suppressor
+tagGDX3WeaponGun1hD302_Desc="Lord Vidurian of the inquisition relished every shot, each as deadly as a blade, for with each he delivered another heretic to the grave."
+tagGDX3WeaponGun1hD303=Unmaker
+tagGDX3WeaponGun1hD303_Desc="Every bolt leaves behind an emptiness, as if existence itself ripples in its trail."
+tagGDX3WeaponGun1hD304=Needle of Fates Unwound
+
+tagGDX3WeaponGun1hF301=Kurn Arcane Impaler
+tagGDX3WeaponGun1hF302=Viletongue
+
+
+tagGDX3WeaponGun2hB301=Rot Regurgitator
+tagGDX3WeaponGun2hB302=Bile Regurgitator
+tagGDX3WeaponGun2hB303=Malaise Spreader
+
+tagGDX3WeaponGun2hC301=Veilgorger
+
+tagGDX3WeaponGun2hD301=Celestial Wyrm
+tagGDX3WeaponGun2hD301_Desc="The great wyrm glides seamlessly across the starry night sky."
+tagGDX3WeaponGun2hD302=Portent of the End Times
+tagGDX3WeaponGun2hD303=Starcore Destroyer
+tagGDX3WeaponGun2hD303_Desc="The core of this weapon blazes with the heat of a dying star."
+
+tagGDX3WeaponGun2hF301=Kurn Arbalest
+tagGDX3WeaponGun2hF302=Icetusk
+
+
+tagGDX3WeaponMelee2hB301=Stonecarver Blade
+tagGDX3WeaponMelee2hB301_Desc="The blade appears ceremonial at a glance, but the edge quickly dispels any illusions as to its intended purpose."
+tagGDX3WeaponMelee2hB302=Voidcarver Blade
+tagGDX3WeaponMelee2hB303=Anointed Blade
+tagGDX3WeaponMelee2hB303_Desc="Blade of the Kaw'Hranaak Naddo, his body and blade anointed in the blood of Ch'thon."
+tagGDX3WeaponMelee2hB304=Titan's Serrated Spear
+tagGDX3WeaponMelee2hB305=Titan's Poisoned Spear
+tagGDX3WeaponMelee2hB306=Tempestborn Spear
+tagGDX3WeaponMelee2hB306_Desc="The spear embodies the pure essence of a tumultuous storm."
+tagGDX3WeaponMelee2hB307=Worldbreaker Spear
+tagGDX3WeaponMelee2hB307_Desc="The spear embodies the pure essence of the Cairn's molten core."
+tagGDX3WeaponMelee2hB308=Wight Frost's Edge
+tagGDX3WeaponMelee2hB309=Wight Death's Edge
+tagGDX3WeaponMelee2hB310=Lucius' Wraith-Arm
+tagGDX3WeaponMelee2hB311=Stormblessed Spear
+tagGDX3WeaponMelee2hB312=Grul'Thunn's Cleaver
+tagGDX3WeaponMelee2hB313=Flameblessed Spear
+tagGDX3WeaponMelee2hB314=Bilesoaked Spear
+tagGDX3WeaponMelee2hB315=Aetherblessed Spear
+tagGDX3WeaponMelee2hB316=Bloodsoaked Spear
+tagGDX3WeaponMelee2hB317=Rimeblessed Spear
+tagGDX3WeaponMelee2hB318=Veilmarked Spear
+
+tagGDX3WeaponMelee2hC301=Glaive of the Black Blood
+tagGDX3WeaponMelee2hC302=Frostshriek
+
+tagGDX3WeaponMelee2hD301=Deathshriek
+tagGDX3WeaponMelee2hD301_Desc="In death, all will be made to serve."
+tagGDX3WeaponMelee2hD302=Ironlord Demolisher
+tagGDX3WeaponMelee2hD303=Elysian Gavel
+tagGDX3WeaponMelee2hD304=Blade of the Ice King
+
+tagGDX3WeaponMelee2hF301=Kurn Arcane Longblade
+tagGDX3WeaponMelee2hF302=Kurn Skullsplitter
+tagGDX3WeaponMelee2hF303=Ember'thil, the Sun Blade
+tagGDX3WeaponMelee2hF303_Desc="Blazing blade of the Hranaak, scorching as the noonday sun."
+tagGDX3WeaponMelee2hF304=Umbra'dol, Legacy of Blood
+tagGDX3WeaponMelee2hF304_Desc="A legacy of war, drowned in the blood of Kurn enemies."
+
+
+tagGDX3WeaponCaster1hB301=Yurra's Left Eye
+tagGDX3WeaponCaster1hB301_Desc="Yurra's eyes showed her visions of hellfire and darkness, so she plucked them out."
+tagGDX3WeaponCaster1hB302=Yurra's Right Eye
+tagGDX3WeaponCaster1hB303=Ramzul's Storm Orb
+tagGDX3WeaponCaster1hB304=Ramzul's Misty Orb
+tagGDX3WeaponCaster1hB305=Hypporaven Plumage
+tagGDX3WeaponCaster1hB306=Hypporaven Feather
+tagGDX3WeaponCaster1hB307=Harbinger's Void Blade
+tagGDX3WeaponCaster1hB308=Harbinger's Dominator Blade
+tagGDX3WeaponCaster1hB308_Desc="The blade draws out the remains of fallen cultists for one final service in the name of Ch'thon."
+tagGDX3WeaponCaster1hB309=Evernight's Feather
+tagGDX3WeaponCaster1hB309_Desc="Evernight's feather glistens with an iridescent hue in the moon's light."
+
+tagGDX3WeaponCaster1hC301=Myrgle's Beguiler
+tagGDX3WeaponCaster1hC302=Thunderune
+tagGDX3WeaponCaster1hC303=Dung Divider
+tagGDX3WeaponCaster1hC303_Desc="For the mega logs in your life."
+
+tagGDX3WeaponCaster1hD301=Widowspine
+tagGDX3WeaponCaster1hD302=Arcanum Infinitum
+tagGDX3WeaponCaster1hD303=Shadowheart
+tagGDX3WeaponCaster1hD303A=Shedowhert
+tagGDX3WeaponCaster1hD303B=Shadoheart
+tagGDX3WeaponCaster1hD303C=Shadowhurt
+tagGDX3WeaponCaster1hD303D=Shadowhertz
+tagGDX3WeaponCaster1hD303E=Shadowfart
+tagGDX3WeaponCaster1hD303F=Shadownheart
+tagGDX3WeaponCaster1hD303_Desc="An invaluable companion for any dark urges."
+tagGDX3WeaponCaster1hD303A_Desc="The blade reads: Authentic Replica - Series 1 of 6. DO NOT OFFER TO PRIMORDIAL POWERS."
+tagGDX3WeaponCaster1hD303B_Desc="The blade reads: Authentic Replica - Series 2 of 6. DO NOT OFFER TO PRIMORDIAL POWERS."
+tagGDX3WeaponCaster1hD303C_Desc="The blade reads: Authentic Replica - Series 3 of 6. DO NOT OFFER TO PRIMORDIAL POWERS."
+tagGDX3WeaponCaster1hD303D_Desc="The blade reads: Authentic Replica - Series 4 of 6. DO NOT OFFER TO PRIMORDIAL POWERS."
+tagGDX3WeaponCaster1hD303E_Desc="The blade reads: Authentic Replica - Series 5 of 6. DO NOT OFFER TO PRIMORDIAL POWERS."
+tagGDX3WeaponCaster1hD303F_Desc="The blade reads: Authentic Replica - Series 6 of 6. DO NOT OFFER TO PRIMORDIAL POWERS."
+tagGDX3WeaponCaster1hD304=Asterllonos, Star of the North
+tagGDX3WeaponCaster1hD304_Desc="To dream of the skies is inspiration, to capture the skies themselves would be sheer folly."
+tagGDX3WeaponCaster1hD305=Spiritmonger's Gavel
+tagGDX3WeaponCaster1hD305_Desc="The gavel calls upon the revenants of past conflict."
+tagGDX3WeaponCaster1hD306=Stormcaster's Beacon
+tagGDX3WeaponCaster1hD307=Beronath's Celestial Horn
+tagGDX3WeaponCaster1hD307_Desc="Horn of Beronath, guardian of Asterkarn and progenitor of monsters."
+tagGDX3WeaponCaster1hD308=Beronath's Voidlost Horn
+tagGDX3WeaponCaster1hD308_Desc="Horn of Beronath, gruesomely twisted by the corrupting grip of the void."
+
+tagGDX3WeaponCaster1hF301=Kurn Ritual Runeblade
+tagGDX3WeaponCaster1hF302=Kurn Sacrificial Runeblade
+tagGDX3WeaponCaster1hF303=Thundol'sil, the Stormrider
+tagGDX3WeaponCaster1hF303_Desc="The edge of Thundol'sil split the very heavens before returning to the Kurn, blessed by the storm."
+tagGDX3WeaponCaster1hF304=Anum'fol, the Cutting Wind
+tagGDX3WeaponCaster1hF304_Desc="The breath of Asterkarn flows from this blade's edge."
+
+
+#Shields
+tagGDX3ShieldB301=Woolly Boneguard
+tagGDX3ShieldB301_Desc="The rhino spirit draws out a brutish strength within the bearer capable of great upheaval."
+tagGDX3ShieldB302=Woolly Voidguard
+tagGDX3ShieldB303=Ruugru's Mane
+tagGDX3ShieldB303_Desc="Hide tougher than iron."
+tagGDX3ShieldB304=Briarthorn Shield
+tagGDX3ShieldB305=Aetherthorn Shield
+tagGDX3ShieldB306=Rimethorn Shield
+tagGDX3ShieldB307=Rimethorn Defender
+tagGDX3ShieldB308=Bloodbound Defender
+tagGDX3ShieldB309=Bloodbound Guardian
+tagGDX3ShieldB310=Blackheart's Wall
+tagGDX3ShieldB311=Glacial Defender
+
+tagGDX3ShieldC301=Aethercore Bulwark
+
+tagGDX3ShieldD301=Stonehand Behemoth
+tagGDX3ShieldD302=Cairnguard
+tagGDX3ShieldD302_Desc="A valiant bastion of the natural order, warped beyond recognition from within."
+
+tagGDX3ShieldF301=Kurn Defender
+tagGDX3ShieldF302=Warpstone Bastion
+tagGDX3ShieldF302_Desc="A relic from another era, a time of strife and bloodshed never seen again."
+tagGDX3ShieldF303=Dauntless
+
+
+
+#Focus
+tagGDX3FocusB301=Groble Frost Effigy
+tagGDX3FocusB302=Groble Void Effigy
+tagGDX3FocusB303=Diremane Horn
+tagGDX3FocusB304=Diremane Trophy
+tagGDX3FocusB305=Bonegrinder's Horn
+tagGDX3FocusB305_Desc="Horn of the mighty Bonegrinder, scourge of the Asterkarn peaks."
+tagGDX3FocusB306=Wight Death Channeller
+tagGDX3FocusB307=Wight Frost Channeller
+tagGDX3FocusB307_Desc="Fallen archers of the frozen wastes answer the call."
+tagGDX3FocusB308=Rimehorn's Frozen Horn
+tagGDX3FocusB309=Garmir's Horn
+
+tagGDX3FocusC301=Void Tear
+tagGDX3FocusC302=Panetti's Codex of Repetitions
+tagGDX3FocusC302_Desc="Several of the pages appear to be almost perfect duplicates of earlier notes. An experiment? Or obsessive note-taking?"
+
+tagGDX3FocusD301=Arcanum Infinite Eye
+tagGDX3FocusD301_Desc="Bearers of the eye were never certain whether it was a gift, or if another pair of eyes was able to peer back through its lidless gaze."
+tagGDX3FocusD302=Ravener's Skull
+tagGDX3FocusD302_Desc="Skull of Ravener, hound of nightmares and elder spawn of Beronath. It became lost to the void following the corruption of its progenitor."
+tagGDX3FocusD303=Murmur's Whisper
+tagGDX3FocusD304=Eldrun's Texts
+tagGDX3FocusD305=Chillbrand
+
+tagGDX3FocusF301=Kurn Beastbinding Rod
+tagGDX3FocusF302=Soul of Asterkarn
+
+
+
+#ArmorHead
+tagGDX3HeadB301=Ironeye Helm
+tagGDX3HeadB302=Ironeye Casque
+tagGDX3HeadB303=Nyarlathon's Gaze
+tagGDX3HeadB303_Desc="You cannot help but feel as if a presence of immeasurable hatred still peers through the slain herald's peerless eye."
+tagGDX3HeadB304=Nyarlathon's Eye
+tagGDX3HeadB305=Bloodbound Helm
+tagGDX3HeadB305_Desc="The Bloodbound offered their souls into the screaming void and in doing so forever damned themselves and their progeny."
+tagGDX3HeadB306=Bloodbound Casque
+tagGDX3HeadB307=Bloodbound Horns
+tagGDX3HeadB308=Bloodbound Hood
+tagGDX3HeadB309=Corpsebreaker's Casque
+tagGDX3HeadB310=Frostsnarl's Horns
+tagGDX3HeadB311=Dread Mask
+tagGDX3HeadB312=Wight Hag's Horns
+tagGDX3HeadB313=Wight Lord's Horns
+tagGDX3HeadB314=Wight Lord's Casque
+tagGDX3HeadB315=Wight Lord's Helm
+
+tagGDX3HeadC301=Veil's Witness
+tagGDX3HeadC302=Lokhor's Visage
+tagGDX3HeadC303=Bloodmane's Helm
+
+tagGDX3HeadD301=Wildhowl Hood
+tagGDX3HeadD302=Eyes of the Primordial Storm
+tagGDX3HeadD303=Horns of Eternal Nightmare
+tagGDX3HeadD303_Desc="Nightmares plague the bearer, but also offer maddening insights."
+tagGDX3HeadD304=Cowl of Fenris
+tagGDX3HeadD305=Jarldin's Eye
+tagGDX3HeadD306=Apoclypton's Gaze
+tagGDX3HeadD307=Bloodlust Scars
+tagGDX3HeadD308=Eldrun's Cursed Vision
+tagGDX3HeadD309=Gaze of Fates Unwound
+tagGDX3HeadD310=Gloom Knight's Helm
+tagGDX3HeadD311=Stormfang Cowl
+tagGDX3HeadD312=Dreamwalker's Visage
+tagGDX3HeadD313=Worldkeeper's Gaze
+tagGDX3HeadD314=Zakull's Visage
+tagGDX3HeadD315=Crown of the Ice King
+tagGDX3HeadD316=Scorv's Glyphs
+tagGDX3HeadD316_Desc="The ravenous spirit of the wendigo courses through these runes."
+tagGDX3HeadD317=Scorv's Visage
+tagGDX3HeadD317_Desc="Is that...what it looks like?"
+tagGDX3HeadD318=Ashen Visage of the Primordial Flame
+tagGDX3HeadD319=Eyes of Mogdrogen's Chosen
+tagGDX3HeadD319_Desc="The eyes of one who has seen the coming darkness."
+
+tagGDX3HeadF301=Kurn Earthen Helm
+tagGDX3HeadF302=Kurn Void Helm
+tagGDX3HeadF303=Kurn Storm Mask
+tagGDX3HeadF304=Kurn Vile Mask
+tagGDX3HeadF305=Kurn Venomsoaked Casque
+tagGDX3HeadF306=Kurn Flamelicked Casque
+
+
+#ArmorShoulders
+tagGDX3ShoulderB300=Plume Mantle
+tagGDX3ShoulderB301=Bloodbound Shoulderguards
+tagGDX3ShoulderB302=Bloodbound Shoulderplates
+tagGDX3ShoulderB303=Herald's Bloody Crest
+tagGDX3ShoulderB304=Herald's Rotten Crest
+tagGDX3ShoulderB305=Frostplume Mantle
+tagGDX3ShoulderB306=Stormplume Mantle
+tagGDX3ShoulderB307=Avinnia's Mantle
+tagGDX3ShoulderB308=Raddoth's Shoulderguards
+tagGDX3ShoulderB309=Raddoth's Pauldrons
+tagGDX3ShoulderB310=Ignus' Mantle
+tagGDX3ShoulderB311=Ignus' Shoulderguards
+tagGDX3ShoulderB312=Shriek's Mantle
+tagGDX3ShoulderB313=Shriek's Shoulderguards
+tagGDX3ShoulderB314=Vinn's Shoulderguards
+tagGDX3ShoulderB315=Vinn's Pauldrons
+tagGDX3ShoulderB316=Corpsebreaker's Shoulderguard
+tagGDX3ShoulderB317=Wight Hag's Mantle
+tagGDX3ShoulderB318=Wight Lord's Mantle
+tagGDX3ShoulderB319=Wight Lord's Shoulderguards
+tagGDX3ShoulderB320=Wight Lord's Pauldrons
+tagGDX3ShoulderB321=Voidplume Mantle
+
+tagGDX3ShoulderC301=Bloodstone Shoulderguards
+tagGDX3ShoulderC302=Lokhor's Mantle
+tagGDX3ShoulderC303=Bloodmane's Furs
+tagGDX3ShoulderC304=Dread Mantle
+
+tagGDX3ShoulderD301=Deathweave Shoulderguards
+tagGDX3ShoulderD302=Blood Talon Pauldrons
+tagGDX3ShoulderD303=Mantle of Blasphemous Rituals
+tagGDX3ShoulderD303_Desc="The scrolls are written in a lost language. Merely staring into them induces intense headaches."
+tagGDX3ShoulderD304=Shoulderguard of Fenris
+tagGDX3ShoulderD305=Furs of the Crimson Moon
+tagGDX3ShoulderD306=Jarldin's Furs
+tagGDX3ShoulderD307=Apoclypton's Halo
+tagGDX3ShoulderD308=Bloodlust Shoulderguards
+tagGDX3ShoulderD309=Eldrun's Mantle
+tagGDX3ShoulderD310=Mantle of Fates Unwound
+tagGDX3ShoulderD311=Gloom Knight's Pauldrons
+tagGDX3ShoulderD312=Stormfang Furs
+tagGDX3ShoulderD313=Dreamwalker's Mantle
+tagGDX3ShoulderD314=Cinderborn Shoulderguards
+tagGDX3ShoulderD315=Worldkeeper's Thicket
+tagGDX3ShoulderD316=Zakull's Boneguards
+tagGDX3ShoulderD317=Eyes of Prodromus
+tagGDX3ShoulderD318=Dread Shadow
+
+tagGDX3ShoulderF301=Kurn Rimetouched Spaulders
+tagGDX3ShoulderF302=Kurn Vile Spaulders
+tagGDX3ShoulderF303=Kurn Arcane Mantle
+tagGDX3ShoulderF304=Kurn Bloodsoaked Mantle
+tagGDX3ShoulderF305=Kurn Void Pauldrons
+tagGDX3ShoulderF306=Kurn Stormstruck Pauldrons
+
+
+
+#ArmorTorso
+tagGDX3TorsoB301=Bloodbound Vestments
+tagGDX3TorsoB302=Bloodbound Armor
+tagGDX3TorsoB303=Tormented Ribcage
+tagGDX3TorsoB304=Tormented Bonecage
+
+tagGDX3TorsoC301=Beastmonger's Raiment
+tagGDX3TorsoC302=Lokhor's Raiments
+tagGDX3TorsoC303=Bloodmane's Cuirass
+
+tagGDX3TorsoD301=Wildhowl Armor
+tagGDX3TorsoD302=Chronostorm Raiment
+tagGDX3TorsoD303=Cuirass of Desolate Ash
+tagGDX3TorsoD304=Armor of Fenris
+tagGDX3TorsoD305=Armor of the Crimson Moon
+tagGDX3TorsoD306=Jarldin's Scars
+tagGDX3TorsoD307=Apoclypton's Portents
+tagGDX3TorsoD308=Bloodlust Armor
+tagGDX3TorsoD309=Armor of Fates Unwound
+tagGDX3TorsoD310=Gloom Knight's Cuirass
+tagGDX3TorsoD311=Stormfang Armor
+tagGDX3TorsoD312=Cinderborn Plate
+tagGDX3TorsoD313=Zakull's Bonecage
+tagGDX3TorsoD314=Armor of the Ice King
+tagGDX3TorsoD315=Worldkeeper's Vines
+
+tagGDX3TorsoF301=Kurn Earthen Chestguard
+tagGDX3TorsoF302=Kurn Lethal Chestguard
+tagGDX3TorsoF303=Kurn Arcane Vestments
+tagGDX3TorsoF304=Kurn Void Vestments
+tagGDX3TorsoF305=Kurn Veil Cuirass
+tagGDX3TorsoF306=Kurn Flamelicked Cuirass
+
+
+
+#ArmorHands
+tagGDX3HandsC301=Tainted Swampgrips
+
+tagGDX3HandsD301=Scarmakers
+tagGDX3HandsD302=Rotdrinker's Grip
+tagGDX3HandsD303=Fatebreaker's Chains
+tagGDX3HandsD304=Coredweller's Chains
+tagGDX3HandsD305=Claws of the Crimson Moon
+tagGDX3HandsD306=Cinderborn Grip
+tagGDX3HandsD307=Savant's Runes
+
+
+
+#ArmorLegs
+tagGDX3LegsB301=Underking's Legplates
+tagGDX3LegsB302=Underking's Chausses
+tagGDX3LegsB303=Reaper's Legwraps
+tagGDX3LegsB304=Reaper's Chausses
+
+tagGDX3LegsC301=Bloodrite Legguards
+
+tagGDX3LegsD301=Voidweave Legplates
+tagGDX3LegsD302=Chronoweaver Legguards
+tagGDX3LegsD303=Shadowbinder's Leggings
+tagGDX3LegsD304=Eldritch Schemer's Legwraps
+tagGDX3LegsD305=Legguards of Crimson Snow
+tagGDX3LegsD306=Legguards of Black Blades
+
+
+
+#ArmorFeet
+tagGDX3FeetC301=Obsidian Stompers
+
+tagGDX3FeetD301=Bloodmist Boots
+tagGDX3FeetD302=Bilethread Greaves
+tagGDX3FeetD303=Jackal's Step
+
+
+
+#ArmorWaist
+tagGDX3WaistB301=Manticore Girdle
+tagGDX3WaistB302=Manticore Waistguard
+tagGDX3WaistB303=Calcified Sash
+tagGDX3WaistB304=Ugdenbog Cord
+
+tagGDX3WaistC301=Girdle of Arcane Dreams
+tagGDX3WaistC302=Sylvian Thorns
+
+tagGDX3WaistD301=Rimespark Cord
+tagGDX3WaistD302=Infernus Cord
+tagGDX3WaistD303=Smoldersteel Girdle
+tagGDX3WaistD304=Chronoweave Girdle
+tagGDX3WaistD305=Mindspawn Girdle
+tagGDX3WaistD306=Eldrun's Sash
+
+tagGDX3WaistF301A=Kurn Chilling Waistguard
+tagGDX3WaistF301B=Kurn Chilling Girdle
+
+
+
+#Rings
+tagGDX3RingB301=Weaver Band
+tagGDX3RingB302=Weaver Ring
+tagGDX3RingB303=Terrorweave Band
+tagGDX3RingB304=Devourer Ring
+tagGDX3RingB305=Gorger Ring
+tagGDX3RingB306=Allostria's Sigil
+tagGDX3RingB306_Desc="Wearing this ring makes your skin crawl, an echo from when a familiar voice was in command of your faculties."
+tagGDX3RingB307=Allostria's Signet
+tagGDX3RingB308=Covenant of Siff
+tagGDX3RingB308_Desc="The ring appears to have belonged to someone that was once close to the great wolf."
+
+tagGDX3RingC301=Sigil of Arcane Weaves
+tagGDX3RingC302=Band of Thundering Vengeance
+
+tagGDX3RingD301=Dawnshard Band
+tagGDX3RingD302=Voidstorm Band
+tagGDX3RingD303=Widow's Bite
+tagGDX3RingD304=Sigil of the Stone Thane
+tagGDX3RingD305=Hellfury Band
+tagGDX3RingD306=Nightforged Sapphire
+tagGDX3RingD307=Nightforged Band
+tagGDX3RingD308=Veilweave Band
+
+tagGDX3RingF301=Kurn Vile Band
+tagGDX3RingF302=Kurn Arcane Band
+tagGDX3RingF303=Kurn Vengeful Band
+tagGDX3RingF304=Eon Band
+tagGDX3RingF305=Band of Aetherstorms
+tagGDX3RingF306=Sigil of the World Devourer
+tagGDX3RingF307=Band of the Merciless
+
+
+
+#Necklaces
+tagGDX3NecklaceB301=Sylvarria's Root
+tagGDX3NecklaceB302=Sylvarria's Thorn
+tagGDX3NecklaceB303=Ixall's Dominion
+tagGDX3NecklaceB303_Desc="The heart of Ixall still pulsates with mindshattering authority."
+tagGDX3NecklaceB304=Ixall's Blaze
+tagGDX3NecklaceB304_Desc="The heart of Ixall still pulsates with blazing hatred."
+
+tagGDX3NecklaceC301=Gem of Elemental Binding
+tagGDX3NecklaceC302=Amulet of Fiery Scorn
+tagGDX3NecklaceC303=Midwinter Memento
+
+tagGDX3NecklaceD113J=Conduit of Frenzied Whispers
+
+tagGDX3NecklaceD301=Avatar of Justice
+tagGDX3NecklaceD301_Desc="Fourth of the seven sacred virtues of humanity."
+tagGDX3NecklaceD302=Celestial Eye
+tagGDX3NecklaceD303=Aeon's Eye
+tagGDX3NecklaceD303_Desc="The dead, drawn to Aeon's thread, become a direct extension of their master's will. ^oReap Spirit's Wraiths scale with player bonuses."
+tagGDX3NecklaceD304=Tears of Asterkarn
+tagGDX3NecklaceD305=Ascendant's Portent
+tagGDX3NecklaceD306=Talisman of Fenris
+tagGDX3NecklaceD307=The Crimson Moon
+tagGDX3NecklaceD308=Nightforged Eye
+tagGDX3NecklaceD309=Apoclypton's Stone
+tagGDX3NecklaceD310=Discordant Gem
+tagGDX3NecklaceD311=Dreamwalker's Ward
+tagGDX3NecklaceD312=Heart of the Ice King
+tagGDX3NecklaceD313=Firestorm Pendant
+tagGDX3NecklaceD314=Heathen's Decree
+
+tagGDX3NecklaceF301=Kurn Vile Pendant
+tagGDX3NecklaceF302=Kurn Vengeful Pendant
+tagGDX3NecklaceF303=Kurn Earthen Pendant
+tagGDX3NecklaceF304=Scarstone Memento
+tagGDX3NecklaceF305=Veilwhisper
+
+
+
+#Medals
+tagGDX3MedalB300=Mark of N'erf
+tagGDX3MedalB300_Desc="Those that bear this mark are worthy of entering the true temple of N'erf."
+tagGDX3MedalB3000=Mark of Nerf
+tagGDX3MedalB3000_Desc="Overpowered"
+tagGDX3MedalB301=Frostplume Crest
+tagGDX3MedalB302=Stormplume Crest
+tagGDX3MedalB303=Prismatic Plume Crest
+tagGDX3MedalB303_Desc="A rare plumage from the Asterkarn Rocs."
+tagGDX3MedalB304=Gryphon Eye
+tagGDX3MedalB305=Korvan Eye
+tagGDX3MedalB306=Frostsnarl's Mark
+tagGDX3MedalB307=Voidplume Crest
+tagGDX3MedalB308=Windwalker's Eye
+
+tagGDX3MedalC301=Badge of Infernal Dreams
+tagGDX3MedalC302=Mark of Primal Surges
+tagGDX3MedalC303=Bloodmane's Mark
+
+tagGDX3MedalD301=Mark of the First Storm
+tagGDX3MedalD302=Sigil of the Infinites
+tagGDX3MedalD303=Brand of the Crimson Company
+tagGDX3MedalD303_Desc="Symbol of utmost loyalty within the Crimson Company."
+tagGDX3MedalD304=Fragment of Anguish
+tagGDX3MedalD305=Rumor's Echo
+tagGDX3MedalD306=Jarldin's Mark
+tagGDX3MedalD307=Mark of the Nightforged
+tagGDX3MedalD308=Gloom Knight's Emblem
+tagGDX3MedalD309=Dreamwalker's Memory
+tagGDX3MedalD310=Zakull's Mark
+tagGDX3MedalD311=Worldkeeper's Heart
+tagGDX3MedalD312=Albrecht's Commendation
+tagGDX3MedalD313=Stormfang Gem
+
+tagGDX3MedalF301=Kurn Mark of Vengeance
+tagGDX3MedalF302=Kurn Mark of Storms
+tagGDX3MedalF303=Kurn Mark of Blood
+tagGDX3MedalF304=Mark of the Timeless
+tagGDX3MedalF305=Mark of Blood's Deceit
+
+
+
+#Blueprints
+tagGDX3Blueprint_RelicC301=Blueprint: Relic - Permafrost
+tagGDX3Blueprint_RelicD301=Blueprint: Relic - Consumption
+tagGDX3Blueprint_RelicD302=Blueprint: Relic - Icebreaker
+tagGDX3Blueprint_RelicD303=Blueprint: Relic - Beronath's Howl
+tagGDX3Blueprint_RelicD304=Blueprint: Relic - Aurora
+tagGDX3Blueprint_RelicD305=Blueprint: Relic - Amatok's Grip
+
+tagGDX3Blueprint_WaistF301A=Blueprint: Kurn Chilling Waistguard
+tagGDX3Blueprint_WaistF301B=Blueprint: Kurn Chilling Girdle
+
+
+tagGDX3Blueprint_WeaponD301=Blueprint: Arcanum Infinite Eye
+tagGDX3Blueprint_WeaponD302=Blueprint: Cinderborn Gavel
+tagGDX3Blueprint_WeaponD303=Blueprint: Beronath's Celestial Horn
+
+tagGDX3Blueprint_WeaponF301=Blueprint: Viletongue
+tagGDX3Blueprint_WeaponF302=Blueprint: Icetusk
+tagGDX3Blueprint_WeaponF303=Blueprint: Warp's Edge
+tagGDX3Blueprint_WeaponF304=Blueprint: Durn's Skull
+tagGDX3Blueprint_WeaponF305=Blueprint: Hrothnar's Claw
+tagGDX3Blueprint_WeaponF306=Blueprint: Ember'thil, the Sun Blade
+tagGDX3Blueprint_WeaponF307=Blueprint: Umbra'dol, Legacy of Blood
+tagGDX3Blueprint_WeaponF308=Blueprint: Thundol'sil, the Stormrider
+tagGDX3Blueprint_WeaponF309=Blueprint: Warpstone Bastion
+tagGDX3Blueprint_WeaponF310=Blueprint: Soul of Asterkarn
+tagGDX3Blueprint_WeaponF311=Blueprint: Dauntless
+tagGDX3Blueprint_WeaponF312=Blueprint: Anum'fol, the Cutting Wind
+
+
+tagGDX3Blueprint_ArmorC301=Blueprint: Bloodmane's Helm
+
+tagGDX3Blueprint_ArmorD301=Blueprint: Rotdrinker's Grip
+tagGDX3Blueprint_ArmorD302=Blueprint: Wildhowl Hood
+tagGDX3Blueprint_ArmorD303=Blueprint: Eyes of the Primordial Storm
+tagGDX3Blueprint_ArmorD304=Blueprint: Horns of Eternal Nightmare
+tagGDX3Blueprint_ArmorD305=Blueprint: Cowl of Fenris
+tagGDX3Blueprint_ArmorD306=Blueprint: Jarldin's Eye
+tagGDX3Blueprint_ArmorD307=Blueprint: Bloodlust Hood
+tagGDX3Blueprint_ArmorD308=Blueprint: Eldrun's Cursed Vision
+tagGDX3Blueprint_ArmorD309=Blueprint: Gaze of Fates Unwound
+tagGDX3Blueprint_ArmorD310=Blueprint: Gloom Knight's Helm
+tagGDX3Blueprint_ArmorD311=Blueprint: Stormfang Cowl
+tagGDX3Blueprint_ArmorD312=Blueprint: Dreamwalker's Visage
+tagGDX3Blueprint_ArmorD313=Blueprint: Worldkeeper's Gaze
+tagGDX3Blueprint_ArmorD314=Blueprint: Zakull's Visage
+tagGDX3Blueprint_ArmorD315=Blueprint: Crown of the Ice King
+tagGDX3Blueprint_ArmorD316=Blueprint: Ashen Visage of the Primordial Flame
+tagGDX3Blueprint_ArmorD317=Blueprint: Mythical Wildhowl Hood
+tagGDX3Blueprint_ArmorD318=Blueprint: Mythical Eyes of the Primordial Storm
+tagGDX3Blueprint_ArmorD319=Blueprint: Mythical Horns of Eternal Nightmare
+
+tagGDX1Blueprint_AccessoryD121J=Blueprint: Conduit of Frenzied Whispers
+
+tagGDX3Blueprint_AccessoryD301=Blueprint: Infernus Cord
+tagGDX3Blueprint_AccessoryD302=Blueprint: Widow's Bite
+tagGDX3Blueprint_AccessoryD303=Blueprint: Heathen's Decree
+
+tagGDX3Blueprint_AccessoryF301=Blueprint: Scarstone
+tagGDX3Blueprint_AccessoryF302=Blueprint: Veilwhisper
+tagGDX3Blueprint_AccessoryF303=Blueprint: Mark of the Timeless
+tagGDX3Blueprint_AccessoryF304=Blueprint: Mark of Blood's Deceit
+tagGDX3Blueprint_AccessoryF305=Blueprint: Eon Band
+tagGDX3Blueprint_AccessoryF306=Blueprint: Band of Aetherstorms
+tagGDX3Blueprint_AccessoryF307=Blueprint: Sigil of the World Devourer
+tagGDX3Blueprint_AccessoryF308=Blueprint: Band of the Merciless
+
+
+#Relics
+tagGDX3RelicC301=Permafrost
+tagGDX3RelicC301Desc="Relentless chill."
+
+tagGDX3RelicD301=Consumption
+tagGDX3RelicD301Desc="Voracious hunger for flesh and blood."
+
+tagGDX3RelicD302=Icebreaker
+tagGDX3RelicD302Desc="The strength to shatter even the glaciers of Asterkarn."
+
+tagGDX3RelicD303=Beronath's Howl
+tagGDX3RelicD303Desc="Beronath's agony, distilled in physical form."
+
+tagGDX3RelicD304=Aurora
+tagGDX3RelicD304Desc="The beauty and power of Asterkarn's eternal winter."
+
+tagGDX3RelicD305=Amatok's Grip
+tagGDX3RelicD305Desc="The perseverance and might to endure the frozen chill of Asterkarn."
+
+tagGDX3RelicD306=Fangs of the Buckfather
+tagGDX3RelicD306Desc="A gift from the gods."
+
+
+#Crafting
+tagGDX1CraftRandomLegendaryDesc2C=The blacksmith combines the raw arcane power within these objects to create an item of Legendary potential, up to level 94, not including objects forged by the Forgotten Gods or those infused with Beronath's Aspect. Characters below level 58 may craft an Epic item instead.
+tagGDX1CraftRandomLegendaryAccessoryDesc2C=The blacksmith combines the raw arcane power within these objects to create an item of Legendary potential, up to level 94, not including objects forged by the Forgotten Gods or those infused with Beronath's Aspect. Characters below level 58 will craft an Epic item instead.
+tagGDX1CraftRandomLegendaryItemDesc2C=The blacksmith crafts an enchanted item appropriate to your level of Legendary quality, up to level 94, not including objects forged by the Forgotten Gods or those infused with Beronath's Aspect.
+
+tagGDX2CraftRandomLegendaryDesc3C=The blacksmith combines the raw arcane power within these objects to create an item of Legendary potential, up to level 94, even including objects forged by the Forgotten Gods themselves, but not those infused with Beronath's Aspect. Characters below level 58 may craft an Epic item instead.
+tagGDX2CraftRandomLegendaryAccessoryDesc3C=The blacksmith combines the raw arcane power within these objects to create an item of Legendary potential, up to level 94, even including objects forged by the Forgotten Gods themselves, but not those infused with Beronath's Aspect. Characters below level 58 will craft an Epic item instead.
+tagGDX2CraftRandomLegendaryItemDesc3C=The blacksmith crafts an enchanted item appropriate to your level of Legendary quality, up to level 94, even including objects forged by the Forgotten Gods themselves, but not those infused with Beronath's Aspect.
+
+tagGDX3CraftRandomLegendaryDesc4=The blacksmith combines the raw arcane power within these objects to create an item of Legendary potential, up to level 94, even those infused with Beronath's Aspect. Characters below level 58 may craft an Epic item instead.
+tagGDX3CraftRandomLegendaryAccessoryDesc4=The blacksmith combines the raw arcane power within these objects to create an item of Legendary potential, up to level 94, even those infused with Beronath's Aspect. Characters below level 58 will craft an Epic item instead.
+tagGDX3CraftRandomLegendaryItemDesc4=The blacksmith crafts an enchanted item appropriate to your level of Legendary quality, up to level 94, even those infused with Beronath's Aspect.
+
+tagGDX3CraftMaterial_Beronath=Aspect of Beronath
+tagGDX3CraftMaterial_Beronath_Desc="Distilled essence of the great beast, progenitor of monsters and demigod of the Kurn."
+
+tagGDX3CraftMaterial_Aster=Frozen Aster
+tagGDX3CraftMaterial_Aster_Desc="A brilliant flower with petals that are as light and fragile as the morning frost."
+
+tagGDX3CraftMaterial_Totem=Bloodbound Totem
+tagGDX3CraftMaterial_Totem_Desc="A wretched totem made of human bones bound in leather, no doubt sourced from the same victim."
+
+tagGDX3CraftMaterial_Awakening=Ashes of Awakening
+tagGDX3CraftMaterial_Awakening_Desc="Remnants of a celestial conflict that has devoured stars and left entire worlds desolated."
+
+tagGDX3CraftMaterial_InertOrb=Inert Sphere
+tagGDX3CraftMaterial_InertOrb_Desc="A stone sphere carved with profane runes clearly intended for some primordial ritual. It is cool to the touch."
+
+tagGDX3CraftMaterial_ActiveOrb=Magma Sphere
+tagGDX3CraftMaterial_ActiveOrb_Desc="A stone sphere blazing with intense searing heat that could melt a glacier. Despite the heat it gives off, it is still cool to the touch."
+
+tagGDX3CraftMaterial_SoulGreater=Soul Fragment
+tagGDX3CraftMaterial_SoulGreater_Desc="The essence of a powerful foe, extracted through violent means."
+
+tagGDX3CraftMaterial_SoulLesser=Soul Echo
+tagGDX3CraftMaterial_SoulLesser_Desc="An echo of a vanquished foe. Someone knowledgeable in the ancient arts may be able to fuse these into something greater."
+
+tagGDX2CraftMaterial_IronExchange_01=Iron Bar
+tagGDX2CraftMaterial_IronExchange_01_Desc=A valuable resource in a world ravaged by death.^w^n^nA Keeper of Iron at the Conclave of the Three or Kurnhold will gladly exchange 50000 Iron Bits for this.
+
+tagGDX2CraftMaterial_IronExchange_02=Stack of Premium Iron Bars
+tagGDX2CraftMaterial_IronExchange_02_Desc=A valuable resource in a world ravaged by death.^w^n^nA Keeper of Iron at the Conclave of the Three or Kurnhold will gladly exchange 500000 Iron Bits for this.
+
+
+#Potion Customization
+tagGDX3Potions_Blueprint_A301Desc=An elaborately enchanted container for potent magical concoctions.
+tagGDX3Potions_Blueprint_A302Desc=A complex diagram of chemical and arcane reactions.
+
+tagGDX3Potions_Blueprint_A301=Formula: Bolstered Flask
+tagGDX3Potions_Blueprint_A302=Formula: Enchanted Flask
+tagGDX3Potions_Blueprint_A303=Formula: Infused Flask
+tagGDX3Potions_Blueprint_A304=Formula: Perfected Flask
+
+tagGDX3Potions_Blueprint_B301=Formula: Bolstered Tincture
+tagGDX3Potions_Blueprint_B302=Formula: Enchanted Tincture
+tagGDX3Potions_Blueprint_B303=Formula: Infused Tincture
+tagGDX3Potions_Blueprint_B304=Formula: Perfected Tincture
+
+tagGDX3Potions_Blueprint_C301=Formula: Bolstered Vial
+tagGDX3Potions_Blueprint_C302=Formula: Enchanted Vial
+tagGDX3Potions_Blueprint_C303=Formula: Infused Vial
+tagGDX3Potions_Blueprint_C304=Formula: Perfected Vial
+
+tagGDX3Potions_Blueprint_Modifier_A301=Formula: Menhirus
+
+tagGDX3Potions_Blueprint_Modifier_A302=Formula: Amplicorum
+
+tagGDX3Potions_Blueprint_Modifier_A303=Formula: Sanginis
+
+tagGDX3Potions_Blueprint_Modifier_A304=Formula: Potentis
+
+tagGDX3Potions_Blueprint_Modifier_A305=Formula: Navitochromatis
+
+tagGDX3Potions_Blueprint_Modifier_A306=Formula: Expulsimum
+
+tagGDX3Potions_Blueprint_Modifier_A307=Formula: Geliodis
+
+tagGDX3Potions_Blueprint_Modifier_A308=Formula: Sansochromatis
+
+tagGDX3Potions_Blueprint_Modifier_A309=Formula: Chromatorrum
+
+tagGDX3Potions_Blueprint_Modifier_A310=Formula: Navito
+
+tagGDX3Potions_Blueprint_Modifier_A311=Formula: Sanso
+
+tagGDX3Potions_Blueprint_Modifier_A312=Formula: Primordis
+
+tagGDX3Potions_Blueprint_Modifier_A313=Formula: Savillis
+
+tagGDX3Potions_Blueprint_Modifier_A314=Formula: Alterom
+
+tagGDX3Potions_Blueprint_Modifier_A315=Formula: Terrobullum
+
+tagGDX3Potions_Blueprint_Modifier_A316=Formula: Ventorus
+
+tagGDX3Potions_Blueprint_Modifier_A317=Formula: Revurrum
+
+tagGDX3Potions_Blueprint_Modifier_A318=Formula: Occullorum
+
+tagGDX3Potions_Blueprint_Modifier_A319=Formula: Draculus
+
+tagGDX3Potions_Blueprint_Modifier_A320=Formula: Phillom
+
+
+tagGDX3Potions_Container_A301=Flask
+
+tagGDX3Potions_Container_A302=Tincture
+
+tagGDX3Potions_Container_A303=Vial
+
+
+tagGDX3Potions_Modifier_A301=Menhirus
+
+tagGDX3Potions_Modifier_A302=Amplicorum
+
+tagGDX3Potions_Modifier_A303=Sanginis
+
+tagGDX3Potions_Modifier_A304=Potentis
+
+tagGDX3Potions_Modifier_A305=Navitochromatis
+
+tagGDX3Potions_Modifier_A306=Expulsimum
+
+tagGDX3Potions_Modifier_A307=Geliodis
+
+tagGDX3Potions_Modifier_A308=Sansochromatis
+
+tagGDX3Potions_Modifier_A309=Chromatorrum
+
+tagGDX3Potions_Modifier_A310=Navito
+
+tagGDX3Potions_Modifier_A311=Sanso
+
+tagGDX3Potions_Modifier_A312=Primordis
+
+tagGDX3Potions_Modifier_A313=Savillis
+
+tagGDX3Potions_Modifier_A314=Alterom
+
+tagGDX3Potions_Modifier_A315=Terrobullum
+
+tagGDX3Potions_Modifier_A316=Ventorus
+
+tagGDX3Potions_Modifier_A317=Revurrum
+
+tagGDX3Potions_Modifier_A318=Occullorum
+
+tagGDX3Potions_Modifier_A319=Draculus
+
+tagGDX3Potions_Modifier_A320=Phillom
+
+
+
+#Consumables
+tagGDX3Consumable_01=Gund Thorngut's Binding Stone
+tagGDX3Consumable_01_Desc="Calls forth a weakened Gund Thorngut to fight for you until his spirit wrests free and escapes through the veil."
+tagGDX3Consumable_01B_Desc="Calls forth the wight Gund Thorngut to fight for you until his spirit wrests free and escapes through the veil."
+
+tagGDX3Consumable_02=Hassia Flameblood's Binding Stone
+tagGDX3Consumable_02_Desc="Calls forth a weakened Hassia Flameblood to fight for you until her spirit wrests free and escapes through the veil."
+tagGDX3Consumable_02B_Desc="Calls forth the wight Hassia Flameblood to fight for you until her spirit wrests free and escapes through the veil."
+
+tagGDX3Consumable_03=Maruda the Forsaken's Binding Stone
+tagGDX3Consumable_03_Desc="Calls forth a weakened Maruda the Forsaken to fight for you until her spirit wrests free and escapes through the veil."
+tagGDX3Consumable_03B_Desc="Calls forth the wight Maruda the Forsaken to fight for you until her spirit wrests free and escapes through the veil."
+
+tagGDX3Consumable_04=Kastorran Stone
+tagGDX3Consumable_04_Desc="The stone bears the marks of Kastorran teeth. It hums with hidden power."
+
+tagGDX3Consumable_05=Roc Rock
+tagGDX3Consumable_05_Desc="It's solid roc."
+
+tagGDX3Consumable_06=Dire Stone
+tagGDX3Consumable_06_Desc="This stone was in dire need of an owner."
+
+
+#ItemEnchantment
+tagGDX3EnchantA301A=Dranghoul's Breath
+tagGDX3EnchantA301Desc="Dranghouls were once stalwart allies of the Kurn, before the splintering of the tribes following the great war. This powder was developed by Dranghoul shamans to ward off the frozen dead."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantA302A=Potent Dranghoul's Breath 
+tagGDX3EnchantA302Desc="Dranghouls were once stalwart allies of the Kurn, before the splintering of the tribes following the great war. This powder was developed by Dranghoul shamans to ward off the frozen dead."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantA303A=Bloodbound Offering
+tagGDX3EnchantA303Desc="Repentant Bloodbound Kurn that turn away from their dark god must mark themselves with these bloodsoaked ashes for one lunar cycle as penance, and to warn the other Kurn of a potential foe in their midst."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantA304A=Potent Bloodbound Offering
+tagGDX3EnchantA304Desc="Repentant Bloodbound Kurn that turn away from their dark god must mark themselves with these bloodsoaked ashes for one lunar cycle as penance, and to warn the other Kurn of a potential foe in their midst."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantA305A=Stormcaller's Ash
+tagGDX3EnchantA305Desc="Ashes of a Storm Roc, its entire body burned upon a sacrificial pyre."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantA306A=Potent Stormcaller's Ash
+tagGDX3EnchantA306Desc="Ashes of a Storm Roc, its entire body burned upon a sacrificial pyre."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantA307A=Woolly Bristlehorn Powder
+tagGDX3EnchantA307Desc="Powder ground from Woolly Bristlehorn bones. The horns were usually reserved for the makings of weapons and armor."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantA308A=Rimethorn Ash
+tagGDX3EnchantA308Desc="The carcass of a Rimethorn, when burnt upon a bed of white sage, turns into a potent ash used by Kurn oracles for centuries."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantA309A=Wight Skin Powder
+tagGDX3EnchantA309Desc="Wights are an unliving reminder of forgotten sins, unburied Kurn heroes lost in battle and traitors left to rot. The flesh of these beings becomes infused with vile necrotic energies, which can still be harnessed for good."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantA310A=Giant's Tusk Powder
+tagGDX3EnchantA310Desc="It takes a brave Kurn, or a foolish one, to harvest the tusk of Asterkarn's behemoths, but their medicinal properties are highly coveted."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantA311A=Mange Powder
+tagGDX3EnchantA311Desc="Beasts tainted by the void's corruption may appear sickly, but a violent darkness festers within."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantA312A=Potent Mange Powder 
+tagGDX3EnchantA312Desc="Beasts tainted by the void's corruption may appear sickly, but a violent darkness festers within."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantA313A=Beastmonger Powder
+tagGDX3EnchantA313Desc="Medicinal powder derived from the roots of Asterkarn bloodferns to pacify unruly beasts."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantA314A=Oxwhip Powder
+tagGDX3EnchantA314Desc="Stimulanting powder derived from the blossoms of the Asterkarn oxwhip. A staple before battle and during lengthy celebrations."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantA315A=Glacier Dust
+tagGDX3EnchantA315Desc="Ritual powder derived from particulates left behind after thawing ice from Asterkarn's monolithic glaciers."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantB301A=Amatok's Feast
+tagGDX3EnchantB301Desc="A gift from Amatok, patron god of the Kurn and father of the winter winds."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantB302A=Potent Amatok's Feast
+tagGDX3EnchantB302Desc="A gift from Amatok, patron god of the Kurn and father of the winter winds."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantB303A=Mogdrogen's Bite
+tagGDX3EnchantB303Desc="A gift from Mogdrogen, great white wolf and patron god of the Kurn."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantB304A=Potent Mogdrogen's Bite
+tagGDX3EnchantB304Desc="A gift from Mogdrogen, great white wolf and patron god of the Kurn."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantB305A=Primordial Ash
+tagGDX3EnchantB305Desc="The burning wastes of Asterkarn are a hellscape few dare enter, but the tainted volcanic soil offers many uses if one is willing to brave the risks."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantB306A=Potent Primordial Ash
+tagGDX3EnchantB306Desc="The burning wastes of Asterkarn are a hellscape few dare enter, but the tainted volcanic soil offers many uses if one is willing to brave the risks."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantB307A=Amatok's Tooth
+tagGDX3EnchantB307Desc="When the first Kurn were said to be starving following a long and bitter winter, Amatok bestowed upon them a single tooth from which sprung a frothy river teeming with whitescale salmon."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantB308A=Ulo's Lifegiving Waters
+tagGDX3EnchantB308Desc="Ulo's waters were said to first breathe life into the Asterkarn valleys, and in turn the Kurn. To this day, many revere her as the mother of all Kurn."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantB309A=Mogdrogen's Boon
+tagGDX3EnchantB309Desc="The great white wolf has long been a symbol of power within Asterkarn. All of the legendary chieftains that united the Kurn tribes could trace their proud lineage back to the god of beasts."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantB310A=Ravager's Gift
+tagGDX3EnchantB310Desc="Though his influence has shrunk in recent centuries, some Kurn still look to Ravager as an avatar of their primal fears and desires, which the ravenous god readily feeds upon."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantB311A=Hranaak Incense
+tagGDX3EnchantB311Desc="Ritual incense extracted by the venerable Hranaak from the roots of Frozen Aster."^w^n(Applied to all one-handed weapons, shields and caster off-hands)
+
+tagGDX3EnchantB312A=Potent Hranaak Incense
+tagGDX3EnchantB312Desc="Ritual incense extracted by the venerable Hranaak from the roots of Frozen Aster."^w^n(Applied to all two-handed weapons)
+
+tagGDX3EnchantB313A=Herald's Glare
+tagGDX3EnchantB313Desc="Malignant rage made manifest. Contact with bare skin induces bloody boils as the flesh reacts aggressively to the corruption."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantB314A=Beronath's Sacred Step
+tagGDX3EnchantB314Desc="Hallowed earth gathered from the footsteps of the great beast Beronath."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantB315A=Hranaak Feather Ash
+tagGDX3EnchantB315Desc="Ashes from a single feather of a Hranaak elder, bestowed willingly, accepted with grace."^w^n(Applied to rings and amulets)
+
+tagGDX3EnchantC301A=Kurn Roc Eye
+tagGDX3EnchantC301Desc="Kurn medicinal powder, derived from an eye of a frost roc."^w^n(Applied to all armor)
+
+tagGDX3EnchantC302A=Kurn Giant's Heart
+tagGDX3EnchantC302Desc="Kurn medicinal powder, derived from a shriveled heart of an ancient giant."^w^n(Applied to all armor)
+
+tagGDX3EnchantC303A=Kurn Yeti Horn
+tagGDX3EnchantC303Desc="Kurn medicinal powder, painstakinly derived from a tough horn of a diremane yeti."^w^n(Applied to all armor)
+
+
+#Mobility Runes
+tagGDX3RuneBDesc="A common symbol of power used by the Kurn to enhance their combat prowess."^w^n(Applied to Medals)
+tagGDX3RuneCDesc="A formidable symbol of power used by the Kurn to enhance their combat prowess."^w^n(Applied to Medals)
+tagGDX3RuneDDesc="An ancient symbol of power used by the Kurn to enhance their combat prowess."^w^n(Applied to Medals)
+
+tagGDX3RuneB301=Emblem of Kurn Guile
+tagGDX3RuneB302=Emblem of Hranaakian Flight
+tagGDX3RuneB303=Emblem of Kurn Endurance
+tagGDX3RuneC301=Glyph of Kurn Guile
+tagGDX3RuneC302=Glyph of Hranaakian Flight
+tagGDX3RuneC303=Glyph of Kurn Endurance
+tagGDX3RuneD301=Rune of Kurn Guile
+tagGDX3RuneD302=Rune of Hranaakian Flight
+tagGDX3RuneD303=Rune of Kurn Endurance
+
+#ItemFactionBoosters
+tagGDX3BoosterKU_A01=Writ of the Kurn
+tagGDX3BoosterKU_B01=Mandate of the Kurn
+
+tagGDX3BoosterAV_A01=Writ of Noktukari
+tagGDX3BoosterAV_B01=Mandate of Noktukari
+
+tagGDX3BoosterKurn_C01=Warrant of the Bloodbound
+
+
+
+#Misc
+
+
+
+#ItemSets
+tagItemSetC004NameC=Bloodreaper's Butchery
+tagItemSetC022NameC=Wildcaller's Summons
+
+tagGDX3ItemSetC301Name=Lokhor's Madness
+tagGDX3ItemSetC301BName=Lokhor's Folly
+tagGDX3ItemSetC301Desc="Lokhor was once a shaman of Mogdrogen, but in desperation he turned to darker powers. His blood pact forever bound his tribe's fortunes to the glory of Ch'thon."
+
+tagGDX3ItemSetC302Name=Bloodmane
+tagGDX3ItemSetC302Desc="The yeti Bloodmane terrorized the far reaches of Asterkarn, until Vudin of the Storm Spears terrorized him instead."
+
+tagGDX3ItemSetD300Name=Fewmet King's Accoutrements
+tagGDX3ItemSetD300Desc="Implements worthy of the porcelain throne."
+
+tagGDX3ItemSetD301Name=Fenris
+tagGDX3ItemSetD301Desc="Fenris, son of Hrothnar and leader of countless raiding parties into Erulan lands was exalted as a legend among the Kurn. His funeral pyre burned like a blazing sun."
+
+tagGDX3ItemSetD302Name=Wake of the Crimson Moon
+tagGDX3ItemSetD302Desc="The red moon of Asterkarn would drive the spawn of Beronath into a bloodthirsty frenzy. The Kurn that worshipped the moon saw this as a sign of bloody victories to come."
+
+tagGDX3ItemSetD303Name=Jarldin's Fury
+tagGDX3ItemSetD303Desc="Jarldin's strength was unmatched, such that he sought challenge among the mightiest fighters and even monstrosities of Cairn."
+
+tagGDX3ItemSetD304Name=Nightforged Pact
+tagGDX3ItemSetD304Desc="The Nightforged reveled in the moon's cold light, their unspoken deeds unfit for the dawn's light."
+
+tagGDX3ItemSetD305Name=Apoclypton
+tagGDX3ItemSetD305Desc="While Apoclypton's dire warnings of the world consumed in fire never came to pass, recent events brought fresh perspective on the soothsayer's words."
+
+tagGDX3ItemSetD306Name=Bloodlust
+tagGDX3ItemSetD306Desc="Tragic is the fate of mortals who lose themselves to the carnage, but it is all too often those forsaken individuals that make the most reliable hounds of war."
+
+tagGDX3ItemSetD307Name=Eldrun's Ruminations
+tagGDX3ItemSetD307Desc="Eldrun's sight was stolen from her at a young age, but in seeking the spirit of the storm, she was granted new eyes through her bonded companions."
+
+tagGDX3ItemSetD308Name=Unwound Fate
+tagGDX3ItemSetD308Desc="In her mercy, Azrakaa would offer mortals a chance to view the strands of fate woven by Aeon, in the hopes of unwinding their own doom."
+
+tagGDX3ItemSetD309Name=Gloom Knight
+tagGDX3ItemSetD309Desc="None live that know the true identity of the Gloom Knight, or whether there even was just one mortal to don the toxic armor."
+
+tagGDX3ItemSetD310Name=Stormfang
+tagGDX3ItemSetD310Desc="Stormfang's cruelty was matched only by her mastery of the tempest, perhaps an external reflection of her own inner turmoil."
+
+tagGDX3ItemSetD311Name=Dreamwalker
+tagGDX3ItemSetD311Desc="The Dreamwalker's otherwise frail appearance paled in comparison to her mastery over the dreamscape, and the ravaged minds she left behind in her wake."
+
+tagGDX3ItemSetD312Name=Cinderborn
+tagGDX3ItemSetD312Desc="Forged of cinders, reborn in flame, doomed to feed its hunger."
+
+tagGDX3ItemSetD313Name=Worldkeeper's Garden
+tagGDX3ItemSetD313Desc="The worldkeeper was equal parts guardian and gardener. Which side of her you met depended entirely on how carefully you trod in her forests."
+
+tagGDX3ItemSetD314Name=Zakull's Anima
+tagGDX3ItemSetD314Desc="Zakull wove shadow and ice into a tapestry of desolation. The night sky was the ultimate reflection of his soul."
+
+tagGDX3ItemSetD315Name=Ice King's Adornments
+tagGDX3ItemSetD315BName=Ice King's Regalia
+tagGDX3ItemSetD315Desc="Legendary adornments of Hrothnar, son of the Great White Wolf, and last ruler of a united Kurn."
+
+
+#AwakenedSets
+tagGDX3ItemAwakenedSetC021BName=Awakened Eastern Oath
+
+tagGDX3ItemAwakenedSetC103Name=Awakened Blazeseer
+tagGDX3ItemAwakenedSetC105Name=Awakened Dreadwalker
+
+tagGDX3ItemAwakenedSetC202Name=Awakened Stormserpent
+tagGDX3ItemAwakenedSetC205Name=Awakened Stonefather
+
+tagGDX3ItemAwakenedSetC301BName=Awakened Lokhor's Folly
+tagGDX3ItemAwakenedSetC302Name=Awakened Bloodmane
+
+tagGDX3ItemAwakenedSetD300Name=Armorum Excrementis
+tagGDX3ItemAwakenedSetD300Desc="Not forged but shit into existence."
+
+
+#LootChests
+tagGDX3KurnChestB01=Worn Chest
+tagGDX3KurnChestC01=Glamorous Chest
+tagGDX3KurnChestD01=Opulent Chest
+
+tagGDX3KurnCorruptedChestB01=Bloodbound Chest 
+tagGDX3KurnCorruptedChestC01=Bloodbound Spoils
+tagGDX3KurnCorruptedChestD01=Bloodbound Trove
+
+tagGDX3FrozenChestB01=Frigid Chest
+tagGDX3FrozenChestC01=Frozen Chest
+tagGDX3FrozenChestD01=Glacial Chest
+
+tagGDX3CorpseB01=Desiccated Husk
+tagGDX3KurnCorpseB01=Slain Kurn
+tagGDX3KurnChthonicCorpseB01=Slain Bloodbound
+
+tagGDX3RoguelikeBonusD01=Ascendant's Spoils
+
+tagGDX3ChestTreasureTrove02=Resplendent Treasure Trove
+
+tagGDX3ChestPotion01=Ancient Offerings
+
+tagGDX3Breakable_FrozenDebris=Frozen Debris
+tagGDX3Breakable_FrozenBody=Frozen Husk
+tagGDX3Breakable_KurnContainer=Kurn Container
+tagGDX3Breakable_KurnUrn=Kurn Urn
+tagGDX3Breakable_KurnUrnCluster=Kurn Urn Cluster
+tagGDX3Breakable_FrozenFlower=Frozen Bloom
+tagGDX3Breakable_Corruption=Chthonic Corruption
+tagGDX3Breakable_CairnStone=Cairn Stone
+tagGDX3Breakable_GlacierWall=Glacial Wall
+
+tagGDX3QuestBreakable_RocNest=Roc Nest
+
+tagGDX3Chest_Dread_Dropped=Black Ichor
+
+tagGDX3ChestTrialOfBlood=Blood Spoils
+tagGDX3ChestBeronath=Beronath's Offerings
+tagGDX3ChestKurnRoguelike=Morgoneth's Collection
+
+tagGDX3ChestOneShot_Kurn=Kurn Stash
+tagGDX3ChestBossOneShot_Beronath=Beronath's Offerings
+
+tagGDX3QuestChest_FirstFlame=Korvan Cache
+tagGDX3QuestChest_VoidHeart=Void Cavity
+tagGDX3QuestChest_TrialOfBlood=Trial of Blood Tribute
+tagGDX3QuestChest_MidwinterCorpse=Arvin's Corpse
+tagGDX3QuestChest_CursedWood=Fulminated Tree Trunk
+tagGDX3QuestChest_BlackLodgeRiddles=Black Lodge Spoils
+tagGDX3QuestChest_KurnSupplies_Corpse=Kurn Corpse
+tagGDX3QuestChest_MammothBurialGround=Vault of Bal-Eigan
+
+tagGDX3QuestChip=Wood Chip
+tagGDX3QuestChip_Desc="How much wood is this?"
+tagGDX3QuestLog=Wooden Log
+tagGDX3QuestLog_Desc="It's Log."
+tagGDX3QuestCarving=Wooden Carving
+tagGDX3QuestCarving_Desc="Expertly chewed."
+tagGDX3QuestCarving02=Huge Wood
+tagGDX3QuestCarving02_Desc="Some nice hard wood."
+
+#Interactive Objects
+tagGDX3DoorLocked_Kurn= {^R} ~ Locked by a powerful guardian
+tagGDX3DoorLocked_Roguelike= {^R} ~ sealed by a powerful rune
+tagGDX3ChestLocked_MammotBurialGround= {^R} ~ Locked by a mystical force
+
+
+
+#Dungeon Doors
+tagGDX3UGDoorEntrance= Entrance
+tagGDX3Door_ChaosTear=Chaos Tear
+tagGDX3Door_WorldTear=World Tear
+tagGDX3Door_WorldTear_Locked= {^R} ~ Sealed by the void
+tagGDX3Door_WorldTearCave=Instability Entrance
+
+tagGDX3UGDoor_LodgeEntrance=Lodge Entrance
+tagGDX3UGDoor_Lodge=Lodge Interior
+tagGDX3UGDoor_Grotto=Grotto Entrance
+
+tagGDX3UGDoor_Mountain=Mountain Pass
+tagGDX3UGDoor_Beronath=Ascend to the Roof of the World
+
+
+tagGDX3DoorOneWayDranghoulRoguelike=Exit the Fortress
+tagGDX3EpicDoor_DranghoulRoguelike=Drang'Gal Gate
+tagGDX3EpicDoor_DranghoulRoguelikeLocked= {^R} ~ Sealed by the void (Requires a Skeleton Key)
+
+#Doors
+tagGDX3Door_Kurnhold=Kurnhold Gate
+tagGDX3Door_KurnStronghold=Stronghold Gate
+
+tagGDX3Door_Dranghoul=Gate
+tagGDX3Door_Vine=Tendrils
+
+
+
+#Affixes
+tagGDX3PrefixAA301=Subduer's
+tagGDX3PrefixAA302=Tamer's
+tagGDX3PrefixAA303=Motivating
+
+tagPrefixB046_Class_A=Barbarian's
+
+tagPrefixB047_Class_A=Conqueror's
+tagPrefixB048_Class_A=Despoiler's
+tagPrefixB049_Class_A=Augur's
+tagPrefixB050_Class_A=Butcher's
+tagPrefixB051_Class_A=Thaumaturge's
+tagPrefixB052_Class_A=Spiritualist's
+tagPrefixB053_Class_A=Runelord's
+tagPrefixB054_Class_A=Phantom's
+tagPrefixB055_Class_A=Fanatic's
+
+tagGDX3PrefixB301_Sh_A=Runecarver's
+tagGDX3PrefixB302_Sh_A=Great Guardian's
+tagGDX3PrefixB303_Sh_A=Doomcaller's
+tagGDX3PrefixB304_Sh_A=Gorewake
+tagGDX3PrefixB305_Sh_A=Bloodsoaked
+
+tagGDX3SuffixAA301=of Dire Fangs
+tagGDX3SuffixAA302=of Dire Scales
+tagGDX3SuffixAA303=of Pack Mentality
+
+tagGDX3SuffixB301_Ar=of Frostblood
+tagGDX3SuffixB302_Ar=of Eternal Blood
+tagGDX3SuffixB303_Ar=of Nature's Bidding
+tagGDX3SuffixB304_Ar=of Corrupted Peaks
+tagGDX3SuffixB305_Ar=of Dauntless Will
+tagGDX3SuffixB306_Ar=of the Primal Will
+tagGDX3SuffixB307_Ar=of Landslides
+tagGDX3SuffixB308_Ar=of Untamed Fangs
+tagGDX3SuffixB309_Ar=of Cruel Designs
+
+tagGDX3SuffixB301_Sh=of Frostblood
+tagGDX3SuffixB302_Sh=of Corrupted Peaks
+tagGDX3SuffixB303_Sh=of the Raven's Eye
+tagGDX3SuffixB304_Sh=of Cruel Designs
+tagGDX3SuffixB305_Sh=of Nature's Bidding
+tagGDX3SuffixB306_Sh=of Landslides
+tagGDX3SuffixB307_Sh=of Dauntless Will
+tagGDX3SuffixB308_Sh=of Dark Bargains
+tagGDX3SuffixB309_Sh=of Dark Desire
+tagGDX3SuffixB310_Sh=of Heretic's Scorn
+tagGDX3SuffixB311_Sh=of Death's Intent
+tagGDX3SuffixB312_Sh=of Crimson Woe
+tagGDX3SuffixB313_Sh=of Blood Tides
+
+tagGDX3SuffixB301_Wpn=of Frostblood
+tagGDX3SuffixB302_Wpn=of Bloody Conflict
+tagGDX3SuffixB303_Wpn=of Untamed Fangs
+tagGDX3SuffixB304_Wpn=of Corrupted Peaks

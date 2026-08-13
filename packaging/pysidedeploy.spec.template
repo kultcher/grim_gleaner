@@ -8,7 +8,7 @@ project_dir = __PROJECT_ROOT__
 input_file = src\gd_affix_relevance\ui\app.py
 exec_directory = __DEPLOY_OUTPUT__
 project_file =
-icon =
+icon = __ICON_PATH__
 
 [python]
 
@@ -32,8 +32,8 @@ plugins =
 [nuitka]
 
 macos.permissions =
-mode = onefile
-extra_args = --quiet --noinclude-qt-translations --windows-console-mode=disable
+mode = standalone
+extra_args = --quiet --noinclude-qt-translations --windows-console-mode=disable --output-filename=grim_gleaner.exe
 
 [buildozer]
 

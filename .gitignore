@@ -20,6 +20,8 @@ artifacts/profiles/*
 !artifacts/profiles/examples/**
 !artifacts/catalog/
 !artifacts/catalog/**
+!artifacts/text_en/
+!artifacts/text_en/**
 
 # Locally extracted proprietary Grim Dawn data.
 game_data/

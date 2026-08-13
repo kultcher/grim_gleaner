@@ -159,12 +159,15 @@ def _nuitka_application_root() -> Path | None:
     """Return the directory containing a Nuitka-built application.
 
     Nuitka deliberately does not set ``sys.frozen``. Its injected
-    ``__compiled__.containing_dir`` value is stable for standalone and onefile
-    deployments and points to the directory where user-supplied resources
-    should live.
+    ``__main__.__compiled__.containing_dir`` value is stable for standalone
+    and onefile deployments and points to the directory where user-supplied
+    resources should live. The marker belongs to the compiled entry-point
+    module; Nuitka does not guarantee that it is injected into imported
+    modules such as this one.
     """
 
-    compiled = globals().get("__compiled__")
+    main_module = sys.modules.get("__main__")
+    compiled = getattr(main_module, "__compiled__", None)
     containing_dir = getattr(compiled, "containing_dir", None)
     if not containing_dir:
         return None

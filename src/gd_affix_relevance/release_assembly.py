@@ -8,9 +8,9 @@ import os
 import shutil
 import tempfile
 from dataclasses import dataclass
-from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
+from gd_affix_relevance import __version__
 from gd_affix_relevance.catalog import CatalogBundle
 from gd_affix_relevance.importers.localization_parser import parse_localization_file
 from gd_affix_relevance.profile_store import load_profile
@@ -335,7 +335,4 @@ def _sha256(path: Path) -> str:
 
 
 def _application_version() -> str:
-    try:
-        return version("gd-affix-relevance")
-    except PackageNotFoundError:
-        return "0.1.0"
+    return __version__
