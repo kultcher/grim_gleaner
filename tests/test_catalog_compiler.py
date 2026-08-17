@@ -169,6 +169,7 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
             ("offensiveTotalDamageModifier", "15"),
             ("characterLifeModifier", "10"),
             ("characterOffensiveAbilityModifier", "8"),
+            ("testPetEffectChance", "12"),
         ],
     )
 
@@ -285,12 +286,24 @@ def test_compiler_overlays_skills_and_includes_unreferenced_named_skills(
         for property_ in bundle.affixes.affixes[0].variants[0].properties
     }
     assert "pet_bonus" not in property_ids
+    assert "pet_unresolved_composite" not in property_ids
     assert "chance_flat_fire_damage" in property_ids
     assert {
         "pet_total_damage_percent",
         "pet_health_percent",
         "pet_offensive_ability_percent",
     } <= property_ids
+    tier = bundle.affixes.affixes[0].tiers[0]
+    assert tier.level_requirement == 5
+    tier_properties = {item.property_id: item for item in tier.properties}
+    assert tier_properties["acid_damage_percent"].attributes[
+        "damage_percent"
+    ] == "25.000000"
+    assert "15" in tier_properties[
+        "pet_total_damage_percent"
+    ].attributes.values()
+    assert bundle.magnitude.bands[0].band_id == "1-49"
+    assert result.magnitude_entry_count == len(bundle.magnitude.entries)
 
 
 def test_compiler_applies_curated_mastery_relationships(
@@ -434,6 +447,24 @@ def test_compiler_preserves_max_skill_rank_for_collapsed_affix_layout(
     assert skill_bonus.attributes["skill_level_min"] == "1"
     assert skill_bonus.attributes["skill_level_max"] == "3"
     assert affix.variants[0].stat_lines == ("+3 to Test Skill",)
+    assert tuple(tier.level_requirement for tier in affix.tiers) == (10, 50)
+    assert [
+        next(
+            property_.attributes["skill_level"]
+            for property_ in tier.properties
+            if property_.property_id == "skill_bonus"
+        )
+        for tier in affix.tiers
+    ] == ["1", "3"]
+    skill_magnitudes = [
+        (entry.band_id, entry.level_requirement, property_.scalar_value)
+        for entry in CatalogBundle.load(output).magnitude.entries
+        if entry.entity_id == affix.affix_id
+        for property_ in entry.properties
+        if property_.property_id == "skill_bonus"
+    ]
+    assert ("1-49", 10, 1.0) in skill_magnitudes
+    assert ("50-64", 50, 3.0) in skill_magnitudes
 
 
 def test_catalog_output_is_deterministic(tmp_path: Path) -> None:
@@ -464,6 +495,7 @@ def test_catalog_output_is_deterministic(tmp_path: Path) -> None:
         "relics.json",
         "runes.json",
         "consumables.json",
+        "magnitude-index.json",
     ):
         assert (first / filename).read_bytes() == (second / filename).read_bytes()
 
@@ -597,6 +629,16 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
             ("FileDescription", "BASE BLANK EPIC HEAD"),
             ("itemClassification", "Epic"),
             ("itemNameTag", "tagMissingPlaceholder"),
+        ],
+    )
+    _write_dbr(
+        base_items / "gearhead/b100_head.dbr",
+        [
+            ("Class", "ArmorProtective_Head"),
+            ("itemClassification", "Rare"),
+            ("itemNameTag", "tagTestHelm"),
+            ("levelRequirement", "30"),
+            ("characterLife", "150"),
         ],
     )
     _write_dbr(
@@ -743,7 +785,7 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
         "consumables": 1,
     }
     assert result.item_variant_count == 7
-    assert result.unresolved_item_record_count == 1
+    assert result.unresolved_item_record_count == 0
     helm = bundle.items.equipment[0]
     assert helm.display_name == "Test Helm"
     assert len(helm.variants) == 2
@@ -768,6 +810,19 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     assert "chance_flat_pierce_damage" in {
         property_.property_id for property_ in helm.variants[1].properties
     }
+    helm_magnitude = next(
+        entry
+        for entry in bundle.magnitude.entries
+        if entry.entity_id == helm.item_id and entry.band_id == "1-49"
+    )
+    assert helm_magnitude.level_requirement == 45
+    assert len(helm_magnitude.band_variant_ids) == 2
+    health_magnitude = next(
+        property_
+        for property_ in helm_magnitude.properties
+        if property_.property_id == "health"
+    )
+    assert health_magnitude.scalar_value == 200.0
     component = bundle.items.components[0]
     assert component.description == "Component description"
     assert component.variants[0].applicable_slots == ("Head",)

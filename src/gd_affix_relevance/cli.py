@@ -168,6 +168,8 @@ def _run_compile_catalog(args: argparse.Namespace) -> int:
             "unresolved_affix_records": result.unresolved_affix_record_count,
             "items": result.item_counts,
             "item_variants": result.item_variant_count,
+            "magnitude_entries": result.magnitude_entry_count,
+            "magnitude_properties": result.magnitude_property_count,
             "skipped_unresolved_item_records": result.unresolved_item_record_count,
             "output_dir": str(result.output_dir),
         }

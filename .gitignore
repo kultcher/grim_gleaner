@@ -22,6 +22,8 @@ artifacts/profiles/*
 !artifacts/catalog/**
 !artifacts/text_en/
 !artifacts/text_en/**
+!artifacts/mastery-trees/
+!artifacts/mastery-trees/**
 
 # Locally extracted proprietary Grim Dawn data.
 game_data/
