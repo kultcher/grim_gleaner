@@ -161,6 +161,14 @@ QTableWidget#uniqueSlotTable, QTableWidget#addonSlotTable {
     border: 1px solid #303540;
     gridline-color: #303540;
     selection-background-color: #3a4454;
+    selection-color: #ffffff;
+}
+QTableWidget#topMatchesTable::item:selected,
+QTableWidget#affixSlotTable::item:selected,
+QTableWidget#uniqueSlotTable::item:selected,
+QTableWidget#addonSlotTable::item:selected {
+    background: #3a4454;
+    color: #ffffff;
 }
 QFrame#slotFilterBar, QFrame#typeFilterBar, QFrame#affixSlotRow,
 QFrame#uniqueSlotRow, QFrame#addonSlotRow {
