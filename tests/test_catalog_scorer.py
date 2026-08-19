@@ -4,6 +4,7 @@ from gd_affix_relevance.catalog import (
     AffixCatalog,
     AffixDefinition,
     AffixProperty,
+    AffixTierDefinition,
     AffixVariantDefinition,
 )
 from gd_affix_relevance.domain import BuildProfile
@@ -356,3 +357,87 @@ def test_slot_ranking_uses_highest_level_layout_and_marks_variations() -> None:
     assert matches[0].variant is high
     assert matches[0].has_level_variations
     assert matches[0].marker == "[C2]"
+
+
+def test_affix_ranking_regrades_from_highest_tier_inside_profile_band() -> None:
+    low = AffixTierDefinition(
+        tier_id="base:records/items/prefix/low.dbr",
+        source="base",
+        record_path="records/items/prefix/low.dbr",
+        gear_slot="Ring",
+        applicable_slots=(SLOT_RING,),
+        level_requirement=20,
+        properties=(AffixProperty("health", "health", {}),),
+        stat_lines=("+[x] Health",),
+    )
+    high = AffixTierDefinition(
+        tier_id="base:records/items/prefix/high.dbr",
+        source="base",
+        record_path="records/items/prefix/high.dbr",
+        gear_slot="Ring",
+        applicable_slots=(SLOT_RING,),
+        level_requirement=70,
+        properties=(
+            AffixProperty("health", "health", {}),
+            AffixProperty("offensive_ability", "offensive_ability", {}),
+        ),
+        stat_lines=("+[x] Health", "+[x] Offensive Ability"),
+    )
+    affix = AffixDefinition(
+        affix_id="prefix:banded",
+        localization_tag="tagBanded",
+        display_name="Banded",
+        kind="prefix",
+        variants=(_variant("health"),),
+        tiers=(low, high),
+    )
+    catalog = AffixCatalog((affix,))
+    profile = BuildProfile(
+        weights={"health": 4, "offensive_ability": 4},
+        level_band="50-64",
+    )
+
+    low_match = rank_affixes_for_slot(
+        catalog, profile, slot_id=SLOT_RING, kind="prefix"
+    )[0]
+    assert low_match.variant.level_requirements == (20,)
+    assert low_match.score.matched_stat_ids == ("health",)
+
+    profile.set_level_band("65-79")
+    high_match = rank_affixes_for_slot(
+        catalog, profile, slot_id=SLOT_RING, kind="prefix"
+    )[0]
+    assert high_match.variant.level_requirements == (70,)
+    assert high_match.score.matched_stat_ids == (
+        "health",
+        "offensive_ability",
+    )
+    assert high_match.score.effective_score > low_match.score.effective_score
+
+
+def test_affix_above_profile_band_is_excluded() -> None:
+    tier = AffixTierDefinition(
+        tier_id="base:records/items/prefix/late.dbr",
+        source="base",
+        record_path="records/items/prefix/late.dbr",
+        gear_slot="Ring",
+        applicable_slots=(SLOT_RING,),
+        level_requirement=65,
+        properties=(AffixProperty("health", "health", {}),),
+        stat_lines=("+[x] Health",),
+    )
+    affix = AffixDefinition(
+        affix_id="prefix:late",
+        localization_tag="tagLate",
+        display_name="Late",
+        kind="prefix",
+        variants=(_variant("health"),),
+        tiers=(tier,),
+    )
+
+    assert not rank_affixes_for_slot(
+        AffixCatalog((affix,)),
+        BuildProfile(weights={"health": 4}, level_band="1-49"),
+        slot_id=SLOT_RING,
+        kind="prefix",
+    )

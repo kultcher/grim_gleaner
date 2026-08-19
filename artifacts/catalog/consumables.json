@@ -284,12 +284,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -578,12 +573,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -640,12 +630,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -1017,12 +1002,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -1210,6 +1190,7 @@
           "effect_properties": [
             {
               "attributes": {
+                "percent": "12.000000",
                 "record_reference": "records/skills/itemskillsgdx1/consumableskills/item_elixir_mogdrogen_01_petbonus.dbr"
               },
               "property_id": "pet_health_percent",
@@ -1217,6 +1198,7 @@
             },
             {
               "attributes": {
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx1/consumableskills/item_elixir_mogdrogen_01_petbonus.dbr"
               },
               "property_id": "pet_total_speed",
@@ -1311,12 +1293,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -1381,12 +1358,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -1524,12 +1496,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -1602,12 +1569,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -1688,12 +1650,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -1869,12 +1826,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -2307,12 +2259,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -2799,12 +2746,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -4381,12 +4323,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -4587,12 +4524,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -4978,12 +4910,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -5041,12 +4968,7 @@
           "applicable_slots": [],
           "category": "consumable",
           "completion_bonus_reference": "",
-          "container_sources": [
-            {
-              "localization_tag": "tagGDX3ChestBeronath",
-              "name": "Beronath's Offerings"
-            }
-          ],
+          "container_sources": [],
           "effect_properties": [
             {
               "attributes": {
@@ -5373,6 +5295,7 @@
           "effect_properties": [
             {
               "attributes": {
+                "percent": "20.000000",
                 "record_reference": "records/skills/itemskills/consumableskills/item_tincture_wrathofbeast_petbonus.dbr"
               },
               "property_id": "pet_critical_damage",
@@ -5380,6 +5303,7 @@
             },
             {
               "attributes": {
+                "percent": "80.000000",
                 "record_reference": "records/skills/itemskills/consumableskills/item_tincture_wrathofbeast_petbonus.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -6164,5 +6088,5 @@
       ]
     }
   ],
-  "schema_version": 7
+  "schema_version": 8
 }

@@ -10,6 +10,10 @@ from gd_affix_relevance.conversions import (
     CONVERSION_SOURCE_TYPES,
     canonical_damage_type,
 )
+from gd_affix_relevance.level_bands import (
+    DEFAULT_LEVEL_BAND_ID,
+    validate_level_band_id,
+)
 
 MIN_STAT_WEIGHT = 0
 MAX_STAT_WEIGHT = 4
@@ -39,6 +43,7 @@ class BuildProfile:
     )
     resistance_cap_enabled: bool = False
     resistance_cap_weights: dict[str, int] = field(default_factory=dict)
+    level_band: str = DEFAULT_LEVEL_BAND_ID
 
     def __post_init__(self) -> None:
         supplied_weights = dict(self.weights)
@@ -69,6 +74,10 @@ class BuildProfile:
         self.resistance_cap_weights.clear()
         for stat_id, weight in supplied_cap_weights.items():
             self.set_resistance_cap_weight(stat_id, weight)
+        self.set_level_band(self.level_band)
+
+    def set_level_band(self, band_id: str) -> None:
+        self.level_band = validate_level_band_id(band_id)
 
     def weight_for(self, stat_id: str) -> int:
         return self.weights.get(stat_id, MIN_STAT_WEIGHT)
@@ -199,6 +208,7 @@ class BuildProfile:
     def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
+            "level_band": self.level_band,
             "masteries": list(self.masteries),
             "skill_weights": dict(sorted(self.skill_weights.items())),
             "weights": dict(sorted(self.weights.items())),
@@ -229,6 +239,7 @@ class BuildProfile:
         raw_resistance_cap_weights = payload.get(
             "resistance_cap_weights", {}
         )
+        raw_level_band = payload.get("level_band", DEFAULT_LEVEL_BAND_ID)
         if not isinstance(name, str):
             raise TypeError("profile name must be a string")
         if not isinstance(raw_weights, dict):
@@ -250,6 +261,7 @@ class BuildProfile:
             name=name,
             masteries=tuple(raw_masteries),
             resistance_cap_enabled=raw_resistance_cap_enabled,
+            level_band=raw_level_band,
         )
         for stat_id, weight in raw_weights.items():
             if not isinstance(stat_id, str):

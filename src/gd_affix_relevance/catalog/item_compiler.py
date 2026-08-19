@@ -24,7 +24,6 @@ from gd_affix_relevance.normalization.mapping_proposals import (
 )
 from gd_affix_relevance.normalization.sample_report import (
     normalize_record_stat_lines,
-    record_semantic_fingerprint,
 )
 from gd_affix_relevance.records import RecordLocation, RecordRepository
 
@@ -156,6 +155,10 @@ def compile_item_payloads(
             source = location.source
             logical_path = location.logical_path
             record = resolver.load(location)
+            if family == "equipment" and _is_blank_equipment_template(
+                record, logical_path
+            ):
+                continue
             name_tag = _name_tag(record, family)
             if not name_tag:
                 continue
@@ -177,7 +180,7 @@ def compile_item_payloads(
                     description = plain_display_name(description_entry.value)
                     strings[description_tag] = description
 
-            properties = _property_payloads(
+            properties = compile_record_properties(
                 record,
                 resolver=resolver,
                 localization_lookup=localization_lookup,
@@ -223,7 +226,7 @@ def compile_item_payloads(
                 resolved_effect = resolver.resolve(effect_reference)
                 if resolved_effect is not None:
                     _, effect_record = resolved_effect
-                    effect_properties = _property_payloads(
+                    effect_properties = compile_record_properties(
                         effect_record,
                         resolver=resolver,
                         localization_lookup=localization_lookup,
@@ -659,6 +662,20 @@ def _name_tag(record: RawDbrRecord, family: str) -> str:
     return (record.first_value(field) or "").strip()
 
 
+def _is_blank_equipment_template(
+    record: RawDbrRecord, logical_path: str
+) -> bool:
+    """Reject generic equipment templates that borrow a real item's name tag."""
+
+    description = (record.first_value("FileDescription") or "").strip()
+    if "base blank" in description.casefold():
+        return True
+    if description:
+        return False
+    stem = Path(logical_path).stem.casefold()
+    return re.match(r"^[bc]\d00(?:_|$)", stem) is not None
+
+
 def _item_category(family: str, logical_path: str, record: RawDbrRecord) -> str:
     if family != "equipment":
         return family.removesuffix("s")
@@ -701,7 +718,7 @@ def _applicable_slots(record: RawDbrRecord) -> tuple[str, ...]:
     return tuple(sorted(slots))
 
 
-def _property_payloads(
+def compile_record_properties(
     record: RawDbrRecord,
     *,
     resolver: RecordRepository,
@@ -777,17 +794,22 @@ def _property_payloads(
             del bundles["pet_bonus"]
             del property_ids["pet_bonus"]
             _, pet_record = resolved_pet
-            for property_key, role, value in record_semantic_fingerprint(
-                pet_record
-            ):
-                if property_key.startswith("unmapped:"):
+            nested_properties = compile_record_properties(
+                pet_record,
+                resolver=resolver,
+                localization_lookup=localization_lookup,
+                modifier=modifier,
+            )
+            for nested in nested_properties:
+                if nested["property_id"] in {
+                    "unmapped",
+                    "unresolved_composite",
+                }:
                     continue
-                nested_key = f"pet_{property_key}"
-                nested_id = f"pet_{property_key.split(':', 1)[0]}"
-                property_ids[nested_key] = nested_id
+                nested_key = f"pet_{nested['property_key']}"
+                property_ids[nested_key] = f"pet_{nested['property_id']}"
+                bundles[nested_key].update(nested["attributes"])
                 bundles[nested_key]["record_reference"] = pet_reference
-                if value:
-                    bundles[nested_key][role] = value
 
     payloads: list[dict[str, Any]] = []
     for property_key, attributes in sorted(bundles.items()):
@@ -849,7 +871,7 @@ def _skill_modifier_payloads(
         resolved = resolver.resolve(modifier_reference)
         if resolved is not None:
             _, modifier_record = resolved
-            properties = _property_payloads(
+            properties = compile_record_properties(
                 modifier_record,
                 resolver=resolver,
                 localization_lookup=localization_lookup,

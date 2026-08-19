@@ -13,6 +13,7 @@ CATALOG_DATA_FILES = (
     "affixes.json",
     "skills.json",
     "strings.en.json",
+    "magnitude-index.json",
     "equipment.json",
     "components.json",
     "augments.json",
@@ -41,6 +42,8 @@ def _write_minimal_catalog(root: Path) -> None:
         "consumables": 0,
         "items": 0,
         "item_variants": 0,
+        "magnitude_entries": 0,
+        "magnitude_properties": 0,
     }
     _write_json(
         root / "manifest.json",
@@ -90,7 +93,21 @@ def _write_minimal_catalog(root: Path) -> None:
         root / "affixes.json",
         {"schema_version": CATALOG_SCHEMA_VERSION, "affixes": []},
     )
-    for filename in CATALOG_DATA_FILES[3:]:
+    _write_json(
+        root / "magnitude-index.json",
+        {
+            "schema_version": CATALOG_SCHEMA_VERSION,
+            "bands": [
+                {"band_id": "1-49", "minimum_level": 1, "maximum_level": 49},
+                {"band_id": "50-64", "minimum_level": 50, "maximum_level": 64},
+                {"band_id": "65-79", "minimum_level": 65, "maximum_level": 79},
+                {"band_id": "80-89", "minimum_level": 80, "maximum_level": 89},
+                {"band_id": "90+", "minimum_level": 90, "maximum_level": None},
+            ],
+            "entries": [],
+        },
+    )
+    for filename in CATALOG_DATA_FILES[4:]:
         _write_json(
             root / filename,
             {"schema_version": CATALOG_SCHEMA_VERSION, "items": []},
@@ -156,7 +173,7 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
     result = assemble_release(project)
 
     assert result.output_root == output.resolve()
-    assert result.catalog_files == 10
+    assert result.catalog_files == 11
     assert result.tag_files == 4
     assert result.tag_entries == 4
     assert result.example_profiles == 1

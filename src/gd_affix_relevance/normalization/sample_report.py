@@ -72,6 +72,7 @@ class AffixSampleCandidate:
     semantic_properties: tuple[str, ...] = ()
     semantic_components: tuple[tuple[str, str, str], ...] = ()
     applicable_slots: tuple[str, ...] = ()
+    source_records: tuple[str, ...] = ()
 
 
 @dataclass(slots=True)
@@ -258,6 +259,7 @@ def build_sample_candidates(
                     group.preserved_values,
                 ),
                 applicable_slots=group.applicable_slots,
+                source_records=tuple(sorted(group.sources)),
             )
         )
     return SampleBuildResult(

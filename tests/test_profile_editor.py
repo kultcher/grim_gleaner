@@ -40,6 +40,7 @@ def test_editor_saves_and_loads_profile_into_existing_controls(
     loaded_profile.set_conversion_source_enabled("fire", "physical", False)
     loaded_profile.resistance_cap_enabled = True
     loaded_profile.set_resistance_cap_weight("fire_resistance", 2)
+    loaded_profile.set_level_band("65-79")
     loaded_path = save_profile(loaded_profile, tmp_path / "loaded.json")
     returned = editor.load_from_path(loaded_path)
 
@@ -53,6 +54,8 @@ def test_editor_saves_and_loads_profile_into_existing_controls(
     }
     assert original.resistance_cap_enabled
     assert original.resistance_cap_weights == {"fire_resistance": 2}
+    assert original.level_band == "65-79"
+    assert editor.level_band_combo.currentData() == "65-79"
     assert (
         editor.accordions["core_health"].rows["health"].weight_control.value
         == 4
@@ -87,6 +90,7 @@ def test_new_profile_can_cancel_or_clear_every_profile_field() -> None:
     profile.set_conversion_source_enabled("fire", "physical", False)
     profile.resistance_cap_enabled = True
     profile.set_resistance_cap_weight("fire_resistance", 2)
+    profile.set_level_band("50-64")
     editor = ProfileEditor(profile)
     editor.name_edit.setText("Changed")
     assert editor.is_dirty
@@ -110,6 +114,8 @@ def test_new_profile_can_cancel_or_clear_every_profile_field() -> None:
     assert profile.excluded_conversion_sources == {}
     assert not profile.resistance_cap_enabled
     assert profile.resistance_cap_weights == {}
+    assert profile.level_band == "90+"
+    assert editor.level_band_combo.currentData() == "90+"
     assert editor.current_profile_path is None
     assert not editor.is_dirty
     assert editor.accordions["core_health"].rows[
@@ -157,6 +163,29 @@ def test_confirm_close_resolves_unsaved_profile_changes(tmp_path: Path) -> None:
     assert editor.confirm_close()
     assert load_profile(destination).weight_for("health") == 4
     assert not editor.is_dirty
+
+
+def test_profile_level_selector_updates_profile_and_dirty_state() -> None:
+    _application()
+    profile = BuildProfile()
+    editor = ProfileEditor(profile)
+    metadata_changes: list[str] = []
+    profile_changes: list[str] = []
+    editor.profile_metadata_changed.connect(
+        lambda: metadata_changes.append(profile.level_band)
+    )
+    editor.profile_changed.connect(
+        lambda: profile_changes.append(profile.level_band)
+    )
+
+    editor.level_band_combo.setCurrentIndex(
+        editor.level_band_combo.findData("80-89")
+    )
+
+    assert profile.level_band == "80-89"
+    assert editor.is_dirty
+    assert metadata_changes == ["80-89"]
+    assert profile_changes == ["80-89"]
 
 
 def test_confirm_close_allows_clean_or_discarded_profile() -> None:

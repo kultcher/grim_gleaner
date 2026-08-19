@@ -85,7 +85,8 @@ class GuidePage(QWidget):
         _add_section(
             content_layout,
             "Current limitations",
-            "- Grades assume the highest-level version of an affix or fixed item.\n"
+            "- Grades use the highest affix or fixed-item version available "
+            "within the profile's selected level band.\n"
             "- Granted skills are flagged but their usefulness is not evaluated.\n"
             "- Skill modifiers receive relevance from the selected skill, but "
             "their exact mechanical value is not yet evaluated.\n"

@@ -11,7 +11,9 @@ from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.io_utils import atomic_write_bytes
 from gd_affix_relevance.scoring import (
+    affix_variants_for_profile,
     canonical_skill_reference,
+    item_variant_is_eligible,
     item_semantic_stat_ids,
     score_semantic_stat_ids,
     unique_item_type,
@@ -79,7 +81,9 @@ def _build_affix_instructions(
 ) -> dict[str, _MarkerInstruction]:
     variants_by_tag: dict[str, list[tuple[str, object]]] = defaultdict(list)
     for affix in catalog.affixes:
-        for variant in affix.variants:
+        for variant in affix_variants_for_profile(
+            affix, profile, include_future_fallback=True
+        ):
             variants_by_tag[affix.localization_tag].append((affix.kind, variant))
 
     instructions: dict[str, _MarkerInstruction] = {}
@@ -125,11 +129,24 @@ def _build_unique_instructions(
     }
     instructions: dict[str, _MarkerInstruction] = {}
     for item in catalog.equipment:
-        candidates = tuple(
-            variant for variant in item.variants if unique_item_type(variant)
+        all_candidates = tuple(
+            variant
+            for variant in item.variants
+            if unique_item_type(variant)
         )
-        if not candidates:
+        if not all_candidates:
             continue
+        eligible_candidates = tuple(
+            variant
+            for variant in all_candidates
+            if item_variant_is_eligible(variant, profile)
+        )
+        candidates = eligible_candidates or tuple(
+            variant
+            for variant in all_candidates
+            if variant.level_requirement
+            == min(value.level_requirement for value in all_candidates)
+        )
         variant = max(
             candidates,
             key=lambda candidate: (

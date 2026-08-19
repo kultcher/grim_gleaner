@@ -9,8 +9,8 @@ from typing import Any
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.io_utils import atomic_write_text
 
-PROFILE_FILE_SCHEMA_VERSION = 4
-SUPPORTED_PROFILE_FILE_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4})
+PROFILE_FILE_SCHEMA_VERSION = 5
+SUPPORTED_PROFILE_FILE_SCHEMA_VERSIONS = frozenset({1, 2, 3, 4, 5})
 
 
 class ProfileFormatError(ValueError):

@@ -9,7 +9,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from gd_affix_relevance.catalog.models import CATALOG_SCHEMA_VERSION
+from gd_affix_relevance.catalog.magnitude import compile_magnitude_payload
+from gd_affix_relevance.catalog.models import (
+    CATALOG_SCHEMA_VERSION,
+    MAGNITUDE_CATALOG_FILE,
+)
 from gd_affix_relevance.catalog.mastery_trees import (
     MasteryTreeRelationship,
     load_mastery_tree_relationships,
@@ -17,6 +21,7 @@ from gd_affix_relevance.catalog.mastery_trees import (
 from gd_affix_relevance.catalog.item_compiler import (
     ITEM_FAMILIES,
     ITEM_SCOPE,
+    compile_record_properties,
     compile_item_payloads,
 )
 from gd_affix_relevance.catalog.value_parsing import integer_value
@@ -29,9 +34,14 @@ from gd_affix_relevance.importers.localization_parser import (
 from gd_affix_relevance.normalization.sample_report import (
     AffixSampleCandidate,
     build_sample_candidates,
+    normalize_record_stat_lines,
     record_semantic_fingerprint,
 )
-from gd_affix_relevance.records import DEFAULT_DATA_SOURCES, RecordRepository
+from gd_affix_relevance.records import (
+    DEFAULT_DATA_SOURCES,
+    RecordLocation,
+    RecordRepository,
+)
 
 AFFIX_SCOPE = "structurally_reachable_magic_and_rare"
 SKILL_SCOPE = "named_player_pet_and_item_granted_with_mastery_tree_metadata"
@@ -50,6 +60,8 @@ class CatalogCompileResult:
     item_counts: dict[str, int]
     item_variant_count: int
     unresolved_item_record_count: int
+    magnitude_entry_count: int
+    magnitude_property_count: int
 
 
 def compile_catalog_bundle(
@@ -112,10 +124,24 @@ def compile_catalog_bundle(
             strings,
         )
     )
+    magnitude_payload = compile_magnitude_payload(
+        affix_payloads, item_payloads
+    )
+    magnitude_entry_count = len(magnitude_payload["entries"])
+    magnitude_property_count = sum(
+        len(entry["properties"])
+        for entry in magnitude_payload["entries"]
+    )
 
     destination.mkdir(parents=True, exist_ok=True)
     item_files = tuple(f"{family}.json" for family in ITEM_FAMILIES)
-    files = ("affixes.json", "skills.json", "strings.en.json", *item_files)
+    files = (
+        "affixes.json",
+        "skills.json",
+        "strings.en.json",
+        *item_files,
+        MAGNITUDE_CATALOG_FILE,
+    )
     _write_json(
         destination / "strings.en.json",
         {
@@ -139,6 +165,10 @@ def compile_catalog_bundle(
             destination / f"{family}.json",
             {"schema_version": CATALOG_SCHEMA_VERSION, "items": item_payloads[family]},
         )
+    _write_json(
+        destination / MAGNITUDE_CATALOG_FILE,
+        {"schema_version": CATALOG_SCHEMA_VERSION, **magnitude_payload},
+    )
     item_counts = {
         family: len(item_payloads[family]) for family in ITEM_FAMILIES
     }
@@ -151,6 +181,8 @@ def compile_catalog_bundle(
         "items": sum(item_counts.values()),
         "item_variants": item_variant_count,
         "unresolved_item_records": unresolved_item_names,
+        "magnitude_entries": magnitude_entry_count,
+        "magnitude_properties": magnitude_property_count,
         **item_counts,
     }
     _write_json(
@@ -189,6 +221,8 @@ def compile_catalog_bundle(
         item_counts=item_counts,
         item_variant_count=item_variant_count,
         unresolved_item_record_count=unresolved_item_names,
+        magnitude_entry_count=magnitude_entry_count,
+        magnitude_property_count=magnitude_property_count,
     )
 
 
@@ -435,6 +469,11 @@ def _compile_affixes(
                 "display_name": ordered_variants[0].display_name,
                 "kind": kind,
                 "rarity": next(iter(rarities)),
+                "tiers": _affix_tier_payloads(
+                    ordered_variants,
+                    resolver,
+                    localization_lookup,
+                ),
                 "variants": [
                     _variant_payload(variant, resolver, localization_lookup)
                     for variant in ordered_variants
@@ -447,6 +486,63 @@ def _compile_affixes(
             str(affix["display_name"]).casefold(),
             str(affix["kind"]),
             str(affix["localization_tag"]).casefold(),
+        ),
+    )
+
+
+def _affix_tier_payloads(
+    candidates: list[AffixSampleCandidate],
+    resolver: RecordRepository,
+    localization_lookup: dict[str, LocalizationEntry],
+) -> list[dict[str, Any]]:
+    """Preserve every concrete reachable affix record and its raw values."""
+
+    tiers: dict[str, dict[str, Any]] = {}
+    for candidate in candidates:
+        source_records = candidate.source_records or (
+            candidate.representative_source,
+        )
+        for source_record in source_records:
+            source, separator, logical_path = source_record.partition(":")
+            if not separator or source not in resolver.source_names:
+                continue
+            path = resolver.data_root / source / Path(logical_path)
+            if not path.is_file():
+                continue
+            location = RecordLocation(source, logical_path, path)
+            record = resolver.load(location)
+            tier_id = f"{source}:{logical_path}"
+            tiers[tier_id] = {
+                "tier_id": tier_id,
+                "source": source,
+                "record_path": logical_path,
+                "gear_slot": candidate.gear_slot,
+                "applicable_slots": list(candidate.applicable_slots),
+                "level_requirement": integer_value(
+                    record.first_value("levelRequirement")
+                ),
+                "properties": compile_record_properties(
+                    record,
+                    resolver=resolver,
+                    localization_lookup=localization_lookup,
+                ),
+                "stat_lines": list(
+                    line
+                    for line in normalize_record_stat_lines(
+                        record,
+                        resolver=resolver,
+                        localization_lookup=localization_lookup,
+                    )
+                    if not line.startswith("[Needs mapping]")
+                ),
+            }
+    return sorted(
+        tiers.values(),
+        key=lambda tier: (
+            str(tier["gear_slot"]).casefold(),
+            int(tier["level_requirement"]),
+            str(tier["source"]),
+            str(tier["record_path"]),
         ),
     )
 

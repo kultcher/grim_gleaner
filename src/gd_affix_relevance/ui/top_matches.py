@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from html import escape
 
 from PySide6.QtCore import QEvent, QObject, QSignalBlocker, Qt, Signal
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QPalette
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -47,6 +48,7 @@ from gd_affix_relevance.scoring import (
     UNIQUE_TYPE_LABELS,
     canonical_skill_reference,
     profile_weight_for_semantic_id,
+    property_enabled_for_profile,
     rank_addons_for_slot,
     rank_affixes_for_slot,
     rank_unique_items_for_slot,
@@ -60,6 +62,10 @@ from gd_affix_relevance.slots import (
     WEAPON_SLOTS,
 )
 from gd_affix_relevance.ui.catalog import RESISTANCE_STATS
+from gd_affix_relevance.ui.detail_stats import (
+    build_detail_stat_rows,
+    stat_table_html,
+)
 from gd_affix_relevance.stats import registered_stat_definitions
 from gd_affix_relevance.ui.widgets import StatRow
 
@@ -71,6 +77,8 @@ RESULTS_PER_AFFIX_TABLE = 5
 SKILL_RANK_HIGHLIGHT = QColor("#8bded7")
 SKILL_MODIFIER_HIGHLIGHT = QColor("#66cdaa")
 HIGHLIGHT_TEXT = QColor("#102528")
+SELECTED_ROW_HIGHLIGHT = QColor("#3a4454")
+SELECTED_ROW_TEXT = QColor("#ffffff")
 MATCHED_STAT_COLOR = "#82d99b"
 UNMATCHED_STAT_COLOR = "#b7bec9"
 SKILL_RANK_STAT_COLOR = "#8bded7"
@@ -145,13 +153,21 @@ def _granted_skill_section(names: tuple[str, ...]) -> tuple[str, ...]:
         else "Granted skills (not evaluated):"
     )
     return (
-        _html_line(""),
         _html_line(heading, bold=True),
         *(
             _html_line(f"- {name}", color=SKILL_RANK_STAT_COLOR)
             for name in distinct_names
         ),
     )
+
+
+def _extend_detail_group(html: list[str], lines: tuple[str, ...] | list[str]) -> None:
+    """Append one visually separated detail group when it has content."""
+
+    if not lines:
+        return
+    html.append(_html_line(""))
+    html.extend(lines)
 
 
 def _has_selected_skill_bonus(
@@ -194,7 +210,10 @@ def _highlight_item(item: QTableWidgetItem, kind: str) -> None:
 
 def _html_line(text: str, *, color: str = "", bold: bool = False) -> str:
     if not text:
-        return "<div><br></div>"
+        # A compact spacer behaves consistently after both divs and tables.
+        # A bare <br> after a table creates two blank rows in QTextEdit because
+        # the table already contributes its own block boundary.
+        return '<div style="font-size:4px">&nbsp;</div>'
     style = []
     if color:
         style.append(f"color: {color}")
@@ -243,11 +262,6 @@ def _semantic_stat_color(stat_id: str, *, matched: bool) -> str:
     return MATCHED_STAT_COLOR if matched else UNMATCHED_STAT_COLOR
 
 
-def _stat_html(stat_id: str, label: str, *, matched: bool) -> str:
-    color = _semantic_stat_color(stat_id, matched=matched)
-    return _html_line(f"- {label}", color=color)
-
-
 class MatchDetailPane(QFrame):
     """Fixed title bar over an independently scrolling rich-text body."""
 
@@ -288,6 +302,22 @@ def _configure_table(table: QTableWidget, stretch_column: int) -> None:
     table.setAlternatingRowColors(True)
     table.verticalHeader().setVisible(False)
     table.verticalHeader().setDefaultSectionSize(26)
+    palette = table.palette()
+    for color_group in (
+        QPalette.ColorGroup.Active,
+        QPalette.ColorGroup.Inactive,
+    ):
+        palette.setColor(
+            color_group,
+            QPalette.ColorRole.Highlight,
+            SELECTED_ROW_HIGHLIGHT,
+        )
+        palette.setColor(
+            color_group,
+            QPalette.ColorRole.HighlightedText,
+            SELECTED_ROW_TEXT,
+        )
+    table.setPalette(palette)
     header = table.horizontalHeader()
     header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
     header.setSectionResizeMode(stretch_column, QHeaderView.ResizeMode.Stretch)
@@ -1208,8 +1238,8 @@ class TopMatchesPage(QWidget):
             f"{self.profile.name}: {visible_affixes} ranked affix entries and "
             f"{visible_uniques} {self.minimum_grade.currentText()}-or-better "
             f"unique-item entries, and {visible_addons} add-on entries. "
-            "Grades assume "
-            f"the highest-level stat layout.{cap_note}{source_note}"
+            f"Grades use the highest variant eligible for level band "
+            f"{self.profile.level_band}.{cap_note}{source_note}"
         )
 
     def _select_first_visible_match(self) -> None:
@@ -1259,12 +1289,6 @@ class TopMatchesPage(QWidget):
                     other.clearSelection()
             self._selected_table = table
         score = match.score
-        matched_ids = set(score.matched_stat_ids)
-        unmatched_ids = [
-            stat_id
-            for stat_id in match.semantic_stat_ids
-            if stat_id not in matched_ids
-        ]
         rarity = match.affix.rarity.strip()
         affix_type = " ".join(
             part for part in (rarity, match.affix.kind.title()) if part
@@ -1287,65 +1311,50 @@ class TopMatchesPage(QWidget):
                 f"{score.matched_count}/{score.total_category_count} "
                 f"({score.coverage_ratio:.0%})"
             ),
-            _html_line(""),
-            _html_line("Matched stats:", bold=True),
+            self._detail_stat_table(
+                match.semantic_stat_ids,
+                match.variant.properties,
+                weight_for=lambda stat_id: profile_weight_for_semantic_id(
+                    self.profile, stat_id
+                ),
+            ),
         ]
-        if score.matched_stat_ids:
-            html.extend(
-                _stat_html(
-                    stat_id,
-                    f"{self._label_for(stat_id, match.variant.properties)}: "
-                    "weight "
-                    f"{profile_weight_for_semantic_id(self.profile, stat_id)}",
-                    matched=True,
-                )
-                for stat_id in score.matched_stat_ids
-            )
-        else:
-            html.append(_stat_html("", "None", matched=True))
-        html.extend(
-            (_html_line(""), _html_line("Remaining unmatched stats:", bold=True))
-        )
-        if unmatched_ids:
-            html.extend(
-                _stat_html(
-                    stat_id,
-                    self._label_for(stat_id, match.variant.properties),
-                    matched=False,
-                )
-                for stat_id in unmatched_ids
-            )
-        else:
-            html.append(_stat_html("", "None", matched=False))
-        html.extend(
+        _extend_detail_group(
+            html,
             _granted_skill_section(
                 tuple(
                     property_.attributes.get("display_name", "").strip()
                     for property_ in match.variant.properties
                     if property_.property_id == "granted_item_skill"
                 )
-            )
+            ),
         )
+        source_lines: list[str] = []
         if match.variant.level_requirements:
-            html.extend(
-                (
-                    _html_line(""),
-                    _html_line(
-                        "Level requirements for this layout: "
-                        + ", ".join(map(str, match.variant.level_requirements))
-                    ),
+            source_lines.append(
+                _html_line(
+                    "Level requirements for this layout: "
+                    + ", ".join(map(str, match.variant.level_requirements))
                 )
             )
-        html.extend(
-            (
-                _html_line(""),
-                _html_line("Grades assume the highest-level stat layout."),
+        source_lines.extend(
+            [
+                _html_line(
+                    "Grade uses the highest stat layout eligible for profile "
+                    f"level band {self.profile.level_band}."
+                ),
                 _html_line(f"Full applicability: {match.variant.gear_slot}"),
+            ]
+        )
+        _extend_detail_group(html, source_lines)
+        _extend_detail_group(
+            html,
+            [
                 _html_line(f"Localization tag: {match.affix.localization_tag}"),
                 _html_line(
                     f"Representative: {match.variant.representative_source}"
                 ),
-            )
+            ],
         )
         self.details.setHtml("".join(html))
 
@@ -1361,12 +1370,6 @@ class TopMatchesPage(QWidget):
                     other.clearSelection()
             self._selected_unique_table = table
         score = match.score
-        matched_ids = set(score.matched_stat_ids)
-        unmatched_ids = [
-            stat_id
-            for stat_id in match.semantic_stat_ids
-            if stat_id not in matched_ids
-        ]
         self.unique_detail_pane.set_title(
             f"{match.marker}{match.item.display_name} · {SLOT_LABELS[slot_id]} · "
             f"{UNIQUE_TYPE_LABELS[match.item_type]}",
@@ -1382,51 +1385,29 @@ class TopMatchesPage(QWidget):
                 f"{score.matched_count}/{score.total_category_count} "
                 f"({score.coverage_ratio:.0%})"
             ),
-            _html_line(""),
-            _html_line("Matched stats:", bold=True),
+            self._detail_stat_table(
+                match.semantic_stat_ids,
+                match.variant.properties,
+                weight_for=lambda stat_id: profile_weight_for_semantic_id(
+                    self.profile, stat_id
+                ),
+            ),
         ]
-        if score.matched_stat_ids:
-            html.extend(
-                _stat_html(
-                    stat_id,
-                    f"{self._label_for(stat_id, match.variant.properties)}: "
-                    "weight "
-                    f"{profile_weight_for_semantic_id(self.profile, stat_id)}",
-                    matched=True,
-                )
-                for stat_id in score.matched_stat_ids
-            )
-        else:
-            html.append(_stat_html("", "None", matched=True))
-        html.extend(
-            (_html_line(""), _html_line("Remaining unmatched stats:", bold=True))
+        _extend_detail_group(
+            html,
+            _granted_skill_section((match.variant.granted_skill_name,)),
         )
-        if unmatched_ids:
-            html.extend(
-                _stat_html(
-                    stat_id,
-                    self._label_for(stat_id, match.variant.properties),
-                    matched=False,
-                )
-                for stat_id in unmatched_ids
-            )
-        else:
-            html.append(_stat_html("", "None", matched=False))
-        if match.variant.set_name:
-            html.extend((_html_line(""), _html_line(f"Set: {match.variant.set_name}")))
-        html.extend(
-            _granted_skill_section((match.variant.granted_skill_name,))
-        )
+        modifier_lines: list[str] = []
         if match.variant.skill_modifiers:
-            html.extend((_html_line(""), _html_line("Skill modifiers:", bold=True)))
+            modifier_lines.append(_html_line("Skill modifiers:", bold=True))
             for modifier in match.variant.skill_modifiers:
-                html.append(
+                modifier_lines.append(
                     _html_line(
                         f"- {modifier.modified_skill_name}",
                         color=SKILL_MODIFIER_STAT_COLOR,
                     )
                 )
-                html.extend(
+                modifier_lines.extend(
                     _html_line(f"  - {line}", color=SKILL_MODIFIER_STAT_COLOR)
                     for line in modifier.stat_lines
                 )
@@ -1444,9 +1425,8 @@ class TopMatchesPage(QWidget):
                     }
                 }
             )
-            html.extend(
-                (
-                    _html_line(""),
+            modifier_lines.extend(
+                [
                     _html_line(
                         "!: Modifies selected build skill(s): "
                         + ", ".join(selected_modifiers),
@@ -1457,25 +1437,26 @@ class TopMatchesPage(QWidget):
                         "each modified skill. The modifier's actual effects, values, "
                         "and conversions are not yet evaluated."
                     ),
-                )
+                ]
             )
-        html.extend(
-            (
-                _html_line(""),
-                _html_line(f"Source: {_item_source_label(match.variant)}"),
-            )
+        _extend_detail_group(html, modifier_lines)
+        source_lines = []
+        if match.variant.set_name:
+            source_lines.append(_html_line(f"Set: {match.variant.set_name}"))
+        source_lines.append(
+            _html_line(f"Source: {_item_source_label(match.variant)}")
         )
         if (
             match.variant.acquisition_source == "Specific Monster Drop"
             and len(match.variant.monster_sources) > 1
         ):
-            html.append(
+            source_lines.append(
                 _html_line(
                     f"Drops from {len(match.variant.monster_sources)} enemies:",
                     bold=True,
                 )
             )
-            html.extend(
+            source_lines.extend(
                 _html_line(f"- {source.name}")
                 for source in match.variant.monster_sources
             )
@@ -1483,26 +1464,35 @@ class TopMatchesPage(QWidget):
             match.variant.acquisition_source == "Lootable Container"
             and len(match.variant.container_sources) > 1
         ):
-            html.append(
+            source_lines.append(
                 _html_line(
                     "Found in "
                     f"{len(match.variant.container_sources)} lootable containers:",
                     bold=True,
                 )
             )
-            html.extend(
+            source_lines.extend(
                 _html_line(f"- {source.name}")
                 for source in match.variant.container_sources
             )
-        html.extend(
-            (
+        source_lines.extend(
+            [
                 _html_line(f"Required level: {match.variant.level_requirement}"),
-                _html_line("Grades assume the highest-level item variant."),
+                _html_line(
+                    "Grade uses the highest item variant eligible for profile "
+                    f"level band {self.profile.level_band}."
+                ),
+            ]
+        )
+        _extend_detail_group(html, source_lines)
+        _extend_detail_group(
+            html,
+            [
                 _html_line(f"Localization tag: {match.item.localization_tag}"),
                 _html_line(
                     f"Record: {match.variant.source}:{match.variant.record_path}"
                 ),
-            )
+            ],
         )
         self.unique_details.setHtml("".join(html))
 
@@ -1519,12 +1509,6 @@ class TopMatchesPage(QWidget):
                     other.setCurrentCell(-1, -1)
             self._selected_addon_table = table
         score = match.score
-        matched_ids = set(score.matched_stat_ids)
-        unmatched_ids = [
-            stat_id
-            for stat_id in match.semantic_stat_ids
-            if stat_id not in matched_ids
-        ]
         type_label = ADDON_TYPE_LABELS[match.addon_type]
         self.addon_detail_pane.set_title(
             f"{match.marker}{match.item.display_name} \u00b7 "
@@ -1543,79 +1527,91 @@ class TopMatchesPage(QWidget):
                 f"{score.matched_count}/{score.total_category_count} "
                 f"({score.coverage_ratio:.0%})"
             ),
-            _html_line(""),
-            _html_line("Matched stats:", bold=True),
+            self._detail_stat_table(
+                match.semantic_stat_ids,
+                match.variant.properties,
+                weight_for=self._addon_display_weight,
+            ),
         ]
-        if score.matched_stat_ids:
-            html.extend(
-                _stat_html(
-                    stat_id,
-                    f"{self._label_for(stat_id, match.variant.properties)}: "
-                    f"{self._addon_weight_description(stat_id)}",
-                    matched=True,
-                )
-                for stat_id in score.matched_stat_ids
-            )
-        else:
-            html.append(_stat_html("", "None", matched=True))
-        html.extend(
-            (_html_line(""), _html_line("Remaining unmatched stats:", bold=True))
+        _extend_detail_group(
+            html,
+            _granted_skill_section((match.variant.granted_skill_name,)),
         )
-        if unmatched_ids:
-            html.extend(
-                _stat_html(
-                    stat_id,
-                    self._label_for(stat_id, match.variant.properties),
-                    matched=False,
-                )
-                for stat_id in unmatched_ids
-            )
-        else:
-            html.append(_stat_html("", "None", matched=False))
-        html.extend(
-            _granted_skill_section((match.variant.granted_skill_name,))
-        )
-        html.append(_html_line(""))
+        source_lines = []
         if match.addon_type == ADDON_AUGMENT:
             faction = (
                 match.variant.faction_name
                 or match.variant.faction_source
                 or "Unknown"
             )
-            html.append(_html_line(f"Faction: {faction}"))
+            source_lines.append(_html_line(f"Faction: {faction}"))
         if match.variant.vendor_sources:
             vendors = ", ".join(
                 f"{source.faction_name} ({source.reputation})"
                 for source in match.variant.vendor_sources
             )
-            html.append(_html_line(f"Recipe sold by: {vendors}"))
-        html.extend(
-            (
+            source_lines.append(_html_line(f"Recipe sold by: {vendors}"))
+        source_lines.extend(
+            [
                 _html_line(f"Source: {match.variant.acquisition_source}"),
                 _html_line(
                     f"Required level: {match.variant.level_requirement}"
                 ),
-                _html_line("Grades assume the highest-level item variant."),
+                _html_line(
+                    "Grade uses the highest item variant eligible for profile "
+                    f"level band {self.profile.level_band}."
+                ),
+            ]
+        )
+        _extend_detail_group(html, source_lines)
+        _extend_detail_group(
+            html,
+            [
                 _html_line(f"Localization tag: {match.item.localization_tag}"),
                 _html_line(
                     f"Record: {match.variant.source}:"
                     f"{match.variant.record_path}"
                 ),
-            )
+            ],
         )
         self.addon_details.setHtml("".join(html))
 
-    def _addon_weight_description(self, stat_id: str) -> str:
+    def _addon_display_weight(self, stat_id: str) -> int:
         if self.resistance_cap_enabled and stat_id in self.resistance_cap_weights:
-            weight = self.resistance_cap_weights[stat_id]
-            return f"cap weight {weight} (amplified to {weight * 2})"
-        return (
-            "weight "
-            f"{profile_weight_for_semantic_id(self.profile, stat_id)}"
+            return self.resistance_cap_weights[stat_id]
+        return profile_weight_for_semantic_id(self.profile, stat_id)
+
+    def _detail_stat_table(
+        self,
+        stat_ids: tuple[str, ...],
+        properties: tuple[object, ...],
+        *,
+        weight_for: Callable[[str], int],
+    ) -> str:
+        rows = build_detail_stat_rows(
+            stat_ids,
+            properties,
+            label_for=lambda stat_id: self._label_for(
+                stat_id, properties, include_value=False
+            ),
+            weight_for=weight_for,
+            property_enabled=lambda property_: property_enabled_for_profile(
+                property_, self.profile  # type: ignore[arg-type]
+            ),
+        )
+        return stat_table_html(
+            rows,
+            color_for=lambda stat_id, matched: _semantic_stat_color(
+                stat_id, matched=matched
+            ),
         )
 
     def _label_for(
-        self, stat_id: str, properties: tuple[object, ...] = ()
+        self,
+        stat_id: str,
+        properties: tuple[object, ...] = (),
+        *,
+        include_value: bool = True,
     ) -> str:
         rank = _skill_rank_for_stat(properties, stat_id)
         property_display_name = _property_display_name_for_stat(
@@ -1648,12 +1644,17 @@ class TopMatchesPage(QWidget):
                 if rank and prefix not in {
                     "skill_modifier:",
                     "granted_item_skill:",
-                }:
+                } and include_value:
                     label = (
                         f"+{rank} to"
                         if prefix == "skill_bonus:"
                         else f"+{rank} to All Skills in"
                     )
+                elif not include_value:
+                    label = {
+                        "skill_bonus:": "Ranks to",
+                        "mastery_bonus:": "All Skills in",
+                    }.get(prefix, label)
                 return f"{label} {reference}"
         return STAT_LABELS.get(stat_id, stat_id)
 

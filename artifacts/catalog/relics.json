@@ -422,6 +422,7 @@
             },
             {
               "attributes": {
+                "percent": "10.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_ancestor.dbr"
               },
               "property_id": "pet_defensive_ability_percent",
@@ -429,6 +430,7 @@
             },
             {
               "attributes": {
+                "percent": "35.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_ancestor.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -436,6 +438,7 @@
             },
             {
               "attributes": {
+                "percent": "25.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_ancestor.dbr"
               },
               "property_id": "pet_vitality_resistance",
@@ -1865,6 +1868,7 @@
             },
             {
               "attributes": {
+                "percent": "10.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_bysmieldomination.dbr"
               },
               "property_id": "pet_critical_damage",
@@ -1872,6 +1876,7 @@
             },
             {
               "attributes": {
+                "percent": "20.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_bysmieldomination.dbr"
               },
               "property_id": "pet_offensive_ability_percent",
@@ -1879,6 +1884,7 @@
             },
             {
               "attributes": {
+                "percent": "70.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_bysmieldomination.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -2861,6 +2867,7 @@
             },
             {
               "attributes": {
+                "percent": "50.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_dirgearkovia.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -2868,6 +2875,7 @@
             },
             {
               "attributes": {
+                "percent": "15.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_dirgearkovia.dbr"
               },
               "property_id": "pet_total_speed",
@@ -2875,6 +2883,7 @@
             },
             {
               "attributes": {
+                "damage_percent": "100.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_dirgearkovia.dbr"
               },
               "property_id": "pet_vitality_damage_percent",
@@ -4703,6 +4712,7 @@
             },
             {
               "attributes": {
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_hysteria.dbr"
               },
               "property_id": "pet_health_percent",
@@ -4710,6 +4720,7 @@
             },
             {
               "attributes": {
+                "percent": "30.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_hysteria.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -6364,6 +6375,7 @@
             },
             {
               "attributes": {
+                "percent": "40.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_mogdrogenardor.dbr"
               },
               "property_id": "pet_aether_resistance",
@@ -6371,6 +6383,7 @@
             },
             {
               "attributes": {
+                "percent": "40.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_mogdrogenardor.dbr"
               },
               "property_id": "pet_chaos_resistance",
@@ -6378,6 +6391,7 @@
             },
             {
               "attributes": {
+                "percent": "100.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_mogdrogenardor.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -6466,6 +6480,7 @@
             },
             {
               "attributes": {
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_mortality.dbr"
               },
               "property_id": "pet_armor_percent",
@@ -6473,6 +6488,7 @@
             },
             {
               "attributes": {
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_mortality.dbr"
               },
               "property_id": "pet_offensive_ability_percent",
@@ -7363,6 +7379,7 @@
             },
             {
               "attributes": {
+                "percent": "16.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_primalinstict.dbr"
               },
               "property_id": "pet_health_percent",
@@ -7370,6 +7387,7 @@
             },
             {
               "attributes": {
+                "damage_min": "995.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_primalinstict.dbr"
               },
               "property_id": "pet_physical_retaliation_damage",
@@ -7377,6 +7395,7 @@
             },
             {
               "attributes": {
+                "percent": "50.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_primalinstict.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -8090,6 +8109,7 @@
             },
             {
               "attributes": {
+                "damage_percent": "60.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_savagery.dbr"
               },
               "property_id": "pet_elemental_damage_percent",
@@ -8097,6 +8117,7 @@
             },
             {
               "attributes": {
+                "percent": "25.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_savagery.dbr"
               },
               "property_id": "pet_elemental_resistance",
@@ -8104,6 +8125,7 @@
             },
             {
               "attributes": {
+                "percent": "10.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_savagery.dbr"
               },
               "property_id": "pet_health_percent",
@@ -8111,6 +8133,7 @@
             },
             {
               "attributes": {
+                "percent": "35.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_savagery.dbr"
               },
               "property_id": "pet_total_damage_percent",
@@ -9651,5 +9674,5 @@
       ]
     }
   ],
-  "schema_version": 7
+  "schema_version": 8
 }

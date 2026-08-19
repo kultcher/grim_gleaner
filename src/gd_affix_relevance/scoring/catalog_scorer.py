@@ -10,10 +10,12 @@ from gd_affix_relevance.catalog import (
     AffixCatalog,
     AffixDefinition,
     AffixProperty,
+    AffixTierDefinition,
     AffixVariantDefinition,
 )
 from gd_affix_relevance.conversions import canonical_damage_type
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.level_bands import level_is_eligible
 from gd_affix_relevance.slots import slot_ids_from_legacy_label
 from gd_affix_relevance.stats import (
     RACE_STAT_SUFFIXES,
@@ -204,6 +206,113 @@ def score_affix_variant(
     )
 
 
+def affix_variants_for_profile(
+    affix: AffixDefinition,
+    profile: BuildProfile,
+    *,
+    slot_id: str | None = None,
+    include_future_fallback: bool = False,
+) -> tuple[AffixVariantDefinition, ...]:
+    """Select the highest eligible concrete tier for each affix shape.
+
+    Schema-8 catalogs preserve every reachable DBR in ``tiers``. Older test
+    fixtures and legacy catalogs only have collapsed ``variants``, so they use
+    the same level rule with the best information available.
+    """
+
+    if affix.tiers:
+        tiers = tuple(
+            tier
+            for tier in affix.tiers
+            if slot_id is None or slot_id in _tier_slot_ids(tier)
+        )
+        grouped: dict[tuple[str, tuple[str, ...]], list[AffixTierDefinition]] = {}
+        for tier in tiers:
+            key = (tier.gear_slot, tier.applicable_slots)
+            grouped.setdefault(key, []).append(tier)
+
+        selected: list[AffixVariantDefinition] = []
+        for group in grouped.values():
+            eligible = [
+                tier
+                for tier in group
+                if level_is_eligible(
+                    tier.level_requirement, profile.level_band
+                )
+            ]
+            if eligible:
+                candidates = eligible
+                selected_level = max(
+                    tier.level_requirement for tier in candidates
+                )
+            elif include_future_fallback:
+                candidates = group
+                selected_level = min(
+                    tier.level_requirement for tier in candidates
+                )
+            else:
+                continue
+            at_level = sorted(
+                (
+                    tier
+                    for tier in candidates
+                    if tier.level_requirement == selected_level
+                ),
+                key=lambda tier: tier.tier_id,
+            )
+            unique: dict[tuple[object, ...], AffixTierDefinition] = {}
+            for tier in at_level:
+                unique.setdefault(_tier_property_signature(tier), tier)
+            layout_count = len(
+                {_tier_property_signature(tier) for tier in group}
+            )
+            selected.extend(
+                _variant_from_tier(
+                    tier,
+                    source_record_count=len(group),
+                    stat_layout_count=layout_count,
+                )
+                for tier in unique.values()
+            )
+        return tuple(selected)
+
+    grouped_variants: dict[
+        tuple[str, tuple[str, ...]], list[AffixVariantDefinition]
+    ] = {}
+    for variant in affix.variants:
+        if slot_id is not None and slot_id not in _variant_slot_ids(variant):
+            continue
+        key = (variant.gear_slot, variant.applicable_slots)
+        grouped_variants.setdefault(key, []).append(variant)
+
+    selected_legacy: list[AffixVariantDefinition] = []
+    for group in grouped_variants.values():
+        eligible = [
+            value
+            for value in group
+            if _variant_has_eligible_level(value, profile)
+        ]
+        if eligible:
+            candidates = eligible
+            selected_level = max(
+                _eligible_variant_level(value, profile)
+                for value in candidates
+            )
+            level_for = lambda value: _eligible_variant_level(value, profile)
+        elif include_future_fallback:
+            candidates = group
+            selected_level = min(_variant_first_level(value) for value in candidates)
+            level_for = _variant_first_level
+        else:
+            continue
+        selected_legacy.extend(
+            value
+            for value in candidates
+            if level_for(value) == selected_level
+        )
+    return tuple(selected_legacy)
+
+
 def affix_common_stat_ids(affix: AffixDefinition) -> tuple[str, ...]:
     """Return categories present on every compiled variant of an affix tag."""
 
@@ -294,7 +403,7 @@ def rank_affix_catalog(
 
     ranked: list[RankedAffixVariant] = []
     for affix in catalog.affixes:
-        for variant in affix.variants:
+        for variant in affix_variants_for_profile(affix, profile):
             stat_ids = variant_semantic_stat_ids(variant, profile)
             ranked.append(
                 RankedAffixVariant(
@@ -323,7 +432,7 @@ def rank_affixes_for_slot(
     kind: str,
     limit: int = 5,
 ) -> tuple[RankedAffixVariant, ...]:
-    """Rank one highest-level layout per affix for an atomic slot."""
+    """Rank one highest eligible layout per affix for an atomic slot."""
 
     if limit < 1:
         raise ValueError("limit must be at least 1")
@@ -331,17 +440,12 @@ def rank_affixes_for_slot(
     for affix in catalog.affixes:
         if affix.kind != kind:
             continue
-        variants = tuple(
-            variant
-            for variant in affix.variants
-            if slot_id in _variant_slot_ids(variant)
+        variants = affix_variants_for_profile(
+            affix, profile, slot_id=slot_id
         )
         if not variants:
             continue
-        layouts = {
-            variant_semantic_stat_ids(variant, profile)
-            for variant in variants
-        }
+        layouts = _affix_layouts_for_slot(affix, profile, slot_id)
         selected = max(
             variants,
             key=lambda variant: (
@@ -527,3 +631,87 @@ def _variant_slot_ids(variant: AffixVariantDefinition) -> tuple[str, ...]:
     return variant.applicable_slots or slot_ids_from_legacy_label(
         variant.gear_slot
     )
+
+
+def _tier_slot_ids(tier: AffixTierDefinition) -> tuple[str, ...]:
+    return tier.applicable_slots or slot_ids_from_legacy_label(tier.gear_slot)
+
+
+def _variant_from_tier(
+    tier: AffixTierDefinition,
+    *,
+    source_record_count: int,
+    stat_layout_count: int,
+) -> AffixVariantDefinition:
+    return AffixVariantDefinition(
+        gear_slot=tier.gear_slot,
+        level_requirements=(tier.level_requirement,),
+        properties=tier.properties,
+        stat_lines=tier.stat_lines,
+        representative_source=f"{tier.source}:{tier.record_path}",
+        source_record_count=source_record_count,
+        stat_layout_count=stat_layout_count,
+        applicable_slots=tier.applicable_slots,
+    )
+
+
+def _tier_property_signature(tier: AffixTierDefinition) -> tuple[object, ...]:
+    return tuple(
+        (
+            property_.property_id,
+            property_.property_key,
+            tuple(sorted(property_.attributes.items())),
+        )
+        for property_ in tier.properties
+    )
+
+
+def _eligible_variant_level(
+    variant: AffixVariantDefinition, profile: BuildProfile
+) -> int:
+    eligible = (
+        level
+        for level in variant.level_requirements
+        if level_is_eligible(level, profile.level_band)
+    )
+    return max(eligible, default=0)
+
+
+def _variant_has_eligible_level(
+    variant: AffixVariantDefinition, profile: BuildProfile
+) -> bool:
+    return not variant.level_requirements or any(
+        level_is_eligible(level, profile.level_band)
+        for level in variant.level_requirements
+    )
+
+
+def _variant_first_level(variant: AffixVariantDefinition) -> int:
+    return min(variant.level_requirements, default=0)
+
+
+def _affix_layouts_for_slot(
+    affix: AffixDefinition,
+    profile: BuildProfile,
+    slot_id: str,
+) -> set[tuple[str, ...]]:
+    if affix.tiers:
+        return {
+            tuple(
+                sorted(
+                    stat_id
+                    for property_ in tier.properties
+                    if property_.property_id != "granted_item_skill"
+                    and property_enabled_for_profile(property_, profile)
+                    for stat_id in semantic_stat_ids(property_)
+                    if stat_is_scoreable(stat_id)
+                )
+            )
+            for tier in affix.tiers
+            if slot_id in _tier_slot_ids(tier)
+        }
+    return {
+        variant_semantic_stat_ids(variant, profile)
+        for variant in affix.variants
+        if slot_id in _variant_slot_ids(variant)
+    }

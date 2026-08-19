@@ -4,13 +4,14 @@ from dataclasses import replace
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QPoint, QPointF, Qt
-from PySide6.QtGui import QWheelEvent
+from PySide6.QtGui import QPalette, QWheelEvent
 from PySide6.QtWidgets import QApplication, QFrame
 
 from gd_affix_relevance.catalog import (
     AffixCatalog,
     AffixDefinition,
     AffixProperty,
+    AffixTierDefinition,
     AffixVariantDefinition,
     ItemCatalog,
     ItemContainerSource,
@@ -40,6 +41,8 @@ from gd_affix_relevance.ui.top_matches import (
     SKILL_RANK_HIGHLIGHT,
     SKILL_MODIFIER_STAT_COLOR,
     SKILL_RANK_STAT_COLOR,
+    SELECTED_ROW_HIGHLIGHT,
+    SELECTED_ROW_TEXT,
     STAT_CATEGORY_COLORS,
     _item_source_label,
     _semantic_stat_color,
@@ -192,8 +195,7 @@ def test_slot_tables_separate_prefixes_and_suffixes_and_track_profile() -> None:
         prefix_table.horizontalHeaderItem(column).text()
         for column in range(prefix_table.columnCount())
     ] == ["Grade", "Affix", "Score", "Coverage"]
-    assert "Matched stats" in page.details.toPlainText()
-    assert "Remaining unmatched stats" in page.details.toPlainText()
+    assert "Relevant Stats" in page.details.toPlainText()
 
     window.profile_editor.accordions["core_health"].rows[
         "health"
@@ -267,10 +269,10 @@ def test_affix_detail_displays_granted_skill_as_unevaluated() -> None:
     details = window.top_matches_page.details.toPlainText()
     assert table.item(0, 0).text().endswith("*]")
     assert "Granted skill (not evaluated):\n- Lightning Bolt" in details
-    unmatched = details.split("Remaining unmatched stats:\n", 1)[1].split(
-        "\n\n", 1
+    stat_table = details.split("Stat\nValue\nWeight", 1)[1].split(
+        "Granted skill (not evaluated):", 1
     )[0]
-    assert "Lightning Bolt" not in unmatched
+    assert "Lightning Bolt" not in stat_table
 
 
 def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
@@ -325,9 +327,10 @@ def test_slot_tables_use_selected_skill_weight_and_display_name() -> None:
     table = window.top_matches_page.tables[(SLOT_RING, "prefix")]
     assert table.rowCount() == 1
     assert table.item(0, 0).text() == "[C1]"
-    assert "+2 to Cadence: weight 4" in (
-        window.top_matches_page.details.toPlainText()
-    )
+    details = window.top_matches_page.details.toPlainText()
+    assert "Ranks to Cadence" in details
+    assert "+2" in details
+    assert "★★★★" in details
     assert window.top_matches_page._label_for(
         "mastery_bonus:playerclass01"
     ) == "+Ranks to all skills in Soldier"
@@ -532,7 +535,7 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
         assert DETAIL_TITLE_COLORS[match.item_type] in (
             page.unique_detail_pane.title.styleSheet()
         )
-    assert "Grades assume the highest-level" in page.status.text()
+    assert "highest variant eligible for level band 90+" in page.status.text()
 
     page.minimum_grade.setCurrentText("B")
     assert table.rowCount() == 4
@@ -589,7 +592,7 @@ def test_addon_tables_rank_components_and_augments_per_slot() -> None:
     app.processEvents()
     assert "Faction: The Black Legion" in page.addon_details.toPlainText()
     assert "Source: Purchased" in page.addon_details.toPlainText()
-    assert "Matched stats" in page.addon_details.toPlainText()
+    assert "Relevant Stats" in page.addon_details.toPlainText()
 
     component_table.selectRow(0)
     app.processEvents()
@@ -701,9 +704,8 @@ def test_resistance_cap_mode_overrides_only_addon_resistance_weights() -> None:
     app.processEvents()
     assert component_table.matches[0].score.effective_score == 15.2
     assert component_table.item(0, 0).text().startswith("[S")
-    assert "cap weight 4 (amplified to 8)" in (
-        page.addon_details.toPlainText()
-    )
+    assert "★★★★" in page.addon_details.toPlainText()
+    assert "Amplified weight total: 8" in page.addon_details.toPlainText()
     assert "Resistance Cap Mode is enabled" in page.status.text()
 
     page.tabs.setCurrentIndex(2)
@@ -830,11 +832,11 @@ def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> No
         window.top_matches_page.affix_detail_pane.title.styleSheet()
     )
     assert "Veteran's" not in affix_details
-    assert "Remaining unmatched stats:\n- Movement Speed" in affix_details
-    unmatched_section = affix_details.split("Remaining unmatched stats:\n", 1)[
-        1
-    ].split("\n\n", 1)[0]
-    assert "Health" not in unmatched_section
+    assert "Other Stats\nMovement Speed" in affix_details
+    other_section = affix_details.split("Other Stats\n", 1)[1].split(
+        "Level requirements for this layout:", 1
+    )[0]
+    assert "Health" not in other_section
 
     unique_table = window.top_matches_page.unique_tables["head"]
     rows = {
@@ -859,14 +861,28 @@ def test_skill_rank_and_modifier_rows_use_distinct_precedence_highlights() -> No
         window.top_matches_page.unique_detail_pane.title.styleSheet()
     )
     assert details.startswith("Effective score:")
-    assert "Matched stats:" in details
-    assert "Remaining unmatched stats:" in details
+    assert "Relevant Stats" in details
+    assert "Other Stats" in details
     assert "Fire Resistance" in details
     assert "Skill modifiers:" in details
     assert "+[x]% Weapon Damage" in details
     detail_html = window.top_matches_page.unique_details.toHtml().lower()
     assert SKILL_RANK_STAT_COLOR in detail_html
     assert SKILL_MODIFIER_STAT_COLOR in detail_html
+    assert "\n\n\n" not in details
+
+    for table in (affix_table, unique_table):
+        palette = table.palette()
+        for color_group in (
+            QPalette.ColorGroup.Active,
+            QPalette.ColorGroup.Inactive,
+        ):
+            assert palette.color(
+                color_group, QPalette.ColorRole.Highlight
+            ) == SELECTED_ROW_HIGHLIGHT
+            assert palette.color(
+                color_group, QPalette.ColorRole.HighlightedText
+            ) == SELECTED_ROW_TEXT
 
 
 def test_detail_stat_colors_follow_semantic_families() -> None:
@@ -895,3 +911,51 @@ def test_detail_stat_colors_follow_semantic_families() -> None:
     assert _semantic_stat_color(
         "skill_bonus:records/skills/example.dbr", matched=False
     ) == SKILL_RANK_STAT_COLOR
+
+
+def test_affix_detail_uses_values_from_the_profile_eligible_tier() -> None:
+    app = _application()
+    low = AffixTierDefinition(
+        tier_id="base:low.dbr",
+        source="base",
+        record_path="low.dbr",
+        gear_slot="Ring",
+        applicable_slots=(SLOT_RING,),
+        level_requirement=20,
+        properties=(AffixProperty("health", "health", {"flat": "100"}),),
+        stat_lines=("+[x] Health",),
+    )
+    high = AffixTierDefinition(
+        tier_id="base:high.dbr",
+        source="base",
+        record_path="high.dbr",
+        gear_slot="Ring",
+        applicable_slots=(SLOT_RING,),
+        level_requirement=70,
+        properties=(
+            AffixProperty("health", "health", {"flat": "250"}),
+            AffixProperty(
+                "offensive_ability", "offensive_ability", {"flat": "50"}
+            ),
+        ),
+        stat_lines=("+[x] Health", "+[x] Offensive Ability"),
+    )
+    base = _affix("prefix:banded", "Banded", "health")
+    affix = replace(base, tiers=(low, high))
+    profile = BuildProfile(
+        weights={"health": 4, "offensive_ability": 4},
+        level_band="50-64",
+    )
+    window = MainWindow(profile, catalog=AffixCatalog((affix,)))
+
+    low_details = window.top_matches_page.details.toPlainText()
+    assert "Health (Flat)\n100\n★★★★" in low_details
+    assert "Offensive Ability" not in low_details
+
+    profile.set_level_band("65-79")
+    window.top_matches_page.refresh()
+    app.processEvents()
+
+    high_details = window.top_matches_page.details.toPlainText()
+    assert "Health (Flat)\n250\n★★★★" in high_details
+    assert "Offensive Ability (Flat)\n50\n★★★★" in high_details

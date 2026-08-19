@@ -22,6 +22,7 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
     profile.set_conversion_source_enabled("fire", "physical", False)
     profile.resistance_cap_enabled = True
     profile.set_resistance_cap_weight("fire_resistance", 0)
+    profile.set_level_band("65-79")
 
     destination = save_profile(profile, tmp_path / "bleed-werewolf")
     first_bytes = destination.read_bytes()
@@ -35,6 +36,7 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
         "excluded_conversion_sources": {"fire": ["physical"]},
         "masteries": ["", ""],
         "name": "Bleed Werewolf",
+        "level_band": "65-79",
         "resistance_cap_enabled": True,
         "resistance_cap_weights": {"fire_resistance": 0},
         "skill_weights": {},
@@ -100,3 +102,22 @@ def test_profile_loader_migrates_schema_one_with_empty_skill_state(
     assert profile.skill_weights == {}
     assert profile.weights == {"health": 2}
     assert profile.excluded_conversion_sources == {}
+    assert profile.level_band == "90+"
+
+
+def test_profile_file_rejects_unknown_level_band(tmp_path: Path) -> None:
+    source = tmp_path / "bad-level.json"
+    source.write_text(
+        json.dumps(
+            {
+                "schema_version": PROFILE_FILE_SCHEMA_VERSION,
+                "name": "Bad Level",
+                "weights": {},
+                "level_band": "94",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ProfileFormatError, match="level band"):
+        load_profile(source)

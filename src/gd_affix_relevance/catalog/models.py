@@ -7,7 +7,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATALOG_SCHEMA_VERSION = 7
+CATALOG_SCHEMA_VERSION = 8
+SUPPORTED_CATALOG_SCHEMA_VERSIONS = frozenset({7, CATALOG_SCHEMA_VERSION})
+MAGNITUDE_CATALOG_FILE = "magnitude-index.json"
 
 ITEM_CATALOG_FILES = (
     "equipment.json",
@@ -88,6 +90,18 @@ class AffixVariantDefinition:
 
 
 @dataclass(frozen=True, slots=True)
+class AffixTierDefinition:
+    tier_id: str
+    source: str
+    record_path: str
+    gear_slot: str
+    applicable_slots: tuple[str, ...]
+    level_requirement: int
+    properties: tuple[AffixProperty, ...]
+    stat_lines: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class AffixDefinition:
     affix_id: str
     localization_tag: str
@@ -95,6 +109,7 @@ class AffixDefinition:
     kind: str
     variants: tuple[AffixVariantDefinition, ...]
     rarity: str = ""
+    tiers: tuple[AffixTierDefinition, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -212,18 +227,65 @@ class ItemCatalog:
 
 
 @dataclass(frozen=True, slots=True)
+class MagnitudeBand:
+    band_id: str
+    minimum_level: int
+    maximum_level: int | None
+
+
+@dataclass(frozen=True, slots=True)
+class MagnitudeProperty:
+    property_id: str
+    property_key: str
+    scalar_value: float
+    value_roles: tuple[str, ...]
+    percentile: float
+    cohort_size: int
+    cohort_id: str
+
+
+@dataclass(frozen=True, slots=True)
+class MagnitudeEntry:
+    entity_type: str
+    entity_id: str
+    variant_id: str
+    band_id: str
+    gear_slot: str
+    category: str
+    rarity: str
+    level_requirement: int
+    band_variant_ids: tuple[str, ...]
+    properties: tuple[MagnitudeProperty, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class MagnitudeCatalog:
+    bands: tuple[MagnitudeBand, ...] = ()
+    entries: tuple[MagnitudeEntry, ...] = ()
+
+    def by_entity_and_band(self) -> dict[tuple[str, str, str], tuple[MagnitudeEntry, ...]]:
+        grouped: dict[tuple[str, str, str], list[MagnitudeEntry]] = {}
+        for entry in self.entries:
+            grouped.setdefault(
+                (entry.entity_type, entry.entity_id, entry.band_id), []
+            ).append(entry)
+        return {key: tuple(value) for key, value in grouped.items()}
+
+
+@dataclass(frozen=True, slots=True)
 class CatalogBundle:
     manifest: CatalogManifest
     strings: StringCatalog
     skills: SkillCatalog
     affixes: AffixCatalog
     items: ItemCatalog
+    magnitude: MagnitudeCatalog = MagnitudeCatalog()
 
     @classmethod
     def load(cls, root: Path) -> CatalogBundle:
         catalog_root = Path(root)
         manifest_payload = _load_json(catalog_root / "manifest.json")
-        _require_schema(manifest_payload, "manifest.json")
+        manifest_schema = _require_schema(manifest_payload, "manifest.json")
         manifest = CatalogManifest(
             schema_version=manifest_payload["schema_version"],
             game_version=manifest_payload["game_version"],
@@ -249,14 +311,14 @@ class CatalogBundle:
             ("skills.json", skills_payload),
             ("affixes.json", affixes_payload),
         ):
-            _require_schema(payload, filename)
+            _require_schema(payload, filename, expected=manifest_schema)
 
         item_payloads = {
             filename: _load_json(catalog_root / filename)
             for filename in ITEM_CATALOG_FILES
         }
         for filename, payload in item_payloads.items():
-            _require_schema(payload, filename)
+            _require_schema(payload, filename, expected=manifest_schema)
 
         strings = StringCatalog(
             locale=strings_payload["locale"],
@@ -278,7 +340,22 @@ class CatalogBundle:
             for filename in ITEM_CATALOG_FILES
         }
         items = ItemCatalog(**item_families)
-        bundle = cls(manifest, strings, skills, affixes, items)
+        magnitude_path = catalog_root / MAGNITUDE_CATALOG_FILE
+        magnitude = MagnitudeCatalog()
+        if magnitude_path.is_file():
+            magnitude_payload = _load_json(magnitude_path)
+            _require_schema(
+                magnitude_payload,
+                MAGNITUDE_CATALOG_FILE,
+                expected=manifest_schema,
+            )
+            magnitude = _magnitude_catalog_from_dict(magnitude_payload)
+        elif manifest_schema >= 8:
+            raise ValueError(
+                f"schema-{manifest_schema} catalog is missing "
+                f"{MAGNITUDE_CATALOG_FILE}"
+            )
+        bundle = cls(manifest, strings, skills, affixes, items, magnitude)
         bundle.validate()
         return bundle
 
@@ -320,6 +397,20 @@ class CatalogBundle:
             raise ValueError("duplicate skill IDs in catalog")
         if len(self.items.by_id()) != len(self.items.all_items()):
             raise ValueError("duplicate item IDs in catalog")
+        if self.manifest.schema_version >= 8:
+            if len(self.magnitude.entries) != self.manifest.counts.get(
+                "magnitude_entries"
+            ):
+                raise ValueError("magnitude entry count does not match manifest")
+            magnitude_property_count = sum(
+                len(entry.properties) for entry in self.magnitude.entries
+            )
+            if magnitude_property_count != self.manifest.counts.get(
+                "magnitude_properties"
+            ):
+                raise ValueError(
+                    "magnitude property count does not match manifest"
+                )
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -330,11 +421,22 @@ def _load_json(path: Path) -> dict[str, Any]:
     return payload
 
 
-def _require_schema(payload: dict[str, Any], filename: str) -> None:
-    if payload.get("schema_version") != CATALOG_SCHEMA_VERSION:
+def _require_schema(
+    payload: dict[str, Any],
+    filename: str,
+    *,
+    expected: int | None = None,
+) -> int:
+    schema = payload.get("schema_version")
+    if schema not in SUPPORTED_CATALOG_SCHEMA_VERSIONS:
         raise ValueError(
-            f"unsupported schema in {filename}: {payload.get('schema_version')}"
+            f"unsupported schema in {filename}: {schema}"
         )
+    if expected is not None and schema != expected:
+        raise ValueError(
+            f"schema mismatch in {filename}: expected {expected}, found {schema}"
+        )
+    return int(schema)
 
 
 def _skill_from_dict(payload: dict[str, Any]) -> SkillDefinition:
@@ -388,6 +490,24 @@ def _affix_from_dict(payload: dict[str, Any]) -> AffixDefinition:
         kind=payload["kind"],
         variants=tuple(_variant_from_dict(variant) for variant in payload["variants"]),
         rarity=str(payload.get("rarity", "")),
+        tiers=tuple(
+            _affix_tier_from_dict(tier) for tier in payload.get("tiers", ())
+        ),
+    )
+
+
+def _affix_tier_from_dict(payload: dict[str, Any]) -> AffixTierDefinition:
+    return AffixTierDefinition(
+        tier_id=payload["tier_id"],
+        source=payload["source"],
+        record_path=payload["record_path"],
+        gear_slot=payload["gear_slot"],
+        applicable_slots=tuple(payload.get("applicable_slots", ())),
+        level_requirement=int(payload.get("level_requirement", 0)),
+        properties=tuple(
+            _property_from_dict(component) for component in payload["properties"]
+        ),
+        stat_lines=tuple(payload["stat_lines"]),
     )
 
 
@@ -495,5 +615,48 @@ def _item_from_dict(payload: dict[str, Any]) -> ItemDefinition:
         description=payload["description"],
         variants=tuple(
             _item_variant_from_dict(variant) for variant in payload["variants"]
+        ),
+    )
+
+
+def _magnitude_catalog_from_dict(payload: dict[str, Any]) -> MagnitudeCatalog:
+    return MagnitudeCatalog(
+        bands=tuple(
+            MagnitudeBand(
+                band_id=band["band_id"],
+                minimum_level=int(band["minimum_level"]),
+                maximum_level=(
+                    int(band["maximum_level"])
+                    if band.get("maximum_level") is not None
+                    else None
+                ),
+            )
+            for band in payload.get("bands", ())
+        ),
+        entries=tuple(
+            MagnitudeEntry(
+                entity_type=entry["entity_type"],
+                entity_id=entry["entity_id"],
+                variant_id=entry["variant_id"],
+                band_id=entry["band_id"],
+                gear_slot=entry["gear_slot"],
+                category=entry["category"],
+                rarity=entry["rarity"],
+                level_requirement=int(entry.get("level_requirement", 0)),
+                band_variant_ids=tuple(entry.get("band_variant_ids", ())),
+                properties=tuple(
+                    MagnitudeProperty(
+                        property_id=property_["property_id"],
+                        property_key=property_["property_key"],
+                        scalar_value=float(property_["scalar_value"]),
+                        value_roles=tuple(property_.get("value_roles", ())),
+                        percentile=float(property_["percentile"]),
+                        cohort_size=int(property_["cohort_size"]),
+                        cohort_id=property_["cohort_id"],
+                    )
+                    for property_ in entry.get("properties", ())
+                ),
+            )
+            for entry in payload.get("entries", ())
         ),
     )

@@ -48,6 +48,22 @@ QLabel#catalogLoadWarning {
     margin: 8px;
     padding: 9px;
 }
+QFrame#sidebarProfileSummary {
+    background: #1b1e24;
+    border: 1px solid #303640;
+    border-radius: 6px;
+    margin: 8px;
+}
+QLabel#sidebarInfoTitle {
+    color: #7f8794;
+    font-size: 8pt;
+    font-weight: 650;
+}
+QLabel#sidebarProfileName {
+    color: #edf1f5;
+    font-weight: 650;
+}
+QLabel#sidebarProfileLevel { color: #78d9e8; }
 QLabel#gameFolderWarning { color: #f0a77b; }
 QLabel#gameFolderConfirmed { color: #81d5aa; }
 QLabel#lastExportedProfile { color: #78d9e8; font-weight: 650; }
@@ -118,6 +134,18 @@ QLineEdit#profileName {
     padding: 7px 9px;
 }
 QLineEdit#profileName:focus { border-color: #d4a843; }
+QComboBox#profileLevelBand {
+    background: #242932;
+    border: 1px solid #3a414d;
+    border-radius: 5px;
+    padding: 6px 10px;
+    min-width: 105px;
+}
+QComboBox#profileLevelBand QAbstractItemView {
+    background: #20242b;
+    border: 1px solid #3a414d;
+    selection-background-color: #3a4454;
+}
 QPushButton#profileAction {
     background: #292e37;
     border: 1px solid #3a414d;
@@ -133,6 +161,14 @@ QTableWidget#uniqueSlotTable, QTableWidget#addonSlotTable {
     border: 1px solid #303540;
     gridline-color: #303540;
     selection-background-color: #3a4454;
+    selection-color: #ffffff;
+}
+QTableWidget#topMatchesTable::item:selected,
+QTableWidget#affixSlotTable::item:selected,
+QTableWidget#uniqueSlotTable::item:selected,
+QTableWidget#addonSlotTable::item:selected {
+    background: #3a4454;
+    color: #ffffff;
 }
 QFrame#slotFilterBar, QFrame#typeFilterBar, QFrame#affixSlotRow,
 QFrame#uniqueSlotRow, QFrame#addonSlotRow {
