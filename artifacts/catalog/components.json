@@ -15,6 +15,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -30,6 +31,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -100,6 +102,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -115,6 +118,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -191,6 +195,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -206,6 +211,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Hero",
@@ -287,6 +293,7 @@
             "Chest",
             "Legs"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b001_armor.dbr",
           "container_sources": [],
@@ -302,6 +309,7 @@
           "item_class": "ItemRelic",
           "item_level": 16,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -369,6 +377,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -384,6 +393,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -437,6 +447,7 @@
           "applicable_slots": [
             "Amulet"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b001_armor.dbr",
           "container_sources": [],
@@ -452,6 +463,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -523,6 +535,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b001_armor.dbr",
           "container_sources": [],
@@ -538,6 +551,7 @@
           "item_class": "ItemRelic",
           "item_level": 45,
           "level_requirement": 35,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -546,6 +560,14 @@
               },
               "property_id": "disruption_resistance",
               "property_key": "disruption_resistance"
+            },
+            {
+              "attributes": {
+                "duration_seconds": "3.000000",
+                "flat": "15.000000"
+              },
+              "property_id": "energy_leech",
+              "property_key": "energy_leech"
             },
             {
               "attributes": {
@@ -571,7 +593,8 @@
           "stat_lines": [
             "+[x]% Energy Regeneration",
             "+[x] Offensive Ability",
-            "+[x]% Disruption Resistance"
+            "+[x]% Disruption Resistance",
+            "[x] Energy Leech over [y] Seconds"
           ],
           "vendor_sources": [
             {
@@ -598,6 +621,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b006_lodestone.dbr",
           "container_sources": [],
@@ -613,6 +637,7 @@
           "item_class": "ItemRelic",
           "item_level": 16,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -694,6 +719,7 @@
           "applicable_slots": [
             "Chest"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -709,6 +735,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -767,6 +794,7 @@
           "applicable_slots": [
             "Shield"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_armor.dbr",
           "container_sources": [
@@ -795,6 +823,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -850,6 +879,7 @@
           "applicable_slots": [
             "Chest"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b007_bindingsbysmiel.dbr",
           "container_sources": [],
@@ -865,6 +895,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -929,6 +960,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -944,6 +976,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1023,6 +1056,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1038,6 +1072,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1092,6 +1127,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1107,6 +1143,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1188,6 +1225,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -1203,6 +1241,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1293,6 +1332,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -1308,6 +1348,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1392,6 +1433,7 @@
             "Medal",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1407,6 +1449,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1458,6 +1501,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -1473,6 +1517,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1550,6 +1595,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_armor.dbr",
           "container_sources": [],
@@ -1565,6 +1611,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1602,6 +1649,7 @@
           "applicable_slots": [
             "Chest"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b003_chest.dbr",
           "container_sources": [],
@@ -1617,6 +1665,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1690,6 +1739,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_weapons.dbr",
           "container_sources": [],
@@ -1705,6 +1755,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 5,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1782,6 +1833,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_weapons.dbr",
           "container_sources": [],
@@ -1797,6 +1849,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 5,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1862,6 +1915,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -1877,6 +1931,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1950,6 +2005,7 @@
           "applicable_slots": [
             "Hands"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -1965,6 +2021,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2021,6 +2078,7 @@
             "Medal",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -2036,6 +2094,7 @@
           "item_class": "ItemRelic",
           "item_level": 11,
           "level_requirement": 7,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2101,6 +2160,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_weapons.dbr",
           "container_sources": [],
@@ -2116,6 +2176,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 5,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2184,6 +2245,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -2199,6 +2261,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2242,10 +2305,12 @@
             },
             {
               "attributes": {
-                "component": "12.000000"
+                "chance_percent": "12.000000",
+                "duration_seconds": "3.000000",
+                "reduction_percent": "25.000000"
               },
-              "property_id": "unresolved_composite",
-              "property_key": "unresolved:offensiveSlowRunSpeedChance"
+              "property_id": "target_movement_speed_reduction",
+              "property_key": "target_movement_speed_reduction"
             }
           ],
           "rarity": "Common",
@@ -2260,7 +2325,7 @@
             "[x] Cold Damage",
             "+[x]% Cold Damage",
             "+[x]% Frostburn Damage",
-            "+[x] Composite effect requiring review"
+            "[x]% Chance of [y]% Slower Target Movement for [z] Seconds"
           ],
           "vendor_sources": []
         }
@@ -2286,6 +2351,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -2301,6 +2367,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2356,6 +2423,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -2371,6 +2439,7 @@
           "item_class": "ItemRelic",
           "item_level": 16,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2463,6 +2532,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b001_armor.dbr",
           "container_sources": [],
@@ -2478,6 +2548,7 @@
           "item_class": "ItemRelic",
           "item_level": 40,
           "level_requirement": 32,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2535,6 +2606,7 @@
             "Medal",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -2550,6 +2622,7 @@
           "item_class": "ItemRelic",
           "item_level": 11,
           "level_requirement": 7,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2596,6 +2669,7 @@
             "Chest",
             "Head"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2611,6 +2685,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2680,6 +2755,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2695,6 +2771,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2758,6 +2835,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -2773,6 +2851,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2849,6 +2928,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -2864,6 +2944,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2947,6 +3028,7 @@
           "applicable_slots": [
             "Amulet"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -2962,6 +3044,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3021,6 +3104,7 @@
           "applicable_slots": [
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -3036,6 +3120,7 @@
           "item_class": "ItemRelic",
           "item_level": 5,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3097,6 +3182,7 @@
           "applicable_slots": [
             "Chest"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b003_chest.dbr",
           "container_sources": [],
@@ -3112,6 +3198,7 @@
           "item_class": "ItemRelic",
           "item_level": 40,
           "level_requirement": 32,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3185,6 +3272,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -3200,6 +3288,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3294,6 +3383,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -3309,6 +3399,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3403,6 +3494,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -3418,6 +3510,7 @@
           "item_class": "ItemRelic",
           "item_level": 11,
           "level_requirement": 11,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3512,6 +3605,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -3527,6 +3621,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3591,6 +3686,7 @@
           "applicable_slots": [
             "Chest"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b008_kilrian.dbr",
           "container_sources": [],
@@ -3606,6 +3702,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Quest",
@@ -3700,6 +3797,7 @@
           "applicable_slots": [
             "Head"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -3715,6 +3813,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3776,6 +3875,7 @@
             "Head",
             "Shoulders"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3791,6 +3891,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3864,6 +3965,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -3879,6 +3981,7 @@
           "item_class": "ItemRelic",
           "item_level": 16,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3972,6 +4075,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -3987,6 +4091,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4048,6 +4153,7 @@
           "applicable_slots": [
             "Feet"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b001_armor.dbr",
           "container_sources": [],
@@ -4063,6 +4169,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4130,6 +4237,7 @@
           "applicable_slots": [
             "Shield"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -4145,6 +4253,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4216,6 +4325,7 @@
           "applicable_slots": [
             "Feet"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -4231,6 +4341,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4290,6 +4401,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -4305,6 +4417,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Common",
@@ -4383,6 +4496,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_weapons.dbr",
           "container_sources": [],
@@ -4398,6 +4512,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 5,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4475,6 +4590,7 @@
             "Legs",
             "Shoulders"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -4490,6 +4606,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4547,6 +4664,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -4562,6 +4680,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 30,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4643,6 +4762,7 @@
             "Ring",
             "Shield"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_armor.dbr",
           "container_sources": [],
@@ -4658,6 +4778,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4711,6 +4832,7 @@
           "applicable_slots": [
             "Head"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b002_diamond.dbr",
           "container_sources": [],
@@ -4726,6 +4848,7 @@
           "item_class": "ItemRelic",
           "item_level": 60,
           "level_requirement": 55,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4801,6 +4924,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -4816,6 +4940,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4873,6 +4998,7 @@
             "Off-hand",
             "Shield"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -4888,6 +5014,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4953,6 +5080,7 @@
           "applicable_slots": [
             "Shield"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -4968,6 +5096,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5034,6 +5163,7 @@
             "Shield",
             "Shoulders"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_armor.dbr",
           "container_sources": [],
@@ -5049,6 +5179,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5102,6 +5233,7 @@
           "applicable_slots": [
             "Hands"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -5117,6 +5249,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5186,6 +5319,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -5201,6 +5335,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5273,6 +5408,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -5288,6 +5424,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5343,6 +5480,7 @@
             "Medal",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -5358,6 +5496,7 @@
           "item_class": "ItemRelic",
           "item_level": 5,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5403,6 +5542,7 @@
           "applicable_slots": [
             "Chest"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -5418,6 +5558,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5479,6 +5620,7 @@
             "Medal",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5494,6 +5636,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5555,6 +5698,7 @@
           "applicable_slots": [
             "Head"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -5570,6 +5714,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5640,6 +5785,7 @@
             "Head",
             "Shoulders"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5655,6 +5801,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5717,6 +5864,7 @@
             "Chest",
             "Head"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -5732,6 +5880,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Hero",
@@ -5810,6 +5959,7 @@
             "Legs",
             "Shoulders"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -5825,6 +5975,7 @@
           "item_class": "ItemRelic",
           "item_level": 11,
           "level_requirement": 7,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5876,6 +6027,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_armor.dbr",
           "container_sources": [],
@@ -5891,6 +6043,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5928,6 +6081,7 @@
           "applicable_slots": [
             "Amulet"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5943,6 +6097,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6014,6 +6169,7 @@
           "applicable_slots": [
             "Amulet"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6029,6 +6185,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6113,6 +6270,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6128,6 +6286,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6220,6 +6379,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6235,6 +6395,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6345,6 +6506,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6360,6 +6522,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6461,6 +6624,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6476,6 +6640,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6586,6 +6751,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6601,6 +6767,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6702,6 +6869,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6717,6 +6885,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6810,6 +6979,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6825,6 +6995,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6927,6 +7098,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6942,6 +7114,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7052,6 +7225,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7067,6 +7241,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7168,6 +7343,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7183,6 +7359,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7285,6 +7462,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_weapons.dbr",
           "container_sources": [],
@@ -7300,6 +7478,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 5,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7366,6 +7545,7 @@
           "applicable_slots": [
             "Shield"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -7381,6 +7561,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7456,6 +7637,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a000_weapons.dbr",
           "container_sources": [
@@ -7484,6 +7666,7 @@
           "item_class": "ItemRelic",
           "item_level": 1,
           "level_requirement": 5,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7560,6 +7743,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -7575,6 +7759,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7650,6 +7835,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -7665,6 +7851,7 @@
           "item_class": "ItemRelic",
           "item_level": 60,
           "level_requirement": 55,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7740,6 +7927,7 @@
             "Legs",
             "Shoulders"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [],
@@ -7755,6 +7943,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7802,6 +7991,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -7817,6 +8007,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7897,6 +8088,7 @@
             "Medal",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -7912,6 +8104,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7979,6 +8172,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7994,6 +8188,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8047,6 +8242,7 @@
           "applicable_slots": [
             "Hands"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b001_armor.dbr",
           "container_sources": [],
@@ -8062,6 +8258,7 @@
           "item_class": "ItemRelic",
           "item_level": 16,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8121,6 +8318,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a001_armor.dbr",
           "container_sources": [
@@ -8149,6 +8347,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8220,6 +8419,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b004_weapon01.dbr",
           "container_sources": [],
@@ -8235,6 +8435,7 @@
           "item_class": "ItemRelic",
           "item_level": 45,
           "level_requirement": 35,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8310,6 +8511,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8325,6 +8527,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8387,6 +8590,7 @@
             "Chest",
             "Head"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8402,6 +8606,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8469,6 +8674,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8484,6 +8690,7 @@
           "item_class": "ItemRelic",
           "item_level": 75,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8537,6 +8744,7 @@
           "applicable_slots": [
             "Hands"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_b001_armor.dbr",
           "container_sources": [],
@@ -8552,6 +8760,7 @@
           "item_class": "ItemRelic",
           "item_level": 16,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8615,6 +8824,7 @@
             "Medal",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -8630,6 +8840,7 @@
           "item_class": "ItemRelic",
           "item_level": 30,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8700,6 +8911,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -8715,6 +8927,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8799,6 +9012,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -8814,6 +9028,7 @@
           "item_class": "ItemRelic",
           "item_level": 35,
           "level_requirement": 27,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8887,6 +9102,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -8902,6 +9118,7 @@
           "item_class": "ItemRelic",
           "item_level": 20,
           "level_requirement": 15,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8975,6 +9192,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -8990,6 +9208,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9074,6 +9293,7 @@
             "One-handed ranged weapon",
             "Two-handed ranged weapon"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -9089,6 +9309,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9156,6 +9377,7 @@
             "Amulet",
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a002_ringsamulets.dbr",
           "container_sources": [],
@@ -9171,6 +9393,7 @@
           "item_class": "ItemRelic",
           "item_level": 11,
           "level_requirement": 7,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9234,6 +9457,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "component",
           "completion_bonus_reference": "records/items/lootaffixes/completion/completionbonus_a003_weapons.dbr",
           "container_sources": [],
@@ -9249,6 +9473,7 @@
           "item_class": "ItemRelic",
           "item_level": 25,
           "level_requirement": 20,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9302,5 +9527,5 @@
       ]
     }
   ],
-  "schema_version": 8
+  "schema_version": 9
 }

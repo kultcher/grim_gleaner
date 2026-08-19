@@ -33,6 +33,78 @@ def test_nominal_values_format_common_and_compound_property_shapes() -> None:
     assert format_nominal_value(
         _property("skill_bonus", skill_level="2")
     ) == "+2"
+    assert format_nominal_value(
+        _property(
+            "energy_leech",
+            chance_percent="10",
+            flat="45",
+            duration_seconds="2",
+        )
+    ) == "10% chance · 45 over 2s"
+    assert format_nominal_value(
+        _property(
+            "fumble",
+            fumble_percent="12",
+            duration_seconds="3",
+        )
+    ) == "12% for 3s"
+
+
+def test_named_item_scale_applies_only_to_confirmed_offensive_roles() -> None:
+    scale = 40.0
+
+    assert format_nominal_value(
+        _property("aether_damage_percent", damage_percent="102"),
+        attribute_scale_percent=scale,
+    ) == "142%"
+    assert format_nominal_value(
+        _property("total_damage_percent", percent="50"),
+        attribute_scale_percent=scale,
+    ) == "70%"
+    assert format_nominal_value(
+        _property("flat_aether_damage", damage_min="20"),
+        attribute_scale_percent=scale,
+    ) == "28"
+    assert format_nominal_value(
+        AffixProperty(
+            "flat_aether_damage",
+            "flat_aether_damage:base_weapon",
+            {"damage_min": "50", "damage_max": "65"},
+        ),
+        attribute_scale_percent=scale,
+    ) == "50–65"
+    assert format_nominal_value(
+        _property(
+            "chance_flat_electrocute_damage",
+            chance_percent="10",
+            damage_min="20",
+            duration_min="3",
+        ),
+        attribute_scale_percent=scale,
+    ) == "10% chance · 28 over 3s"
+    assert format_nominal_value(
+        _property(
+            "burn_damage_percent",
+            damage_percent="33",
+            duration_percent="20",
+        ),
+        attribute_scale_percent=scale,
+    ) == "46% · +28% duration"
+    assert format_nominal_value(
+        _property("stun_duration", percent="15"),
+        attribute_scale_percent=scale,
+    ) == "21%"
+
+    for property_ in (
+        _property("offensive_ability", flat="44"),
+        _property("critical_damage", percent="15"),
+        _property("retaliation_damage_percent", damage_percent="100"),
+        _property("pet_aether_damage_percent", damage_percent="100"),
+        _property("target_resistance_reduction_percent", reduction_percent="15"),
+    ):
+        assert format_nominal_value(
+            property_, attribute_scale_percent=scale
+        ) == format_nominal_value(property_)
 
 
 def test_detail_rows_preserve_semantics_and_use_four_star_weights() -> None:
@@ -72,10 +144,18 @@ def test_detail_rows_preserve_semantics_and_use_four_star_weights() -> None:
         ("base_weapon_damage_as_physical", "Implicit", 0),
     ]
     rendered = stat_table_html(rows, color_for=lambda _stat, _matched: "#fff")
+    assert "Base Damage" in rendered
     assert "Relevant Stats" in rendered
     assert "Other Stats" in rendered
+    assert rendered.index("Base Damage") < rendered.index("Relevant Stats")
+    assert rendered.index("Relevant Stats") < rendered.index("Other Stats")
     assert "★★★★" in rendered
     assert "☆☆☆☆" in rendered
     assert '<table align="left"' in rendered
     assert 'width="100%"' not in rendered
     assert "white-space:nowrap" in rendered
+
+    without_base = stat_table_html(
+        rows[:2], color_for=lambda _stat, _matched: "#fff"
+    )
+    assert "Base Damage" not in without_base

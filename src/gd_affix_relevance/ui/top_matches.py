@@ -1391,6 +1391,9 @@ class TopMatchesPage(QWidget):
                 weight_for=lambda stat_id: profile_weight_for_semantic_id(
                     self.profile, stat_id
                 ),
+                attribute_scale_percent=(
+                    match.variant.attribute_scale_percent
+                ),
             ),
         ]
         _extend_detail_group(
@@ -1587,6 +1590,7 @@ class TopMatchesPage(QWidget):
         properties: tuple[object, ...],
         *,
         weight_for: Callable[[str], int],
+        attribute_scale_percent: float | None = None,
     ) -> str:
         rows = build_detail_stat_rows(
             stat_ids,
@@ -1598,6 +1602,7 @@ class TopMatchesPage(QWidget):
             property_enabled=lambda property_: property_enabled_for_profile(
                 property_, self.profile  # type: ignore[arg-type]
             ),
+            attribute_scale_percent=attribute_scale_percent,
         )
         return stat_table_html(
             rows,

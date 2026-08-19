@@ -14,6 +14,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -29,6 +30,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -68,6 +70,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -83,6 +86,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -128,6 +132,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -143,6 +148,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -184,6 +190,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -199,6 +206,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -238,6 +246,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -253,6 +262,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -302,6 +312,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -317,6 +328,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -366,6 +378,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -381,6 +394,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -420,6 +434,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -435,6 +450,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -480,6 +496,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -495,6 +512,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -540,6 +558,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -555,6 +574,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -600,6 +620,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -615,6 +636,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -660,6 +682,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -675,6 +698,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 1,
           "level_requirement": 1,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -720,6 +744,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -735,6 +760,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -774,6 +800,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -789,6 +816,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -828,6 +856,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -843,6 +872,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -882,6 +912,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -897,6 +928,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -936,6 +968,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -951,6 +984,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -990,6 +1024,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1005,6 +1040,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1044,6 +1080,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1059,6 +1096,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -1100,6 +1138,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1115,6 +1154,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1154,6 +1194,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1169,6 +1210,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1208,6 +1250,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1223,6 +1266,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -1272,6 +1316,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1287,6 +1332,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -1336,6 +1382,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1351,6 +1398,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1390,6 +1438,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1405,6 +1454,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1444,6 +1494,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1459,6 +1510,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1498,6 +1550,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1513,6 +1566,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1552,6 +1606,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1567,6 +1622,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1606,6 +1662,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1621,6 +1678,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1660,6 +1718,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1675,6 +1734,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1714,6 +1774,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1729,6 +1790,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1768,6 +1830,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1783,6 +1846,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1822,6 +1886,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1837,6 +1902,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1876,6 +1942,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1891,6 +1958,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1930,6 +1998,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1945,6 +2014,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1984,6 +2054,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1999,6 +2070,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2038,6 +2110,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2053,6 +2126,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2092,6 +2166,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2107,6 +2182,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2146,6 +2222,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2161,6 +2238,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2200,6 +2278,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2215,6 +2294,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2254,6 +2334,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2269,6 +2350,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2308,6 +2390,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2323,6 +2406,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2362,6 +2446,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2377,6 +2462,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2416,6 +2502,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2431,6 +2518,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2470,6 +2558,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2485,6 +2574,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2524,6 +2614,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2539,6 +2630,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2578,6 +2670,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2593,6 +2686,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Legendary",
@@ -2634,6 +2728,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2649,6 +2744,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2688,6 +2784,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2703,6 +2800,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2742,6 +2840,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2757,6 +2856,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Legendary",
@@ -2806,6 +2906,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2821,6 +2922,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Legendary",
@@ -2870,6 +2972,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2885,6 +2988,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2924,6 +3028,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2939,6 +3044,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2978,6 +3084,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2993,6 +3100,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 33,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3032,6 +3140,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3047,6 +3156,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3086,6 +3196,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3101,6 +3212,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3140,6 +3252,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3155,6 +3268,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3194,6 +3308,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3209,6 +3324,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3248,6 +3364,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3263,6 +3380,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3302,6 +3420,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3317,6 +3436,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3356,6 +3476,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3371,6 +3492,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3410,6 +3532,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3425,6 +3548,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3464,6 +3588,7 @@
           "applicable_slots": [
             "Medal"
           ],
+          "attribute_scale_percent": null,
           "category": "rune",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3479,6 +3604,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3505,5 +3631,5 @@
       ]
     }
   ],
-  "schema_version": 8
+  "schema_version": 9
 }

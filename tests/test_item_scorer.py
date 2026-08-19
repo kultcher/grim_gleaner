@@ -97,6 +97,31 @@ def test_unique_ranking_uses_highest_variant_and_flags_selected_skill_modifier()
     assert matches[0].marker == "[C1*!]"
 
 
+def test_split_weapon_base_damage_maps_each_damage_type_without_flat_bonus() -> None:
+    variant = _variant(
+        item_class="WeaponMelee_Axe",
+        properties=(
+            ItemProperty(
+                "flat_physical_damage",
+                "flat_physical_damage:base_weapon",
+                {"damage_min": "18", "damage_max": "22"},
+            ),
+            ItemProperty(
+                "flat_aether_damage",
+                "flat_aether_damage:base_weapon",
+                {"damage_min": "50", "damage_max": "65"},
+            ),
+        ),
+    )
+
+    stat_ids = item_semantic_stat_ids(variant)
+
+    assert "base_weapon_damage_as_physical" in stat_ids
+    assert "base_weapon_damage_as_aether" in stat_ids
+    assert "flat_physical_damage" not in stat_ids
+    assert "flat_aether_damage" not in stat_ids
+
+
 def test_selected_skill_modifier_uses_skill_weight_and_ignores_unselected() -> None:
     selected_skill = "records/skills/playerclass01/cadence1_buff.dbr"
     selected_modifier = "records/skills/playerclass01/cadence1.dbr"

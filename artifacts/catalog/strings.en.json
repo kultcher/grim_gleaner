@@ -1,6 +1,6 @@
 {
   "locale": "en",
-  "schema_version": 8,
+  "schema_version": 9,
   "strings": {
     "tagAetherCrystalA02": "Aether Crystal Cluster",
     "tagAetherObeliskA01": "Aetherial Obelisk",

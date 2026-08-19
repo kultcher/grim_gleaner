@@ -354,13 +354,17 @@ def _scalar_properties(
                 if attributes.get(role)
             )
         )
+        property_key = str(property_.get("property_key", property_id))
+        context = (
+            "base_weapon" if property_key.endswith(":base_weapon") else ""
+        )
         identity = json.dumps(
-            (property_id, qualifiers), separators=(",", ":")
+            (property_id, context, qualifiers), separators=(",", ":")
         )
         scalar.append(
             {
                 "property_id": property_id,
-                "property_key": str(property_.get("property_key", property_id)),
+                "property_key": property_key,
                 "scalar_value": abs(value),
                 "value_roles": roles,
                 "identity": identity,

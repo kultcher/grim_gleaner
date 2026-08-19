@@ -14,7 +14,7 @@ def test_release_dependencies_and_python_range_are_pinned() -> None:
         (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
     )
 
-    assert payload["project"]["version"] == "0.9.1-beta"
+    assert payload["project"]["version"] == "0.9.2-beta"
     assert __version__ == payload["project"]["version"]
     assert payload["project"]["requires-python"] == ">=3.13,<3.15"
     assert "PySide6==6.11.1" in payload["project"]["dependencies"]
@@ -53,7 +53,7 @@ def test_packaging_script_validates_release_before_archiving() -> None:
     assert 'Replace("__ICON_PATH__", $iconPath)' in script
     assert "Application icon is not a valid ICO container" in script
     assert '"grim_gleaner.dist"' in script
-    assert "Grim-Gleaner-0.9.1-beta-win64.zip" in script
+    assert "Grim-Gleaner-0.9.2-beta-win64.zip" in script
     assert "Standalone distribution does not contain its required dependencies" in script
     assert "Copy-Item -LiteralPath $standaloneOutput" in script
     assert "assemble-release" in script

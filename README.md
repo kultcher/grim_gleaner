@@ -1,4 +1,14 @@
-# Grim Gleaner v.0.9.1-beta
+# Grim Gleaner v.0.9.2-beta
+
+Recent Changes:
+v0.9.2-beta (08/19/26):
+- updated catalog for Grim Dawn 1.3.0.7
+- added profile level-awareness:\
+Items that are above your selected level band are excluded from the display view\
+Item grading and stat displays reflect the version of that affix/item that is appropriate to your level range
+- Various UI readability and organization tweaks
+
+_____
 
 Grim Gleaner is a utility to help Grim Dawn players quickly and conveniently
 identify and evaluate affixes and items that are most relevant to their build.
