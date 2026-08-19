@@ -10,12 +10,15 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any
 
-LEVEL_BANDS: tuple[dict[str, Any], ...] = (
-    {"band_id": "1-49", "minimum_level": 1, "maximum_level": 49},
-    {"band_id": "50-64", "minimum_level": 50, "maximum_level": 64},
-    {"band_id": "65-79", "minimum_level": 65, "maximum_level": 79},
-    {"band_id": "80-89", "minimum_level": 80, "maximum_level": 89},
-    {"band_id": "90+", "minimum_level": 90, "maximum_level": None},
+from gd_affix_relevance.level_bands import LEVEL_BANDS as SHARED_LEVEL_BANDS
+
+LEVEL_BANDS: tuple[dict[str, Any], ...] = tuple(
+    {
+        "band_id": band.band_id,
+        "minimum_level": band.minimum_level,
+        "maximum_level": band.maximum_level,
+    }
+    for band in SHARED_LEVEL_BANDS
 )
 
 _COMPOUND_ROLE_MARKERS = (

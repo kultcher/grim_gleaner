@@ -155,6 +155,9 @@ def test_main_window_exposes_gear_grade_subnavigation_and_settings() -> None:
     assert window.profile_editor.tabs.count() == 6
     assert window.profile_editor.tabs.tabText(4) == "Pets"
     assert window.profile_editor.tabs.tabText(5) == "Skills"
+    assert window.profile_editor.level_band_combo.currentData() == "90+"
+    assert window.sidebar_profile_name.text() == "New Build Profile"
+    assert window.sidebar_profile_level.text() == "Profile level: 90+"
     assert {
         "pets_damage",
         "pets_defenses",
@@ -165,6 +168,13 @@ def test_main_window_exposes_gear_grade_subnavigation_and_settings() -> None:
         for package_id in ("pets_damage", "pets_defenses", "pets_utility")
     )
     assert window.focusPolicy() == Qt.FocusPolicy.NoFocus
+
+    window.profile_editor.name_edit.setText("Sidebar Test")
+    window.profile_editor.level_band_combo.setCurrentIndex(
+        window.profile_editor.level_band_combo.findData("50-64")
+    )
+    assert window.sidebar_profile_name.text() == "Sidebar Test"
+    assert window.sidebar_profile_level.text() == "Profile level: 50-64"
 
     window.profile_editor.view_matches_button.click()
     assert window.navigation.currentRow() == 1

@@ -6,6 +6,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QSignalBlocker, Signal
 from PySide6.QtWidgets import (
+    QComboBox,
     QFileDialog,
     QFrame,
     QHBoxLayout,
@@ -21,6 +22,7 @@ from PySide6.QtWidgets import (
 
 from gd_affix_relevance.catalog import SkillCatalog
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.level_bands import LEVEL_BANDS
 from gd_affix_relevance.profile_store import load_profile, save_profile
 from gd_affix_relevance.ui.catalog import PROFILE_TABS, TabDefinition
 from gd_affix_relevance.ui.widgets import PackageAccordion
@@ -29,6 +31,7 @@ from gd_affix_relevance.ui.skills_editor import SkillsEditor
 
 class ProfileEditor(QWidget):
     profile_changed = Signal()
+    profile_metadata_changed = Signal()
     profile_path_changed = Signal(object)
     view_matches_requested = Signal()
 
@@ -107,20 +110,31 @@ class ProfileEditor(QWidget):
             self.file_status.setToolTip(str(self.current_profile_path))
         layout.addWidget(self.file_status)
 
-        hint_row = QHBoxLayout()
-        hint = QLabel(
-            "All packages remain visible. Optional packages start collapsed and stay "
-            "open whenever they contain a nonzero weight.",
-            self,
+        level_row = QHBoxLayout()
+        level_label = QLabel("Profile level", self)
+        level_label.setObjectName("fieldLabel")
+        level_row.addWidget(level_label)
+        self.level_band_combo = QComboBox(self)
+        self.level_band_combo.setObjectName("profileLevelBand")
+        self.level_band_combo.setToolTip(
+            "The character level range used when exporting grades"
         )
-        hint.setObjectName("pageHint")
-        hint.setWordWrap(True)
-        hint_row.addWidget(hint, 1)
+        for band in LEVEL_BANDS:
+            self.level_band_combo.addItem(band.display_label, band.band_id)
+        selected_level = self.level_band_combo.findData(
+            self.profile.level_band
+        )
+        self.level_band_combo.setCurrentIndex(max(0, selected_level))
+        self.level_band_combo.currentIndexChanged.connect(
+            self._level_band_changed
+        )
+        level_row.addWidget(self.level_band_combo)
+        level_row.addStretch(1)
         self.view_matches_button = QPushButton("View Matches", self)
         self.view_matches_button.setObjectName("primaryAction")
         self.view_matches_button.clicked.connect(self.view_matches_requested)
-        hint_row.addWidget(self.view_matches_button)
-        layout.addLayout(hint_row)
+        level_row.addWidget(self.view_matches_button)
+        layout.addLayout(level_row)
 
         self.tabs = QTabWidget(self)
         self.tabs.setObjectName("profileTabs")
@@ -167,6 +181,16 @@ class ProfileEditor(QWidget):
     def _name_changed(self, name: str) -> None:
         self.profile.name = name
         self._mark_unsaved()
+        self.profile_metadata_changed.emit()
+
+    def _level_band_changed(self, _index: int) -> None:
+        band_id = self.level_band_combo.currentData()
+        if not isinstance(band_id, str):
+            return
+        self.profile.set_level_band(band_id)
+        self._mark_unsaved()
+        self.profile_metadata_changed.emit()
+        self.profile_changed.emit()
 
     def _weights_changed(self, _stat_id: str, _weight: int) -> None:
         self._mark_unsaved()
@@ -215,9 +239,15 @@ class ProfileEditor(QWidget):
         self.profile.resistance_cap_weights.clear()
         for stat_id, weight in loaded.resistance_cap_weights.items():
             self.profile.set_resistance_cap_weight(stat_id, weight)
+        self.profile.set_level_band(loaded.level_band)
 
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
+        del blocker
+        blocker = QSignalBlocker(self.level_band_combo)
+        self.level_band_combo.setCurrentIndex(
+            self.level_band_combo.findData(self.profile.level_band)
+        )
         del blocker
         for accordion in self.accordions.values():
             accordion.refresh_from_profile()
@@ -228,6 +258,7 @@ class ProfileEditor(QWidget):
         self.file_status.setText(f"Loaded: {self.current_profile_path.name}")
         self.file_status.setToolTip(str(self.current_profile_path))
         self.profile_path_changed.emit(self.current_profile_path)
+        self.profile_metadata_changed.emit()
         self.profile_changed.emit()
         return self.profile
 
@@ -249,8 +280,14 @@ class ProfileEditor(QWidget):
         self.profile.excluded_conversion_sources.clear()
         self.profile.resistance_cap_enabled = baseline.resistance_cap_enabled
         self.profile.resistance_cap_weights.clear()
+        self.profile.set_level_band(baseline.level_band)
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
+        del blocker
+        blocker = QSignalBlocker(self.level_band_combo)
+        self.level_band_combo.setCurrentIndex(
+            self.level_band_combo.findData(self.profile.level_band)
+        )
         del blocker
         for accordion in self.accordions.values():
             accordion.refresh_from_profile()
@@ -260,6 +297,7 @@ class ProfileEditor(QWidget):
         self.file_status.setText("New profile — not saved")
         self.file_status.setToolTip("")
         self.profile_path_changed.emit(None)
+        self.profile_metadata_changed.emit()
         self.profile_changed.emit()
         return True
 

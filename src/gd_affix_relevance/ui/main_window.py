@@ -7,6 +7,7 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, Qt
 from PySide6.QtGui import QCloseEvent, QFont
 from PySide6.QtWidgets import (
+    QFrame,
     QHBoxLayout,
     QLabel,
     QListWidget,
@@ -96,6 +97,25 @@ class MainWindow(QMainWindow):
             Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
         sidebar_layout.addWidget(self.navigation, 1)
+
+        self.profile_summary = QFrame(sidebar)
+        self.profile_summary.setObjectName("sidebarProfileSummary")
+        profile_summary_layout = QVBoxLayout(self.profile_summary)
+        profile_summary_layout.setContentsMargins(10, 8, 10, 8)
+        profile_summary_layout.setSpacing(3)
+        profile_title = QLabel("CURRENT PROFILE", self.profile_summary)
+        profile_title.setObjectName("sidebarInfoTitle")
+        profile_summary_layout.addWidget(profile_title)
+        self.sidebar_profile_name = QLabel("New Build Profile", self.profile_summary)
+        self.sidebar_profile_name.setObjectName("sidebarProfileName")
+        self.sidebar_profile_name.setWordWrap(True)
+        profile_summary_layout.addWidget(self.sidebar_profile_name)
+        self.sidebar_profile_level = QLabel(
+            "Profile level: 90+", self.profile_summary
+        )
+        self.sidebar_profile_level.setObjectName("sidebarProfileLevel")
+        profile_summary_layout.addWidget(self.sidebar_profile_level)
+        sidebar_layout.addWidget(self.profile_summary)
 
         self.game_location_warning = QLabel(
             "Grim Dawn folder not confirmed.\nExports are disabled.", sidebar
@@ -211,6 +231,9 @@ class MainWindow(QMainWindow):
         )
 
         self.profile_editor.profile_changed.connect(self.top_matches_page.refresh)
+        self.profile_editor.profile_metadata_changed.connect(
+            self._update_profile_summary
+        )
         self.top_matches_page.profile_state_changed.connect(
             self.profile_editor.mark_external_change
         )
@@ -228,6 +251,7 @@ class MainWindow(QMainWindow):
         self.navigation.currentRowChanged.connect(self._navigation_changed)
         self.navigation.setCurrentRow(0)
         self.setCentralWidget(central)
+        self._update_profile_summary()
         self._update_game_location_state()
         self.catalog_warning.setVisible(bool(self.catalog_load_error))
 
@@ -283,6 +307,15 @@ class MainWindow(QMainWindow):
                 "profiles/active_path", str(Path(path).resolve())
             )
         self.settings.sync()
+
+    def _update_profile_summary(self) -> None:
+        profile = self.profile_editor.profile
+        self.sidebar_profile_name.setText(
+            profile.name.strip() or "Unnamed profile"
+        )
+        self.sidebar_profile_level.setText(
+            f"Profile level: {profile.level_band}"
+        )
 
     def prompt_for_game_folder_if_needed(self) -> None:
         """Prompt once at startup when no confirmed installation is stored."""
