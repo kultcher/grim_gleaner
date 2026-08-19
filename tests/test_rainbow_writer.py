@@ -6,6 +6,7 @@ from gd_affix_relevance.catalog import (
     AffixCatalog,
     AffixDefinition,
     AffixProperty,
+    AffixTierDefinition,
     AffixVariantDefinition,
     ItemCatalog,
     ItemDefinition,
@@ -361,6 +362,85 @@ def test_markers_omit_high_s_counts_and_flag_granted_affix_skills() -> None:
 
     assert markers["tagHigh"] == "(S+)"
     assert markers["tagGranted"] == "(C1*)"
+
+
+def test_export_markers_follow_profile_level_eligibility_and_tier_stats() -> None:
+    low = AffixTierDefinition(
+        tier_id="base:low.dbr",
+        source="base",
+        record_path="low.dbr",
+        gear_slot="Ring",
+        applicable_slots=(),
+        level_requirement=20,
+        properties=(AffixProperty("health", "health", {}),),
+        stat_lines=("+[x] Health",),
+    )
+    high = AffixTierDefinition(
+        tier_id="base:high.dbr",
+        source="base",
+        record_path="high.dbr",
+        gear_slot="Ring",
+        applicable_slots=(),
+        level_requirement=70,
+        properties=(
+            AffixProperty("health", "health", {}),
+            AffixProperty("offensive_ability", "offensive_ability", {}),
+        ),
+        stat_lines=("+[x] Health", "+[x] Offensive Ability"),
+    )
+    late = AffixTierDefinition(
+        tier_id="base:late.dbr",
+        source="base",
+        record_path="late.dbr",
+        gear_slot="Ring",
+        applicable_slots=(),
+        level_requirement=65,
+        properties=(AffixProperty("health", "health", {}),),
+        stat_lines=("+[x] Health",),
+    )
+    banded = AffixDefinition(
+        affix_id="prefix:banded",
+        localization_tag="tagBanded",
+        display_name="Banded",
+        kind="prefix",
+        variants=(_variant("health"),),
+        tiers=(low, high),
+    )
+    unavailable = AffixDefinition(
+        affix_id="prefix:unavailable",
+        localization_tag="tagUnavailable",
+        display_name="Unavailable",
+        kind="prefix",
+        variants=(_variant("health"),),
+        tiers=(late,),
+    )
+    catalog = AffixCatalog((banded, unavailable))
+    profile = BuildProfile(
+        weights={"health": 4, "offensive_ability": 4},
+        level_band="50-64",
+    )
+
+    low_markers = build_affix_markers(catalog, profile)
+    assert low_markers["tagBanded"] == "(C1)"
+    assert low_markers["tagUnavailable"] == "(C1)"
+
+    profile.set_level_band("65-79")
+    high_markers = build_affix_markers(catalog, profile)
+    assert high_markers["tagBanded"] == "(B2)"
+    assert high_markers["tagUnavailable"] == "(C1)"
+
+
+def test_unique_export_uses_nearest_future_variant_above_profile_band() -> None:
+    item = _unique_item(
+        "tagLateUnique",
+        "Late Unique",
+        (ItemProperty("health", "health", {}),),
+    )
+
+    assert build_unique_item_markers(
+        ItemCatalog((item,), (), (), (), (), ()),
+        BuildProfile(weights={"health": 4}, level_band="1-49"),
+    ) == {"tagLateUnique": "(C1)"}
 
 
 def test_writer_grades_unique_items_and_flags_only_relevant_modifiers(

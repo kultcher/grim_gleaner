@@ -532,7 +532,7 @@ def test_unique_tables_show_b_or_better_items_and_filter_types() -> None:
         assert DETAIL_TITLE_COLORS[match.item_type] in (
             page.unique_detail_pane.title.styleSheet()
         )
-    assert "Grades assume the highest-level" in page.status.text()
+    assert "highest variant eligible for level band 90+" in page.status.text()
 
     page.minimum_grade.setCurrentText("B")
     assert table.rowCount() == 4

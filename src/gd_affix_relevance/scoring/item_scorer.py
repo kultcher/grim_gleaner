@@ -10,6 +10,7 @@ from gd_affix_relevance.catalog import (
     ItemVariantDefinition,
 )
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.level_bands import level_is_eligible
 from gd_affix_relevance.scoring.catalog_scorer import (
     RelevanceScore,
     canonical_skill_reference,
@@ -134,6 +135,14 @@ def unique_item_type(variant: ItemVariantDefinition) -> str:
     return ""
 
 
+def item_variant_is_eligible(
+    variant: ItemVariantDefinition, profile: BuildProfile
+) -> bool:
+    """Whether an item variant is usable within the profile's level band."""
+
+    return level_is_eligible(variant.level_requirement, profile.level_band)
+
+
 def rank_unique_items_for_slot(
     catalog: ItemCatalog,
     profile: BuildProfile,
@@ -152,6 +161,7 @@ def rank_unique_items_for_slot(
             for variant in item.variants
             if equipment_class_slot_id(variant.item_class) == slot_id
             and unique_item_type(variant) in enabled_types
+            and item_variant_is_eligible(variant, profile)
         )
         if not candidates:
             continue
@@ -237,6 +247,7 @@ def rank_addons_for_slot(
             for variant in item.variants
             if slot_id
             in slot_ids_from_item_applicability(variant.applicable_slots)
+            and item_variant_is_eligible(variant, profile)
         )
         if not candidates:
             continue

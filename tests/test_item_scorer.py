@@ -435,3 +435,73 @@ def test_resistance_cap_weights_override_and_amplify_addons_only() -> None:
         addon_type=ADDON_COMPONENT,
         resistance_cap_weights={"fire_resistance": 0},
     )
+
+
+def test_item_ranking_regrades_from_highest_variant_inside_profile_band() -> None:
+    low = _variant(
+        level_requirement=20,
+        properties=(ItemProperty("health", "health", {}),),
+    )
+    high = _variant(
+        record_path="records/items/gearhead/b001b_head.dbr",
+        level_requirement=70,
+        item_level=75,
+        properties=(
+            ItemProperty("health", "health", {}),
+            ItemProperty("offensive_ability", "offensive_ability", {}),
+        ),
+    )
+    catalog = ItemCatalog((_item("Banded Helm", low, high),), (), (), (), (), ())
+    profile = BuildProfile(
+        weights={"health": 4, "offensive_ability": 4},
+        level_band="50-64",
+    )
+
+    low_match = rank_unique_items_for_slot(
+        catalog, profile, slot_id=SLOT_HEAD, minimum_grade="D"
+    )[0]
+    assert low_match.variant is low
+    assert low_match.score.matched_stat_ids == ("health",)
+
+    profile.set_level_band("65-79")
+    high_match = rank_unique_items_for_slot(
+        catalog, profile, slot_id=SLOT_HEAD, minimum_grade="D"
+    )[0]
+    assert high_match.variant is high
+    assert high_match.score.matched_stat_ids == (
+        "health",
+        "offensive_ability",
+    )
+    assert high_match.score.effective_score > low_match.score.effective_score
+
+
+def test_items_and_addons_above_profile_band_are_excluded() -> None:
+    late_unique = _variant(level_requirement=65)
+    late_component_variant = _variant(
+        category="component",
+        item_class="ItemRelic",
+        applicable_slots=("Head",),
+        level_requirement=65,
+    )
+    late_component = replace(
+        _item("Late Component", late_component_variant), family="components"
+    )
+    catalog = ItemCatalog(
+        (_item("Late Helm", late_unique),),
+        (late_component,),
+        (),
+        (),
+        (),
+        (),
+    )
+    profile = BuildProfile(weights={"health": 4}, level_band="1-49")
+
+    assert not rank_unique_items_for_slot(
+        catalog, profile, slot_id=SLOT_HEAD, minimum_grade="D"
+    )
+    assert not rank_addons_for_slot(
+        catalog,
+        profile,
+        slot_id=SLOT_HEAD,
+        addon_type=ADDON_COMPONENT,
+    )

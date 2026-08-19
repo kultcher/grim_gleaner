@@ -34,3 +34,22 @@ def validate_level_band_id(band_id: str) -> str:
     if normalized not in LEVEL_BAND_IDS:
         raise ValueError(f"unknown profile level band: {band_id!r}")
     return normalized
+
+
+def level_band_definition(band_id: str) -> LevelBandDefinition:
+    """Return the validated definition for a persisted profile band."""
+
+    normalized = validate_level_band_id(band_id)
+    return next(band for band in LEVEL_BANDS if band.band_id == normalized)
+
+
+def level_is_eligible(level_requirement: int, band_id: str) -> bool:
+    """Whether a concrete record can be equipped within the selected band.
+
+    Grim Dawn records commonly use zero for an unrestricted/starting-level
+    entry. Treat that as level one, matching the catalog magnitude builder.
+    """
+
+    maximum = level_band_definition(band_id).maximum_level
+    effective_level = max(1, int(level_requirement))
+    return maximum is None or effective_level <= maximum

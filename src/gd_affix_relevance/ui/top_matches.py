@@ -1208,8 +1208,8 @@ class TopMatchesPage(QWidget):
             f"{self.profile.name}: {visible_affixes} ranked affix entries and "
             f"{visible_uniques} {self.minimum_grade.currentText()}-or-better "
             f"unique-item entries, and {visible_addons} add-on entries. "
-            "Grades assume "
-            f"the highest-level stat layout.{cap_note}{source_note}"
+            f"Grades use the highest variant eligible for level band "
+            f"{self.profile.level_band}.{cap_note}{source_note}"
         )
 
     def _select_first_visible_match(self) -> None:
@@ -1339,7 +1339,10 @@ class TopMatchesPage(QWidget):
         html.extend(
             (
                 _html_line(""),
-                _html_line("Grades assume the highest-level stat layout."),
+                _html_line(
+                    "Grade uses the highest stat layout eligible for profile "
+                    f"level band {self.profile.level_band}."
+                ),
                 _html_line(f"Full applicability: {match.variant.gear_slot}"),
                 _html_line(f"Localization tag: {match.affix.localization_tag}"),
                 _html_line(
@@ -1497,7 +1500,10 @@ class TopMatchesPage(QWidget):
         html.extend(
             (
                 _html_line(f"Required level: {match.variant.level_requirement}"),
-                _html_line("Grades assume the highest-level item variant."),
+                _html_line(
+                    "Grade uses the highest item variant eligible for profile "
+                    f"level band {self.profile.level_band}."
+                ),
                 _html_line(f"Localization tag: {match.item.localization_tag}"),
                 _html_line(
                     f"Record: {match.variant.source}:{match.variant.record_path}"
@@ -1595,7 +1601,10 @@ class TopMatchesPage(QWidget):
                 _html_line(
                     f"Required level: {match.variant.level_requirement}"
                 ),
-                _html_line("Grades assume the highest-level item variant."),
+                _html_line(
+                    "Grade uses the highest item variant eligible for profile "
+                    f"level band {self.profile.level_band}."
+                ),
                 _html_line(f"Localization tag: {match.item.localization_tag}"),
                 _html_line(
                     f"Record: {match.variant.source}:"
