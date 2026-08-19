@@ -913,6 +913,68 @@ def test_detail_stat_colors_follow_semantic_families() -> None:
     ) == SKILL_RANK_STAT_COLOR
 
 
+def test_unique_detail_applies_named_item_scale_to_offensive_damage() -> None:
+    app = _application()
+    base = _item(
+        "Scaled Crown",
+        category="legendary",
+        rarity="Legendary",
+        source="Random Drop",
+        emphasized=False,
+    )
+    variant = replace(
+        base.variants[0],
+        properties=(
+            ItemProperty(
+                "aether_damage_percent",
+                "aether_damage_percent",
+                {"damage_percent": "102"},
+            ),
+            ItemProperty(
+                "flat_aether_damage",
+                "flat_aether_damage",
+                {"damage_min": "20"},
+            ),
+            ItemProperty(
+                "offensive_ability",
+                "offensive_ability",
+                {"flat": "44"},
+            ),
+            ItemProperty(
+                "casting_speed",
+                "casting_speed",
+                {"percent": "18"},
+            ),
+        ),
+        attribute_scale_percent=40.0,
+    )
+    item = replace(base, variants=(variant,))
+    profile = BuildProfile(
+        weights={
+            "aether_damage_percent": 4,
+            "flat_aether_damage": 4,
+            "offensive_ability": 2,
+            "casting_speed": 2,
+        }
+    )
+    window = MainWindow(
+        profile,
+        items=ItemCatalog((item,), (), (), (), (), ()),
+    )
+    window.show()
+    window.top_matches_page.minimum_grade.setCurrentText("B")
+    table = window.top_matches_page.unique_tables["head"]
+    assert table.rowCount() == 1
+    table.selectRow(0)
+    app.processEvents()
+
+    details = window.top_matches_page.unique_details.toPlainText()
+    assert "Aether Damage (+%)\n142%" in details
+    assert "Aether Damage (Flat)\n28" in details
+    assert "Offensive Ability (Flat)\n44" in details
+    assert "Casting Speed\n18%" in details
+
+
 def test_affix_detail_uses_values_from_the_profile_eligible_tier() -> None:
     app = _application()
     low = AffixTierDefinition(

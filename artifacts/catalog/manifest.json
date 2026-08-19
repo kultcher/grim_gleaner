@@ -33,7 +33,7 @@
   "game_version": "1.3.0.7",
   "item_scope": "named_equipment_components_augments_relics_runes_and_consumables",
   "locale": "en",
-  "schema_version": 8,
+  "schema_version": 9,
   "skill_scope": "named_player_pet_and_item_granted_with_mastery_tree_metadata",
   "sources": [
     "base",

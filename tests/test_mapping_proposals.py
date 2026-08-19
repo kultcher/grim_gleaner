@@ -260,9 +260,8 @@ def test_final_reachable_review_fields_are_confirmed() -> None:
 def test_orphan_only_fields_remain_auditable_but_are_ignored() -> None:
     for raw_field in (
         "characterIncreasedExperience",
-        "offensiveFreezeChance",
         "offensiveSlowDefensiveReductionMin",
-        "offensiveSlowManaLeachMin",
+        "offensiveTotalResistanceReductionAbsoluteChance",
     ):
         proposal = propose_field_mapping(raw_field)
         assert proposal is not None
@@ -299,24 +298,83 @@ def test_item_only_base_damage_numbered_conversions_and_max_resists_map() -> Non
     assert maximum_resistance.property_id == "maximum_fire_resistance"
 
 
-def test_item_only_retaliation_and_total_speed_fields_form_bundles() -> None:
+def test_item_only_control_and_speed_fields_form_bundles() -> None:
     total_speed = propose_field_mapping("offensiveSlowTotalSpeedMin")
     total_speed_duration = propose_field_mapping(
         "offensiveSlowTotalSpeedDurationMin"
     )
+    total_speed_chance = propose_field_mapping("offensiveSlowTotalSpeedChance")
+    freeze = propose_field_mapping("offensiveFreezeChance")
+    freeze_duration = propose_field_mapping("offensiveFreezeMin")
+    leech = propose_field_mapping("offensiveSlowManaLeachMin")
+    leech_duration = propose_field_mapping("offensiveSlowManaLeachDurationMin")
+    leech_chance = propose_field_mapping("offensiveSlowManaLeachChance")
     confusion = propose_field_mapping("retaliationConfusionMin")
-    leech = propose_field_mapping("retaliationSlowManaLeachMin")
-    leech_duration = propose_field_mapping(
+    retaliation_leech = propose_field_mapping("retaliationSlowManaLeachMin")
+    retaliation_leech_duration = propose_field_mapping(
         "retaliationSlowManaLeachDurationMin"
     )
 
     assert total_speed is not None and total_speed_duration is not None
-    assert total_speed.bundle_key == total_speed_duration.bundle_key == (
-        "target_total_speed_reduction"
+    assert total_speed_chance is not None
+    assert (
+        total_speed.bundle_key
+        == total_speed_duration.bundle_key
+        == total_speed_chance.bundle_key
+        == "target_total_speed_reduction"
     )
+    assert total_speed_chance.component_requirement == "optional"
+    assert freeze is not None and freeze_duration is not None
+    assert freeze.bundle_key == freeze_duration.bundle_key == "freeze"
+    assert (
+        leech is not None
+        and leech_duration is not None
+        and leech_chance is not None
+    )
+    assert (
+        leech.bundle_key
+        == leech_duration.bundle_key
+        == leech_chance.bundle_key
+        == "energy_leech"
+    )
+    assert leech_chance.component_requirement == "optional"
     assert confusion is not None
     assert confusion.property_id == "confusion_retaliation"
-    assert leech is not None and leech_duration is not None
-    assert leech.bundle_key == leech_duration.bundle_key == (
-        "energy_leech_retaliation"
+    assert (
+        retaliation_leech is not None
+        and retaliation_leech_duration is not None
     )
+    assert (
+        retaliation_leech.bundle_key
+        == retaliation_leech_duration.bundle_key
+        == "energy_leech_retaliation"
+    )
+
+
+def test_item_only_fumble_knockdown_and_physical_reduction_are_confirmed() -> None:
+    expected = {
+        "offensiveFumbleChance": ("fumble", "chance_percent"),
+        "offensiveFumbleDurationMin": ("fumble", "duration_seconds"),
+        "offensiveFumbleMin": ("fumble", "fumble_percent"),
+        "offensiveKnockdownChance": ("knockdown", "chance_percent"),
+        "offensiveKnockdownMin": ("knockdown", "duration_seconds"),
+        "offensivePhysicalReductionPercentDurationMin": (
+            "target_physical_damage_reduction_percent",
+            "duration_seconds",
+        ),
+        "offensivePhysicalReductionPercentMin": (
+            "target_physical_damage_reduction_percent",
+            "reduction_percent",
+        ),
+    }
+
+    for raw_field, (property_id, value_role) in expected.items():
+        proposal = propose_field_mapping(raw_field)
+        assert proposal is not None
+        assert proposal.property_id == property_id
+        assert proposal.value_role == value_role
+        assert proposal.confidence == "confirmed"
+
+    fumble_chance = propose_field_mapping("offensiveFumbleChance")
+    assert fumble_chance is not None
+    assert fumble_chance.component_requirement == "optional"

@@ -21,6 +21,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -36,6 +37,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -103,6 +105,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -118,6 +121,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -193,6 +197,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -208,6 +213,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -284,6 +290,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -299,6 +306,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -367,6 +375,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -382,6 +391,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -458,6 +468,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -473,6 +484,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -547,6 +559,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -562,6 +575,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -623,6 +637,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -638,6 +653,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -698,6 +714,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -713,6 +730,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -782,6 +800,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -797,6 +816,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -873,6 +893,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -888,6 +909,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -964,6 +986,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -979,6 +1002,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1049,6 +1073,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1064,6 +1089,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1140,6 +1166,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1155,6 +1182,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1237,6 +1265,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1252,6 +1281,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1312,6 +1342,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1327,6 +1358,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1390,6 +1422,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1405,6 +1438,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1467,6 +1501,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1482,6 +1517,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1552,6 +1588,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1567,6 +1604,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1627,6 +1665,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1642,6 +1681,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1707,6 +1747,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1722,6 +1763,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1766,6 +1808,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1781,6 +1824,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1858,6 +1902,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1873,6 +1918,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -1939,6 +1985,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1954,6 +2001,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2038,6 +2086,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2053,6 +2102,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2121,6 +2171,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2136,6 +2187,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2197,6 +2249,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2212,6 +2265,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2288,6 +2342,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2303,6 +2358,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2363,6 +2419,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2378,6 +2435,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2438,6 +2496,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2453,6 +2512,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2519,6 +2579,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2534,6 +2595,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2611,6 +2673,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2626,6 +2689,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2708,6 +2772,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2723,6 +2788,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2773,6 +2839,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2788,6 +2855,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2869,6 +2937,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2884,6 +2953,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -2941,6 +3011,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2956,6 +3027,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3008,6 +3080,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3023,6 +3096,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3091,6 +3165,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3106,6 +3181,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3166,6 +3242,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3181,6 +3258,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3257,6 +3335,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3272,6 +3351,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3332,6 +3412,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3347,6 +3428,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3408,6 +3490,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3423,6 +3506,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3484,6 +3568,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3499,6 +3584,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3564,6 +3650,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3579,6 +3666,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3636,6 +3724,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3651,6 +3740,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3708,6 +3798,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3723,6 +3814,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3773,6 +3865,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3788,6 +3881,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3878,6 +3972,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3893,6 +3988,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -3975,6 +4071,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3990,6 +4087,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4072,6 +4170,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4087,6 +4186,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4163,6 +4263,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4178,6 +4279,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4251,6 +4353,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4266,6 +4369,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4324,6 +4428,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4339,6 +4444,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4399,6 +4505,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4414,6 +4521,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4484,6 +4592,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4499,6 +4608,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4565,6 +4675,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4580,6 +4691,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4662,6 +4774,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4677,6 +4790,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4735,6 +4849,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4750,6 +4865,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4823,6 +4939,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4838,6 +4955,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4888,6 +5006,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4903,6 +5022,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -4985,6 +5105,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5000,6 +5121,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5081,6 +5203,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5096,6 +5219,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5146,6 +5270,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5161,6 +5286,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5227,6 +5353,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5242,6 +5369,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5312,6 +5440,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5327,6 +5456,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5402,6 +5532,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5417,6 +5548,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5494,6 +5626,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5509,6 +5642,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5574,6 +5708,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5589,6 +5724,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5641,6 +5777,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5656,6 +5793,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5725,6 +5863,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5740,6 +5879,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5808,6 +5948,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5823,6 +5964,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5905,6 +6047,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5920,6 +6063,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -5989,6 +6133,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6004,6 +6149,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6064,6 +6210,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6079,6 +6226,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6139,6 +6287,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6154,6 +6303,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6220,6 +6370,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6235,6 +6386,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6303,6 +6455,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6318,6 +6471,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6400,6 +6554,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6415,6 +6570,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6483,6 +6639,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6498,6 +6655,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6567,6 +6725,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6582,6 +6741,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6653,6 +6813,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6668,6 +6829,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6745,6 +6907,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6760,6 +6923,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6826,6 +6990,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6841,6 +7006,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -6918,6 +7084,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6933,6 +7100,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7015,6 +7183,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7030,6 +7199,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7112,6 +7282,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7127,6 +7298,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7195,6 +7367,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7210,6 +7383,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7279,6 +7453,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7294,6 +7469,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7371,6 +7547,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7386,6 +7563,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7456,6 +7634,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7471,6 +7650,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7539,6 +7719,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7554,6 +7735,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7630,6 +7812,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7645,6 +7828,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7721,6 +7905,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7736,6 +7921,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7807,6 +7993,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7822,6 +8009,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7887,6 +8075,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7902,6 +8091,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -7960,6 +8150,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -7975,6 +8166,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8057,6 +8249,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8072,6 +8265,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8154,6 +8348,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8169,6 +8364,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8226,6 +8422,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8241,6 +8438,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8298,6 +8496,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8313,6 +8512,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8370,6 +8570,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8385,6 +8586,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8434,6 +8636,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8449,6 +8652,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8493,6 +8697,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8508,6 +8713,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8576,6 +8782,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8591,6 +8798,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8659,6 +8867,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8674,6 +8883,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8757,6 +8967,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8772,6 +8983,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8840,6 +9052,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8855,6 +9068,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -8931,6 +9145,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -8946,6 +9161,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9020,6 +9236,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9035,6 +9252,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9092,6 +9310,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9107,6 +9326,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9164,6 +9384,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9179,6 +9400,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9237,6 +9459,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9252,6 +9475,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9342,6 +9566,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9357,6 +9582,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9439,6 +9665,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9454,6 +9681,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9528,6 +9756,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9543,6 +9772,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9633,6 +9863,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9648,6 +9879,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9721,6 +9953,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9736,6 +9969,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9794,6 +10028,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9809,6 +10044,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9871,6 +10107,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9886,6 +10123,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -9955,6 +10193,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -9970,6 +10209,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10036,6 +10276,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10051,6 +10292,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10127,6 +10369,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10142,6 +10385,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10205,6 +10449,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10220,6 +10465,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10288,6 +10534,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10303,6 +10550,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10377,6 +10625,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10392,6 +10641,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10444,6 +10694,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10459,6 +10710,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10525,6 +10777,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10540,6 +10793,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10611,6 +10865,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10626,6 +10881,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10686,6 +10942,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10701,6 +10958,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10766,6 +11024,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10781,6 +11040,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10833,6 +11093,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10848,6 +11109,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -10922,6 +11184,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -10937,6 +11200,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11013,6 +11277,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11028,6 +11293,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11096,6 +11362,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11111,6 +11378,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11181,6 +11449,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11196,6 +11465,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11264,6 +11534,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11279,6 +11550,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11353,6 +11625,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11368,6 +11641,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11434,6 +11708,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11449,6 +11724,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11522,6 +11798,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11537,6 +11814,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11595,6 +11873,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11610,6 +11889,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11618,6 +11898,14 @@
               },
               "property_id": "cold_damage_percent",
               "property_key": "cold_damage_percent"
+            },
+            {
+              "attributes": {
+                "chance_percent": "3.000000",
+                "duration_seconds": "2.000000"
+              },
+              "property_id": "freeze",
+              "property_key": "freeze"
             },
             {
               "attributes": {
@@ -11643,6 +11931,7 @@
           "stat_lines": [
             "+[x] Health",
             "+[x]% Cold Damage",
+            "[x]% Chance to Freeze Target for [y] Seconds",
             "+[x]% Frostburn Damage"
           ],
           "vendor_sources": [
@@ -11676,6 +11965,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11691,6 +11981,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11765,6 +12056,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11780,6 +12072,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11854,6 +12147,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11869,6 +12163,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -11942,6 +12237,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -11957,6 +12253,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12003,6 +12300,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12018,6 +12316,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -12052,6 +12351,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12067,6 +12367,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12141,6 +12442,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12156,6 +12458,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12229,6 +12532,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12244,6 +12548,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12294,6 +12599,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12309,6 +12615,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12378,6 +12685,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12393,6 +12701,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12461,6 +12770,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12476,6 +12786,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12541,6 +12852,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12556,6 +12868,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12620,6 +12933,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12635,6 +12949,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12707,6 +13022,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12722,6 +13038,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12801,6 +13118,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12816,6 +13134,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12880,6 +13199,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12895,6 +13215,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -12952,6 +13273,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -12967,6 +13289,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13033,6 +13356,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13048,6 +13372,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13111,6 +13436,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13126,6 +13452,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13207,6 +13534,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13222,6 +13550,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13293,6 +13622,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13308,6 +13638,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13371,6 +13702,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13386,6 +13718,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13460,6 +13793,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13475,6 +13809,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13555,6 +13890,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13570,6 +13906,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13649,6 +13986,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13664,6 +14002,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13751,6 +14090,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13766,6 +14106,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13845,6 +14186,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13860,6 +14202,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -13939,6 +14282,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -13954,6 +14298,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14027,6 +14372,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14042,6 +14388,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14113,6 +14460,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14128,6 +14476,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14191,6 +14540,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14206,6 +14556,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14286,6 +14637,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14301,6 +14653,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14372,6 +14725,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14387,6 +14741,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14466,6 +14821,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14481,6 +14837,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14560,6 +14917,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14575,6 +14933,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14638,6 +14997,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14653,6 +15013,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14726,6 +15087,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14741,6 +15103,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14821,6 +15184,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14836,6 +15200,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14908,6 +15273,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -14923,6 +15289,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -14994,6 +15361,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15009,6 +15377,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15080,6 +15449,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15095,6 +15465,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15175,6 +15546,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15190,6 +15562,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15269,6 +15642,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15284,6 +15658,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15355,6 +15730,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15370,6 +15746,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15449,6 +15826,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15464,6 +15842,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15544,6 +15923,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15559,6 +15939,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15630,6 +16011,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15645,6 +16027,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15732,6 +16115,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15747,6 +16131,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15826,6 +16211,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15841,6 +16227,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -15912,6 +16299,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -15927,6 +16315,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16014,6 +16403,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16029,6 +16419,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16100,6 +16491,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16115,6 +16507,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16169,6 +16562,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16184,6 +16578,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -16215,6 +16610,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16230,6 +16626,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16293,6 +16690,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16308,6 +16706,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16387,6 +16786,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16402,6 +16802,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16476,6 +16877,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16491,6 +16893,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16570,6 +16973,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16585,6 +16989,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16648,6 +17053,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16663,6 +17069,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16734,6 +17141,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16749,6 +17157,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16757,6 +17166,14 @@
               },
               "property_id": "cold_damage_percent",
               "property_key": "cold_damage_percent"
+            },
+            {
+              "attributes": {
+                "chance_percent": "6.000000",
+                "duration_seconds": "2.000000"
+              },
+              "property_id": "freeze",
+              "property_key": "freeze"
             },
             {
               "attributes": {
@@ -16782,6 +17199,7 @@
           "stat_lines": [
             "+[x] Health",
             "+[x]% Cold Damage",
+            "[x]% Chance to Freeze Target for [y] Seconds",
             "+[x]% Frostburn Damage"
           ],
           "vendor_sources": [
@@ -16812,6 +17230,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16827,6 +17246,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16898,6 +17318,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16913,6 +17334,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -16984,6 +17406,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -16999,6 +17422,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17070,6 +17494,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17085,6 +17510,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17156,6 +17582,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17171,6 +17598,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17242,6 +17670,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17257,6 +17686,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17329,6 +17759,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17344,6 +17775,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17423,6 +17855,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17438,6 +17871,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17501,6 +17935,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17516,6 +17951,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17596,6 +18032,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17611,6 +18048,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17684,6 +18122,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17699,6 +18138,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17778,6 +18218,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17793,6 +18234,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17872,6 +18314,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17887,6 +18330,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -17962,6 +18406,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -17977,6 +18422,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18048,6 +18494,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18063,6 +18510,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18150,6 +18598,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18165,6 +18614,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18252,6 +18702,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18267,6 +18718,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18338,6 +18790,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18353,6 +18806,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18424,6 +18878,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18439,6 +18894,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18511,6 +18967,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18526,6 +18983,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18614,6 +19072,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18629,6 +19088,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18708,6 +19168,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18723,6 +19184,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18786,6 +19248,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18801,6 +19264,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18872,6 +19336,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18887,6 +19352,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -18950,6 +19416,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -18965,6 +19432,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19025,6 +19493,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19040,6 +19509,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -19071,6 +19541,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19086,6 +19557,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19166,6 +19638,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19181,6 +19654,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19244,6 +19718,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19259,6 +19734,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19322,6 +19798,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19337,6 +19814,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19400,6 +19878,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19415,6 +19894,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19494,6 +19974,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19509,6 +19990,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19580,6 +20062,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19595,6 +20078,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19658,6 +20142,7 @@
             "Two-handed spear",
             "Two-handed sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19673,6 +20158,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19733,6 +20219,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19748,6 +20235,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19830,6 +20318,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19845,6 +20334,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -19911,6 +20401,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -19926,6 +20417,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20009,6 +20501,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20024,6 +20517,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20094,6 +20588,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20109,6 +20604,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20183,6 +20679,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20198,6 +20695,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20280,6 +20778,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20295,6 +20794,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20371,6 +20871,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20386,6 +20887,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20454,6 +20956,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20469,6 +20972,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20537,6 +21041,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20552,6 +21057,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20615,6 +21121,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20630,6 +21137,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20690,6 +21198,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20705,6 +21214,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20765,6 +21275,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20780,6 +21291,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20840,6 +21352,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20855,6 +21368,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -20931,6 +21445,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -20946,6 +21461,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21022,6 +21538,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21037,6 +21554,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21113,6 +21631,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21128,6 +21647,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21194,6 +21714,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21209,6 +21730,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21281,6 +21803,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21296,6 +21819,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21372,6 +21896,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21387,6 +21912,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21455,6 +21981,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21470,6 +21997,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21538,6 +22066,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21553,6 +22082,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21637,6 +22167,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21652,6 +22183,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21720,6 +22252,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21735,6 +22268,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21800,6 +22334,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21815,6 +22350,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21873,6 +22409,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21888,6 +22425,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -21977,6 +22515,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -21992,6 +22531,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22050,6 +22590,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22065,6 +22606,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22154,6 +22696,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22169,6 +22712,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22219,6 +22763,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22234,6 +22779,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22308,6 +22854,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22323,6 +22870,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22396,6 +22944,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22411,6 +22960,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22463,6 +23013,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22478,6 +23029,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22538,6 +23090,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22553,6 +23106,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22627,6 +23181,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22642,6 +23197,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22716,6 +23272,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22731,6 +23288,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22789,6 +23347,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22804,6 +23363,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22889,6 +23449,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22904,6 +23465,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -22977,6 +23539,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -22992,6 +23555,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23042,6 +23606,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23057,6 +23622,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23133,6 +23699,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23148,6 +23715,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23230,6 +23798,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23245,6 +23814,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23305,6 +23875,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23320,6 +23891,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23395,6 +23967,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23410,6 +23983,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23478,6 +24052,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23493,6 +24068,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23553,6 +24129,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23568,6 +24145,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23630,6 +24208,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23645,6 +24224,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23705,6 +24285,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23720,6 +24301,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23788,6 +24370,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23803,6 +24386,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23863,6 +24447,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23878,6 +24463,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -23948,6 +24534,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -23963,6 +24550,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24037,6 +24625,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24052,6 +24641,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24112,6 +24702,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24127,6 +24718,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24209,6 +24801,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24224,6 +24817,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24292,6 +24886,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24307,6 +24902,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24377,6 +24973,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24392,6 +24989,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24460,6 +25058,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24475,6 +25074,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24535,6 +25135,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24550,6 +25151,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24618,6 +25220,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24633,6 +25236,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24690,6 +25294,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24705,6 +25310,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24749,6 +25355,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24764,6 +25371,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24834,6 +25442,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24849,6 +25458,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -24915,6 +25525,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -24930,6 +25541,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25007,6 +25619,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25022,6 +25635,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25090,6 +25704,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25105,6 +25720,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25179,6 +25795,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25194,6 +25811,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25254,6 +25872,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25269,6 +25888,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25343,6 +25963,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25358,6 +25979,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25424,6 +26046,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25439,6 +26062,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25504,6 +26128,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25519,6 +26144,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25569,6 +26195,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25584,6 +26211,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25665,6 +26293,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25680,6 +26309,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25729,6 +26359,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25744,6 +26375,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25794,6 +26426,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25809,6 +26442,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25877,6 +26511,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25892,6 +26527,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25952,6 +26588,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -25967,6 +26604,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 50,
           "level_requirement": 50,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -25975,6 +26613,14 @@
               },
               "property_id": "cold_damage_percent",
               "property_key": "cold_damage_percent"
+            },
+            {
+              "attributes": {
+                "chance_percent": "3.000000",
+                "duration_seconds": "2.000000"
+              },
+              "property_id": "freeze",
+              "property_key": "freeze"
             },
             {
               "attributes": {
@@ -26000,6 +26646,7 @@
           "stat_lines": [
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
+            "[x]% Chance to Freeze Target for [y] Seconds",
             "+[x]% Frostburn Damage"
           ],
           "vendor_sources": [
@@ -26033,6 +26680,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -26048,6 +26696,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -26108,6 +26757,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -26123,6 +26773,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -26205,6 +26856,7 @@
             "Shield",
             "Sword"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -26220,6 +26872,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 40,
           "level_requirement": 40,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -26274,6 +26927,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -26289,6 +26943,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 65,
           "level_requirement": 65,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -26349,6 +27004,7 @@
             "Amulet",
             "Ring"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -26364,6 +27020,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 90,
           "level_requirement": 90,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -26453,6 +27110,7 @@
             "Shoulders",
             "Waist"
           ],
+          "attribute_scale_percent": null,
           "category": "augment",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -26468,6 +27126,7 @@
           "item_class": "ItemEnchantment",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [
             {
@@ -26498,5 +27157,5 @@
       ]
     }
   ],
-  "schema_version": 8
+  "schema_version": 9
 }

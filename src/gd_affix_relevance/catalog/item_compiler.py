@@ -8,7 +8,10 @@ import re
 from typing import Any
 
 from gd_affix_relevance.catalog.drop_sources import discover_drop_sources
-from gd_affix_relevance.catalog.value_parsing import integer_value
+from gd_affix_relevance.catalog.value_parsing import (
+    integer_value,
+    optional_float_value,
+)
 from gd_affix_relevance.domain import LocalizationEntry, RawDbrRecord
 from gd_affix_relevance.importers.localization_parser import plain_display_name
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
@@ -184,6 +187,7 @@ def compile_item_payloads(
                 record,
                 resolver=resolver,
                 localization_lookup=localization_lookup,
+                weapon_base_damage=_is_weapon_record(record),
             )
             lines = list(
                 line
@@ -301,6 +305,12 @@ def compile_item_payloads(
                 "item_level": integer_value(record.first_value("itemLevel")),
                 "level_requirement": integer_value(
                     record.first_value("levelRequirement")
+                ),
+                "attribute_scale_percent": optional_float_value(
+                    record.first_value("attributeScalePercent")
+                ),
+                "loot_randomizer_jitter": optional_float_value(
+                    record.first_value("lootRandomizerJitter")
                 ),
                 "applicable_slots": list(_applicable_slots(record)),
                 "set_reference": set_reference,
@@ -709,6 +719,11 @@ def _gear_slot(record: RawDbrRecord) -> str:
     return ""
 
 
+def _is_weapon_record(record: RawDbrRecord) -> bool:
+    item_class = (record.first_value("Class") or "").strip()
+    return item_class.startswith(("WeaponMelee_", "WeaponHunting_"))
+
+
 def _applicable_slots(record: RawDbrRecord) -> tuple[str, ...]:
     slots = {
         label
@@ -724,6 +739,7 @@ def compile_record_properties(
     resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
     modifier: bool = False,
+    weapon_base_damage: bool = False,
 ) -> list[dict[str, Any]]:
     bundles: dict[str, dict[str, str]] = defaultdict(dict)
     property_ids: dict[str, str] = {}
@@ -783,8 +799,15 @@ def compile_record_properties(
         ):
             continue
         proposal = contextualize_damage_chance(proposal, chance_bundles)
-        property_ids[proposal.bundle_key] = proposal.property_id
-        bundles[proposal.bundle_key][proposal.value_role] = field.value
+        bundle_key = proposal.bundle_key
+        if (
+            weapon_base_damage
+            and field.key in {"offensivePhysicalMin", "offensivePhysicalMax"}
+            and proposal.property_id == "flat_physical_damage"
+        ):
+            bundle_key = "flat_physical_damage:base_weapon"
+        property_ids[bundle_key] = proposal.property_id
+        bundles[bundle_key][proposal.value_role] = field.value
 
     pet_attributes = bundles.get("pet_bonus")
     if pet_attributes is not None:

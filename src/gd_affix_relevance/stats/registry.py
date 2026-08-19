@@ -55,7 +55,7 @@ def conversion_stat(destination: str, label: str) -> StatDefinition:
 def base_weapon_damage_stat(damage_type: str, label: str) -> StatDefinition:
     return stat(
         f"base_weapon_damage_as_{damage_type}",
-        f"Base Weapon Damage as {label}",
+        f"as {label}",
     )
 
 
@@ -471,13 +471,29 @@ ADVANCED_TAB = TabDefinition(
                 stat(stat_id, label)
                 for stat_id, label in (
                     ("confusion", "Chance to Confuse Target"),
+                    ("fumble", "Chance for Target to Fumble Attacks"),
+                    ("freeze", "Chance to Freeze Target"),
+                    ("knockdown", "Chance to Knockdown Target"),
                     ("enemy_health_reduction_percent", "Enemy Health Reduction"),
                     ("energy_burn_percent", "Energy Burn (+%)"),
+                    ("energy_leech", "Energy Leech"),
                     (
                         "energy_leech_retaliation",
                         "Energy Leech Retaliation over 2 Seconds",
                     ),
                     ("confusion_retaliation", "Seconds of Confuse Retaliation"),
+                    (
+                        "target_attack_speed_reduction",
+                        "Slower Target Attack Speed",
+                    ),
+                    (
+                        "target_movement_speed_reduction",
+                        "Slower Target Movement",
+                    ),
+                    (
+                        "target_physical_damage_reduction_percent",
+                        "Reduced Target Physical Damage",
+                    ),
                     (
                         "target_total_speed_reduction",
                         "Reduced Target Total Speed",

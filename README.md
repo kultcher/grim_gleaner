@@ -1,4 +1,4 @@
-# Grim Gleaner v.0.9.1-beta
+# Grim Gleaner v.0.9.2-beta
 
 Grim Gleaner is a utility to help Grim Dawn players quickly and conveniently
 identify and evaluate affixes and items that are most relevant to their build.
