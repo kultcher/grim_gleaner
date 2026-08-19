@@ -1819,6 +1819,13 @@
             },
             {
               "attributes": {
+                "duration_seconds": "1.000000"
+              },
+              "property_id": "freeze",
+              "property_key": "freeze"
+            },
+            {
+              "attributes": {
                 "value": "30.000000"
               },
               "property_id": "skill_modifier_cooldown",
@@ -1833,7 +1840,7 @@
             },
             {
               "attributes": {
-                "duration_min": "5.000000",
+                "duration_seconds": "5.000000",
                 "reduction_percent": "30.000000"
               },
               "property_id": "target_total_speed_reduction",
@@ -1844,6 +1851,7 @@
           "effect_skill_reference": "records/skills/itemskills/consumableskills/item_tincture_frostguard.dbr",
           "effect_stat_lines": [
             "[x] Cold Damage",
+            "[x]% Chance to Freeze Target for [y] Seconds",
             "[x]% Reduced Target Total Speed for [y] Seconds"
           ],
           "faction_name": "",
@@ -2253,7 +2261,8 @@
             },
             {
               "attributes": {
-                "duration_min": "3.000000",
+                "chance_percent": "25.000000",
+                "duration_seconds": "3.000000",
                 "reduction_percent": "20.000000"
               },
               "property_id": "target_total_speed_reduction",
@@ -2279,13 +2288,6 @@
               },
               "property_id": "unresolved_composite",
               "property_key": "unresolved:offensiveSlowOffensiveAbilityChance"
-            },
-            {
-              "attributes": {
-                "component": "25.000000"
-              },
-              "property_id": "unresolved_composite",
-              "property_key": "unresolved:offensiveSlowTotalSpeedChance"
             }
           ],
           "effect_skill_name": "Hex Oil",
@@ -2293,7 +2295,7 @@
           "effect_stat_lines": [
             "+[x] Composite effect requiring review",
             "[x]% Chance to Reduce Target's Defensive Ability by [y] for [z] Seconds",
-            "[x]% Reduced Target Total Speed for [y] Seconds"
+            "[x]% Chance of [y]% Slow Target for [z] Seconds"
           ],
           "faction_name": "",
           "faction_source": "",
@@ -4419,6 +4421,14 @@
             },
             {
               "attributes": {
+                "duration_seconds": "2.000000",
+                "fumble_percent": "25.000000"
+              },
+              "property_id": "fumble",
+              "property_key": "fumble"
+            },
+            {
+              "attributes": {
                 "value": "30.000000"
               },
               "property_id": "skill_modifier_cooldown",
@@ -4435,6 +4445,7 @@
           "effect_skill_name": "Slithblood Tincture",
           "effect_skill_reference": "records/skills/itemskills/consumableskills/item_tincture_slithblood.dbr",
           "effect_stat_lines": [
+            "[x]% Chance for Target to Fumble Attacks for [y] Seconds",
             "[x] Poison Damage over [y] Seconds"
           ],
           "faction_name": "",

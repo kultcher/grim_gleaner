@@ -24,6 +24,7 @@ def build_detail_stat_rows(
     label_for: Callable[[str], str],
     weight_for: Callable[[str], int],
     property_enabled: Callable[[object], bool] = lambda _property: True,
+    attribute_scale_percent: float | None = None,
 ) -> tuple[DetailStatRow, ...]:
     """Associate scoreable semantic IDs with their concrete catalog values."""
 
@@ -40,7 +41,12 @@ def build_detail_stat_rows(
             dict.fromkeys(
                 value
                 for property_ in grouped.get(stat_id, ())
-                if (value := format_nominal_value(property_))
+                if (
+                    value := format_nominal_value(
+                        property_,
+                        attribute_scale_percent=attribute_scale_percent,
+                    )
+                )
             )
         )
         if values:
@@ -62,12 +68,22 @@ def build_detail_stat_rows(
     return tuple(rows)
 
 
-def format_nominal_value(property_: object) -> str:
-    """Format one property's non-jittered, level-selected catalog value."""
+def format_nominal_value(
+    property_: object,
+    *,
+    attribute_scale_percent: float | None = None,
+) -> str:
+    """Format one level-selected value, optionally applying named-item scale."""
 
     attributes = getattr(property_, "attributes", {})
     if not isinstance(attributes, dict):
         return ""
+    attributes = _scaled_offensive_attributes(
+        getattr(property_, "property_id", ""),
+        getattr(property_, "property_key", ""),
+        attributes,
+        attribute_scale_percent,
+    )
 
     if "skill_level" in attributes:
         return _signed(attributes["skill_level"])
@@ -97,7 +113,10 @@ def format_nominal_value(property_: object) -> str:
         attributes.get("damage_min", ""),
         attributes.get("damage_max", ""),
     )
-    damage_value = bool(value)
+    damage_value = (
+        bool(value)
+        or getattr(property_, "property_id", "") == "energy_leech"
+    )
     if not value:
         percent_range = _range_value(
             attributes.get("percent_min", ""),
@@ -110,6 +129,7 @@ def format_nominal_value(property_: object) -> str:
             "damage_percent",
             "percent",
             "reduction_percent",
+            "fumble_percent",
         ):
             if key in attributes and (number := _number(attributes[key])):
                 value = f"{number}%"
@@ -118,7 +138,7 @@ def format_nominal_value(property_: object) -> str:
         for key in ("flat", "value", "reduction_flat", "damage_min"):
             if key in attributes and (number := _number(attributes[key])):
                 value = number
-                damage_value = key == "damage_min"
+                damage_value = damage_value or key == "damage_min"
                 break
     if not value and "seconds" in attributes:
         seconds = _number(attributes["seconds"])
@@ -143,12 +163,26 @@ def stat_table_html(
 ) -> str:
     """Render rows as conservative HTML supported by Qt's rich-text engine."""
 
+    base_damage = [
+        row
+        for row in rows
+        if row.stat_id.startswith("base_weapon_damage_as_")
+    ]
+    ordinary = [
+        row
+        for row in rows
+        if not row.stat_id.startswith("base_weapon_damage_as_")
+    ]
     relevant = sorted(
-        (row for row in rows if row.weight),
+        (row for row in ordinary if row.weight),
         key=lambda row: -row.weight,
     )
-    other = [row for row in rows if not row.weight]
-    groups = (("Relevant Stats", relevant), ("Other Stats", other))
+    other = [row for row in ordinary if not row.weight]
+    groups = (
+        ("Base Damage", base_damage),
+        ("Relevant Stats", relevant),
+        ("Other Stats", other),
+    )
     body: list[str] = []
     for heading, group in groups:
         if not group:
@@ -242,3 +276,50 @@ def _number(raw: object) -> str:
     if value.is_integer():
         return str(int(value))
     return f"{value:.2f}".rstrip("0").rstrip(".")
+
+
+def _scaled_offensive_attributes(
+    property_id: str,
+    property_key: str,
+    attributes: dict[str, str],
+    scale_percent: float | None,
+) -> dict[str, str]:
+    """Apply Grim Dawn's named-item attribute scale to confirmed roles only."""
+
+    if not scale_percent or property_key.endswith(":base_weapon"):
+        return attributes
+
+    scaled_roles: frozenset[str]
+    if property_id == "total_damage_percent":
+        scaled_roles = frozenset({"percent"})
+    elif property_id == "stun_duration":
+        scaled_roles = frozenset({"percent"})
+    elif (
+        property_id.endswith("_damage_percent")
+        and not property_id.startswith("pet_")
+        and property_id
+        not in {"retaliation_damage_percent", "weapon_damage_percent"}
+    ):
+        scaled_roles = frozenset({"damage_percent", "duration_percent"})
+    elif (
+        property_id.startswith("flat_")
+        or property_id.startswith("chance_flat_")
+    ) and property_id.endswith("_damage"):
+        scaled_roles = frozenset({"damage_min", "damage_max"})
+    else:
+        return attributes
+
+    scaled = dict(attributes)
+    multiplier = 1.0 + float(scale_percent) / 100.0
+    for role in scaled_roles:
+        if role not in scaled:
+            continue
+        try:
+            raw_value = float(scaled[role])
+        except (TypeError, ValueError):
+            continue
+        # The game truncates the scaled authored value before applying its
+        # separate display-roll range. We intentionally show that nominal
+        # center value and continue to omit jitter.
+        scaled[role] = str(int(raw_value * multiplier))
+    return scaled

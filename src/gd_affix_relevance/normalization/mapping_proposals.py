@@ -154,8 +154,9 @@ REVIEW_RULES: dict[str, tuple[str, str, str]] = {
 }
 
 # These fields currently occur only on localized affix definitions with no
-# incoming item-record references. Keep the list explicit so they can be
-# re-evaluated if a future game database reconnects one of those affixes.
+# incoming item-record references and have no known named-item use. Keep the
+# list explicit so they can be re-evaluated if a future database reconnects
+# one of those effects.
 LEGACY_ORPHANED_FIELDS = frozenset(
     {
         "characterConstitutionModifier",
@@ -163,14 +164,9 @@ LEGACY_ORPHANED_FIELDS = frozenset(
         "defensiveBleedingDuration",
         "defensivePoisonDuration",
         "defensiveProtection",
-        "offensiveFreezeChance",
-        "offensiveFreezeMin",
         "offensiveSlowDefensiveReductionChance",
         "offensiveSlowDefensiveReductionDurationMin",
         "offensiveSlowDefensiveReductionMin",
-        "offensiveSlowManaLeachChance",
-        "offensiveSlowManaLeachDurationMin",
-        "offensiveSlowManaLeachMin",
         "offensiveTotalResistanceReductionAbsoluteChance",
     }
 )
@@ -273,6 +269,166 @@ CONFIRMED_COMPOSITE_RULES: dict[str, tuple[str, str, str, str, str]] = {
         "Energy Burn",
         "percent",
         "{percent}% Energy Burn",
+    ),
+    "offensiveFumbleChance": (
+        "fumble",
+        "fumble",
+        "Chance for Target to Fumble Attacks",
+        "chance_percent",
+        "{chance_percent}% Chance of {fumble_percent}% Chance for Target to "
+        "Fumble Attacks for {duration_seconds} Seconds",
+    ),
+    "offensiveFumbleDurationMin": (
+        "fumble",
+        "fumble",
+        "Chance for Target to Fumble Attacks",
+        "duration_seconds",
+        "{fumble_percent}% Chance for Target to Fumble Attacks for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveFumbleMin": (
+        "fumble",
+        "fumble",
+        "Chance for Target to Fumble Attacks",
+        "fumble_percent",
+        "{fumble_percent}% Chance for Target to Fumble Attacks for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveFreezeChance": (
+        "freeze",
+        "freeze",
+        "Chance to Freeze Target",
+        "chance_percent",
+        "{chance_percent}% Chance to Freeze Target for {duration_seconds} Seconds",
+    ),
+    "offensiveFreezeMin": (
+        "freeze",
+        "freeze",
+        "Chance to Freeze Target",
+        "duration_seconds",
+        "{chance_percent}% Chance to Freeze Target for {duration_seconds} Seconds",
+    ),
+    "offensiveKnockdownChance": (
+        "knockdown",
+        "knockdown",
+        "Chance to Knockdown Target",
+        "chance_percent",
+        "{chance_percent}% Chance to Knockdown Target for {duration_seconds} Seconds",
+    ),
+    "offensiveKnockdownMin": (
+        "knockdown",
+        "knockdown",
+        "Chance to Knockdown Target",
+        "duration_seconds",
+        "{chance_percent}% Chance to Knockdown Target for {duration_seconds} Seconds",
+    ),
+    "offensivePhysicalReductionPercentDurationMin": (
+        "target_physical_damage_reduction_percent",
+        "target_physical_damage_reduction_percent",
+        "Reduced Target Physical Damage",
+        "duration_seconds",
+        "{reduction_percent}% Reduced Target's Physical Damage for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensivePhysicalReductionPercentMin": (
+        "target_physical_damage_reduction_percent",
+        "target_physical_damage_reduction_percent",
+        "Reduced Target Physical Damage",
+        "reduction_percent",
+        "{reduction_percent}% Reduced Target's Physical Damage for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveSlowAttackSpeedChance": (
+        "target_attack_speed_reduction",
+        "target_attack_speed_reduction",
+        "Slower Target Attack Speed",
+        "chance_percent",
+        "{chance_percent}% Chance of {reduction_percent}% Slower Target "
+        "Attack Speed for {duration_seconds} Seconds",
+    ),
+    "offensiveSlowAttackSpeedDurationMin": (
+        "target_attack_speed_reduction",
+        "target_attack_speed_reduction",
+        "Slower Target Attack Speed",
+        "duration_seconds",
+        "{reduction_percent}% Slower Target Attack Speed for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveSlowAttackSpeedMin": (
+        "target_attack_speed_reduction",
+        "target_attack_speed_reduction",
+        "Slower Target Attack Speed",
+        "reduction_percent",
+        "{reduction_percent}% Slower Target Attack Speed for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveSlowManaLeachChance": (
+        "energy_leech",
+        "energy_leech",
+        "Energy Leech",
+        "chance_percent",
+        "{chance_percent}% Chance of {flat} Energy Leech over "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveSlowManaLeachDurationMin": (
+        "energy_leech",
+        "energy_leech",
+        "Energy Leech",
+        "duration_seconds",
+        "{flat} Energy Leech over {duration_seconds} Seconds",
+    ),
+    "offensiveSlowManaLeachMin": (
+        "energy_leech",
+        "energy_leech",
+        "Energy Leech",
+        "flat",
+        "{flat} Energy Leech over {duration_seconds} Seconds",
+    ),
+    "offensiveSlowRunSpeedChance": (
+        "target_movement_speed_reduction",
+        "target_movement_speed_reduction",
+        "Slower Target Movement",
+        "chance_percent",
+        "{chance_percent}% Chance of {reduction_percent}% Slower Target "
+        "Movement for {duration_seconds} Seconds",
+    ),
+    "offensiveSlowRunSpeedDurationMin": (
+        "target_movement_speed_reduction",
+        "target_movement_speed_reduction",
+        "Slower Target Movement",
+        "duration_seconds",
+        "{reduction_percent}% Slower Target Movement for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveSlowRunSpeedMin": (
+        "target_movement_speed_reduction",
+        "target_movement_speed_reduction",
+        "Slower Target Movement",
+        "reduction_percent",
+        "{reduction_percent}% Slower Target Movement for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveSlowTotalSpeedChance": (
+        "target_total_speed_reduction",
+        "target_total_speed_reduction",
+        "Slow Target",
+        "chance_percent",
+        "{chance_percent}% Chance of {reduction_percent}% Slow Target for "
+        "{duration_seconds} Seconds",
+    ),
+    "offensiveSlowTotalSpeedDurationMin": (
+        "target_total_speed_reduction",
+        "target_total_speed_reduction",
+        "Reduced Target Total Speed",
+        "duration_seconds",
+        "{reduction_percent}% Reduced Target Total Speed for {duration_seconds} Seconds",
+    ),
+    "offensiveSlowTotalSpeedMin": (
+        "target_total_speed_reduction",
+        "target_total_speed_reduction",
+        "Reduced Target Total Speed",
+        "reduction_percent",
+        "{reduction_percent}% Reduced Target Total Speed for {duration_seconds} Seconds",
     ),
     "offensiveSlowDefensiveAbilityChance": (
         "defensive_ability_reduction",
@@ -411,6 +567,11 @@ CONFIRMED_COMPOSITE_RULES: dict[str, tuple[str, str, str, str, str]] = {
 
 
 CONFIRMED_COMPONENT_REQUIREMENTS: dict[str, ComponentRequirement] = {
+    "offensiveFumbleChance": "optional",
+    "offensiveSlowAttackSpeedChance": "optional",
+    "offensiveSlowManaLeachChance": "optional",
+    "offensiveSlowRunSpeedChance": "optional",
+    "offensiveSlowTotalSpeedChance": "optional",
     "retaliationSlowAttackSpeedGlobal": "metadata",
     "retaliationSlowRunSpeedGlobal": "metadata",
     "skillCooldownReductionChance": "optional",
@@ -617,24 +778,6 @@ def propose_field_mapping(raw_field: str) -> FieldMappingProposal | None:
             else "Damage to Creature Type"
         )
         return _proposal(raw_field, property_id, label, "percent")
-
-    if raw_field in {
-        "offensiveSlowTotalSpeedDurationMin",
-        "offensiveSlowTotalSpeedMin",
-    }:
-        role = (
-            "duration_min" if raw_field.endswith("DurationMin") else "reduction_percent"
-        )
-        return _proposal(
-            raw_field,
-            "target_total_speed_reduction",
-            "Reduced Target Total Speed",
-            role,
-            display_template=(
-                "{reduction_percent}% Reduced Target Total Speed for "
-                "{duration_min} Seconds"
-            ),
-        )
 
     if raw_field == "retaliationConfusionMin":
         return _proposal(

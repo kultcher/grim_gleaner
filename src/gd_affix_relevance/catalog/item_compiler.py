@@ -187,6 +187,7 @@ def compile_item_payloads(
                 record,
                 resolver=resolver,
                 localization_lookup=localization_lookup,
+                weapon_base_damage=_is_weapon_record(record),
             )
             lines = list(
                 line
@@ -718,6 +719,11 @@ def _gear_slot(record: RawDbrRecord) -> str:
     return ""
 
 
+def _is_weapon_record(record: RawDbrRecord) -> bool:
+    item_class = (record.first_value("Class") or "").strip()
+    return item_class.startswith(("WeaponMelee_", "WeaponHunting_"))
+
+
 def _applicable_slots(record: RawDbrRecord) -> tuple[str, ...]:
     slots = {
         label
@@ -733,6 +739,7 @@ def compile_record_properties(
     resolver: RecordRepository,
     localization_lookup: dict[str, LocalizationEntry],
     modifier: bool = False,
+    weapon_base_damage: bool = False,
 ) -> list[dict[str, Any]]:
     bundles: dict[str, dict[str, str]] = defaultdict(dict)
     property_ids: dict[str, str] = {}
@@ -792,8 +799,15 @@ def compile_record_properties(
         ):
             continue
         proposal = contextualize_damage_chance(proposal, chance_bundles)
-        property_ids[proposal.bundle_key] = proposal.property_id
-        bundles[proposal.bundle_key][proposal.value_role] = field.value
+        bundle_key = proposal.bundle_key
+        if (
+            weapon_base_damage
+            and field.key in {"offensivePhysicalMin", "offensivePhysicalMax"}
+            and proposal.property_id == "flat_physical_damage"
+        ):
+            bundle_key = "flat_physical_damage:base_weapon"
+        property_ids[bundle_key] = proposal.property_id
+        bundles[bundle_key][proposal.value_role] = field.value
 
     pet_attributes = bundles.get("pet_bonus")
     if pet_attributes is not None:

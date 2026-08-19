@@ -563,6 +563,14 @@
             },
             {
               "attributes": {
+                "duration_seconds": "3.000000",
+                "flat": "15.000000"
+              },
+              "property_id": "energy_leech",
+              "property_key": "energy_leech"
+            },
+            {
+              "attributes": {
                 "percent": "20.000000"
               },
               "property_id": "energy_regeneration_percent",
@@ -585,7 +593,8 @@
           "stat_lines": [
             "+[x]% Energy Regeneration",
             "+[x] Offensive Ability",
-            "+[x]% Disruption Resistance"
+            "+[x]% Disruption Resistance",
+            "[x] Energy Leech over [y] Seconds"
           ],
           "vendor_sources": [
             {
@@ -2296,10 +2305,12 @@
             },
             {
               "attributes": {
-                "component": "12.000000"
+                "chance_percent": "12.000000",
+                "duration_seconds": "3.000000",
+                "reduction_percent": "25.000000"
               },
-              "property_id": "unresolved_composite",
-              "property_key": "unresolved:offensiveSlowRunSpeedChance"
+              "property_id": "target_movement_speed_reduction",
+              "property_key": "target_movement_speed_reduction"
             }
           ],
           "rarity": "Common",
@@ -2314,7 +2325,7 @@
             "[x] Cold Damage",
             "+[x]% Cold Damage",
             "+[x]% Frostburn Damage",
-            "+[x] Composite effect requiring review"
+            "[x]% Chance of [y]% Slower Target Movement for [z] Seconds"
           ],
           "vendor_sources": []
         }

@@ -140,3 +140,52 @@ def test_magnitude_index_uses_skill_rank_and_ignores_compound_effects() -> None:
     ]
     assert entry["properties"][0]["scalar_value"] == 3.0
     assert entry["properties"][0]["percentile"] == 0.5
+
+
+def test_magnitude_separates_base_weapon_damage_from_flat_bonus_damage() -> None:
+    def item(item_id: str, property_key: str) -> dict[str, object]:
+        return {
+            "item_id": item_id,
+            "variants": [
+                {
+                    "source": "base",
+                    "record_path": f"records/items/{item_id}.dbr",
+                    "category": "legendary",
+                    "rarity": "Legendary",
+                    "gear_slot": "One-handed weapon",
+                    "level_requirement": 94,
+                    "properties": [
+                        _property(
+                            "flat_lightning_damage",
+                            "20",
+                            role="damage_min",
+                            key=property_key,
+                        )
+                    ],
+                }
+            ],
+        }
+
+    payload = compile_magnitude_payload(
+        [],
+        {
+            "equipment": [
+                item(
+                    "equipment:base",
+                    "flat_lightning_damage:base_weapon",
+                ),
+                item("equipment:bonus", "flat_lightning_damage"),
+            ]
+        },
+    )
+    entries = [
+        entry
+        for entry in payload["entries"]
+        if entry["band_id"] == "90+"
+    ]
+    cohort_ids = {
+        entry["properties"][0]["cohort_id"] for entry in entries
+    }
+
+    assert len(entries) == 2
+    assert len(cohort_ids) == 2

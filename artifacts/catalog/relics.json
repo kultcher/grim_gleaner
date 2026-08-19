@@ -1540,6 +1540,14 @@
             },
             {
               "attributes": {
+                "duration_seconds": "3.000000",
+                "reduction_percent": "15.000000"
+              },
+              "property_id": "target_movement_speed_reduction",
+              "property_key": "target_movement_speed_reduction"
+            },
+            {
+              "attributes": {
                 "percent": "60.000000"
               },
               "property_id": "total_damage_percent",
@@ -1558,6 +1566,7 @@
             "+[x]% Offensive Ability",
             "*Granted Skill: Mutilate",
             "[x]% Chance of [y]-[z] Physical Damage",
+            "[x]% Slower Target Movement for [y] Seconds",
             "+[x]% Total Damage"
           ],
           "vendor_sources": []
@@ -5062,6 +5071,14 @@
               },
               "property_id": "mastery_bonus",
               "property_key": "mastery_bonus:1"
+            },
+            {
+              "attributes": {
+                "duration_seconds": "3.000000",
+                "reduction_percent": "15.000000"
+              },
+              "property_id": "target_movement_speed_reduction",
+              "property_key": "target_movement_speed_reduction"
             }
           ],
           "rarity": "Legendary",
@@ -5079,6 +5096,7 @@
             "+[x]% Frostburn Damage",
             "+[x]% Burn Damage",
             "+[x]% Electrocute Damage",
+            "[x]% Slower Target Movement for [y] Seconds",
             "+1 to All Skills in Inquisitor"
           ],
           "vendor_sources": []

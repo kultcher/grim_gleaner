@@ -11901,6 +11901,14 @@
             },
             {
               "attributes": {
+                "chance_percent": "3.000000",
+                "duration_seconds": "2.000000"
+              },
+              "property_id": "freeze",
+              "property_key": "freeze"
+            },
+            {
+              "attributes": {
                 "damage_percent": "35.000000"
               },
               "property_id": "frostburn_damage_percent",
@@ -11923,6 +11931,7 @@
           "stat_lines": [
             "+[x] Health",
             "+[x]% Cold Damage",
+            "[x]% Chance to Freeze Target for [y] Seconds",
             "+[x]% Frostburn Damage"
           ],
           "vendor_sources": [
@@ -17160,6 +17169,14 @@
             },
             {
               "attributes": {
+                "chance_percent": "6.000000",
+                "duration_seconds": "2.000000"
+              },
+              "property_id": "freeze",
+              "property_key": "freeze"
+            },
+            {
+              "attributes": {
                 "damage_percent": "80.000000"
               },
               "property_id": "frostburn_damage_percent",
@@ -17182,6 +17199,7 @@
           "stat_lines": [
             "+[x] Health",
             "+[x]% Cold Damage",
+            "[x]% Chance to Freeze Target for [y] Seconds",
             "+[x]% Frostburn Damage"
           ],
           "vendor_sources": [
@@ -26598,6 +26616,14 @@
             },
             {
               "attributes": {
+                "chance_percent": "3.000000",
+                "duration_seconds": "2.000000"
+              },
+              "property_id": "freeze",
+              "property_key": "freeze"
+            },
+            {
+              "attributes": {
                 "percent": "15.000000"
               },
               "property_id": "freeze_resistance",
@@ -26620,6 +26646,7 @@
           "stat_lines": [
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
+            "[x]% Chance to Freeze Target for [y] Seconds",
             "+[x]% Frostburn Damage"
           ],
           "vendor_sources": [
