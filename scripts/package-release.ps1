@@ -20,7 +20,7 @@ $standaloneOutput = Join-Path $deployOutput "grim_gleaner.dist"
 $generatedSpec = Join-Path $buildWorkspace "pysidedeploy.spec"
 $specTemplate = Join-Path $projectRoot "packaging\pysidedeploy.spec.template"
 $iconPath = Join-Path $projectRoot "packaging\gg_icon.ico"
-$archivePath = Join-Path $distRoot "Grim-Gleaner-0.9.1-beta-win64.zip"
+$archivePath = Join-Path $distRoot "Grim-Gleaner-0.9.2-beta-win64.zip"
 $temporaryRoot = [System.IO.Path]::GetFullPath(
     [System.IO.Path]::GetTempPath()
 )

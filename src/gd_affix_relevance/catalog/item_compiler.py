@@ -8,7 +8,10 @@ import re
 from typing import Any
 
 from gd_affix_relevance.catalog.drop_sources import discover_drop_sources
-from gd_affix_relevance.catalog.value_parsing import integer_value
+from gd_affix_relevance.catalog.value_parsing import (
+    integer_value,
+    optional_float_value,
+)
 from gd_affix_relevance.domain import LocalizationEntry, RawDbrRecord
 from gd_affix_relevance.importers.localization_parser import plain_display_name
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
@@ -301,6 +304,12 @@ def compile_item_payloads(
                 "item_level": integer_value(record.first_value("itemLevel")),
                 "level_requirement": integer_value(
                     record.first_value("levelRequirement")
+                ),
+                "attribute_scale_percent": optional_float_value(
+                    record.first_value("attributeScalePercent")
+                ),
+                "loot_randomizer_jitter": optional_float_value(
+                    record.first_value("lootRandomizerJitter")
                 ),
                 "applicable_slots": list(_applicable_slots(record)),
                 "set_reference": set_reference,

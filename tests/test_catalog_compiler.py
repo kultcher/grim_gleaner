@@ -534,6 +534,7 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
             ("itemNameTag", "tagTestHelm"),
             ("itemLevel", "20"),
             ("levelRequirement", "15"),
+            ("attributeScalePercent", "12.5"),
             ("characterLife", "100"),
             ("augmentSkillLevel1", "1"),
             ("augmentSkillName1", "records/skills/playerclass01/testskill.dbr"),
@@ -548,6 +549,8 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
             ("itemNameTag", "tagTestHelm"),
             ("itemLevel", "50"),
             ("levelRequirement", "45"),
+            ("attributeScalePercent", "40"),
+            ("lootRandomizerJitter", "17.5"),
             ("characterLife", "200"),
             ("offensivePierceMin", "10"),
             ("offensivePierceChance", "30"),
@@ -791,6 +794,8 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     assert len(helm.variants) == 2
     assert helm.variants[0].category == "monster_infrequent"
     assert helm.variants[0].gear_slot == "Head"
+    assert helm.variants[0].attribute_scale_percent == 12.5
+    assert helm.variants[0].loot_randomizer_jitter is None
     assert helm.variants[0].acquisition_source == "Specific Monster Drop"
     assert tuple(
         (source.name, source.classification)
@@ -804,6 +809,8 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     ) == ("Test Corpse",)
     assert helm.variants[0].properties[0].property_id == "health"
     assert helm.variants[1].set_name == "Test Set"
+    assert helm.variants[1].attribute_scale_percent == 40.0
+    assert helm.variants[1].loot_randomizer_jitter == 17.5
     assert helm.variants[1].acquisition_source == "Crafted"
     assert "+2 to Test Skill" in helm.variants[1].stat_lines
     assert "[x]% Chance of [y] Pierce Damage" in helm.variants[1].stat_lines

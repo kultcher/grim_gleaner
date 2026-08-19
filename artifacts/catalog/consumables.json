@@ -12,6 +12,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -51,6 +52,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Common",
@@ -117,6 +119,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -132,6 +135,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -163,6 +167,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -178,6 +183,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -209,6 +215,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -251,6 +258,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 40,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -282,6 +290,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -322,6 +331,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -347,6 +357,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -362,6 +373,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -398,6 +410,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -413,6 +426,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -449,6 +463,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -464,6 +479,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -500,6 +516,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -540,6 +557,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -571,6 +589,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -603,6 +622,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -628,6 +648,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -661,6 +682,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -686,6 +708,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -701,6 +724,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -726,6 +750,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -741,6 +766,7 @@
           "item_class": "ItemDifficultyUnlock",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -766,6 +792,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -781,6 +808,7 @@
           "item_class": "ItemDifficultyUnlock",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Legendary",
@@ -806,6 +834,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -821,6 +850,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -857,6 +887,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -872,6 +903,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -903,6 +935,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -918,6 +951,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -954,6 +988,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -969,6 +1004,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 40,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1000,6 +1036,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1032,6 +1069,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1057,6 +1095,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1097,6 +1136,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1128,6 +1168,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1143,6 +1184,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Quest",
@@ -1184,6 +1226,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1226,6 +1269,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1251,6 +1295,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1266,6 +1311,7 @@
           "item_class": "OneShot_PotionMana",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -1291,6 +1337,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1331,6 +1378,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1356,6 +1404,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1404,6 +1453,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1429,6 +1479,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1469,6 +1520,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1494,6 +1546,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1542,6 +1595,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1567,6 +1621,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1623,6 +1678,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1648,6 +1704,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1680,6 +1737,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1705,6 +1763,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1720,6 +1779,7 @@
           "item_class": "OneShot_Food",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1745,6 +1805,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1793,6 +1854,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1824,6 +1886,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1856,6 +1919,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1881,6 +1945,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1896,6 +1961,7 @@
           "item_class": "ItemDifficultyUnlock",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Legendary",
@@ -1921,6 +1987,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1944,6 +2011,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 30,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -1958,6 +2026,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -1981,6 +2050,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2006,6 +2076,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2029,6 +2100,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 30,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2043,6 +2115,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2066,6 +2139,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2091,6 +2165,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2123,6 +2198,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2154,6 +2230,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2226,6 +2303,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 40,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2257,6 +2335,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2289,6 +2368,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2314,6 +2394,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2347,6 +2428,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 40,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2378,6 +2460,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2418,6 +2501,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2449,6 +2533,7 @@
         {
           "acquisition_source": "Lootable Container",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [
@@ -2473,6 +2558,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -2498,6 +2584,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2513,6 +2600,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -2549,6 +2637,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2589,6 +2678,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2620,6 +2710,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2635,6 +2726,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -2671,6 +2763,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2713,6 +2806,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2744,6 +2838,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2776,6 +2871,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -2801,6 +2897,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2816,6 +2913,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -2847,6 +2945,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2862,6 +2961,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -2893,6 +2993,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2908,6 +3009,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -2939,6 +3041,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -2954,6 +3057,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -2985,6 +3089,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3000,6 +3105,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3031,6 +3137,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3046,6 +3153,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3077,6 +3185,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3092,6 +3201,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3123,6 +3233,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3138,6 +3249,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3169,6 +3281,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3184,6 +3297,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3215,6 +3329,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3230,6 +3345,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3261,6 +3377,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3276,6 +3393,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3307,6 +3425,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3322,6 +3441,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3353,6 +3473,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3368,6 +3489,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3399,6 +3521,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3414,6 +3537,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3445,6 +3569,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3460,6 +3585,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Rare",
@@ -3491,6 +3617,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3514,6 +3641,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 30,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -3528,6 +3656,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3551,6 +3680,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 70,
           "level_requirement": 70,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -3576,6 +3706,7 @@
         {
           "acquisition_source": "Lootable Container",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [
@@ -3604,6 +3735,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -3629,6 +3761,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3644,6 +3777,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -3680,6 +3814,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3695,6 +3830,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -3720,6 +3856,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3743,6 +3880,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -3774,6 +3912,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3814,6 +3953,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -3845,6 +3985,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3860,6 +4001,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -3885,6 +4027,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3925,6 +4068,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -3950,6 +4094,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -3990,6 +4135,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4015,6 +4161,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4055,6 +4202,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4080,6 +4228,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4120,6 +4269,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4145,6 +4295,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4185,6 +4336,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4210,6 +4362,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4225,6 +4378,7 @@
           "item_class": "ItemDifficultyUnlock",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Legendary",
@@ -4250,6 +4404,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4290,6 +4445,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4321,6 +4477,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4353,6 +4510,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4378,6 +4536,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4410,6 +4569,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4441,6 +4601,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4491,6 +4652,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 40,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4522,6 +4684,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4554,6 +4717,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4579,6 +4743,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4594,6 +4759,7 @@
           "item_class": "ItemDevotionReset",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -4619,6 +4785,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4634,6 +4801,7 @@
           "item_class": "OneShot_PotionHealth",
           "item_level": 0,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -4648,6 +4816,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4663,6 +4832,7 @@
           "item_class": "OneShot_PotionHealth",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -4677,6 +4847,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4692,6 +4863,7 @@
           "item_class": "OneShot_PotionHealth",
           "item_level": 18,
           "level_requirement": 12,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -4706,6 +4878,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4721,6 +4894,7 @@
           "item_class": "OneShot_PotionHealth",
           "item_level": 32,
           "level_requirement": 24,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -4746,6 +4920,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4761,6 +4936,7 @@
           "item_class": "ItemAttributeReset",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -4786,6 +4962,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4818,6 +4995,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4843,6 +5021,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4883,6 +5062,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4908,6 +5088,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4941,6 +5122,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -4966,6 +5148,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -4998,6 +5181,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -5023,6 +5207,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5046,6 +5231,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 40,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -5077,6 +5263,7 @@
         {
           "acquisition_source": "Crafted",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5109,6 +5296,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 5,
           "level_requirement": 75,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -5134,6 +5322,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5149,6 +5338,7 @@
           "item_class": "OneShot_Food",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -5163,6 +5353,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5178,6 +5369,7 @@
           "item_class": "OneShot_Food",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -5203,6 +5395,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5218,6 +5411,7 @@
           "item_class": "ItemUsableSkill",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "",
@@ -5243,6 +5437,7 @@
         {
           "acquisition_source": "Specific Monster Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5258,6 +5453,7 @@
           "item_class": "ItemFactionWarrant",
           "item_level": 45,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [
             {
               "classification": "Boss",
@@ -5289,6 +5485,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5338,6 +5535,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 25,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -5369,6 +5567,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5384,6 +5583,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5415,6 +5615,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5430,6 +5631,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5461,6 +5663,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5476,6 +5679,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5507,6 +5711,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5522,6 +5727,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5553,6 +5759,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5568,6 +5775,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5599,6 +5807,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5614,6 +5823,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5645,6 +5855,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5660,6 +5871,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5691,6 +5903,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5706,6 +5919,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5737,6 +5951,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5752,6 +5967,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5783,6 +5999,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5798,6 +6015,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5829,6 +6047,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5844,6 +6063,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5875,6 +6095,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5890,6 +6111,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5921,6 +6143,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5936,6 +6159,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -5967,6 +6191,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -5982,6 +6207,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -6013,6 +6239,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6028,6 +6255,7 @@
           "item_class": "ItemFactionBooster",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Epic",
@@ -6059,6 +6287,7 @@
         {
           "acquisition_source": "Random Drop",
           "applicable_slots": [],
+          "attribute_scale_percent": null,
           "category": "consumable",
           "completion_bonus_reference": "",
           "container_sources": [],
@@ -6074,6 +6303,7 @@
           "item_class": "OneShot_Scroll",
           "item_level": 1,
           "level_requirement": 0,
+          "loot_randomizer_jitter": null,
           "monster_sources": [],
           "properties": [],
           "rarity": "Magical",
@@ -6088,5 +6318,5 @@
       ]
     }
   ],
-  "schema_version": 8
+  "schema_version": 9
 }

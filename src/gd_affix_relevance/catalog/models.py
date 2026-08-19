@@ -7,8 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATALOG_SCHEMA_VERSION = 8
-SUPPORTED_CATALOG_SCHEMA_VERSIONS = frozenset({7, CATALOG_SCHEMA_VERSION})
+CATALOG_SCHEMA_VERSION = 9
+SUPPORTED_CATALOG_SCHEMA_VERSIONS = frozenset({7, 8, CATALOG_SCHEMA_VERSION})
 MAGNITUDE_CATALOG_FILE = "magnitude-index.json"
 
 ITEM_CATALOG_FILES = (
@@ -179,6 +179,8 @@ class ItemVariantDefinition:
     properties: tuple[ItemProperty, ...]
     stat_lines: tuple[str, ...]
     skill_modifiers: tuple[ItemSkillModifier, ...]
+    attribute_scale_percent: float | None = None
+    loot_randomizer_jitter: float | None = None
     acquisition_source: str = "Random Drop"
     faction_source: str = ""
     faction_name: str = ""
@@ -566,6 +568,16 @@ def _item_variant_from_dict(payload: dict[str, Any]) -> ItemVariantDefinition:
         gear_slot=payload["gear_slot"],
         item_level=payload["item_level"],
         level_requirement=payload["level_requirement"],
+        attribute_scale_percent=(
+            float(payload["attribute_scale_percent"])
+            if payload.get("attribute_scale_percent") is not None
+            else None
+        ),
+        loot_randomizer_jitter=(
+            float(payload["loot_randomizer_jitter"])
+            if payload.get("loot_randomizer_jitter") is not None
+            else None
+        ),
         applicable_slots=tuple(payload["applicable_slots"]),
         set_reference=payload["set_reference"],
         set_name=payload["set_name"],
