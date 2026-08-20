@@ -9,8 +9,12 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtWidgets import QApplication
 
+from gd_affix_relevance.domain import ENGLISH_LOCALE, LocaleSpec, locale_for_code
+from gd_affix_relevance.grade_export import detect_grim_dawn_user_settings_root
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
+from gd_affix_relevance.ui import i18n
 from gd_affix_relevance.ui.main_window import MainWindow
+from gd_affix_relevance.ui.settings import UI_LOCALE_SETTING
 from gd_affix_relevance.ui.style import APP_STYLESHEET
 
 
@@ -28,13 +32,31 @@ def create_application(argv: Sequence[str] | None = None) -> QApplication:
 
 def main(argv: Sequence[str] | None = None) -> int:
     application = create_application(argv)
+    settings = QSettings()
+    runtime_paths = _entrypoint_runtime_paths()
+    i18n.configure(runtime_paths.i18n_root, _resolve_ui_locale(settings))
     window = MainWindow(
-        settings=QSettings(),
-        runtime_paths=_entrypoint_runtime_paths(),
+        settings=settings,
+        runtime_paths=runtime_paths,
+        user_settings_root=detect_grim_dawn_user_settings_root(),
     )
     window.show()
     QTimer.singleShot(0, window.show_startup_prompts)
     return application.exec()
+
+
+def _resolve_ui_locale(settings: QSettings) -> LocaleSpec:
+    """Read the persisted interface language, defaulting safely to English.
+
+    The UI locale is chosen once at startup (see ``ui.i18n``): changing it
+    later in Settings takes effect on the next launch, not live.
+    """
+
+    code = settings.value(UI_LOCALE_SETTING, ENGLISH_LOCALE.code, type=str)
+    try:
+        return locale_for_code(code)
+    except ValueError:
+        return ENGLISH_LOCALE
 
 
 def _entrypoint_runtime_paths(

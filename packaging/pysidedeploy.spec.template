@@ -33,7 +33,7 @@ plugins =
 
 macos.permissions =
 mode = standalone
-extra_args = --quiet --noinclude-qt-translations --windows-console-mode=disable --output-filename=grim_gleaner.exe
+extra_args = --quiet --noinclude-qt-translations --windows-console-mode=disable --output-filename=grim_gleaner.exe --assume-yes-for-downloads
 
 [buildozer]
 

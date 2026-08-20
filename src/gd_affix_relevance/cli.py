@@ -10,7 +10,8 @@ from pathlib import Path
 
 from gd_affix_relevance.catalog import CatalogBundle
 from gd_affix_relevance.catalog.compiler import compile_catalog_bundle
-from gd_affix_relevance.domain import LocalizationEntry
+from gd_affix_relevance.domain import LocalizationEntry, locale_for_code
+from gd_affix_relevance.game_localization import prepare_game_item_tags
 from gd_affix_relevance.importers.localization_parser import (
     load_localization_directory,
 )
@@ -187,6 +188,7 @@ def _run_generate_output(args: argparse.Namespace) -> int:
         profile,
         items=bundle.items,
         fallback_source_root=args.fallback_source_root,
+        locale=locale_for_code(args.locale),
     )
     _print_json_summary(
         {
@@ -257,8 +259,37 @@ def _run_audit_item_tags(args: argparse.Namespace) -> int:
 
 
 def _run_show_runtime_paths(args: argparse.Namespace) -> int:
-    runtime_paths = resolve_runtime_paths(application_root=args.application_root)
+    locale = locale_for_code(args.locale)
+    runtime_paths = resolve_runtime_paths(
+        application_root=args.application_root,
+        locale=locale,
+    )
     _print_json_summary(runtime_paths.as_dict())
+    return 0
+
+
+def _run_prepare_game_localization(args: argparse.Namespace) -> int:
+    locale = locale_for_code(args.locale)
+    destination = args.output_dir
+    if destination is None:
+        destination = resolve_runtime_paths(locale=locale).tags_root
+    try:
+        result = prepare_game_item_tags(
+            args.game_folder,
+            destination,
+            locale=locale,
+        )
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    _print_json_summary(
+        {
+            "locale": result.locale.code,
+            "archive_paths": [str(path) for path in result.archive_paths],
+            "output_root": str(result.output_root),
+            "files_written": result.files_written,
+        }
+    )
     return 0
 
 
@@ -345,6 +376,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional bundled source used for files absent from source-root",
     )
     generate.add_argument("--output-dir", type=Path, required=True)
+    generate.add_argument("--locale", choices=("en", "ru"), default="en")
     generate.set_defaults(handler=_run_generate_output)
 
     item_audit = subparsers.add_parser(
@@ -403,7 +435,21 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="use the packaged layout rooted at this directory",
     )
+    paths.add_argument("--locale", choices=("en", "ru"), default="en")
     paths.set_defaults(handler=_run_show_runtime_paths)
+
+    prepare_localization = subparsers.add_parser(
+        "prepare-game-localization",
+        help="extract required item-tag files from an installed Grim Dawn locale",
+    )
+    prepare_localization.add_argument("--game-folder", type=Path, required=True)
+    prepare_localization.add_argument(
+        "--locale",
+        choices=("en", "ru"),
+        default="ru",
+    )
+    prepare_localization.add_argument("--output-dir", type=Path)
+    prepare_localization.set_defaults(handler=_run_prepare_game_localization)
 
     release = subparsers.add_parser(
         "assemble-release",

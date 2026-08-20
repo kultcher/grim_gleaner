@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from html import escape
 
 from gd_affix_relevance.scoring import semantic_stat_ids
+from gd_affix_relevance.ui.i18n import t
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,9 +53,9 @@ def build_detail_stat_rows(
         if values:
             value = "; ".join(values)
         elif stat_id == "base_weapon_damage_as_physical":
-            value = "Implicit"
+            value = t("detail_stats.implicit")
         elif stat_id.startswith("skill_modifier:"):
-            value = "Present"
+            value = t("detail_stats.present")
         else:
             value = "—"
         rows.append(
@@ -95,7 +96,7 @@ def format_nominal_value(
         percent = _percent(attributes.get("percent", ""))
         source = _damage_type(attributes.get("source_damage_type", ""))
         if percent and source:
-            return f"{percent} from {source}"
+            return t("detail_stats.percent_from_source", percent=percent, source=source)
         return percent
 
     chance = _first_percent(
@@ -145,14 +146,19 @@ def format_nominal_value(
         value = f"{seconds}s" if seconds else ""
 
     if chance:
-        value = f"{chance} chance" + (f" · {value}" if value else "")
+        value = t("detail_stats.chance", chance=chance) + (
+            f" · {value}" if value else ""
+        )
     if duration:
-        suffix = f"over {duration}s" if damage_value else f"for {duration}s"
+        suffix = (
+            t("detail_stats.duration_over", duration=duration)
+            if damage_value
+            else t("detail_stats.duration_for", duration=duration)
+        )
         value = f"{value} {suffix}" if value else suffix
     if duration_percent := _percent(attributes.get("duration_percent", "")):
-        value = f"{value} · +{duration_percent} duration" if value else (
-            f"+{duration_percent} duration"
-        )
+        extra = t("detail_stats.duration_bonus", percent=duration_percent)
+        value = f"{value} · {extra}" if value else extra
     return value
 
 
@@ -179,9 +185,9 @@ def stat_table_html(
     )
     other = [row for row in ordinary if not row.weight]
     groups = (
-        ("Base Damage", base_damage),
-        ("Relevant Stats", relevant),
-        ("Other Stats", other),
+        (t("detail_stats.base_damage"), base_damage),
+        (t("detail_stats.relevant_stats"), relevant),
+        (t("detail_stats.other_stats"), other),
     )
     body: list[str] = []
     for heading, group in groups:
@@ -209,15 +215,15 @@ def stat_table_html(
     if not body:
         body.append(
             '<tr><td colspan="3" style="color:#b7bec9; padding:5px">'
-            "None</td></tr>"
+            f"{escape(t('detail_stats.none'))}</td></tr>"
         )
     return (
         '<table align="left" cellspacing="0" cellpadding="0" border="0" '
         'bgcolor="#171a1f">'
         '<tr bgcolor="#20252d">'
-        '<th align="left" style="color:#b7bec9; padding:5px 6px">Stat</th>'
-        '<th align="right" style="color:#b7bec9; padding:5px 10px">Value</th>'
-        '<th align="center" style="color:#b7bec9; padding:5px 6px">Weight</th>'
+        f'<th align="left" style="color:#b7bec9; padding:5px 6px">{escape(t("detail_stats.stat_column"))}</th>'
+        f'<th align="right" style="color:#b7bec9; padding:5px 10px">{escape(t("detail_stats.value_column"))}</th>'
+        f'<th align="center" style="color:#b7bec9; padding:5px 6px">{escape(t("detail_stats.weight_column"))}</th>'
         "</tr>"
         + "".join(body)
         + "</table>"

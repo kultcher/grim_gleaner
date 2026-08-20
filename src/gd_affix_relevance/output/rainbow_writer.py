@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
-from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.domain import ENGLISH_LOCALE, BuildProfile, LocaleSpec
 from gd_affix_relevance.io_utils import atomic_write_bytes
 from gd_affix_relevance.scoring import (
     affix_variants_for_profile,
@@ -23,8 +23,9 @@ from gd_affix_relevance.scoring import (
 UTF8_BOM = b"\xef\xbb\xbf"
 COLOR_CODE_PATTERN = re.compile(r"\{\^[^}]+\}")
 GENERATED_MARKER_PATTERN = re.compile(
-    r"\((?:S\+\+|S\+|S|A|B|C|D|F|-|—)[*!]{0,2}\d*[*!]{0,2}\)"
+    r"(?:\(|\[)(?:S\+\+|S\+|S|A|B|C|D|F|-|—)[*!]{0,2}\d*[*!]{0,2}(?:\)|\])"
 )
+GENDER_MARKER_PATTERN = re.compile(r"\[(?:ms|fs|ns|mp|fp|np)\]")
 RAINBOW_SET_MARKER_PATTERN = re.compile(
     r"^(?P<leading>\s*)(?:\{\^E\})?\((?:S|\$)\)"
 )
@@ -184,6 +185,7 @@ def generate_rainbow_output(
     *,
     items: ItemCatalog | None = None,
     fallback_source_root: Path | None = None,
+    locale: LocaleSpec = ENGLISH_LOCALE,
 ) -> RainbowGenerationResult:
     """Clone merged localization and annotate affix and unique-item tags.
 
@@ -231,6 +233,7 @@ def generate_rainbow_output(
                 raw_bytes,
                 instructions,
                 relative.as_posix(),
+                locale,
             )
             changes.extend(file_changes)
             found_tags.update(file_found_tags)
@@ -280,6 +283,7 @@ def _annotate_text_bytes(
     raw_bytes: bytes,
     instructions: dict[str, _MarkerInstruction],
     relative_path: str,
+    locale: LocaleSpec,
 ) -> tuple[bytes, tuple[LocalizationChange, ...], set[str]]:
     has_bom = raw_bytes.startswith(UTF8_BOM)
     text = raw_bytes.decode("utf-8-sig")
@@ -300,7 +304,7 @@ def _annotate_text_bytes(
 
         found_tags.add(tag)
         value = body[separator + 1 :]
-        annotated_value = _replace_generated_marker(value, instruction)
+        annotated_value = _replace_generated_marker(value, instruction, locale)
         annotated_body = f"{tag}={annotated_value}"
         output_lines.append(annotated_body + ending)
         if annotated_body != body:
@@ -321,12 +325,28 @@ def _annotate_text_bytes(
 
 
 def _replace_generated_marker(
-    value: str, instruction: _MarkerInstruction
+    value: str,
+    instruction: _MarkerInstruction,
+    locale: LocaleSpec = ENGLISH_LOCALE,
 ) -> str:
     clean_value = _normalize_rainbow_set_marker(
         _strip_generated_marker(value)
     )
     has_explicit_color = COLOR_CODE_PATTERN.search(clean_value) is not None
+    if locale.code == "ru":
+        marker = instruction.marker
+        gender_matches = tuple(GENDER_MARKER_PATTERN.finditer(clean_value))
+        if gender_matches:
+            return _annotate_gender_variants(
+                clean_value,
+                marker,
+                instruction.placement,
+                has_explicit_color,
+            )
+        marker_color = MARKER_COLOR if has_explicit_color else ""
+        if instruction.placement == "suffix":
+            return f"{clean_value}{marker_color}{marker}"
+        return f"{marker_color}{marker}{clean_value}"
     if instruction.placement == "suffix":
         marker_color = MARKER_COLOR if has_explicit_color else ""
         return f"{clean_value}{marker_color}{instruction.marker}"
@@ -334,27 +354,50 @@ def _replace_generated_marker(
     return f"{marker_color}{instruction.marker}{clean_value}"
 
 
+def _annotate_gender_variants(
+    value: str,
+    marker: str,
+    placement: str,
+    has_explicit_color: bool,
+) -> str:
+    """Place a Russian grade inside every selectable grammatical variant."""
+
+    matches = tuple(GENDER_MARKER_PATTERN.finditer(value))
+    marker_color = MARKER_COLOR if has_explicit_color else ""
+    chunks: list[str] = []
+    for index, match in enumerate(matches):
+        next_start = matches[index + 1].start() if index + 1 < len(matches) else len(value)
+        variant = value[match.end() : next_start]
+        if placement == "suffix":
+            annotated = f"{variant}{marker_color}{marker}"
+        else:
+            annotated = f"{marker_color}{marker}{variant}"
+        chunks.append(f"{match.group()}{annotated}")
+    return value[: matches[0].start()] + "".join(chunks)
+
+
 def _strip_generated_marker(value: str) -> str:
-    existing = next(
-        (
-            match
-            for match in GENERATED_MARKER_PATTERN.finditer(value)
-            if match.group() != "(S)"
-            or value[
-                max(0, match.start() - len(MARKER_COLOR)) : match.start()
-            ]
-            == MARKER_COLOR
-        ),
-        None,
-    )
-    if existing is None:
-        return value
-    start, end = existing.span()
-    if value[max(0, start - len(MARKER_COLOR)) : start] == MARKER_COLOR:
-        start -= len(MARKER_COLOR)
-    if value[end : end + len(DEFAULT_COLOR)] == DEFAULT_COLOR:
-        end += len(DEFAULT_COLOR)
-    return value[:start] + value[end:]
+    while True:
+        existing = next(
+            (
+                match
+                for match in GENERATED_MARKER_PATTERN.finditer(value)
+                if match.group() != "(S)"
+                or value[
+                    max(0, match.start() - len(MARKER_COLOR)) : match.start()
+                ]
+                == MARKER_COLOR
+            ),
+            None,
+        )
+        if existing is None:
+            return value
+        start, end = existing.span()
+        if value[max(0, start - len(MARKER_COLOR)) : start] == MARKER_COLOR:
+            start -= len(MARKER_COLOR)
+        if value[end : end + len(DEFAULT_COLOR)] == DEFAULT_COLOR:
+            end += len(DEFAULT_COLOR)
+        value = value[:start] + value[end:]
 
 
 def _normalize_rainbow_set_marker(value: str) -> str:

@@ -20,9 +20,12 @@ from gd_affix_relevance.stats import registered_stat_definitions
 TAG_SOURCES = dict(zip(("base", "gdx1", "gdx2", "gdx3"), ITEM_TAG_FILENAMES))
 OPTIONAL_RELEASE_DOCUMENTS = ("LICENSE.txt", "THIRD_PARTY_NOTICES.txt")
 EXAMPLE_PROFILE_DIRECTORY = Path("Profiles/examples")
+I18N_RESOURCE_DIRECTORY = Path("resources/i18n")
+I18N_RESOURCE_FILES = ("en.json", "ru.json")
 MANAGED_RELEASE_PATHS = (
     "catalog",
     "tags",
+    str(I18N_RESOURCE_DIRECTORY),
     "README.txt",
     "LICENSE.txt",
     "THIRD_PARTY_NOTICES.txt",
@@ -37,6 +40,7 @@ class ReleaseAssemblyResult:
     catalog_files: int
     tag_files: int
     tag_entries: int
+    i18n_files: int
     example_profiles: int
     optional_documents_missing: tuple[str, ...]
     manifest_path: Path
@@ -47,6 +51,7 @@ class ReleaseAssemblyResult:
             "catalog_files": self.catalog_files,
             "tag_files": self.tag_files,
             "tag_entries": self.tag_entries,
+            "i18n_files": self.i18n_files,
             "example_profiles": self.example_profiles,
             "optional_documents_missing": list(self.optional_documents_missing),
             "manifest_path": str(self.manifest_path),
@@ -60,12 +65,15 @@ def assemble_release(
     catalog_root: Path | None = None,
     data_root: Path | None = None,
     profiles_root: Path | None = None,
+    i18n_root: Path | None = None,
 ) -> ReleaseAssemblyResult:
     """Validate and stage packaged catalogs, raw tags, and release metadata.
 
     Only paths listed in ``MANAGED_RELEASE_PATHS`` are replaced. In particular,
     a previously built executable, dependency directory, staging output, and
-    user backups are left untouched.
+    user backups are left untouched. Only the authored English/Russian UI
+    resource files are bundled here; official Grim Dawn game text is never
+    included because it must be obtained from the user's installed game.
     """
 
     project = Path(project_root).expanduser().resolve()
@@ -88,6 +96,11 @@ def assemble_release(
         Path(profiles_root).expanduser().resolve()
         if profiles_root is not None
         else project / "artifacts" / "profiles" / "examples"
+    )
+    i18n_source = (
+        Path(i18n_root).expanduser().resolve()
+        if i18n_root is not None
+        else project / I18N_RESOURCE_DIRECTORY
     )
     _validate_output_root(output, project)
 
@@ -117,6 +130,16 @@ def assemble_release(
         tag_sources[filename] = path
         tag_entry_counts[filename] = entry_count
 
+    i18n_sources: dict[str, Path] = {}
+    for filename in I18N_RESOURCE_FILES:
+        path = i18n_source / filename
+        if not path.is_file():
+            raise FileNotFoundError(f"required UI translation file is missing: {path}")
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict) or not payload:
+            raise ValueError(f"UI translation file has no entries: {path}")
+        i18n_sources[filename] = path
+
     readme_source = project / "README.md"
     if not readme_source.is_file():
         raise FileNotFoundError(f"release README source is missing: {readme_source}")
@@ -129,9 +152,11 @@ def assemble_release(
         managed_stage = temporary_root / "managed"
         staged_catalog = managed_stage / "catalog"
         staged_tags = managed_stage / "tags"
+        staged_i18n = managed_stage / I18N_RESOURCE_DIRECTORY
         staged_profiles = managed_stage / EXAMPLE_PROFILE_DIRECTORY
         staged_catalog.mkdir(parents=True)
         staged_tags.mkdir(parents=True)
+        staged_i18n.mkdir(parents=True)
         staged_profiles.mkdir(parents=True)
 
         catalog_hashes: dict[str, str] = {}
@@ -146,6 +171,12 @@ def assemble_release(
             target = staged_tags / filename
             shutil.copy2(source, target)
             tag_hashes[filename] = _sha256(target)
+
+        i18n_hashes: dict[str, str] = {}
+        for filename, source in i18n_sources.items():
+            target = staged_i18n / filename
+            shutil.copy2(source, target)
+            i18n_hashes[filename] = _sha256(target)
 
         profile_hashes: dict[str, str] = {}
         for source in example_profile_sources:
@@ -181,6 +212,7 @@ def assemble_release(
                 }
                 for filename in TAG_SOURCES.values()
             },
+            "i18n": i18n_hashes,
             "example_profiles": profile_hashes,
         }
         (managed_stage / "release-manifest.json").write_text(
@@ -199,6 +231,7 @@ def assemble_release(
         catalog_files=len(catalog_files),
         tag_files=len(tag_sources),
         tag_entries=sum(tag_entry_counts.values()),
+        i18n_files=len(i18n_sources),
         example_profiles=len(example_profile_sources),
         optional_documents_missing=tuple(optional_missing),
         manifest_path=output / "release-manifest.json",

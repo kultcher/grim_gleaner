@@ -30,10 +30,20 @@ from gd_affix_relevance.catalog.compiler import (
     CatalogCompileResult,
     compile_catalog_bundle,
 )
+from gd_affix_relevance.catalog.locale_overlay import (
+    EMPTY_OVERLAY,
+    CatalogLocaleOverlay,
+    load_catalog_locale_overlay,
+    localize_affix_catalog,
+    localize_catalog_bundle,
+    localize_item_catalog,
+    localize_skill_catalog,
+)
 
 __all__ = [
     "CATALOG_SCHEMA_VERSION",
     "MAGNITUDE_CATALOG_FILE",
+    "EMPTY_OVERLAY",
     "AffixCatalog",
     "AffixDefinition",
     "AffixProperty",
@@ -41,6 +51,7 @@ __all__ = [
     "AffixVariantDefinition",
     "CatalogBundle",
     "CatalogCompileResult",
+    "CatalogLocaleOverlay",
     "CatalogManifest",
     "ItemCatalog",
     "ItemContainerSource",
@@ -58,4 +69,9 @@ __all__ = [
     "SkillDefinition",
     "StringCatalog",
     "compile_catalog_bundle",
+    "load_catalog_locale_overlay",
+    "localize_affix_catalog",
+    "localize_catalog_bundle",
+    "localize_item_catalog",
+    "localize_skill_catalog",
 ]

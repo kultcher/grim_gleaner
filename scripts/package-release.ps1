@@ -9,6 +9,12 @@ param(
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
+# pyside6-deploy/Nuitka mis-encode non-ASCII path segments (e.g. a Cyrillic
+# OneDrive "Документы" folder) into mojibake without this. Must be set
+# before pyside6-deploy/Nuitka subprocesses spawn below.
+$env:PYTHONUTF8 = "1"
+$env:PYTHONIOENCODING = "utf-8"
+
 $projectRoot = [System.IO.Path]::GetFullPath(
     (Join-Path $PSScriptRoot "..")
 )
@@ -210,6 +216,8 @@ $requiredPaths = @(
     "tags\tagsgdx1_items.txt",
     "tags\tagsgdx2_items.txt",
     "tags\tagsgdx3_items.txt",
+    "resources\i18n\en.json",
+    "resources\i18n\ru.json",
     "Profiles",
     "Profiles\examples"
 )

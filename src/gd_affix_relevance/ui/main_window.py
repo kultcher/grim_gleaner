@@ -24,14 +24,17 @@ from gd_affix_relevance.catalog import (
     CatalogBundle,
     ItemCatalog,
     SkillCatalog,
+    load_catalog_locale_overlay,
+    localize_catalog_bundle,
 )
-from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.domain import BuildProfile, locale_for_code
 from gd_affix_relevance.profile_store import load_profile
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.guide import GuidePage
+from gd_affix_relevance.ui.i18n import active_locale, t
 from gd_affix_relevance.ui.profile_editor import ProfileEditor
-from gd_affix_relevance.ui.settings import SettingsPage
+from gd_affix_relevance.ui.settings import GAME_LOCALE_SETTING, SettingsPage
 from gd_affix_relevance.ui.top_matches import TopMatchesPage
 
 NAV_PAGE_ROLE = Qt.ItemDataRole.UserRole
@@ -49,6 +52,7 @@ class MainWindow(QMainWindow):
         items: ItemCatalog | None = None,
         settings: QSettings | None = None,
         runtime_paths: RuntimePaths | None = None,
+        user_settings_root: Path | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Grim Gleaner")
@@ -56,6 +60,18 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(880, 620)
         self.settings = settings
         self.runtime_paths = runtime_paths or resolve_runtime_paths()
+        if self.settings is not None:
+            locale_code = self.settings.value(
+                GAME_LOCALE_SETTING,
+                self.runtime_paths.locale.code,
+                type=str,
+            )
+            try:
+                self.runtime_paths = self.runtime_paths.for_locale(
+                    locale_for_code(locale_code)
+                )
+            except ValueError:
+                self.settings.remove(GAME_LOCALE_SETTING)
         self._game_folder_prompted = False
         self._catalog_error_shown = False
         self.catalog_load_error = ""
@@ -71,10 +87,7 @@ class MainWindow(QMainWindow):
                 except (OSError, ValueError, TypeError):
                     self.settings.remove("profiles/active_path")
                     self.settings.sync()
-                    startup_notice = (
-                        "The last active profile could not be found or read; "
-                        "started a new profile."
-                    )
+                    startup_notice = t("main_window.profile_not_found_notice")
                 else:
                     profile_path = candidate
 
@@ -103,30 +116,31 @@ class MainWindow(QMainWindow):
         profile_summary_layout = QVBoxLayout(self.profile_summary)
         profile_summary_layout.setContentsMargins(10, 8, 10, 8)
         profile_summary_layout.setSpacing(3)
-        profile_title = QLabel("CURRENT PROFILE", self.profile_summary)
+        profile_title = QLabel(t("main_window.current_profile"), self.profile_summary)
         profile_title.setObjectName("sidebarInfoTitle")
         profile_summary_layout.addWidget(profile_title)
-        self.sidebar_profile_name = QLabel("New Build Profile", self.profile_summary)
+        self.sidebar_profile_name = QLabel(
+            t("main_window.new_build_profile"), self.profile_summary
+        )
         self.sidebar_profile_name.setObjectName("sidebarProfileName")
         self.sidebar_profile_name.setWordWrap(True)
         profile_summary_layout.addWidget(self.sidebar_profile_name)
         self.sidebar_profile_level = QLabel(
-            "Profile level: 90+", self.profile_summary
+            t("main_window.profile_level", level="90+"), self.profile_summary
         )
         self.sidebar_profile_level.setObjectName("sidebarProfileLevel")
         profile_summary_layout.addWidget(self.sidebar_profile_level)
         sidebar_layout.addWidget(self.profile_summary)
 
         self.game_location_warning = QLabel(
-            "Grim Dawn folder not confirmed.\nExports are disabled.", sidebar
+            t("main_window.game_location_warning"), sidebar
         )
         self.game_location_warning.setObjectName("gameLocationWarning")
         self.game_location_warning.setWordWrap(True)
         sidebar_layout.addWidget(self.game_location_warning)
 
         self.catalog_warning = QLabel(
-            "The packaged catalog could not be loaded.\n"
-            "Gear Grades and exports are unavailable.",
+            t("main_window.catalog_warning"),
             sidebar,
         )
         self.catalog_warning.setObjectName("catalogLoadWarning")
@@ -162,8 +176,8 @@ class MainWindow(QMainWindow):
         )
         self.profile_page_index = self.pages.addWidget(self.profile_editor)
         self.profile_navigation_row = self._add_navigation_item(
-            "Build Profile",
-            "Set the stats this build values",
+            t("nav.build_profile"),
+            t("nav.build_profile_tooltip"),
             self.profile_page_index,
         )
 
@@ -179,15 +193,17 @@ class MainWindow(QMainWindow):
             self.top_matches_page
         )
         self.gear_grades_navigation_row = self._add_navigation_item(
-            "Gear Grades",
-            "Rank affixes and gear against this profile",
+            t("nav.gear_grades"),
+            t("nav.gear_grades_tooltip"),
             self.gear_grades_page_index,
         )
         self.gear_subnavigation_rows: dict[int, int] = {}
-        for tab_index, title in enumerate(("Affixes", "Uniques", "Add-ons")):
+        gear_tab_keys = ("tabs.affixes", "tabs.uniques", "tabs.addons")
+        for tab_index, key in enumerate(gear_tab_keys):
+            title = t(key)
             self.gear_subnavigation_rows[tab_index] = self._add_navigation_item(
                 title,
-                f"Open the {title} Gear Grades tab",
+                t("nav.gear_grades_subtab_tooltip", title=title),
                 self.gear_grades_page_index,
                 tab_index=tab_index,
                 child=True,
@@ -200,6 +216,8 @@ class MainWindow(QMainWindow):
             source_root=self.runtime_paths.tags_root,
             output_root=self.runtime_paths.staging_output_root,
             backups_root=self.runtime_paths.backups_root,
+            user_settings_root=user_settings_root,
+            locale=self.runtime_paths.locale,
             catalog_status=catalog_status,
             settings=self.settings,
             parent=self.pages,
@@ -208,25 +226,30 @@ class MainWindow(QMainWindow):
             self.generate_output_page
         )
         self.export_grades_navigation_row = self._add_navigation_item(
-            "Export Grades",
-            "Apply grades to Grim Dawn or restore the original item names",
+            t("nav.export_grades"),
+            t("nav.export_grades_tooltip"),
             self.export_grades_page_index,
         )
 
-        self.settings_page = SettingsPage(self.settings, self.pages)
+        self.settings_page = SettingsPage(
+            self.settings,
+            self.pages,
+            runtime_paths=self.runtime_paths,
+        )
         self.settings_page.game_folder_changed.connect(self._game_folder_changed)
+        self.settings_page.game_locale_changed.connect(self._game_locale_changed)
         self.settings_page_index = self.pages.addWidget(self.settings_page)
         self.settings_navigation_row = self._add_navigation_item(
-            "Settings",
-            "Configure Grim Dawn paths and application preferences",
+            t("nav.settings"),
+            t("nav.settings_tooltip"),
             self.settings_page_index,
         )
 
         self.guide_page = GuidePage(self.pages)
         self.guide_page_index = self.pages.addWidget(self.guide_page)
         self.guide_navigation_row = self._add_navigation_item(
-            "Guide",
-            "How to use Grim Gleaner and understand its limitations",
+            t("nav.guide"),
+            t("nav.guide_tooltip"),
             self.guide_page_index,
         )
 
@@ -311,10 +334,10 @@ class MainWindow(QMainWindow):
     def _update_profile_summary(self) -> None:
         profile = self.profile_editor.profile
         self.sidebar_profile_name.setText(
-            profile.name.strip() or "Unnamed profile"
+            profile.name.strip() or t("main_window.unnamed_profile")
         )
         self.sidebar_profile_level.setText(
-            f"Profile level: {profile.level_band}"
+            t("main_window.profile_level", level=profile.level_band)
         )
 
     def prompt_for_game_folder_if_needed(self) -> None:
@@ -334,16 +357,26 @@ class MainWindow(QMainWindow):
             self._catalog_error_shown = True
             QMessageBox.critical(
                 self,
-                "Grim Gleaner Catalog Unavailable",
-                f"{self.catalog_load_error}\n\n"
-                "Gear grading and export are disabled. Reinstall or extract "
-                "the complete Grim Gleaner release before continuing.",
+                t("main_window.catalog_unavailable_title"),
+                t(
+                    "main_window.catalog_unavailable_body",
+                    error=self.catalog_load_error,
+                ),
             )
         self.prompt_for_game_folder_if_needed()
 
     def _game_folder_changed(self, game_folder: str = "") -> None:
         self.generate_output_page.refresh_game_location(game_folder)
         self._update_game_location_state()
+
+    def _game_locale_changed(self, locale_code: str) -> None:
+        locale = locale_for_code(locale_code)
+        self.runtime_paths = self.runtime_paths.for_locale(locale)
+        self.generate_output_page.set_locale(
+            locale,
+            source_root=self.runtime_paths.tags_root,
+            output_root=self.runtime_paths.staging_output_root,
+        )
 
     def _update_game_location_state(self) -> None:
         self.game_location_warning.setVisible(
@@ -363,10 +396,32 @@ def _load_runtime_catalog(
     root = runtime_paths.catalog_root
     if not (root / "manifest.json").is_file():
         if runtime_paths.mode == "release":
-            return None, f"The packaged catalog is missing from {root}."
-        return None, "Compile a development catalog under artifacts/catalog to rank gear."
+            return None, t("main_window.catalog_missing_release", root=root)
+        return None, t("main_window.catalog_missing_development")
     try:
         bundle = CatalogBundle.load(root)
+        bundle = _localize_catalog_for_ui(bundle, runtime_paths)
     except (OSError, ValueError, KeyError, TypeError) as error:
-        return None, f"Could not load the compiled catalog at {root}: {error}"
-    return bundle, f"Catalog: {root}"
+        return None, t("main_window.catalog_load_error", root=root, error=error)
+    return bundle, t("main_window.catalog_status", root=root)
+
+
+def _localize_catalog_for_ui(
+    bundle: CatalogBundle,
+    runtime_paths: RuntimePaths,
+) -> CatalogBundle:
+    """Overlay display names for the configured UI locale, English untouched.
+
+    The catalog display language follows ``ui_locale`` (see ``ui.i18n``),
+    not the ``game_locale`` export target: a Russian interface should show
+    Russian item names even if grades are still exported to ``text_en``.
+    """
+
+    catalog_locale = active_locale()
+    if catalog_locale.code == bundle.manifest.locale:
+        return bundle
+    overlay_paths = runtime_paths.for_locale(catalog_locale)
+    overlay = load_catalog_locale_overlay(
+        overlay_paths.tags_root, locale=catalog_locale
+    )
+    return localize_catalog_bundle(bundle, overlay)
