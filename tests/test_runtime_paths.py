@@ -4,6 +4,7 @@ import sys
 from types import ModuleType, SimpleNamespace
 from pathlib import Path
 
+from gd_affix_relevance.domain import RUSSIAN_LOCALE
 from gd_affix_relevance.runtime_paths import (
     EXPORT_LOCALIZATION_SOURCES,
     resolve_export_sources,
@@ -26,6 +27,7 @@ def test_development_paths_are_project_relative(tmp_path: Path) -> None:
     assert paths.staging_output_root == (
         tmp_path.resolve() / "artifacts" / "generated" / "text_en"
     )
+    assert paths.i18n_root == tmp_path.resolve() / "resources" / "i18n"
 
 
 def test_explicit_application_root_uses_release_layout(tmp_path: Path) -> None:
@@ -44,6 +46,33 @@ def test_explicit_application_root_uses_release_layout(tmp_path: Path) -> None:
     assert paths.staging_output_root == root.resolve() / "staging" / "text_en"
     assert paths.backups_root == root.resolve() / "backups"
     assert paths.profiles_root == root.resolve() / "Profiles"
+    assert paths.i18n_root == root.resolve() / "resources" / "i18n"
+
+
+def test_russian_runtime_paths_use_locale_specific_resources(tmp_path: Path) -> None:
+    development = resolve_runtime_paths(
+        project_root=tmp_path,
+        frozen=False,
+        environment={},
+        locale=RUSSIAN_LOCALE,
+    )
+    release = resolve_runtime_paths(
+        application_root=tmp_path / "release",
+        environment={},
+        locale=RUSSIAN_LOCALE,
+    )
+
+    assert development.tags_root == tmp_path.resolve() / "artifacts" / "text_ru"
+    assert development.locale is RUSSIAN_LOCALE
+    assert development.staging_output_root == (
+        tmp_path.resolve() / "artifacts" / "generated" / "text_ru"
+    )
+    assert release.tags_root == (tmp_path / "release" / "tags" / "ru").resolve()
+    assert release.staging_output_root == (
+        tmp_path / "release" / "staging" / "text_ru"
+    ).resolve()
+    assert release.as_dict()["locale"] == "ru"
+    assert release.for_locale(RUSSIAN_LOCALE) == release
 
 
 def test_environment_override_selects_release_layout(tmp_path: Path) -> None:
@@ -149,36 +178,77 @@ def test_export_sources_prefer_installed_tags_with_bundled_fallback(
     assert selection.uses_game_files
 
 
-def test_export_sources_map_centralized_game_data_to_flat_filenames(
-    tmp_path: Path,
-) -> None:
-    game_data = tmp_path / "game_data"
-    for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items():
-        source = game_data / relative_path
-        source.parent.mkdir(parents=True, exist_ok=True)
-        source.write_text(f"{filename}=value\n", encoding="utf-8")
-
-    selection = resolve_export_sources(None, game_data)
-
-    assert selection.primary_root == game_data.resolve()
-    assert selection.fallback_root is None
-    assert selection.primary_files == tuple(
-        ((game_data / relative_path).resolve(), Path(filename))
-        for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items()
+def test_export_sources_select_russian_game_directory(tmp_path: Path) -> None:
+    game = tmp_path / "Grim Dawn"
+    russian = game / "settings" / "text_ru"
+    english = game / "settings" / "text_en"
+    russian.mkdir(parents=True)
+    english.mkdir(parents=True)
+    (russian / "tags_items.txt").write_text(
+        "tagExample=Пример\n",
+        encoding="utf-8-sig",
+    )
+    (english / "tags_items.txt").write_text(
+        "tagExample=Example\n",
+        encoding="utf-8-sig",
     )
 
+    selection = resolve_export_sources(
+        game,
+        tmp_path / "russian-tags",
+        locale=RUSSIAN_LOCALE,
+    )
 
-def test_export_sources_reject_incomplete_centralized_game_data(
-    tmp_path: Path,
-) -> None:
-    game_data = tmp_path / "game_data"
-    first_relative = next(iter(EXPORT_LOCALIZATION_SOURCES.values()))
-    source = game_data / first_relative
-    source.parent.mkdir(parents=True)
-    source.write_text("tag=value\n", encoding="utf-8")
+    assert selection.game_text_root == russian.resolve()
+    assert selection.primary_root == russian.resolve()
+    assert selection.game_files == ("tags_items.txt",)
+
+
+def test_export_sources_accept_nested_user_localization_root(tmp_path: Path) -> None:
+    game = tmp_path / "Grim Dawn"
+    user_text = tmp_path / "Documents" / "Settings" / "text_ru"
+    nested = user_text / "aom"
+    nested.mkdir(parents=True)
+    (nested / "rainbow-items.txt").write_text("tag=value\n", encoding="utf-8")
+    bundled = tmp_path / "bundled"
+
+    selection = resolve_export_sources(
+        game,
+        bundled,
+        locale=RUSSIAN_LOCALE,
+        installed_text_root=user_text,
+    )
+
+    assert selection.primary_root == user_text.resolve()
+    assert selection.fallback_root == bundled.resolve()
+    assert selection.game_files == ("aom/rainbow-items.txt",)
+
+
+def test_development_export_sources_map_centralized_game_data(tmp_path: Path) -> None:
+    data_root = tmp_path / "game_data"
+    for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items():
+        source = data_root / relative_path
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text(f"tag{filename}=Value\n", encoding="utf-8")
+
+    selection = resolve_export_sources(None, data_root)
+
+    assert selection.primary_root == data_root.resolve()
+    assert selection.primary_files is not None
+    assert dict(selection.primary_files) == {
+        (data_root / relative_path).resolve(): Path(filename)
+        for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items()
+    }
+
+
+def test_incomplete_centralized_game_data_is_rejected(tmp_path: Path) -> None:
+    data_root = tmp_path / "game_data"
+    first_path = data_root / next(iter(EXPORT_LOCALIZATION_SOURCES.values()))
+    first_path.parent.mkdir(parents=True)
+    first_path.write_text("tagExample=Value\n", encoding="utf-8")
 
     try:
-        resolve_export_sources(None, game_data)
+        resolve_export_sources(None, data_root)
     except ValueError as error:
         assert "centralized game-data localization is incomplete" in str(error)
     else:

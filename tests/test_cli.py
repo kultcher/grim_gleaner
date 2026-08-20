@@ -32,6 +32,8 @@ def test_every_cli_command_has_a_dispatch_handler() -> None:
             "text",
             "--output-dir",
             "out",
+            "--locale",
+            "ru",
         ),
         ("audit-items", "--data-root", "data"),
         (
@@ -44,6 +46,13 @@ def test_every_cli_command_has_a_dispatch_handler() -> None:
             "out",
         ),
         ("show-runtime-paths",),
+        (
+            "prepare-game-localization",
+            "--game-folder",
+            "game",
+            "--locale",
+            "ru",
+        ),
         ("assemble-release",),
     )
 

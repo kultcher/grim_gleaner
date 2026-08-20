@@ -10,7 +10,22 @@ from gd_affix_relevance.domain import LocalizationEntry
 
 COLOR_CODE_PATTERN = re.compile(r"\{\^[^}]+\}")
 RAINBOW_LEADING_MARKER_PATTERN = re.compile(r"^(?:XY|X|Y)(?=\{\^[^}]+\})")
+GAME_LEADING_DOLLAR_PATTERN = re.compile(r"^\$(?!\{%)")
 LEGACY_CONTROL_CODE_PATTERN = re.compile(r"\^[A-Za-z]")
+
+# Grim Dawn item-tag text packs grammatical-gender/number variants of the same
+# adjective into one value, e.g. "[ms]тупой[fs]тупая[ns]тупое[np]тупые"
+# (masculine/feminine/neuter singular, plural). The game engine picks the
+# form matching the target item's gender at generation time; this tool has no
+# per-item gender context when resolving a shared catalog display name, so it
+# picks one canonical form for display. Masculine singular is preferred as
+# the conventional Russian dictionary/lemma form for adjectives. Codes are a
+# closed, verified set from real Grim Dawn item tags and must not be confused
+# with unrelated bracket content such as "[A2]" grade labels, which are left
+# untouched.
+GENDER_VARIANT_LEADING_PATTERN = re.compile(r"^\[(ms|fs|ns|np|mp)\]")
+GENDER_VARIANT_SEGMENT_PATTERN = re.compile(r"\[(ms|fs|ns|np|mp)\]([^\[]*)")
+GENDER_VARIANT_PRIORITY = ("ms", "ns", "fs", "np", "mp")
 
 
 def parse_localization_text(
@@ -81,5 +96,21 @@ def plain_display_name(value: str) -> str:
     """Remove game and Rainbow control codes for report display only."""
 
     without_marker = RAINBOW_LEADING_MARKER_PATTERN.sub("", value, count=1)
-    without_colors = COLOR_CODE_PATTERN.sub("", without_marker)
-    return LEGACY_CONTROL_CODE_PATTERN.sub("", without_colors).strip()
+    without_dollar = GAME_LEADING_DOLLAR_PATTERN.sub("", without_marker, count=1)
+    without_colors = COLOR_CODE_PATTERN.sub("", without_dollar)
+    without_legacy = LEGACY_CONTROL_CODE_PATTERN.sub("", without_colors)
+    return _resolve_gender_variant(without_legacy).strip()
+
+
+def _resolve_gender_variant(value: str) -> str:
+    """Collapse a packed gender/number variant value to one canonical form."""
+
+    if not GENDER_VARIANT_LEADING_PATTERN.match(value):
+        return value
+    segments = dict(GENDER_VARIANT_SEGMENT_PATTERN.findall(value))
+    if not segments:
+        return value
+    for code in GENDER_VARIANT_PRIORITY:
+        if code in segments:
+            return segments[code]
+    return next(iter(segments.values()))
