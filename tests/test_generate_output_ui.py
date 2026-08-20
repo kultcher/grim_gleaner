@@ -12,7 +12,7 @@ from gd_affix_relevance.catalog import (
     AffixProperty,
     AffixVariantDefinition,
 )
-from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.domain import BuildProfile, RUSSIAN_LOCALE
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 
 
@@ -178,3 +178,103 @@ def test_export_page_rejects_existing_folder_without_executable(
 
     assert page.generate_button.isEnabled()
     assert str(game / "settings" / "text_en") in page.target_label.text()
+
+
+def test_export_page_can_target_russian_localization(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    _application()
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    bundled = tmp_path / "tags" / "ru"
+    bundled.mkdir(parents=True)
+    (bundled / "tags_items.txt").write_text(
+        "tagHealthy=Здоровый\n",
+        encoding="utf-8-sig",
+    )
+    settings = QSettings(
+        str(tmp_path / "settings.ini"),
+        QSettings.Format.IniFormat,
+    )
+    settings.setValue("paths/grim_dawn_folder", str(game))
+    page = GenerateOutputPage(
+        _catalog(),
+        BuildProfile("Здоровье", {"health": 4}),
+        source_root=bundled,
+        output_root=tmp_path / "staging" / "text_ru",
+        backups_root=tmp_path / "backups",
+        locale=RUSSIAN_LOCALE,
+        settings=settings,
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *_args: QMessageBox.StandardButton.Yes,
+    )
+
+    page.generate()
+
+    target = game / "settings" / "text_ru"
+    assert target.is_dir()
+    assert "text_ru" in page.target_label.text()
+    assert not (game / "settings" / "text_en").exists()
+
+
+def test_export_page_prepares_missing_selected_language_automatically(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    _application()
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    bundled = tmp_path / "tags" / "ru"
+    settings = QSettings(
+        str(tmp_path / "settings.ini"),
+        QSettings.Format.IniFormat,
+    )
+    settings.setValue("paths/grim_dawn_folder", str(game))
+    page = GenerateOutputPage(
+        _catalog(),
+        BuildProfile("Здоровье", {"health": 4}),
+        source_root=bundled,
+        output_root=tmp_path / "staging" / "text_ru",
+        backups_root=tmp_path / "backups",
+        locale=RUSSIAN_LOCALE,
+        settings=settings,
+    )
+    prepared: list[tuple[Path, Path, str]] = []
+
+    def prepare(game_folder, destination_root, *, locale):
+        prepared.append((game_folder, destination_root, locale.code))
+        destination_root.mkdir(parents=True)
+        for filename in (
+            "tags_items.txt",
+            "tagsgdx1_items.txt",
+            "tagsgdx2_items.txt",
+            "tagsgdx3_items.txt",
+        ):
+            (destination_root / filename).write_text(
+                "tagHealthy=Здоровый\n",
+                encoding="utf-8-sig",
+            )
+
+    monkeypatch.setattr(
+        "gd_affix_relevance.ui.generate_output.prepare_game_item_tags",
+        prepare,
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *_args: QMessageBox.StandardButton.Yes,
+    )
+
+    page.generate()
+
+    assert prepared == [(game, bundled, "ru")]
+    assert page.last_result is not None
+    assert "(C1)Здоровый" in (
+        game / "settings" / "text_ru" / "tags_items.txt"
+    ).read_text(encoding="utf-8-sig")

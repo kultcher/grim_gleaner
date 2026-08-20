@@ -4,6 +4,7 @@ import sys
 from types import ModuleType, SimpleNamespace
 from pathlib import Path
 
+from gd_affix_relevance.domain import RUSSIAN_LOCALE
 from gd_affix_relevance.runtime_paths import (
     resolve_export_sources,
     resolve_runtime_paths,
@@ -25,6 +26,7 @@ def test_development_paths_are_project_relative(tmp_path: Path) -> None:
     assert paths.staging_output_root == (
         tmp_path.resolve() / "artifacts" / "generated" / "text_en"
     )
+    assert paths.i18n_root == tmp_path.resolve() / "resources" / "i18n"
 
 
 def test_explicit_application_root_uses_release_layout(tmp_path: Path) -> None:
@@ -43,6 +45,33 @@ def test_explicit_application_root_uses_release_layout(tmp_path: Path) -> None:
     assert paths.staging_output_root == root.resolve() / "staging" / "text_en"
     assert paths.backups_root == root.resolve() / "backups"
     assert paths.profiles_root == root.resolve() / "Profiles"
+    assert paths.i18n_root == root.resolve() / "resources" / "i18n"
+
+
+def test_russian_runtime_paths_use_locale_specific_resources(tmp_path: Path) -> None:
+    development = resolve_runtime_paths(
+        project_root=tmp_path,
+        frozen=False,
+        environment={},
+        locale=RUSSIAN_LOCALE,
+    )
+    release = resolve_runtime_paths(
+        application_root=tmp_path / "release",
+        environment={},
+        locale=RUSSIAN_LOCALE,
+    )
+
+    assert development.tags_root == tmp_path.resolve() / "artifacts" / "text_ru"
+    assert development.locale is RUSSIAN_LOCALE
+    assert development.staging_output_root == (
+        tmp_path.resolve() / "artifacts" / "generated" / "text_ru"
+    )
+    assert release.tags_root == (tmp_path / "release" / "tags" / "ru").resolve()
+    assert release.staging_output_root == (
+        tmp_path / "release" / "staging" / "text_ru"
+    ).resolve()
+    assert release.as_dict()["locale"] == "ru"
+    assert release.for_locale(RUSSIAN_LOCALE) == release
 
 
 def test_environment_override_selects_release_layout(tmp_path: Path) -> None:
@@ -146,3 +175,49 @@ def test_export_sources_prefer_installed_tags_with_bundled_fallback(
     assert selection.fallback_root == bundled.resolve()
     assert selection.game_files == ("tags_items.txt",)
     assert selection.uses_game_files
+
+
+def test_export_sources_select_russian_game_directory(tmp_path: Path) -> None:
+    game = tmp_path / "Grim Dawn"
+    russian = game / "settings" / "text_ru"
+    english = game / "settings" / "text_en"
+    russian.mkdir(parents=True)
+    english.mkdir(parents=True)
+    (russian / "tags_items.txt").write_text(
+        "tagExample=Пример\n",
+        encoding="utf-8-sig",
+    )
+    (english / "tags_items.txt").write_text(
+        "tagExample=Example\n",
+        encoding="utf-8-sig",
+    )
+
+    selection = resolve_export_sources(
+        game,
+        tmp_path / "russian-tags",
+        locale=RUSSIAN_LOCALE,
+    )
+
+    assert selection.game_text_root == russian.resolve()
+    assert selection.primary_root == russian.resolve()
+    assert selection.game_files == ("tags_items.txt",)
+
+
+def test_export_sources_accept_nested_user_localization_root(tmp_path: Path) -> None:
+    game = tmp_path / "Grim Dawn"
+    user_text = tmp_path / "Documents" / "Settings" / "text_ru"
+    nested = user_text / "aom"
+    nested.mkdir(parents=True)
+    (nested / "rainbow-items.txt").write_text("tag=value\n", encoding="utf-8")
+    bundled = tmp_path / "bundled"
+
+    selection = resolve_export_sources(
+        game,
+        bundled,
+        locale=RUSSIAN_LOCALE,
+        installed_text_root=user_text,
+    )
+
+    assert selection.primary_root == user_text.resolve()
+    assert selection.fallback_root == bundled.resolve()
+    assert selection.game_files == ("aom/rainbow-items.txt",)

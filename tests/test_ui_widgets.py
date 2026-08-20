@@ -8,7 +8,7 @@ from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QApplication, QLabel
 
 from gd_affix_relevance.catalog import AffixCatalog
-from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.domain import BuildProfile, RUSSIAN_LOCALE
 from gd_affix_relevance.profile_store import save_profile
 from gd_affix_relevance.runtime_paths import RuntimePaths
 from gd_affix_relevance.ui.catalog import PackageDefinition, stat
@@ -212,6 +212,39 @@ def test_settings_page_persists_grim_dawn_folder(tmp_path: Path) -> None:
     assert restored.settings_page.game_folder_edit.text() == game_folder
 
 
+def test_settings_page_switches_export_to_russian_locale(tmp_path: Path) -> None:
+    _application()
+    settings = QSettings(
+        str(tmp_path / "settings.ini"),
+        QSettings.Format.IniFormat,
+    )
+    runtime_paths = RuntimePaths(
+        mode="development",
+        application_root=tmp_path,
+        project_root=tmp_path,
+        catalog_root=tmp_path / "artifacts" / "catalog",
+        tags_root=tmp_path / "artifacts" / "text_en",
+        staging_output_root=tmp_path / "artifacts" / "generated" / "text_en",
+        backups_root=tmp_path / "artifacts" / "backups",
+        profiles_root=tmp_path / "artifacts" / "profiles",
+        i18n_root=tmp_path / "resources" / "i18n",
+    )
+    window = MainWindow(
+        catalog=AffixCatalog(()),
+        settings=settings,
+        runtime_paths=runtime_paths,
+    )
+
+    window.settings_page.game_locale_combo.setCurrentIndex(
+        window.settings_page.game_locale_combo.findData("ru")
+    )
+
+    assert settings.value("localization/game_locale") == "ru"
+    assert window.runtime_paths.locale is RUSSIAN_LOCALE
+    assert window.generate_output_page.locale is RUSSIAN_LOCALE
+    assert window.generate_output_page.staging_root.name == "text_ru"
+
+
 def test_game_folder_confirmation_controls_warning_and_export(
     tmp_path: Path,
 ) -> None:
@@ -274,6 +307,7 @@ def test_missing_packaged_catalog_is_prominent_and_disables_export(
         staging_output_root=root / "staging" / "text_en",
         backups_root=root / "backups",
         profiles_root=root / "Profiles",
+        i18n_root=root / "resources" / "i18n",
     )
     settings = QSettings(
         str(tmp_path / "settings.ini"), QSettings.Format.IniFormat

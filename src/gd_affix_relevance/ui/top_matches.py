@@ -67,6 +67,7 @@ from gd_affix_relevance.ui.detail_stats import (
     stat_table_html,
 )
 from gd_affix_relevance.stats import registered_stat_definitions
+from gd_affix_relevance.ui.i18n import stat_label, t
 from gd_affix_relevance.ui.widgets import StatRow
 
 STAT_LABELS = {
@@ -74,6 +75,60 @@ STAT_LABELS = {
     for definition in registered_stat_definitions()
 }
 RESULTS_PER_AFFIX_TABLE = 5
+SLOT_GROUP_KEYS = {
+    "Weapons": "weapons",
+    "Off-hands": "off_hands",
+    "Accessories": "accessories",
+    "Armor": "armor",
+}
+ACQUISITION_SOURCE_PART_KEYS = {
+    "Purchased": "acquisition.purchased",
+    "Random Blueprint": "acquisition.random_blueprint",
+    "Special Vendor": "acquisition.special_vendor",
+    "Faction Vendor": "acquisition.faction_vendor",
+    "Special Vendor Blueprint": "acquisition.special_vendor_blueprint",
+    "Faction Vendor Blueprint": "acquisition.faction_vendor_blueprint",
+    "Default Recipe": "acquisition.default_recipe",
+    "Crafted": "acquisition.crafted",
+    "Specific Monster Drop": "acquisition.specific_monster_drop",
+    "Lootable Container": "acquisition.lootable_container",
+    "Random Drop": "acquisition.random_drop",
+    "Unknown": "acquisition.unknown",
+}
+
+
+def _slot_label(slot_id: str) -> str:
+    return t(f"slot.{slot_id}", default=SLOT_LABELS[slot_id])
+
+
+def _slot_group_label(category_label: str) -> str:
+    key = SLOT_GROUP_KEYS.get(category_label)
+    return t(f"slot_group.{key}", default=category_label) if key else category_label
+
+
+def _filter_label(filter_id: str, fallback: str) -> str:
+    return t(f"slot_filter.{filter_id}", default=fallback)
+
+
+def _unique_type_label(type_id: str) -> str:
+    return t(f"unique_type.{type_id}", default=UNIQUE_TYPE_LABELS[type_id])
+
+
+def _addon_type_label(addon_type: str) -> str:
+    return t(f"addon_type.{addon_type}", default=ADDON_TYPE_LABELS[addon_type])
+
+
+def _acquisition_source_label(value: str) -> str:
+    parts = value.split(" / ")
+    translated = [
+        t(ACQUISITION_SOURCE_PART_KEYS[part], default=part)
+        if part in ACQUISITION_SOURCE_PART_KEYS
+        else part
+        for part in parts
+    ]
+    return " / ".join(translated)
+
+
 SKILL_RANK_HIGHLIGHT = QColor("#8bded7")
 SKILL_MODIFIER_HIGHLIGHT = QColor("#66cdaa")
 HIGHLIGHT_TEXT = QColor("#102528")
@@ -126,10 +181,11 @@ def _item_source_label(variant: ItemVariantDefinition) -> str:
         variant.acquisition_source == "Lootable Container"
         and variant.container_sources
     ):
-        return "Lootable Container: " + _compact_named_source(
-            variant.container_sources
+        return t(
+            "matches.lootable_container_source",
+            names=_compact_named_source(variant.container_sources),
         )
-    return variant.acquisition_source
+    return _acquisition_source_label(variant.acquisition_source)
 
 
 def _compact_named_source(
@@ -139,8 +195,12 @@ def _compact_named_source(
     remaining = len(sources) - 1
     if not remaining:
         return first
-    noun = "other" if remaining == 1 else "others"
-    return f"{first} +{remaining} {noun}"
+    key = (
+        "matches.plus_other_source"
+        if remaining == 1
+        else "matches.plus_other_sources"
+    )
+    return t(key, first=first, remaining=remaining)
 
 
 def _granted_skill_section(names: tuple[str, ...]) -> tuple[str, ...]:
@@ -148,9 +208,9 @@ def _granted_skill_section(names: tuple[str, ...]) -> tuple[str, ...]:
     if not distinct_names:
         return ()
     heading = (
-        "Granted skill (not evaluated):"
+        t("matches.granted_skill_singular")
         if len(distinct_names) == 1
-        else "Granted skills (not evaluated):"
+        else t("matches.granted_skill_plural")
     )
     return (
         _html_line(heading, bold=True),
@@ -197,13 +257,10 @@ def _has_selected_skill_bonus(
 def _highlight_item(item: QTableWidgetItem, kind: str) -> None:
     if kind == "modifier":
         item.setBackground(SKILL_MODIFIER_HIGHLIGHT)
-        item.setToolTip(
-            "Modifies an active build skill. Skill-modifier highlighting "
-            "supersedes bonus-rank highlighting."
-        )
+        item.setToolTip(t("matches.modifier_highlight_tooltip"))
     elif kind == "rank":
         item.setBackground(SKILL_RANK_HIGHLIGHT)
-        item.setToolTip("Includes bonus ranks for an active build skill.")
+        item.setToolTip(t("matches.rank_highlight_tooltip"))
     if kind:
         item.setForeground(HIGHLIGHT_TEXT)
 
@@ -331,7 +388,14 @@ class AffixSlotTable(QTableWidget):
         self.matches: tuple[RankedAffixVariant, ...] = ()
         self._updating = False
         self.setObjectName("affixSlotTable")
-        self.setHorizontalHeaderLabels(("Grade", "Affix", "Score", "Coverage"))
+        self.setHorizontalHeaderLabels(
+            (
+                t("matches.column_grade"),
+                t("matches.column_affix"),
+                t("matches.column_score"),
+                t("matches.column_coverage"),
+            )
+        )
         _configure_table(self, 1)
         self.setMinimumHeight(190)
         self.setMaximumHeight(205)
@@ -388,7 +452,7 @@ class AffixSlotRow(QFrame):
         layout.setContentsMargins(10, 9, 10, 10)
         layout.setSpacing(10)
 
-        slot_label = QLabel(SLOT_LABELS[slot_id], self)
+        slot_label = QLabel(_slot_label(slot_id), self)
         slot_label.setObjectName("affixSlotName")
         slot_label.setFixedWidth(100)
         layout.addWidget(slot_label)
@@ -399,7 +463,9 @@ class AffixSlotRow(QFrame):
             section_layout = QVBoxLayout(section)
             section_layout.setContentsMargins(0, 0, 0, 0)
             section_layout.setSpacing(5)
-            title = QLabel("Prefixes" if kind == "prefix" else "Suffixes")
+            title = QLabel(
+                t("matches.prefixes") if kind == "prefix" else t("matches.suffixes")
+            )
             title.setObjectName("affixTableTitle")
             section_layout.addWidget(title)
             table = AffixSlotTable(section)
@@ -420,15 +486,17 @@ class AddonSlotTable(QTableWidget):
         self._updating = False
         self.setObjectName("addonSlotTable")
         metadata_label = (
-            "Faction / Source" if addon_type == ADDON_COMPONENT else "Faction"
+            t("matches.column_faction_source")
+            if addon_type == ADDON_COMPONENT
+            else t("matches.column_faction")
         )
         self.setHorizontalHeaderLabels(
             (
-                "Grade",
-                ADDON_TYPE_LABELS[addon_type],
+                t("matches.column_grade"),
+                _addon_type_label(addon_type),
                 metadata_label,
-                "Score",
-                "Coverage",
+                t("matches.column_score"),
+                t("matches.column_coverage"),
             )
         )
         _configure_table(self, 1)
@@ -466,17 +534,17 @@ class AddonSlotTable(QTableWidget):
                 faction_text = ", ".join(factions)
                 source = match.variant.acquisition_source
                 if faction_text and "Random Blueprint" in source:
-                    extras = ["Random Blueprint"]
+                    extras = [_acquisition_source_label("Random Blueprint")]
                     if "Special Vendor" in source:
-                        extras.append("Special Vendor")
+                        extras.append(_acquisition_source_label("Special Vendor"))
                     metadata = f"{faction_text} / {' / '.join(extras)}"
                 else:
-                    metadata = faction_text or source
+                    metadata = faction_text or _acquisition_source_label(source)
             else:
                 metadata = (
                     match.variant.faction_name
                     or match.variant.faction_source
-                    or "Unknown"
+                    or t("acquisition.unknown")
                 )
             values = (
                 match.marker,
@@ -513,7 +581,7 @@ class AddonSlotRow(QFrame):
         layout.setContentsMargins(10, 9, 10, 10)
         layout.setSpacing(10)
 
-        slot_label = QLabel(SLOT_LABELS[slot_id], self)
+        slot_label = QLabel(_slot_label(slot_id), self)
         slot_label.setObjectName("affixSlotName")
         slot_label.setFixedWidth(100)
         layout.addWidget(slot_label)
@@ -525,9 +593,9 @@ class AddonSlotRow(QFrame):
             section_layout.setContentsMargins(0, 0, 0, 0)
             section_layout.setSpacing(5)
             title = QLabel(
-                "Components"
+                t("matches.components")
                 if addon_type == ADDON_COMPONENT
-                else "Augments"
+                else t("matches.augments")
             )
             title.setObjectName("affixTableTitle")
             section_layout.addWidget(title)
@@ -546,7 +614,14 @@ class UniqueSlotTable(QTableWidget):
         self._updating = False
         self.setObjectName("uniqueSlotTable")
         self.setHorizontalHeaderLabels(
-            ("Grade", "Item", "Type", "Source", "Score", "Coverage")
+            (
+                t("matches.column_grade"),
+                t("matches.column_item"),
+                t("matches.column_type"),
+                t("matches.column_source"),
+                t("matches.column_score"),
+                t("matches.column_coverage"),
+            )
         )
         _configure_table(self, 1)
         self.setMinimumHeight(84)
@@ -575,7 +650,7 @@ class UniqueSlotTable(QTableWidget):
             values = (
                 match.marker,
                 match.item.display_name,
-                UNIQUE_TYPE_LABELS[match.item_type],
+                _unique_type_label(match.item_type),
                 _item_source_label(match.variant),
                 _format_score(score.effective_score),
                 f"{score.matched_count}/{score.total_category_count}",
@@ -609,7 +684,7 @@ class UniqueSlotRow(QFrame):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(10, 9, 10, 10)
         layout.setSpacing(10)
-        slot_label = QLabel(SLOT_LABELS[slot_id], self)
+        slot_label = QLabel(_slot_label(slot_id), self)
         slot_label.setObjectName("affixSlotName")
         slot_label.setFixedWidth(100)
         layout.addWidget(slot_label)
@@ -681,11 +756,11 @@ class TopMatchesPage(QWidget):
         layout.setSpacing(12)
 
         heading_row = QHBoxLayout()
-        heading = QLabel("Gear Grades", self)
+        heading = QLabel(t("nav.gear_grades"), self)
         heading.setObjectName("pageTitle")
         heading_row.addWidget(heading)
         heading_row.addStretch()
-        self.refresh_button = QPushButton("Refresh", self)
+        self.refresh_button = QPushButton(t("matches.refresh"), self)
         self.refresh_button.setObjectName("profileAction")
         self.refresh_button.clicked.connect(self.refresh)
         heading_row.addWidget(self.refresh_button)
@@ -696,11 +771,7 @@ class TopMatchesPage(QWidget):
         self.status.setWordWrap(True)
         layout.addWidget(self.status)
 
-        highlight_legend = QLabel(
-            "Pale turquoise: +ranks to active skills    "
-            "Aquamarine: active-skill modifier",
-            self,
-        )
+        highlight_legend = QLabel(t("matches.highlight_legend"), self)
         highlight_legend.setObjectName("matchHighlightLegend")
         layout.addWidget(highlight_legend)
 
@@ -708,10 +779,10 @@ class TopMatchesPage(QWidget):
         filter_frame.setObjectName("slotFilterBar")
         filter_layout = QHBoxLayout(filter_frame)
         filter_layout.setContentsMargins(10, 7, 10, 7)
-        filter_layout.addWidget(QLabel("Show item slots:", filter_frame))
+        filter_layout.addWidget(QLabel(t("matches.show_item_slots"), filter_frame))
         self.slot_filters: dict[str, QCheckBox] = {}
         for filter_id, label in FILTER_LABELS:
-            checkbox = QCheckBox(label, filter_frame)
+            checkbox = QCheckBox(_filter_label(filter_id, label), filter_frame)
             checkbox.setObjectName(f"slotFilter_{filter_id}")
             checkbox.setChecked(True)
             checkbox.toggled.connect(self._slot_filter_changed)
@@ -728,9 +799,9 @@ class TopMatchesPage(QWidget):
 
         self.tabs = QTabWidget(self)
         self.tabs.setObjectName("recommendationTabs")
-        self.tabs.addTab(self._build_affix_tab(), "Affixes")
-        self.tabs.addTab(self._build_unique_tab(), "Uniques")
-        self.tabs.addTab(self._build_addon_tab(), "Add-ons")
+        self.tabs.addTab(self._build_affix_tab(), t("tabs.affixes"))
+        self.tabs.addTab(self._build_unique_tab(), t("tabs.uniques"))
+        self.tabs.addTab(self._build_addon_tab(), t("tabs.addons"))
         layout.addWidget(self.tabs, 1)
         self.refresh()
 
@@ -747,7 +818,7 @@ class TopMatchesPage(QWidget):
         content_layout.setContentsMargins(2, 4, 8, 8)
         content_layout.setSpacing(10)
         for category_label, slot_ids in SLOT_GROUPS:
-            category = QLabel(category_label, content)
+            category = QLabel(_slot_group_label(category_label), content)
             category.setObjectName("affixCategoryTitle")
             content_layout.addWidget(category)
             self.category_widgets.append((category, slot_ids))
@@ -770,7 +841,7 @@ class TopMatchesPage(QWidget):
         scroll.setWidget(content)
         splitter.addWidget(scroll)
         self.affix_detail_pane = MatchDetailPane(
-            "Select an affix to inspect its matched stats.", splitter
+            t("matches.affix_placeholder"), splitter
         )
         self.details = self.affix_detail_pane.body
         splitter.addWidget(self.affix_detail_pane)
@@ -792,16 +863,16 @@ class TopMatchesPage(QWidget):
         type_frame.setObjectName("typeFilterBar")
         type_layout = QHBoxLayout(type_frame)
         type_layout.setContentsMargins(10, 7, 10, 7)
-        type_layout.addWidget(QLabel("Show types:", type_frame))
+        type_layout.addWidget(QLabel(t("matches.show_types"), type_frame))
         self.type_filters: dict[str, QCheckBox] = {}
         for type_id in UNIQUE_ITEM_TYPES:
-            checkbox = QCheckBox(UNIQUE_TYPE_LABELS[type_id], type_frame)
+            checkbox = QCheckBox(_unique_type_label(type_id), type_frame)
             checkbox.setChecked(True)
             checkbox.toggled.connect(self._type_filter_changed)
             type_layout.addWidget(checkbox)
             self.type_filters[type_id] = checkbox
         type_layout.addSpacing(14)
-        type_layout.addWidget(QLabel("Minimum grade:", type_frame))
+        type_layout.addWidget(QLabel(t("matches.minimum_grade"), type_frame))
         self.minimum_grade = QComboBox(type_frame)
         self.minimum_grade.setObjectName("minimumGradeSelector")
         self.minimum_grade.addItems(("S++", "S+", "S", "A", "B"))
@@ -821,7 +892,7 @@ class TopMatchesPage(QWidget):
         content_layout.setContentsMargins(2, 4, 8, 8)
         content_layout.setSpacing(10)
         for category_label, slot_ids in SLOT_GROUPS:
-            category = QLabel(category_label, content)
+            category = QLabel(_slot_group_label(category_label), content)
             category.setObjectName("affixCategoryTitle")
             content_layout.addWidget(category)
             self.unique_category_widgets.append((category, slot_ids))
@@ -845,7 +916,7 @@ class TopMatchesPage(QWidget):
         splitter.addWidget(upper)
 
         self.unique_detail_pane = MatchDetailPane(
-            "Select an item to inspect its matched stats.", splitter
+            t("matches.unique_placeholder"), splitter
         )
         self.unique_details = self.unique_detail_pane.body
         splitter.addWidget(self.unique_detail_pane)
@@ -879,7 +950,7 @@ class TopMatchesPage(QWidget):
         mode_layout.setContentsMargins(12, 10, 12, 12)
         mode_layout.setSpacing(7)
         self.resistance_cap_toggle = QCheckBox(
-            "Enable Resistance Cap Mode", self.resistance_cap_body
+            t("matches.resistance_cap_enable"), self.resistance_cap_body
         )
         self.resistance_cap_toggle.setObjectName("resistanceCapToggle")
         self.resistance_cap_toggle.setChecked(self.resistance_cap_enabled)
@@ -888,11 +959,7 @@ class TopMatchesPage(QWidget):
         )
         mode_layout.addWidget(self.resistance_cap_toggle)
         self.resistance_cap_hint = QLabel(
-            "Overrides profile resistance weights for Add-ons only. "
-            "Two stars score like an ordinary four-star weight; higher "
-            "ratings are strongly amplified."
-            "\nUntouched weights inherit from the main profile. Changes here "
-            "are saved separately and never write back to the main weights.",
+            t("matches.resistance_cap_hint"),
             self.resistance_cap_body,
         )
         self.resistance_cap_hint.setObjectName("resistanceCapHint")
@@ -933,7 +1000,7 @@ class TopMatchesPage(QWidget):
         content_layout.setContentsMargins(2, 4, 8, 8)
         content_layout.setSpacing(10)
         for category_label, slot_ids in SLOT_GROUPS:
-            category = QLabel(category_label, content)
+            category = QLabel(_slot_group_label(category_label), content)
             category.setObjectName("affixCategoryTitle")
             content_layout.addWidget(category)
             self.addon_category_widgets.append((category, slot_ids))
@@ -956,7 +1023,7 @@ class TopMatchesPage(QWidget):
         self.addon_scroll.setWidget(content)
         splitter.addWidget(self.addon_scroll)
         self.addon_detail_pane = MatchDetailPane(
-            "Select a component or augment to inspect its matched stats.",
+            t("matches.addon_placeholder"),
             splitter,
         )
         self.addon_details = self.addon_detail_pane.body
@@ -969,9 +1036,9 @@ class TopMatchesPage(QWidget):
         self.resistance_cap_button.setChecked(expanded)
         self.resistance_cap_body.setVisible(expanded)
         indicator = "\u25be" if expanded else "\u25b8"
-        active = " (On)" if self.resistance_cap_enabled else ""
+        active = t("matches.resistance_cap_on_suffix") if self.resistance_cap_enabled else ""
         self.resistance_cap_button.setText(
-            f"{indicator} Resistance Cap Mode{active}"
+            t("matches.resistance_cap_button", indicator=indicator, active=active)
         )
         self.resistance_cap_button.setProperty(
             "active", self.resistance_cap_enabled
@@ -1039,8 +1106,7 @@ class TopMatchesPage(QWidget):
     @staticmethod
     def _weapon_filter_warning(parent: QWidget) -> QLabel:
         warning = QLabel(
-            "1H or 2H, and at least one weapon type must be selected to view "
-            "weapons.",
+            t("matches.weapon_filter_warning"),
             parent,
         )
         warning.setObjectName("weaponFilterWarning")
@@ -1073,7 +1139,7 @@ class TopMatchesPage(QWidget):
         if self.catalog is None:
             self.status.setText(
                 self.catalog_status
-                or "No compiled gear catalog is available for ranking."
+                or t("matches.no_catalog")
             )
             return
         has_cap_weight = self.resistance_cap_enabled and any(
@@ -1082,9 +1148,7 @@ class TopMatchesPage(QWidget):
         if not has_cap_weight and not self.profile.weights and not any(
             weight > 0 for weight in self.profile.skill_weights.values()
         ):
-            self.status.setText(
-                "Set at least one nonzero build-profile weight to rank gear."
-            )
+            self.status.setText(t("matches.no_weights"))
             return
 
         all_affixes: list[RankedAffixVariant] = []
@@ -1230,16 +1294,22 @@ class TopMatchesPage(QWidget):
         )
         source_note = f" {self.catalog_status}" if self.catalog_status else ""
         cap_note = (
-            " Resistance Cap Mode is enabled for Add-ons."
+            t("matches.resistance_cap_status_note")
             if self.resistance_cap_enabled
             else ""
         )
         self.status.setText(
-            f"{self.profile.name}: {visible_affixes} ranked affix entries and "
-            f"{visible_uniques} {self.minimum_grade.currentText()}-or-better "
-            f"unique-item entries, and {visible_addons} add-on entries. "
-            f"Grades use the highest variant eligible for level band "
-            f"{self.profile.level_band}.{cap_note}{source_note}"
+            t(
+                "matches.status_summary",
+                profile_name=self.profile.name,
+                visible_affixes=visible_affixes,
+                visible_uniques=visible_uniques,
+                minimum_grade=self.minimum_grade.currentText(),
+                visible_addons=visible_addons,
+                level_band=self.profile.level_band,
+                cap_note=cap_note,
+                source_note=source_note,
+            )
         )
 
     def _select_first_visible_match(self) -> None:
@@ -1290,26 +1360,30 @@ class TopMatchesPage(QWidget):
             self._selected_table = table
         score = match.score
         rarity = match.affix.rarity.strip()
-        affix_type = " ".join(
-            part for part in (rarity, match.affix.kind.title()) if part
+        affix_kind_label = t(
+            f"matches.kind_{match.affix.kind}", default=match.affix.kind.title()
         )
+        affix_type = " ".join(part for part in (rarity, affix_kind_label) if part)
         rarity_color = DETAIL_TITLE_COLORS.get(
             f"affix_{rarity.casefold()}", DETAIL_TITLE_COLORS["affix"]
         )
         self.affix_detail_pane.set_title(
             f"{match.marker}{match.affix.display_name} · "
-            f"{SLOT_LABELS[slot_id]} · {affix_type}",
+            f"{_slot_label(slot_id)} · {affix_type}",
             rarity_color,
         )
         html = [
             _html_line(
-                f"Effective score: {_format_score(score.effective_score)} "
-                f"· Base score: {_format_score(score.base_effective_score)} "
-                f"(profile x{score.profile_adjustment:.3f}) "
-                f"· Raw weight total: {score.weighted_match} "
-                f"· Coverage: "
-                f"{score.matched_count}/{score.total_category_count} "
-                f"({score.coverage_ratio:.0%})"
+                t(
+                    "matches.score_summary",
+                    effective_score=_format_score(score.effective_score),
+                    base_score=_format_score(score.base_effective_score),
+                    profile_adjustment=f"{score.profile_adjustment:.3f}",
+                    weighted_match=score.weighted_match,
+                    matched_count=score.matched_count,
+                    total_category_count=score.total_category_count,
+                    coverage_ratio=f"{score.coverage_ratio:.0%}",
+                )
             ),
             self._detail_stat_table(
                 match.semantic_stat_ids,
@@ -1333,26 +1407,43 @@ class TopMatchesPage(QWidget):
         if match.variant.level_requirements:
             source_lines.append(
                 _html_line(
-                    "Level requirements for this layout: "
-                    + ", ".join(map(str, match.variant.level_requirements))
+                    t(
+                        "matches.layout_level_requirements",
+                        levels=", ".join(map(str, match.variant.level_requirements)),
+                    )
                 )
             )
         source_lines.extend(
             [
                 _html_line(
-                    "Grade uses the highest stat layout eligible for profile "
-                    f"level band {self.profile.level_band}."
+                    t(
+                        "matches.grade_uses_highest_layout",
+                        level_band=self.profile.level_band,
+                    )
                 ),
-                _html_line(f"Full applicability: {match.variant.gear_slot}"),
+                _html_line(
+                    t(
+                        "matches.full_applicability",
+                        gear_slot=match.variant.gear_slot,
+                    )
+                ),
             ]
         )
         _extend_detail_group(html, source_lines)
         _extend_detail_group(
             html,
             [
-                _html_line(f"Localization tag: {match.affix.localization_tag}"),
                 _html_line(
-                    f"Representative: {match.variant.representative_source}"
+                    t(
+                        "matches.localization_tag",
+                        tag=match.affix.localization_tag,
+                    )
+                ),
+                _html_line(
+                    t(
+                        "matches.representative_source",
+                        source=match.variant.representative_source,
+                    )
                 ),
             ],
         )
@@ -1371,19 +1462,22 @@ class TopMatchesPage(QWidget):
             self._selected_unique_table = table
         score = match.score
         self.unique_detail_pane.set_title(
-            f"{match.marker}{match.item.display_name} · {SLOT_LABELS[slot_id]} · "
-            f"{UNIQUE_TYPE_LABELS[match.item_type]}",
+            f"{match.marker}{match.item.display_name} · {_slot_label(slot_id)} · "
+            f"{_unique_type_label(match.item_type)}",
             DETAIL_TITLE_COLORS[match.item_type],
         )
         html = [
             _html_line(
-                f"Effective score: {_format_score(score.effective_score)} "
-                f"· Base score: {_format_score(score.base_effective_score)} "
-                f"(profile x{score.profile_adjustment:.3f}) "
-                f"· Raw weight total: {score.weighted_match} "
-                f"· Coverage: "
-                f"{score.matched_count}/{score.total_category_count} "
-                f"({score.coverage_ratio:.0%})"
+                t(
+                    "matches.score_summary",
+                    effective_score=_format_score(score.effective_score),
+                    base_score=_format_score(score.base_effective_score),
+                    profile_adjustment=f"{score.profile_adjustment:.3f}",
+                    weighted_match=score.weighted_match,
+                    matched_count=score.matched_count,
+                    total_category_count=score.total_category_count,
+                    coverage_ratio=f"{score.coverage_ratio:.0%}",
+                )
             ),
             self._detail_stat_table(
                 match.semantic_stat_ids,
@@ -1402,7 +1496,7 @@ class TopMatchesPage(QWidget):
         )
         modifier_lines: list[str] = []
         if match.variant.skill_modifiers:
-            modifier_lines.append(_html_line("Skill modifiers:", bold=True))
+            modifier_lines.append(_html_line(t("matches.skill_modifiers"), bold=True))
             for modifier in match.variant.skill_modifiers:
                 modifier_lines.append(
                     _html_line(
@@ -1431,23 +1525,23 @@ class TopMatchesPage(QWidget):
             modifier_lines.extend(
                 [
                     _html_line(
-                        "!: Modifies selected build skill(s): "
-                        + ", ".join(selected_modifiers),
+                        t(
+                            "matches.modifies_selected_skills",
+                            skills=", ".join(selected_modifiers),
+                        ),
                         color=SKILL_MODIFIER_STAT_COLOR,
                     ),
-                    _html_line(
-                        "The selected skill's profile weight is included once for "
-                        "each modified skill. The modifier's actual effects, values, "
-                        "and conversions are not yet evaluated."
-                    ),
+                    _html_line(t("matches.modifier_disclaimer")),
                 ]
             )
         _extend_detail_group(html, modifier_lines)
         source_lines = []
         if match.variant.set_name:
-            source_lines.append(_html_line(f"Set: {match.variant.set_name}"))
+            source_lines.append(
+                _html_line(t("matches.set_name", name=match.variant.set_name))
+            )
         source_lines.append(
-            _html_line(f"Source: {_item_source_label(match.variant)}")
+            _html_line(t("matches.source", source=_item_source_label(match.variant)))
         )
         if (
             match.variant.acquisition_source == "Specific Monster Drop"
@@ -1455,7 +1549,10 @@ class TopMatchesPage(QWidget):
         ):
             source_lines.append(
                 _html_line(
-                    f"Drops from {len(match.variant.monster_sources)} enemies:",
+                    t(
+                        "matches.drops_from_enemies",
+                        count=len(match.variant.monster_sources),
+                    ),
                     bold=True,
                 )
             )
@@ -1469,8 +1566,10 @@ class TopMatchesPage(QWidget):
         ):
             source_lines.append(
                 _html_line(
-                    "Found in "
-                    f"{len(match.variant.container_sources)} lootable containers:",
+                    t(
+                        "matches.found_in_containers",
+                        count=len(match.variant.container_sources),
+                    ),
                     bold=True,
                 )
             )
@@ -1480,10 +1579,17 @@ class TopMatchesPage(QWidget):
             )
         source_lines.extend(
             [
-                _html_line(f"Required level: {match.variant.level_requirement}"),
                 _html_line(
-                    "Grade uses the highest item variant eligible for profile "
-                    f"level band {self.profile.level_band}."
+                    t(
+                        "matches.required_level",
+                        level=match.variant.level_requirement,
+                    )
+                ),
+                _html_line(
+                    t(
+                        "matches.grade_uses_highest_item_variant",
+                        level_band=self.profile.level_band,
+                    )
                 ),
             ]
         )
@@ -1491,9 +1597,18 @@ class TopMatchesPage(QWidget):
         _extend_detail_group(
             html,
             [
-                _html_line(f"Localization tag: {match.item.localization_tag}"),
                 _html_line(
-                    f"Record: {match.variant.source}:{match.variant.record_path}"
+                    t(
+                        "matches.localization_tag",
+                        tag=match.item.localization_tag,
+                    )
+                ),
+                _html_line(
+                    t(
+                        "matches.record",
+                        source=match.variant.source,
+                        path=match.variant.record_path,
+                    )
                 ),
             ],
         )
@@ -1512,23 +1627,30 @@ class TopMatchesPage(QWidget):
                     other.setCurrentCell(-1, -1)
             self._selected_addon_table = table
         score = match.score
-        type_label = ADDON_TYPE_LABELS[match.addon_type]
+        type_label = _addon_type_label(match.addon_type)
         self.addon_detail_pane.set_title(
             f"{match.marker}{match.item.display_name} \u00b7 "
-            f"{SLOT_LABELS[slot_id]} \u00b7 {type_label}",
+            f"{_slot_label(slot_id)} \u00b7 {type_label}",
             DETAIL_TITLE_COLORS[match.addon_type],
+        )
+        weight_kind = (
+            t("matches.weight_amplified")
+            if self.resistance_cap_enabled
+            else t("matches.weight_raw")
         )
         html = [
             _html_line(
-                f"Effective score: {_format_score(score.effective_score)} "
-                f"\u00b7 Base score: {_format_score(score.base_effective_score)} "
-                f"(profile x{score.profile_adjustment:.3f}) "
-                f"\u00b7 "
-                f"{'Amplified' if self.resistance_cap_enabled else 'Raw'} "
-                f"weight total: {score.weighted_match} "
-                f"\u00b7 Coverage: "
-                f"{score.matched_count}/{score.total_category_count} "
-                f"({score.coverage_ratio:.0%})"
+                t(
+                    "matches.addon_score_summary",
+                    effective_score=_format_score(score.effective_score),
+                    base_score=_format_score(score.base_effective_score),
+                    profile_adjustment=f"{score.profile_adjustment:.3f}",
+                    weight_kind=weight_kind,
+                    weighted_match=score.weighted_match,
+                    matched_count=score.matched_count,
+                    total_category_count=score.total_category_count,
+                    coverage_ratio=f"{score.coverage_ratio:.0%}",
+                )
             ),
             self._detail_stat_table(
                 match.semantic_stat_ids,
@@ -1545,24 +1667,38 @@ class TopMatchesPage(QWidget):
             faction = (
                 match.variant.faction_name
                 or match.variant.faction_source
-                or "Unknown"
+                or t("acquisition.unknown")
             )
-            source_lines.append(_html_line(f"Faction: {faction}"))
+            source_lines.append(_html_line(t("matches.faction", faction=faction)))
         if match.variant.vendor_sources:
             vendors = ", ".join(
                 f"{source.faction_name} ({source.reputation})"
                 for source in match.variant.vendor_sources
             )
-            source_lines.append(_html_line(f"Recipe sold by: {vendors}"))
+            source_lines.append(
+                _html_line(t("matches.recipe_sold_by", vendors=vendors))
+            )
         source_lines.extend(
             [
-                _html_line(f"Source: {match.variant.acquisition_source}"),
                 _html_line(
-                    f"Required level: {match.variant.level_requirement}"
+                    t(
+                        "matches.source",
+                        source=_acquisition_source_label(
+                            match.variant.acquisition_source
+                        ),
+                    )
                 ),
                 _html_line(
-                    "Grade uses the highest item variant eligible for profile "
-                    f"level band {self.profile.level_band}."
+                    t(
+                        "matches.required_level",
+                        level=match.variant.level_requirement,
+                    )
+                ),
+                _html_line(
+                    t(
+                        "matches.grade_uses_highest_item_variant",
+                        level_band=self.profile.level_band,
+                    )
                 ),
             ]
         )
@@ -1570,10 +1706,18 @@ class TopMatchesPage(QWidget):
         _extend_detail_group(
             html,
             [
-                _html_line(f"Localization tag: {match.item.localization_tag}"),
                 _html_line(
-                    f"Record: {match.variant.source}:"
-                    f"{match.variant.record_path}"
+                    t(
+                        "matches.localization_tag",
+                        tag=match.item.localization_tag,
+                    )
+                ),
+                _html_line(
+                    t(
+                        "matches.record",
+                        source=match.variant.source,
+                        path=match.variant.record_path,
+                    )
                 ),
             ],
         )
@@ -1622,11 +1766,11 @@ class TopMatchesPage(QWidget):
         property_display_name = _property_display_name_for_stat(
             properties, stat_id
         )
-        for prefix, label in (
-            ("skill_bonus:", "+Ranks to"),
-            ("skill_modifier:", "Skill modifier for"),
-            ("mastery_bonus:", "+Ranks to all skills in"),
-            ("granted_item_skill:", "Granted Skill:"),
+        for prefix, label_key in (
+            ("skill_bonus:", "matches.label_skill_bonus"),
+            ("skill_modifier:", "matches.label_skill_modifier"),
+            ("mastery_bonus:", "matches.label_mastery_bonus"),
+            ("granted_item_skill:", "matches.label_granted_skill"),
         ):
             if stat_id.startswith(prefix):
                 reference = stat_id[len(prefix) :]
@@ -1646,22 +1790,25 @@ class TopMatchesPage(QWidget):
                     reference = self.mastery_labels.get(
                         reference, property_display_name or reference
                     )
+                label = t(label_key)
                 if rank and prefix not in {
                     "skill_modifier:",
                     "granted_item_skill:",
                 } and include_value:
                     label = (
-                        f"+{rank} to"
+                        t("matches.label_skill_bonus_ranked", rank=rank)
                         if prefix == "skill_bonus:"
-                        else f"+{rank} to All Skills in"
+                        else t("matches.label_mastery_bonus_ranked", rank=rank)
                     )
                 elif not include_value:
-                    label = {
-                        "skill_bonus:": "Ranks to",
-                        "mastery_bonus:": "All Skills in",
-                    }.get(prefix, label)
+                    label = t(
+                        {
+                            "skill_bonus:": "matches.label_skill_bonus_novalue",
+                            "mastery_bonus:": "matches.label_mastery_bonus_novalue",
+                        }.get(prefix, label_key)
+                    )
                 return f"{label} {reference}"
-        return STAT_LABELS.get(stat_id, stat_id)
+        return stat_label(stat_id, STAT_LABELS.get(stat_id, stat_id))
 
 
 def _skill_rank_for_stat(

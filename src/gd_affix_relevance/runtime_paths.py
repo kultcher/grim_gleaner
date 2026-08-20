@@ -8,6 +8,8 @@ from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from gd_affix_relevance.domain import ENGLISH_LOCALE, LocaleSpec
+
 APP_ROOT_ENVIRONMENT_VARIABLE = "GRIM_GLEANER_APP_ROOT"
 ITEM_TAG_FILENAMES = (
     "tags_items.txt",
@@ -29,12 +31,31 @@ class RuntimePaths:
     staging_output_root: Path
     backups_root: Path
     profiles_root: Path
+    i18n_root: Path
+    locale: LocaleSpec = ENGLISH_LOCALE
 
     def as_dict(self) -> dict[str, str | None]:
-        return {
+        payload = {
             key: str(value) if value is not None else None
             for key, value in asdict(self).items()
         }
+        payload["locale"] = self.locale.code
+        return payload
+
+    def for_locale(self, locale: LocaleSpec) -> RuntimePaths:
+        """Resolve the same application layout for another locale."""
+
+        if self.mode == "release":
+            return resolve_runtime_paths(
+                application_root=self.application_root,
+                locale=locale,
+            )
+        return resolve_runtime_paths(
+            project_root=self.project_root,
+            frozen=False,
+            environment={},
+            locale=locale,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,6 +75,9 @@ class ExportSourceSelection:
 def resolve_export_sources(
     game_folder: Path | None,
     bundled_tags_root: Path,
+    *,
+    locale: LocaleSpec = ENGLISH_LOCALE,
+    installed_text_root: Path | None = None,
 ) -> ExportSourceSelection:
     """Prefer installed item tags and use bundled tags for missing files.
 
@@ -67,9 +91,22 @@ def resolve_export_sources(
     bundled = Path(bundled_tags_root).expanduser().resolve()
     game_text_root: Path | None = None
     game_files: tuple[str, ...] = ()
-    if game_folder is not None and str(game_folder).strip():
+    if installed_text_root is not None:
+        game_text_root = Path(installed_text_root).expanduser().resolve()
+        game_files = (
+            tuple(
+                path.relative_to(game_text_root).as_posix()
+                for path in sorted(game_text_root.rglob("*"))
+                if path.is_file()
+            )
+            if game_text_root.is_dir()
+            else ()
+        )
+    elif game_folder is not None and str(game_folder).strip():
         game_text_root = (
-            Path(game_folder).expanduser().resolve() / "settings" / "text_en"
+            Path(game_folder).expanduser().resolve()
+            / "settings"
+            / locale.game_text_directory
         )
         game_files = tuple(
             filename
@@ -99,6 +136,7 @@ def resolve_runtime_paths(
     executable: Path | None = None,
     nuitka_application_root: Path | None = None,
     environment: Mapping[str, str] | None = None,
+    locale: LocaleSpec = ENGLISH_LOCALE,
 ) -> RuntimePaths:
     """Return stable paths without depending on the process working directory.
 
@@ -132,10 +170,16 @@ def resolve_runtime_paths(
             application_root=root,
             project_root=None,
             catalog_root=root / "catalog",
-            tags_root=root / "tags",
-            staging_output_root=root / "staging" / "text_en",
+            tags_root=(
+                root / "tags"
+                if locale.code == ENGLISH_LOCALE.code
+                else root / "tags" / locale.code
+            ),
+            staging_output_root=root / "staging" / locale.game_text_directory,
             backups_root=root / "backups",
             profiles_root=root / "Profiles",
+            i18n_root=root / "resources" / "i18n",
+            locale=locale,
         )
 
     root = (
@@ -148,10 +192,14 @@ def resolve_runtime_paths(
         application_root=root,
         project_root=root,
         catalog_root=root / "artifacts" / "catalog",
-        tags_root=root / "artifacts" / "text_en",
-        staging_output_root=root / "artifacts" / "generated" / "text_en",
+        tags_root=root / "artifacts" / locale.game_text_directory,
+        staging_output_root=(
+            root / "artifacts" / "generated" / locale.game_text_directory
+        ),
         backups_root=root / "artifacts" / "backups",
         profiles_root=root / "artifacts" / "profiles",
+        i18n_root=root / "resources" / "i18n",
+        locale=locale,
     )
 
 

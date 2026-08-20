@@ -4,19 +4,21 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import tempfile
 from dataclasses import dataclass, replace
 from pathlib import Path
 
 from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
-from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.domain import ENGLISH_LOCALE, BuildProfile, LocaleSpec
 from gd_affix_relevance.output import RainbowGenerationResult, generate_rainbow_output
 from gd_affix_relevance.runtime_paths import resolve_export_sources
 
-BACKUP_SCHEMA_VERSION = 1
+BACKUP_SCHEMA_VERSION = 2
+LEGACY_BACKUP_SCHEMA_VERSION = 1
 BACKUP_MANIFEST = "backup-manifest.json"
-BACKUP_CONTENTS = "text_en"
+BACKUP_CONTENTS = ENGLISH_LOCALE.game_text_directory
 GRIM_DAWN_EXECUTABLE = "Grim Dawn.exe"
 
 
@@ -26,6 +28,7 @@ class GradeExportResult:
     backup_root: Path
     backup_created: bool
     generation: RainbowGenerationResult
+    locale: LocaleSpec
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,6 +36,7 @@ class GradeRestoreResult:
     target_root: Path
     original_existed: bool
     restored_files: int
+    locale: LocaleSpec
 
 
 def validate_grim_dawn_folder(game_folder: Path) -> Path:
@@ -55,9 +59,43 @@ def validate_grim_dawn_folder(game_folder: Path) -> Path:
     return game
 
 
-def grim_dawn_text_root(game_folder: Path) -> Path:
+def grim_dawn_text_root(
+    game_folder: Path,
+    *,
+    locale: LocaleSpec = ENGLISH_LOCALE,
+    user_settings_root: Path | None = None,
+) -> Path:
     game = validate_grim_dawn_folder(game_folder)
-    return game / "settings" / "text_en"
+    if user_settings_root is not None:
+        return (
+            Path(user_settings_root).expanduser().resolve()
+            / locale.game_text_directory
+        )
+    return game / "settings" / locale.game_text_directory
+
+
+def detect_grim_dawn_user_settings_root(
+    documents_root: Path | None = None,
+) -> Path | None:
+    """Find the active per-user Grim Dawn Settings directory when present."""
+
+    documents = Path(documents_root).expanduser() if documents_root else None
+    if documents is None and os.name == "nt":
+        try:
+            import winreg
+
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r"Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders",
+            ) as key:
+                raw_documents = winreg.QueryValueEx(key, "Personal")[0]
+            documents = Path(os.path.expandvars(raw_documents))
+        except (OSError, TypeError, ValueError):
+            documents = None
+    if documents is None:
+        documents = Path.home() / "Documents"
+    candidate = (documents / "My Games" / "Grim Dawn" / "Settings").resolve()
+    return candidate if candidate.is_dir() else None
 
 
 def export_grades_to_game(
@@ -69,19 +107,32 @@ def export_grades_to_game(
     profile: BuildProfile,
     *,
     items: ItemCatalog | None = None,
+    locale: LocaleSpec = ENGLISH_LOCALE,
+    user_settings_root: Path | None = None,
 ) -> GradeExportResult:
     """Generate, back up the original once, and install graded localization."""
 
-    target = grim_dawn_text_root(game_folder)
-    selection = resolve_export_sources(game_folder, bundled_tags_root)
+    target = grim_dawn_text_root(
+        game_folder,
+        locale=locale,
+        user_settings_root=user_settings_root,
+    )
+    selection = resolve_export_sources(
+        game_folder,
+        bundled_tags_root,
+        locale=locale,
+        installed_text_root=target,
+    )
     stage = Path(staging_root).expanduser().resolve()
     if target.resolve() == stage or target.resolve().is_relative_to(stage):
-        raise ValueError("staging and Grim Dawn text_en paths must not overlap")
+        raise ValueError(
+            "staging and Grim Dawn localization paths must not overlap"
+        )
 
     stage.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix=".grade-export-", dir=stage.parent))
     try:
-        generated = temporary / "text_en"
+        generated = temporary / locale.game_text_directory
         generation = generate_rainbow_output(
             selection.primary_root,
             generated,
@@ -89,62 +140,99 @@ def export_grades_to_game(
             profile,
             items=items,
             fallback_source_root=selection.fallback_root,
+            locale=locale,
         )
         _replace_directory(stage, generated)
     finally:
         shutil.rmtree(temporary, ignore_errors=True)
 
-    backup, backup_created = _ensure_original_backup(target, backups_root)
-    _install_directory(stage, target)
+    backup, backup_created = _ensure_original_backup(
+        target,
+        backups_root,
+        locale,
+    )
+    _install_directory(stage, target, locale)
     return GradeExportResult(
         target_root=target,
         backup_root=backup,
         backup_created=backup_created,
         generation=replace(generation, output_root=stage),
+        locale=locale,
     )
 
 
 def restore_game_backup(
     game_folder: Path,
     backups_root: Path,
+    *,
+    locale: LocaleSpec = ENGLISH_LOCALE,
+    user_settings_root: Path | None = None,
 ) -> GradeRestoreResult:
     """Restore and consume the original snapshot for the configured game."""
 
-    target = grim_dawn_text_root(game_folder)
-    backup = backup_path_for(target, backups_root)
-    manifest = _load_backup_manifest(backup, target)
+    target = grim_dawn_text_root(
+        game_folder,
+        locale=locale,
+        user_settings_root=user_settings_root,
+    )
+    backup = backup_path_for(target, backups_root, locale=locale)
+    manifest = _load_backup_manifest(backup, target, locale)
     original_existed = bool(manifest["original_existed"])
-    contents = backup / BACKUP_CONTENTS
+    contents = backup / locale.game_text_directory
     restored_files = 0
     if original_existed:
         if not contents.is_dir():
             raise ValueError(f"backup contents are missing: {contents}")
         restored_files = sum(1 for path in contents.rglob("*") if path.is_file())
-        _install_directory(contents, target)
+        _install_directory(contents, target, locale)
     else:
         _remove_directory_recoverably(target)
     shutil.rmtree(backup)
-    return GradeRestoreResult(target, original_existed, restored_files)
+    return GradeRestoreResult(target, original_existed, restored_files, locale)
 
 
-def backup_path_for(target_root: Path, backups_root: Path) -> Path:
+def backup_path_for(
+    target_root: Path,
+    backups_root: Path,
+    *,
+    locale: LocaleSpec = ENGLISH_LOCALE,
+) -> Path:
     target = Path(target_root).expanduser().resolve()
     identity = hashlib.sha256(str(target).casefold().encode("utf-8")).hexdigest()[:12]
-    return Path(backups_root).expanduser().resolve() / f"{identity}-text_en"
+    return (
+        Path(backups_root).expanduser().resolve()
+        / f"{identity}-{locale.game_text_directory}"
+    )
 
 
-def backup_available(game_folder: Path, backups_root: Path) -> bool:
+def backup_available(
+    game_folder: Path,
+    backups_root: Path,
+    *,
+    locale: LocaleSpec = ENGLISH_LOCALE,
+    user_settings_root: Path | None = None,
+) -> bool:
     try:
-        target = grim_dawn_text_root(game_folder)
+        target = grim_dawn_text_root(
+            game_folder,
+            locale=locale,
+            user_settings_root=user_settings_root,
+        )
     except ValueError:
         return False
-    return (backup_path_for(target, backups_root) / BACKUP_MANIFEST).is_file()
+    return (
+        backup_path_for(target, backups_root, locale=locale) / BACKUP_MANIFEST
+    ).is_file()
 
 
-def _ensure_original_backup(target: Path, backups_root: Path) -> tuple[Path, bool]:
-    backup = backup_path_for(target, backups_root)
+def _ensure_original_backup(
+    target: Path,
+    backups_root: Path,
+    locale: LocaleSpec,
+) -> tuple[Path, bool]:
+    backup = backup_path_for(target, backups_root, locale=locale)
     if backup.exists():
-        _load_backup_manifest(backup, target)
+        _load_backup_manifest(backup, target, locale)
         return backup, False
 
     backup.parent.mkdir(parents=True, exist_ok=True)
@@ -152,13 +240,14 @@ def _ensure_original_backup(target: Path, backups_root: Path) -> tuple[Path, boo
     try:
         original_existed = target.is_dir()
         if original_existed:
-            shutil.copytree(target, temporary / BACKUP_CONTENTS)
+            shutil.copytree(target, temporary / locale.game_text_directory)
         (temporary / BACKUP_MANIFEST).write_text(
             json.dumps(
                 {
                     "schema_version": BACKUP_SCHEMA_VERSION,
                     "target_root": str(target.resolve()),
                     "original_existed": original_existed,
+                    "locale": locale.code,
                 },
                 indent=2,
             )
@@ -172,7 +261,11 @@ def _ensure_original_backup(target: Path, backups_root: Path) -> tuple[Path, boo
     return backup, True
 
 
-def _load_backup_manifest(backup: Path, target: Path) -> dict[str, object]:
+def _load_backup_manifest(
+    backup: Path,
+    target: Path,
+    locale: LocaleSpec,
+) -> dict[str, object]:
     manifest_path = backup / BACKUP_MANIFEST
     if not manifest_path.is_file():
         raise ValueError(f"no original-state backup exists for {target}")
@@ -180,18 +273,31 @@ def _load_backup_manifest(backup: Path, target: Path) -> dict[str, object]:
         payload = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise ValueError(f"could not read backup manifest: {error}") from error
-    if payload.get("schema_version") != BACKUP_SCHEMA_VERSION:
+    schema_version = payload.get("schema_version")
+    if schema_version not in (LEGACY_BACKUP_SCHEMA_VERSION, BACKUP_SCHEMA_VERSION):
         raise ValueError("unsupported backup manifest version")
+    manifest_locale = payload.get("locale")
+    if schema_version == LEGACY_BACKUP_SCHEMA_VERSION:
+        manifest_locale = ENGLISH_LOCALE.code
+    if manifest_locale != locale.code:
+        raise ValueError(
+            "backup locale does not match the selected localization: "
+            f"{manifest_locale!r} != {locale.code!r}"
+        )
     if Path(str(payload.get("target_root", ""))).resolve() != target.resolve():
         raise ValueError("backup does not belong to the configured Grim Dawn folder")
     return payload
 
 
-def _install_directory(source: Path, target: Path) -> None:
+def _install_directory(
+    source: Path,
+    target: Path,
+    locale: LocaleSpec,
+) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix=".grim-gleaner-install-", dir=target.parent))
     try:
-        incoming = temporary / "text_en"
+        incoming = temporary / locale.game_text_directory
         shutil.copytree(source, incoming)
         _replace_directory(target, incoming)
     finally:

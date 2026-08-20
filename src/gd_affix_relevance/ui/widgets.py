@@ -25,6 +25,15 @@ from gd_affix_relevance.conversions import (
     conversion_sources_for,
 )
 from gd_affix_relevance.ui.catalog import PackageDefinition, StatDefinition
+from gd_affix_relevance.ui.i18n import stat_label, t
+
+
+def _weight_label(value: int) -> str:
+    return t(f"weight.{value}", default=WEIGHT_LABELS[value])
+
+
+def _conversion_source_label(source: str) -> str:
+    return t(f"conversion_source.{source}", default=CONVERSION_DAMAGE_LABELS[source])
 
 
 class WeightControl(QWidget):
@@ -44,7 +53,7 @@ class WeightControl(QWidget):
         self.decrement_button = QToolButton(self)
         self.decrement_button.setObjectName("weightArrow")
         self.decrement_button.setText("◀")
-        self.decrement_button.setToolTip("Decrease weight")
+        self.decrement_button.setToolTip(t("widgets.weight_decrease"))
         self.decrement_button.setAutoRepeat(True)
         self.decrement_button.clicked.connect(self.decrement)
         layout.addWidget(self.decrement_button)
@@ -63,7 +72,7 @@ class WeightControl(QWidget):
         self.increment_button = QToolButton(self)
         self.increment_button.setObjectName("weightArrow")
         self.increment_button.setText("▶")
-        self.increment_button.setToolTip("Increase weight")
+        self.increment_button.setToolTip(t("widgets.weight_increase"))
         self.increment_button.setAutoRepeat(True)
         self.increment_button.clicked.connect(self.increment)
         layout.addWidget(self.increment_button)
@@ -101,8 +110,10 @@ class WeightControl(QWidget):
         super().keyPressEvent(event)
 
     def _refresh(self) -> None:
-        label = WEIGHT_LABELS[self._value]
-        self.setAccessibleName(f"Weight {self._value} of {MAX_STAT_WEIGHT}: {label}")
+        label = _weight_label(self._value)
+        self.setAccessibleName(
+            t("widgets.weight_accessible_name", value=self._value, max=MAX_STAT_WEIGHT, label=label)
+        )
         self.setToolTip(f"{self._value} — {label}")
         self.decrement_button.setEnabled(self._value > 0)
         self.increment_button.setEnabled(self._value < MAX_STAT_WEIGHT)
@@ -110,7 +121,9 @@ class WeightControl(QWidget):
             filled = index <= self._value
             button.setText("★" if filled else "☆")
             button.setProperty("filled", filled)
-            button.setAccessibleName(f"Set weight to {index}: {WEIGHT_LABELS[index]}")
+            button.setAccessibleName(
+                t("widgets.weight_set_accessible_name", index=index, label=_weight_label(index))
+            )
             button.style().unpolish(button)
             button.style().polish(button)
 
@@ -128,7 +141,7 @@ class StatRow(QWidget):
         self.definition = definition
         layout = QHBoxLayout(self)
         layout.setContentsMargins(12, 5, 10, 5)
-        label = QLabel(definition.label, self)
+        label = QLabel(stat_label(definition.stat_id, definition.label), self)
         label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         layout.addWidget(label)
         self.weight_control = WeightControl(value, self)
@@ -167,7 +180,7 @@ class ConversionStatRow(QWidget):
         main_row = QWidget(self)
         main_layout = QHBoxLayout(main_row)
         main_layout.setContentsMargins(12, 5, 10, 5)
-        label = QLabel(definition.label, main_row)
+        label = QLabel(stat_label(definition.stat_id, definition.label), main_row)
         label.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
         )
@@ -196,7 +209,7 @@ class ConversionStatRow(QWidget):
             conversion_sources_for(self.destination)
         ):
             checkbox = QCheckBox(
-                CONVERSION_DAMAGE_LABELS[source], self.sources_body
+                _conversion_source_label(source), self.sources_body
             )
             checkbox.toggled.connect(
                 lambda checked, selected=source: self._source_toggled(
@@ -204,9 +217,7 @@ class ConversionStatRow(QWidget):
                 )
             )
             if source == "specific_skill":
-                checkbox.setToolTip(
-                    "Include conversions that apply only to a specific skill."
-                )
+                checkbox.setToolTip(t("widgets.specific_skill_source_tooltip"))
             sources_layout.addWidget(checkbox, index // 3, index % 3)
             self.source_checkboxes[source] = checkbox
         layout.addWidget(self.sources_body)
@@ -239,10 +250,10 @@ class ConversionStatRow(QWidget):
         )
         total = len(self.source_checkboxes)
         indicator = "\u25be" if self.sources_button.isChecked() else "\u25b8"
-        self.sources_button.setText(f"{indicator} Sources {enabled}/{total}")
-        self.sources_button.setToolTip(
-            "Choose which incoming damage types make this conversion relevant."
+        self.sources_button.setText(
+            t("widgets.sources_button", indicator=indicator, enabled=enabled, total=total)
         )
+        self.sources_button.setToolTip(t("widgets.sources_button_tooltip"))
 
 
 class PackageModifyControl(QWidget):
@@ -258,14 +269,14 @@ class PackageModifyControl(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 8, 0)
         layout.setSpacing(3)
-        label = QLabel("Modify All", self)
+        label = QLabel(t("widgets.modify_all"), self)
         label.setObjectName("packageModifyLabel")
         layout.addWidget(label)
 
         self.decrement_button = QToolButton(self)
         self.decrement_button.setObjectName("weightArrow")
         self.decrement_button.setText("◀")
-        self.decrement_button.setToolTip("Decrease every stat in this package")
+        self.decrement_button.setToolTip(t("widgets.package_decrease"))
         self.decrement_button.clicked.connect(self.decrement_requested)
         layout.addWidget(self.decrement_button)
 
@@ -285,7 +296,7 @@ class PackageModifyControl(QWidget):
         self.increment_button = QToolButton(self)
         self.increment_button.setObjectName("weightArrow")
         self.increment_button.setText("▶")
-        self.increment_button.setToolTip("Increase every stat in this package")
+        self.increment_button.setToolTip(t("widgets.package_increase"))
         self.increment_button.clicked.connect(self.increment_requested)
         layout.addWidget(self.increment_button)
 
@@ -295,15 +306,19 @@ class PackageModifyControl(QWidget):
         maximum = max(values, default=0)
         self.decrement_button.setEnabled(maximum > 0)
         self.increment_button.setEnabled(minimum < MAX_STAT_WEIGHT)
-        state = f"weight {common}" if common is not None else "mixed weights"
-        self.setToolTip(
-            f"Package has {state}. Arrows adjust each stat by one; stars set all stats."
+        state = (
+            t("widgets.package_state_common", weight=common)
+            if common is not None
+            else t("widgets.package_state_mixed")
         )
+        self.setToolTip(t("widgets.package_modify_tooltip", state=state))
         for index, button in enumerate(self.star_buttons, start=1):
             filled = common is not None and index <= common
             button.setText("★" if filled else "☆")
             button.setProperty("filled", filled)
-            button.setAccessibleName(f"Set every package stat to {index}")
+            button.setAccessibleName(
+                t("widgets.package_star_accessible_name", index=index)
+            )
             button.style().unpolish(button)
             button.style().polish(button)
 
@@ -462,13 +477,20 @@ class PackageAccordion(QFrame):
         count = self.nonzero_count
         expanded = self.header.isChecked()
         indicator = "▾" if expanded else "▸"
-        summary = f"  ·  {count} weighted" if count else ""
-        default = "  ·  Always shown" if self.definition.default_expanded else ""
-        self.header.setText(f"{indicator}  {self.definition.label}{summary}{default}")
+        summary = t("widgets.package_weighted_summary", count=count) if count else ""
+        default = (
+            t("widgets.package_always_shown")
+            if self.definition.default_expanded
+            else ""
+        )
+        label = t(
+            f"package.{self.definition.package_id}", default=self.definition.label
+        )
+        self.header.setText(f"{indicator}  {label}{summary}{default}")
         if self.is_pinned:
-            self.header.setToolTip("This package stays open while it contains weighted stats.")
+            self.header.setToolTip(t("widgets.package_pinned_tooltip"))
         else:
-            self.header.setToolTip("Expand or collapse this package.")
+            self.header.setToolTip(t("widgets.package_toggle_tooltip"))
         self.modify_all.refresh(
             tuple(row.weight_control.value for row in self.rows.values())
         )
