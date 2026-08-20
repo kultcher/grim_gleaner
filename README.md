@@ -3,6 +3,7 @@
 Recent Changes:
 v0.9.2-beta (08/19/26):
 - updated catalog for Grim Dawn 1.3.0.7
+- added English and Russian interface and item-name export support
 - added profile level-awareness:\
 Items that are above your selected level band are excluded from the display view\
 Item grading and stat displays reflect the version of that affix/item that is appropriate to your level range
@@ -40,9 +41,60 @@ AI (Codex) was used for data analysis data and coding to build this program.
 4. Open the "Settings" section from the sidebar and set your Grim Dawn game location (you'll be prompted automatically the first time you open the program.)\
 (Steam default location: C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn)
 
-**NOTE**: This utility has only been tested using English localization on 64-bit
-Windows 11. No promises that it will work with other languages or on non-x64
-Windows systems.
+**NOTE**: English and Russian localizations are supported on 64-bit Windows.
+Other Grim Dawn languages and non-x64 Windows systems are not currently supported.
+
+## Russian Localization / Русская локализация
+
+Grim Gleaner can display its interface in Russian and export grades into Russian
+Grim Dawn item names. The interface language and the item language are separate
+settings, so either can remain in English if preferred.
+
+1. Close Grim Dawn before preparing files or exporting grades.
+2. In **Settings**, set **Interface language** to **Русский**. Restart Grim
+   Gleaner to apply the translated interface.
+3. Set **Grim Dawn item language** to **Русский**. Selecting Russian for the
+   interface also selects Russian item names by default, but the item language
+   can be changed independently.
+4. Confirm that the selected game folder contains `Grim Dawn.exe`.
+5. Create or load a profile, then open **Export Grades** and export it. Before
+   the first Russian export, Grim Gleaner automatically reads the required item
+   tags from `Text_RU.arc` in the selected Grim Dawn installation.
+6. Start Grim Dawn with its language set to Russian. The generated files are
+   written to the active `Documents\My Games\Grim Dawn\Settings\text_ru`
+   folder when it exists, otherwise to the selected installation's
+   `settings\text_ru` folder.
+
+Use **Refresh game language files** only after a Grim Dawn update or when you
+need to rebuild the prepared clean-language source. Restart Grim Gleaner after
+refreshing so the catalog reloads the updated item names.
+
+Rainbow Filter and gdse are optional. If matching localization files are
+already installed, Grim Gleaner preserves their colors and text and adds grade
+markers on top. Clean item tags extracted from the user's own Grim Dawn
+installation fill any missing files. Grim Gleaner does not distribute extracted
+game localization.
+
+The first export for each language preserves its original state in the
+`backups` folder beside the packaged application. Later exports do not overwrite
+that snapshot. **Restore Backups** restores only the currently selected item
+language, so English and Russian backups cannot be mixed accidentally.
+
+### Краткая инструкция
+
+1. Закройте Grim Dawn.
+2. В разделе **Настройки** выберите **Русский** для языка интерфейса и языка
+   предметов Grim Dawn, затем перезапустите Grim Gleaner.
+3. Укажите папку игры, содержащую `Grim Dawn.exe`.
+4. Создайте или загрузите профиль и нажмите **Экспортировать оценки**. При
+   первом экспорте русские файлы будут подготовлены автоматически.
+5. Запустите Grim Dawn на русском языке и проверьте оценки в названиях
+   предметов. Для отмены изменений используйте **Восстановить резервную
+   копию**.
+
+Rainbow Filter устанавливать необязательно. Если он уже установлен, его цвета
+и оформление сохраняются. Кнопка **Обновить файлы языка игры** нужна после
+обновления Grim Dawn; после её использования перезапустите Grim Gleaner.
 
 ## Installing from Source
 
@@ -71,8 +123,8 @@ There are three tabbed subsections:
 - Uniques will do the same for Epics, Uniques and Monster Infrequents. You can set a minimum grade you want to appear in each list.
 - Add-ons will show your the 5 highest-graded Components and Augments for each item slot and their sources. It also has an optional "Resistance Cap Mode" that lets you easily target specific resistances that you need to cap.
 4. **Export to in-game tags**\
-**Important**: Any time you want to export grades, make sure the game is closed! Also, if you replace or remove the files in your /Grim Dawn/settings/text_en folder, you need to run the export again.\
-Click over to the "Export Grades" sections from the sidebar, then click "Export Grades." This will automatically backup the files in your /Grim Dawn/settings/text_en folder, if they are there. (These files are used for things like Rainbow Filter/gdse). Grim Gleaner *should* be fully compatible and add it's tags while preserving any color/text changes from Rainbow Filter and similar mods. (**Note**: Since Grim Gleaner uses "S" in it's grading and Rainbow uses "S" for set items, Grim Gleaner will replace Rainbow's set notation with "$" for clarity.)
+**Important**: Any time you want to export grades, make sure the game is closed! Also, if you replace or remove the files in the selected `text_en` or `text_ru` folder, you need to run the export again.\
+Choose the item language under "Settings," then open "Export Grades" from the sidebar and click "Export Grades." Missing clean-language files are prepared automatically from the selected Grim Dawn installation. The first export backs up the selected language folder if it already exists. These files may be used by Rainbow Filter or gdse; Grim Gleaner preserves their color/text changes while adding grades. (**Note**: Since Grim Gleaner uses "S" in its grading and Rainbow uses "S" for set items, Grim Gleaner replaces Rainbow's set notation with "$" for clarity.)
 
 Rainbow Filter or gdse are recommended but not required. Find them below:\
 [Rainbow Filter](https://forums.crateentertainment.com/t/tool-rainbow-filter-item-highlighting/42765)\
