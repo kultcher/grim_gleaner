@@ -13,7 +13,11 @@ from gd_affix_relevance.catalog import (
     AffixVariantDefinition,
 )
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.grade_export import (
+    LOCALIZATION_LOCATION_INSTALLATION,
+)
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
+from gd_affix_relevance.ui.settings import LOCALIZATION_LOCATION_SETTING
 
 
 def _application() -> QApplication:
@@ -43,7 +47,13 @@ def _catalog() -> AffixCatalog:
     )
 
 
-def _page(tmp_path: Path, game: Path, bundled: Path) -> GenerateOutputPage:
+def _page(
+    tmp_path: Path,
+    game: Path,
+    bundled: Path,
+    *,
+    user_settings_root: Path | None = None,
+) -> GenerateOutputPage:
     settings = QSettings(
         str(tmp_path / "settings.ini"), QSettings.Format.IniFormat
     )
@@ -54,6 +64,7 @@ def _page(tmp_path: Path, game: Path, bundled: Path) -> GenerateOutputPage:
         source_root=bundled,
         output_root=tmp_path / "staging" / "text_en",
         backups_root=tmp_path / "backups",
+        user_settings_root=user_settings_root,
         settings=settings,
     )
 
@@ -138,6 +149,82 @@ def test_export_page_uses_bundled_tags_for_clean_install(
 
     assert not installed.exists()
     assert "clean-install state" in page.status.text()
+
+
+def test_export_page_displays_and_uses_existing_user_localization(
+    tmp_path: Path,
+) -> None:
+    _application()
+    bundled = tmp_path / "app" / "tags"
+    bundled.mkdir(parents=True)
+    (bundled / "tags_items.txt").write_text(
+        "tagHealthy=Bundled Healthy\n",
+        encoding="utf-8",
+    )
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    user_settings = tmp_path / "Documents" / "My Games" / "Grim Dawn" / "Settings"
+    user_text = user_settings / "text_en"
+    user_text.mkdir(parents=True)
+    (user_text / "tags_items.txt").write_text(
+        "tagHealthy={^G}User Healthy\n",
+        encoding="utf-8",
+    )
+
+    page = _page(
+        tmp_path,
+        game,
+        bundled,
+        user_settings_root=user_settings,
+    )
+
+    assert str(user_text.resolve()) in page.target_label.text()
+
+
+def test_export_page_requires_saved_choice_when_both_locations_have_files(
+    tmp_path: Path,
+) -> None:
+    _application()
+    bundled = tmp_path / "app" / "tags"
+    bundled.mkdir(parents=True)
+    (bundled / "tags_items.txt").write_text(
+        "tagHealthy=Bundled Healthy\n",
+        encoding="utf-8",
+    )
+    game = tmp_path / "Grim Dawn"
+    install_text = game / "settings" / "text_en"
+    install_text.mkdir(parents=True)
+    (game / "Grim Dawn.exe").touch()
+    (install_text / "tags_items.txt").write_text(
+        "tagHealthy=Install Healthy\n",
+        encoding="utf-8",
+    )
+    user_settings = tmp_path / "Documents" / "My Games" / "Grim Dawn" / "Settings"
+    user_text = user_settings / "text_en"
+    user_text.mkdir(parents=True)
+    (user_text / "tags_items.txt").write_text(
+        "tagHealthy=User Healthy\n",
+        encoding="utf-8",
+    )
+    page = _page(
+        tmp_path,
+        game,
+        bundled,
+        user_settings_root=user_settings,
+    )
+
+    assert not page.generate_button.isEnabled()
+    assert "both" in page.target_label.text().casefold()
+
+    page.settings.setValue(
+        LOCALIZATION_LOCATION_SETTING,
+        LOCALIZATION_LOCATION_INSTALLATION,
+    )
+    page.refresh_game_location()
+
+    assert page.generate_button.isEnabled()
+    assert str(install_text) in page.target_label.text()
 
 
 def test_export_page_requires_configured_game_folder(tmp_path: Path) -> None:

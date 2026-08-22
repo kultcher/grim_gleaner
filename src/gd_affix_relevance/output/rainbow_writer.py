@@ -184,6 +184,8 @@ def generate_rainbow_output(
     *,
     items: ItemCatalog | None = None,
     fallback_source_root: Path | None = None,
+    source_files: tuple[tuple[Path, Path], ...] | None = None,
+    fallback_source_files: tuple[tuple[Path, Path], ...] | None = None,
 ) -> RainbowGenerationResult:
     """Clone merged localization and annotate affix and unique-item tags.
 
@@ -212,8 +214,13 @@ def generate_rainbow_output(
         if _paths_overlap(fallback, destination):
             raise ValueError("fallback source and output directories must not overlap")
 
-    source_files = _merged_source_files(source, fallback)
-    if not source_files:
+    merged_source_files = _merged_source_files(
+        source,
+        fallback,
+        primary_files=source_files,
+        fallback_files=fallback_source_files,
+    )
+    if not merged_source_files:
         raise ValueError("localization sources contain no files")
 
     affix_instructions = _build_affix_instructions(catalog, profile)
@@ -223,7 +230,7 @@ def generate_rainbow_output(
     instructions = {**affix_instructions, **unique_instructions}
     found_tags: set[str] = set()
     changes: list[LocalizationChange] = []
-    for source_path, relative in source_files:
+    for source_path, relative in merged_source_files:
         destination_path = destination / relative
         raw_bytes = source_path.read_bytes()
         if source_path.suffix.casefold() == ".txt":
@@ -249,7 +256,7 @@ def generate_rainbow_output(
     return RainbowGenerationResult(
         source_root=source,
         output_root=destination,
-        files_written=len(source_files),
+        files_written=len(merged_source_files),
         affix_tags_scored=len(affix_instructions),
         affix_tags_found=len(found_affix_tags),
         unique_tags_scored=len(unique_instructions),
@@ -265,15 +272,48 @@ def generate_rainbow_output(
 def _merged_source_files(
     primary: Path,
     fallback: Path | None,
+    *,
+    primary_files: tuple[tuple[Path, Path], ...] | None = None,
+    fallback_files: tuple[tuple[Path, Path], ...] | None = None,
 ) -> tuple[tuple[Path, Path], ...]:
     selected: dict[str, tuple[Path, Path]] = {}
-    for root in (fallback, primary):
+    for root, explicit_files in (
+        (fallback, fallback_files),
+        (primary, primary_files),
+    ):
         if root is None:
             continue
-        for path in sorted(candidate for candidate in root.rglob("*") if candidate.is_file()):
-            relative = path.relative_to(root)
+        candidates = (
+            _validated_explicit_source_files(root, explicit_files)
+            if explicit_files is not None
+            else tuple(
+                (path, path.relative_to(root))
+                for path in sorted(
+                    candidate for candidate in root.rglob("*") if candidate.is_file()
+                )
+            )
+        )
+        for path, relative in candidates:
             selected[relative.as_posix().casefold()] = (path, relative)
     return tuple(selected[key] for key in sorted(selected))
+
+
+def _validated_explicit_source_files(
+    root: Path,
+    files: tuple[tuple[Path, Path], ...],
+) -> tuple[tuple[Path, Path], ...]:
+    validated: list[tuple[Path, Path]] = []
+    for source_path, relative_path in files:
+        source = Path(source_path).resolve()
+        relative = Path(relative_path)
+        if not source.is_file():
+            raise ValueError(f"localization source file is missing: {source}")
+        if not source.is_relative_to(root):
+            raise ValueError(f"localization source file escapes its root: {source}")
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError(f"invalid localization output path: {relative}")
+        validated.append((source, relative))
+    return tuple(validated)
 
 
 def _annotate_text_bytes(

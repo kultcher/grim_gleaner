@@ -209,6 +209,7 @@ $requiredPaths = @(
     "tags\tags_items.txt",
     "tags\tagsgdx1_items.txt",
     "tags\tagsgdx2_items.txt",
+    "tags\tagsgdx2_endlessdungeon.txt",
     "tags\tagsgdx3_items.txt",
     "Profiles",
     "Profiles\examples"

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import tempfile
 from dataclasses import dataclass, replace
@@ -18,6 +19,14 @@ BACKUP_SCHEMA_VERSION = 1
 BACKUP_MANIFEST = "backup-manifest.json"
 BACKUP_CONTENTS = "text_en"
 GRIM_DAWN_EXECUTABLE = "Grim Dawn.exe"
+LOCALIZATION_LOCATION_AUTO = "auto"
+LOCALIZATION_LOCATION_INSTALLATION = "installation"
+LOCALIZATION_LOCATION_USER = "user"
+LOCALIZATION_LOCATION_CHOICES = (
+    LOCALIZATION_LOCATION_AUTO,
+    LOCALIZATION_LOCATION_INSTALLATION,
+    LOCALIZATION_LOCATION_USER,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,9 +64,95 @@ def validate_grim_dawn_folder(game_folder: Path) -> Path:
     return game
 
 
-def grim_dawn_text_root(game_folder: Path) -> Path:
+def detect_grim_dawn_user_settings_root(
+    documents_root: Path | None = None,
+) -> Path | None:
+    """Return the per-user Grim Dawn ``Settings`` directory when present.
+
+    Windows may redirect the Documents directory (for example, through
+    OneDrive), so use the shell's configured location rather than assuming it
+    lives directly under the user's home directory. ``documents_root`` keeps
+    the filesystem decision deterministic in tests.
+    """
+
+    documents = Path(documents_root).expanduser() if documents_root else None
+    if documents is None and os.name == "nt":
+        try:
+            import winreg
+
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r"Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders",
+            ) as key:
+                raw_documents = winreg.QueryValueEx(key, "Personal")[0]
+            documents = Path(os.path.expandvars(raw_documents))
+        except (OSError, TypeError, ValueError):
+            documents = None
+    if documents is None:
+        documents = Path.home() / "Documents"
+
+    candidate = (documents / "My Games" / "Grim Dawn" / "Settings").resolve()
+    return candidate if candidate.is_dir() else None
+
+
+def grim_dawn_text_root(
+    game_folder: Path,
+    *,
+    user_settings_root: Path | None = None,
+    location_preference: str = LOCALIZATION_LOCATION_AUTO,
+) -> Path:
+    """Resolve the active item-localization directory.
+
+    Automatic selection follows existing localization files, not merely the
+    presence of a ``Settings`` directory. If both supported locations contain
+    files, the game does not expose a reliable precedence rule, so the user
+    must explicitly choose one.
+    """
+
     game = validate_grim_dawn_folder(game_folder)
-    return game / "settings" / "text_en"
+    installation_text_root = game / "settings" / "text_en"
+    preference = str(location_preference).strip().casefold()
+    if preference not in LOCALIZATION_LOCATION_CHOICES:
+        raise ValueError(
+            "Unsupported localization folder preference: "
+            f"{location_preference!r}"
+        )
+    if preference == LOCALIZATION_LOCATION_INSTALLATION:
+        return installation_text_root
+
+    user_text_root = None
+    if user_settings_root is not None:
+        user_text_root = (
+            Path(user_settings_root).expanduser().resolve() / "text_en"
+        )
+    if preference == LOCALIZATION_LOCATION_USER:
+        if user_text_root is None:
+            raise ValueError(
+                "The Documents/My Games Grim Dawn Settings folder could not "
+                "be located. Choose the game installation folder instead."
+            )
+        return user_text_root
+
+    installation_has_files = _contains_localization_files(installation_text_root)
+    user_has_files = (
+        user_text_root is not None
+        and _contains_localization_files(user_text_root)
+    )
+    if installation_has_files and user_has_files:
+        raise ValueError(
+            "Localization files exist in both the Grim Dawn installation and "
+            "Documents/My Games. Choose a localization folder on the Settings "
+            "page before exporting or restoring."
+        )
+    if user_has_files:
+        return user_text_root
+    return installation_text_root
+
+
+def _contains_localization_files(root: Path) -> bool:
+    return root.is_dir() and any(
+        path.is_file() for path in root.rglob("*.txt")
+    )
 
 
 def export_grades_to_game(
@@ -69,11 +164,21 @@ def export_grades_to_game(
     profile: BuildProfile,
     *,
     items: ItemCatalog | None = None,
+    user_settings_root: Path | None = None,
+    location_preference: str = LOCALIZATION_LOCATION_AUTO,
 ) -> GradeExportResult:
     """Generate, back up the original once, and install graded localization."""
 
-    target = grim_dawn_text_root(game_folder)
-    selection = resolve_export_sources(game_folder, bundled_tags_root)
+    target = grim_dawn_text_root(
+        game_folder,
+        user_settings_root=user_settings_root,
+        location_preference=location_preference,
+    )
+    selection = resolve_export_sources(
+        game_folder,
+        bundled_tags_root,
+        installed_text_root=target,
+    )
     stage = Path(staging_root).expanduser().resolve()
     if target.resolve() == stage or target.resolve().is_relative_to(stage):
         raise ValueError("staging and Grim Dawn text_en paths must not overlap")
@@ -89,6 +194,8 @@ def export_grades_to_game(
             profile,
             items=items,
             fallback_source_root=selection.fallback_root,
+            source_files=selection.primary_files,
+            fallback_source_files=selection.fallback_files,
         )
         _replace_directory(stage, generated)
     finally:
@@ -107,10 +214,17 @@ def export_grades_to_game(
 def restore_game_backup(
     game_folder: Path,
     backups_root: Path,
+    *,
+    user_settings_root: Path | None = None,
+    location_preference: str = LOCALIZATION_LOCATION_AUTO,
 ) -> GradeRestoreResult:
     """Restore and consume the original snapshot for the configured game."""
 
-    target = grim_dawn_text_root(game_folder)
+    target = grim_dawn_text_root(
+        game_folder,
+        user_settings_root=user_settings_root,
+        location_preference=location_preference,
+    )
     backup = backup_path_for(target, backups_root)
     manifest = _load_backup_manifest(backup, target)
     original_existed = bool(manifest["original_existed"])
@@ -133,9 +247,19 @@ def backup_path_for(target_root: Path, backups_root: Path) -> Path:
     return Path(backups_root).expanduser().resolve() / f"{identity}-text_en"
 
 
-def backup_available(game_folder: Path, backups_root: Path) -> bool:
+def backup_available(
+    game_folder: Path,
+    backups_root: Path,
+    *,
+    user_settings_root: Path | None = None,
+    location_preference: str = LOCALIZATION_LOCATION_AUTO,
+) -> bool:
     try:
-        target = grim_dawn_text_root(game_folder)
+        target = grim_dawn_text_root(
+            game_folder,
+            user_settings_root=user_settings_root,
+            location_preference=location_preference,
+        )
     except ValueError:
         return False
     return (backup_path_for(target, backups_root) / BACKUP_MANIFEST).is_file()

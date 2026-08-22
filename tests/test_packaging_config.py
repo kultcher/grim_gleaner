@@ -57,6 +57,7 @@ def test_packaging_script_validates_release_before_archiving() -> None:
     assert "Standalone distribution does not contain its required dependencies" in script
     assert "Copy-Item -LiteralPath $standaloneOutput" in script
     assert "assemble-release" in script
+    assert '"tags\\tagsgdx2_endlessdungeon.txt"' in script
     assert "release-manifest.json" in script
     assert "Compress-Archive -LiteralPath $releaseRoot" in script
     assert 'Join-Path $releaseRoot "*"' not in script

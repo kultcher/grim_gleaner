@@ -49,6 +49,7 @@ class MainWindow(QMainWindow):
         items: ItemCatalog | None = None,
         settings: QSettings | None = None,
         runtime_paths: RuntimePaths | None = None,
+        user_settings_root: Path | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Grim Gleaner")
@@ -200,6 +201,7 @@ class MainWindow(QMainWindow):
             source_root=self.runtime_paths.tags_root,
             output_root=self.runtime_paths.staging_output_root,
             backups_root=self.runtime_paths.backups_root,
+            user_settings_root=user_settings_root,
             catalog_status=catalog_status,
             settings=self.settings,
             parent=self.pages,
@@ -215,6 +217,9 @@ class MainWindow(QMainWindow):
 
         self.settings_page = SettingsPage(self.settings, self.pages)
         self.settings_page.game_folder_changed.connect(self._game_folder_changed)
+        self.settings_page.localization_location_changed.connect(
+            self.generate_output_page.refresh_game_location
+        )
         self.settings_page_index = self.pages.addWidget(self.settings_page)
         self.settings_navigation_row = self._add_navigation_item(
             "Settings",

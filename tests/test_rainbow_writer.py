@@ -246,6 +246,28 @@ def test_writer_rejects_overlapping_source_and_output(tmp_path: Path) -> None:
         )
 
 
+def test_writer_accepts_explicit_flattened_source_files(tmp_path: Path) -> None:
+    source = tmp_path / "game_data"
+    nested = source / "gdx2" / "text_en" / "tagsgdx2_endlessdungeon.txt"
+    nested.parent.mkdir(parents=True)
+    nested.write_text("tagAffix=Bonebleach Halberd\n", encoding="utf-8")
+    output = tmp_path / "output"
+    catalog = AffixCatalog((_affix("tagAffix", "Affix", _variant("health")),))
+
+    result = generate_rainbow_output(
+        source,
+        output,
+        catalog,
+        BuildProfile("Health", {"health": 4}),
+        source_files=((nested, Path("tagsgdx2_endlessdungeon.txt")),),
+    )
+
+    generated = output / "tagsgdx2_endlessdungeon.txt"
+    assert generated.is_file()
+    assert "(C1)Bonebleach Halberd" in generated.read_text(encoding="utf-8")
+    assert result.files_written == 1
+
+
 def test_writer_prefers_primary_files_and_fills_missing_files_from_fallback(
     tmp_path: Path,
 ) -> None:

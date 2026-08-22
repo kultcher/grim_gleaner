@@ -11,7 +11,10 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.grade_export import (
     BACKUP_CONTENTS,
+    LOCALIZATION_LOCATION_INSTALLATION,
+    LOCALIZATION_LOCATION_USER,
     backup_available,
+    detect_grim_dawn_user_settings_root,
     export_grades_to_game,
     grim_dawn_text_root,
     restore_game_backup,
@@ -69,6 +72,109 @@ def test_game_folder_requires_grim_dawn_executable(tmp_path: Path) -> None:
     (game / "Grim Dawn.exe").touch()
 
     assert grim_dawn_text_root(game) == game / "settings" / "text_en"
+
+
+def test_detects_redirected_documents_user_settings(tmp_path: Path) -> None:
+    settings_root = tmp_path / "My Games" / "Grim Dawn" / "Settings"
+    settings_root.mkdir(parents=True)
+
+    assert detect_grim_dawn_user_settings_root(tmp_path) == settings_root
+
+
+def test_text_root_uses_user_localization_only_when_language_folder_exists(
+    tmp_path: Path,
+) -> None:
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    user_settings = tmp_path / "Documents" / "My Games" / "Grim Dawn" / "Settings"
+    user_settings.mkdir(parents=True)
+
+    assert grim_dawn_text_root(
+        game,
+        user_settings_root=user_settings,
+    ) == game / "settings" / "text_en"
+
+    user_text = user_settings / "text_en"
+    user_text.mkdir()
+    (user_text / "tags_items.txt").write_text("tag=value\n", encoding="utf-8")
+
+    assert grim_dawn_text_root(
+        game,
+        user_settings_root=user_settings,
+    ) == user_text.resolve()
+
+
+def test_text_root_requires_choice_when_both_locations_contain_files(
+    tmp_path: Path,
+) -> None:
+    game = tmp_path / "Grim Dawn"
+    install_text = game / "settings" / "text_en"
+    install_text.mkdir(parents=True)
+    (game / "Grim Dawn.exe").touch()
+    (install_text / "tags_items.txt").write_text("tag=value\n", encoding="utf-8")
+    user_settings = tmp_path / "Documents" / "My Games" / "Grim Dawn" / "Settings"
+    user_text = user_settings / "text_en"
+    user_text.mkdir(parents=True)
+    (user_text / "tags_items.txt").write_text("tag=value\n", encoding="utf-8")
+
+    try:
+        grim_dawn_text_root(game, user_settings_root=user_settings)
+    except ValueError as error:
+        assert "both" in str(error).casefold()
+        assert "choose" in str(error).casefold()
+    else:
+        raise AssertionError("ambiguous localization roots were accepted")
+
+    assert grim_dawn_text_root(
+        game,
+        user_settings_root=user_settings,
+        location_preference=LOCALIZATION_LOCATION_INSTALLATION,
+    ) == install_text
+    assert grim_dawn_text_root(
+        game,
+        user_settings_root=user_settings,
+        location_preference=LOCALIZATION_LOCATION_USER,
+    ) == user_text.resolve()
+
+
+def test_export_can_target_existing_user_localization(tmp_path: Path) -> None:
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    install_text = game / "settings" / "text_en"
+    install_text.mkdir(parents=True)
+    (install_text / "tags_items.txt").write_text(
+        "tagHealthy=Install Healthy\n",
+        encoding="utf-8",
+    )
+    user_settings = tmp_path / "Documents" / "My Games" / "Grim Dawn" / "Settings"
+    user_text = user_settings / "text_en"
+    user_text.mkdir(parents=True)
+    user_item_tags = user_text / "tags_items.txt"
+    user_item_tags.write_text(
+        "tagHealthy={^G}User Healthy\n",
+        encoding="utf-8",
+    )
+
+    exported = export_grades_to_game(
+        game,
+        _bundled_tags(tmp_path),
+        tmp_path / "staging" / "text_en",
+        tmp_path / "backups",
+        _catalog(),
+        BuildProfile("Health", {"health": 4}),
+        user_settings_root=user_settings,
+        location_preference=LOCALIZATION_LOCATION_USER,
+    )
+
+    assert exported.target_root == user_text.resolve()
+    assert "{^C}(C1){^G}User Healthy" in user_item_tags.read_text(
+        encoding="utf-8-sig"
+    )
+    assert "Install Healthy" in (install_text / "tags_items.txt").read_text(
+        encoding="utf-8"
+    )
 
 
 def test_export_preserves_first_original_backup_across_reexports_and_restores(

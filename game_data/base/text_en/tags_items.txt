@@ -2684,6 +2684,81 @@ tagDLCB24=Mantle of the Circle of Five
 tagDLCIllusionB25=Illusion: Robes of the Circle of Five
 tagDLCB25=Robes of the Circle of Five
 
+tagDLCIllusionC01=Illusion: Plague Doctor's Injector
+tagDLCC01=Plague Doctor's Injector
+tagDLCC01Desc="Part of the wicked adornments of a plague doctor."
+tagDLCIllusionC02=Illusion: Plague Doctor's Mask
+tagDLCC02=Plague Doctor's Mask
+tagDLCIllusionC03=Illusion: Plague Doctor's Jacket
+tagDLCC03=Plague Doctor's Jacket
+tagDLCIllusionC04=Illusion: Plague Doctor's Shoulderpads
+tagDLCC04=Plague Doctor's Shoulderpads
+tagDLCIllusionC05=Illusion: Plague Doctor's Winged Shoulderpads
+tagDLCC05=Plague Doctor's Winged Shoulderpads
+tagDLCIllusionC06=Illusion: Plague Doctor's Grips
+tagDLCC06=Plague Doctor's Grips
+
+tagDLCIllusionC07=Illusion: Keeper of the Dead's Staff
+tagDLCC07=Keeper of the Dead's Staff
+tagDLCC07Desc="Part of the Keeper of the Dead's armor."
+tagDLCIllusionC08=Illusion: Keeper of the Dead's Visage
+tagDLCC08=Keeper of the Dead's Visage
+tagDLCIllusionC09=Illusion: Keeper of the Dead's Armor
+tagDLCC09=Keeper of the Dead's Armor
+tagDLCIllusionC10=Illusion: Keeper of the Dead's Mantle
+tagDLCC10=Keeper of the Dead's Mantle
+tagDLCIllusionC11=Illusion: Keeper of the Dead's Bracers
+tagDLCC11=Keeper of the Dead's Bracers
+tagDLCIllusionC12=Illusion: Keeper of the Dead's Boots
+tagDLCC12=Keeper of the Dead's Boots
+tagDLCIllusionC25=Illusion: Keeper of the Dead's Legguards
+tagDLCC25=Keeper of the Dead's Legguards
+
+tagDLCIllusionC13=Illusion: Vampiric Knight's Greatsword
+tagDLCC13=Vampiric Knight's Greatsword
+tagDLCC13Desc="Part of the Vampiric Knight's armory."
+tagDLCIllusionC14=Illusion: Vampiric Knight's Crown
+tagDLCC14=Vampiric Knight's Crown
+tagDLCIllusionC15=Illusion: Vampiric Knight's Armor
+tagDLCC15=Vampiric Knight's Armor
+tagDLCIllusionC16=Illusion: Vampiric Knight's Shoulderguard
+tagDLCC16=Vampiric Knight's Shoulderguard
+tagDLCIllusionC17=Illusion: Vampiric Knight's Winged Shoulderguard
+tagDLCC17=Vampiric Knight's Winged Shoulderguard
+tagDLCIllusionC18=Illusion: Vampiric Knight's Gauntlets
+tagDLCC18=Vampiric Knight's Gauntlets
+tagDLCIllusionC19=Illusion: Vampiric Knight's Boots
+tagDLCC19=Vampiric Knight's Boots
+tagDLCIllusionC26=Illusion: Vampiric Knight's Legguards
+tagDLCC26=Vampiric Knight's Legguards
+
+tagDLCIllusionC20=Illusion: Dark Priest's Channeler
+tagDLCC20=Dark Priest's Channeler
+tagDLCC20Desc="Part of the Dark Priest's ghastly collection."
+tagDLCIllusionC21=Illusion: Dark Priest's Hood
+tagDLCC21=Dark Priest's Hood
+tagDLCIllusionC22=Illusion: Dark Priest's Robes
+tagDLCC22=Dark Priest's Robes
+tagDLCIllusionC23=Illusion: Dark Priest's Mantle
+tagDLCC23=Dark Priest's Mantle
+tagDLCIllusionC24=Illusion: Dark Priest's Bracers
+tagDLCC24=Dark Priest's Bracers
+
+tagDLCIllusionCollectionC01=Illusion: Plague Doctor's Adornments
+tagDLCIllusionCollectionC01Item=Plague Doctor's Adornments
+tagDLCIllusionCollectionC01Desc="Wicked adornments of the Plague Doctor."
+
+tagDLCIllusionCollectionC02=Illusion: Keeper of the Dead's Armor
+tagDLCIllusionCollectionC02Item=Keeper of the Dead's Armor
+tagDLCIllusionCollectionC02Desc="Armor of the Keeper of the Dead."
+
+tagDLCIllusionCollectionC03=Illusion: Vampiric Knight's Armor
+tagDLCIllusionCollectionC03Item=Vampiric Knight's Armor
+tagDLCIllusionCollectionC03Desc="Armor of the bloody Vampiric Knight."
+
+tagDLCIllusionCollectionC04=Illusion: Dark Priest's Collection
+tagDLCIllusionCollectionC04Item=Dark Priest's Collection
+tagDLCIllusionCollectionC04Desc="Ghastly collection of the Dark priest."
 
 
 #ItemNote

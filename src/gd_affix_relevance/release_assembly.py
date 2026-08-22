@@ -14,10 +14,10 @@ from gd_affix_relevance import __version__
 from gd_affix_relevance.catalog import CatalogBundle
 from gd_affix_relevance.importers.localization_parser import parse_localization_file
 from gd_affix_relevance.profile_store import load_profile
-from gd_affix_relevance.runtime_paths import ITEM_TAG_FILENAMES
+from gd_affix_relevance.runtime_paths import EXPORT_LOCALIZATION_SOURCES
 from gd_affix_relevance.stats import registered_stat_definitions
 
-TAG_SOURCES = dict(zip(("base", "gdx1", "gdx2", "gdx3"), ITEM_TAG_FILENAMES))
+TAG_SOURCES = EXPORT_LOCALIZATION_SOURCES
 OPTIONAL_RELEASE_DOCUMENTS = ("LICENSE.txt", "THIRD_PARTY_NOTICES.txt")
 EXAMPLE_PROFILE_DIRECTORY = Path("Profiles/examples")
 MANAGED_RELEASE_PATHS = (
@@ -107,8 +107,8 @@ def assemble_release(
 
     tag_sources: dict[str, Path] = {}
     tag_entry_counts: dict[str, int] = {}
-    for source, filename in TAG_SOURCES.items():
-        path = data_source / source / "text_en" / filename
+    for filename, relative_path in TAG_SOURCES.items():
+        path = data_source / relative_path
         if not path.is_file():
             raise FileNotFoundError(f"required localization file is missing: {path}")
         entry_count = len(parse_localization_file(path))
@@ -179,7 +179,7 @@ def assemble_release(
                     "entries": tag_entry_counts[filename],
                     "sha256": tag_hashes[filename],
                 }
-                for filename in TAG_SOURCES.values()
+                for filename in TAG_SOURCES
             },
             "example_profiles": profile_hashes,
         }

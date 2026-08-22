@@ -9,12 +9,18 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 APP_ROOT_ENVIRONMENT_VARIABLE = "GRIM_GLEANER_APP_ROOT"
-ITEM_TAG_FILENAMES = (
-    "tags_items.txt",
-    "tagsgdx1_items.txt",
-    "tagsgdx2_items.txt",
-    "tagsgdx3_items.txt",
-)
+EXPORT_LOCALIZATION_SOURCES = {
+    "tags_items.txt": Path("base/text_en/tags_items.txt"),
+    "tagsgdx1_items.txt": Path("gdx1/text_en/tagsgdx1_items.txt"),
+    "tagsgdx2_items.txt": Path("gdx2/text_en/tagsgdx2_items.txt"),
+    "tagsgdx2_endlessdungeon.txt": Path(
+        "gdx2/text_en/tagsgdx2_endlessdungeon.txt"
+    ),
+    "tagsgdx3_items.txt": Path("gdx3/text_en/tagsgdx3_items.txt"),
+}
+ITEM_TAG_FILENAMES = tuple(EXPORT_LOCALIZATION_SOURCES)
+
+LocalizationSourceFiles = tuple[tuple[Path, Path], ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,6 +51,8 @@ class ExportSourceSelection:
     fallback_root: Path | None
     game_text_root: Path | None
     game_files: tuple[str, ...]
+    primary_files: LocalizationSourceFiles | None = None
+    fallback_files: LocalizationSourceFiles | None = None
 
     @property
     def uses_game_files(self) -> bool:
@@ -54,6 +62,8 @@ class ExportSourceSelection:
 def resolve_export_sources(
     game_folder: Path | None,
     bundled_tags_root: Path,
+    *,
+    installed_text_root: Path | None = None,
 ) -> ExportSourceSelection:
     """Prefer installed item tags and use bundled tags for missing files.
 
@@ -65,9 +75,17 @@ def resolve_export_sources(
     """
 
     bundled = Path(bundled_tags_root).expanduser().resolve()
+    bundled_files = _development_source_files(bundled)
     game_text_root: Path | None = None
     game_files: tuple[str, ...] = ()
-    if game_folder is not None and str(game_folder).strip():
+    if installed_text_root is not None:
+        game_text_root = Path(installed_text_root).expanduser().resolve()
+        game_files = tuple(
+            filename
+            for filename in ITEM_TAG_FILENAMES
+            if (game_text_root / filename).is_file()
+        )
+    elif game_folder is not None and str(game_folder).strip():
         game_text_root = (
             Path(game_folder).expanduser().resolve() / "settings" / "text_en"
         )
@@ -82,13 +100,41 @@ def resolve_export_sources(
             fallback_root=bundled,
             game_text_root=game_text_root,
             game_files=game_files,
+            fallback_files=bundled_files,
         )
     return ExportSourceSelection(
         primary_root=bundled,
         fallback_root=None,
         game_text_root=game_text_root,
         game_files=(),
+        primary_files=bundled_files,
     )
+
+
+def _development_source_files(root: Path) -> LocalizationSourceFiles | None:
+    """Map the extracted ``game_data`` tree to flat export filenames.
+
+    Packaged releases already have a flat ``tags`` directory and therefore
+    return ``None`` so every bundled file remains eligible. Development uses
+    the extracted source tree directly, with this allowlist preventing DBRs
+    and unrelated localization files from being copied into Grim Dawn.
+    """
+
+    expected = tuple(
+        (root / relative_path, Path(filename))
+        for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items()
+    )
+    if not any(source_path.exists() for source_path, _ in expected):
+        return None
+    missing = tuple(
+        str(source_path) for source_path, _ in expected if not source_path.is_file()
+    )
+    if missing:
+        raise ValueError(
+            "centralized game-data localization is incomplete: "
+            + ", ".join(missing)
+        )
+    return expected
 
 
 def resolve_runtime_paths(
@@ -148,7 +194,7 @@ def resolve_runtime_paths(
         application_root=root,
         project_root=root,
         catalog_root=root / "artifacts" / "catalog",
-        tags_root=root / "artifacts" / "text_en",
+        tags_root=root / "game_data",
         staging_output_root=root / "artifacts" / "generated" / "text_en",
         backups_root=root / "artifacts" / "backups",
         profiles_root=root / "artifacts" / "profiles",

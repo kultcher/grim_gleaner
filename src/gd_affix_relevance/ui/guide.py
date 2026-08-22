@@ -78,7 +78,7 @@ class GuidePage(QWidget):
             "Export and profiles",
             "Save and Load default to Grim Gleaner's Profiles folder. Export "
             "uses will use existing Rainbow Filters/gdse item files when present "
-            "and bundled English files for anything missing. The first export preserves an "
+            "and clean localization files for anything missing. The first export preserves an "
             "original-state backup; repeated exports do not overwrite it.",
             content,
         )

@@ -9,6 +9,7 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtWidgets import QApplication
 
+from gd_affix_relevance.grade_export import detect_grim_dawn_user_settings_root
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
 from gd_affix_relevance.ui.main_window import MainWindow
 from gd_affix_relevance.ui.style import APP_STYLESHEET
@@ -31,6 +32,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     window = MainWindow(
         settings=QSettings(),
         runtime_paths=_entrypoint_runtime_paths(),
+        user_settings_root=detect_grim_dawn_user_settings_root(),
     )
     window.show()
     QTimer.singleShot(0, window.show_startup_prompts)

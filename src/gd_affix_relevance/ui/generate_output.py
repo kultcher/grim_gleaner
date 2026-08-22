@@ -18,13 +18,18 @@ from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.grade_export import (
     GradeExportResult,
+    LOCALIZATION_LOCATION_AUTO,
+    LOCALIZATION_LOCATION_CHOICES,
     backup_available,
     export_grades_to_game,
     grim_dawn_text_root,
     restore_game_backup,
 )
 from gd_affix_relevance.output import build_affix_markers, build_unique_item_markers
-from gd_affix_relevance.ui.settings import GAME_FOLDER_SETTING
+from gd_affix_relevance.ui.settings import (
+    GAME_FOLDER_SETTING,
+    LOCALIZATION_LOCATION_SETTING,
+)
 
 LAST_EXPORTED_PROFILE_SETTING = "export/last_profile_name"
 
@@ -39,6 +44,7 @@ class GenerateOutputPage(QWidget):
         source_root: Path,
         output_root: Path,
         backups_root: Path,
+        user_settings_root: Path | None = None,
         catalog_status: str = "",
         settings: QSettings | None = None,
         parent: QWidget | None = None,
@@ -52,6 +58,9 @@ class GenerateOutputPage(QWidget):
         self.bundled_source_root = Path(source_root)
         self.staging_root = Path(output_root)
         self.backups_root = Path(backups_root)
+        self.user_settings_root = (
+            Path(user_settings_root) if user_settings_root is not None else None
+        )
         self.last_result: GradeExportResult | None = None
 
         layout = QVBoxLayout(self)
@@ -67,7 +76,7 @@ class GenerateOutputPage(QWidget):
             "grades directly to Grim Dawn's item names. Existing Rainbow item "
             "files are retained as the source, while Grim Gleaner's bundled "
             "files supply anything missing. Before the first export, the "
-            "current text_en folder is backed up so it can be restored here.",
+            "current localization folder is backed up so it can be restored here.",
             self,
         )
         explanation.setObjectName("pageHint")
@@ -119,7 +128,11 @@ class GenerateOutputPage(QWidget):
             return
         try:
             game_folder = self._configured_game_folder()
-            grim_dawn_text_root(game_folder)
+            grim_dawn_text_root(
+                game_folder,
+                user_settings_root=self.user_settings_root,
+                location_preference=self._localization_location_preference(),
+            )
         except (OSError, ValueError) as error:
             QMessageBox.critical(self, "Could Not Export Grades", str(error))
             return
@@ -147,6 +160,8 @@ class GenerateOutputPage(QWidget):
                 self.catalog,
                 self.profile,
                 items=self.items,
+                user_settings_root=self.user_settings_root,
+                location_preference=self._localization_location_preference(),
             )
         except (OSError, UnicodeError, ValueError) as error:
             QMessageBox.critical(self, "Could Not Export Grades", str(error))
@@ -173,7 +188,12 @@ class GenerateOutputPage(QWidget):
     def restore_backup(self, _checked: bool = False) -> None:
         try:
             game_folder = self._configured_game_folder()
-            if not backup_available(game_folder, self.backups_root):
+            if not backup_available(
+                game_folder,
+                self.backups_root,
+                user_settings_root=self.user_settings_root,
+                location_preference=self._localization_location_preference(),
+            ):
                 raise ValueError(
                     "No original-state backup exists for the configured Grim Dawn folder."
                 )
@@ -184,7 +204,7 @@ class GenerateOutputPage(QWidget):
         choice = QMessageBox.question(
             self,
             "Restore Backup",
-            "Restoring Grim Dawn/settings/text_en folder to original state.\n\n"
+            "Restoring Grim Dawn localization folder to original state.\n\n"
             "Proceed?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
             QMessageBox.StandardButton.Cancel,
@@ -193,7 +213,12 @@ class GenerateOutputPage(QWidget):
             return
 
         try:
-            result = restore_game_backup(game_folder, self.backups_root)
+            result = restore_game_backup(
+                game_folder,
+                self.backups_root,
+                user_settings_root=self.user_settings_root,
+                location_preference=self._localization_location_preference(),
+            )
         except (OSError, ValueError) as error:
             QMessageBox.critical(self, "Could Not Restore Backup", str(error))
             return
@@ -216,11 +241,19 @@ class GenerateOutputPage(QWidget):
     ) -> None:
         try:
             game_folder = self._configured_game_folder()
-            target = grim_dawn_text_root(game_folder)
-        except (OSError, ValueError):
-            self.target_label.setText(
-                "Target: Set a valid Grim Dawn folder on the Settings page."
+            target = grim_dawn_text_root(
+                game_folder,
+                user_settings_root=self.user_settings_root,
+                location_preference=self._localization_location_preference(),
             )
+        except (OSError, ValueError) as error:
+            message = str(error)
+            if not (
+                "Localization files exist in both" in message
+                or "Documents/My Games Grim Dawn Settings" in message
+            ):
+                message = "Set a valid Grim Dawn folder on the Settings page."
+            self.target_label.setText(f"Target unavailable: {message}")
             self.generate_button.setEnabled(False)
             self.restore_button.setEnabled(False)
             if update_status:
@@ -229,7 +262,26 @@ class GenerateOutputPage(QWidget):
         self.target_label.setText(f"Target: {target}")
         self.generate_button.setEnabled(self.catalog is not None)
         self.restore_button.setEnabled(
-            backup_available(game_folder, self.backups_root)
+            backup_available(
+                game_folder,
+                self.backups_root,
+                user_settings_root=self.user_settings_root,
+                location_preference=self._localization_location_preference(),
+            )
+        )
+
+    def _localization_location_preference(self) -> str:
+        if self.settings is None:
+            return LOCALIZATION_LOCATION_AUTO
+        value = self.settings.value(
+            LOCALIZATION_LOCATION_SETTING,
+            LOCALIZATION_LOCATION_AUTO,
+            type=str,
+        )
+        return (
+            value
+            if value in LOCALIZATION_LOCATION_CHOICES
+            else LOCALIZATION_LOCATION_AUTO
         )
 
     def _configured_game_folder(self) -> Path:

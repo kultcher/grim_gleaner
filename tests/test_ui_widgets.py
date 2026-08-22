@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication, QLabel
 
 from gd_affix_relevance.catalog import AffixCatalog
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.grade_export import LOCALIZATION_LOCATION_USER
 from gd_affix_relevance.profile_store import save_profile
 from gd_affix_relevance.runtime_paths import RuntimePaths
 from gd_affix_relevance.ui.catalog import PackageDefinition, stat
@@ -210,6 +211,19 @@ def test_settings_page_persists_grim_dawn_folder(tmp_path: Path) -> None:
     assert settings.value("paths/grim_dawn_folder") == game_folder
     restored = MainWindow(catalog=AffixCatalog(()), settings=settings)
     assert restored.settings_page.game_folder_edit.text() == game_folder
+
+    window.settings_page.localization_location_combo.setCurrentIndex(
+        window.settings_page.localization_location_combo.findData(
+            LOCALIZATION_LOCATION_USER
+        )
+    )
+    assert settings.value("paths/localization_location") == (
+        LOCALIZATION_LOCATION_USER
+    )
+    restored = MainWindow(catalog=AffixCatalog(()), settings=settings)
+    assert restored.settings_page.localization_location_combo.currentData() == (
+        LOCALIZATION_LOCATION_USER
+    )
 
 
 def test_game_folder_confirmation_controls_warning_and_export(

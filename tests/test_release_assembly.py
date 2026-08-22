@@ -115,10 +115,10 @@ def _write_minimal_catalog(root: Path) -> None:
 
 
 def _write_tag_sources(data_root: Path, *, value: str = "Value") -> None:
-    for source, filename in TAG_SOURCES.items():
-        path = data_root / source / "text_en" / filename
+    for filename, relative_path in TAG_SOURCES.items():
+        path = data_root / relative_path
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(f"tag{source}={value}\n", encoding="utf-8")
+        path.write_text(f"tag{filename}={value}\n", encoding="utf-8")
 
 
 def _write_example_profiles(root: Path) -> None:
@@ -174,11 +174,12 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
 
     assert result.output_root == output.resolve()
     assert result.catalog_files == 11
-    assert result.tag_files == 4
-    assert result.tag_entries == 4
+    assert result.tag_files == 5
+    assert result.tag_entries == 5
     assert result.example_profiles == 1
     assert (output / "catalog" / "manifest.json").is_file()
     assert (output / "tags" / "tagsgdx3_items.txt").is_file()
+    assert (output / "tags" / "tagsgdx2_endlessdungeon.txt").is_file()
     assert (output / "README.txt").read_text(encoding="utf-8") == "# Test release\n"
     assert (output / "LICENSE.txt").read_text(encoding="utf-8") == "Test license\n"
     assert (output / "THIRD_PARTY_NOTICES.txt").read_text(

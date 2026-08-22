@@ -6,6 +6,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QSettings, Signal
 from PySide6.QtWidgets import (
+    QComboBox,
     QFileDialog,
     QFormLayout,
     QHBoxLayout,
@@ -17,15 +18,23 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from gd_affix_relevance.grade_export import validate_grim_dawn_folder
+from gd_affix_relevance.grade_export import (
+    LOCALIZATION_LOCATION_AUTO,
+    LOCALIZATION_LOCATION_CHOICES,
+    LOCALIZATION_LOCATION_INSTALLATION,
+    LOCALIZATION_LOCATION_USER,
+    validate_grim_dawn_folder,
+)
 
 GAME_FOLDER_SETTING = "paths/grim_dawn_folder"
+LOCALIZATION_LOCATION_SETTING = "paths/localization_location"
 
 
 class SettingsPage(QWidget):
     """Store application paths that are not part of a build profile."""
 
     game_folder_changed = Signal(str)
+    localization_location_changed = Signal(str)
 
     def __init__(
         self,
@@ -70,6 +79,28 @@ class SettingsPage(QWidget):
         self.browse_button.clicked.connect(self._browse_game_folder)
         path_layout.addWidget(self.browse_button)
         form.addRow("Grim Dawn folder location", path_row)
+
+        self.localization_location_combo = QComboBox(self)
+        self.localization_location_combo.addItem(
+            "Automatic (use the only existing localization)",
+            LOCALIZATION_LOCATION_AUTO,
+        )
+        self.localization_location_combo.addItem(
+            "Grim Dawn installation folder",
+            LOCALIZATION_LOCATION_INSTALLATION,
+        )
+        self.localization_location_combo.addItem(
+            "Documents / My Games",
+            LOCALIZATION_LOCATION_USER,
+        )
+        saved_location = self._saved_localization_location()
+        self.localization_location_combo.setCurrentIndex(
+            self.localization_location_combo.findData(saved_location)
+        )
+        self.localization_location_combo.currentIndexChanged.connect(
+            self._save_localization_location
+        )
+        form.addRow("Localization output location", self.localization_location_combo)
         layout.addLayout(form)
 
         self.game_folder_status = QLabel(self)
@@ -77,10 +108,10 @@ class SettingsPage(QWidget):
         layout.addWidget(self.game_folder_status)
 
         note = QLabel(
-            "Export Grades checks this folder's settings/text_en directory for "
-            "existing item-tag files. Installed files take precedence and the "
-            "bundled clean-install tags fill any missing files. Export writes "
-            "the graded files there after preserving an original-state backup.",
+            "Automatic selection uses whichever supported location already "
+            "contains localization files. If both the game folder and "
+            "Documents contain them, choose one explicitly. Export preserves "
+            "an original-state backup of the selected location.",
             self,
         )
         note.setObjectName("pageHint")
@@ -93,6 +124,27 @@ class SettingsPage(QWidget):
         if self.settings is None:
             return ""
         return self.settings.value(GAME_FOLDER_SETTING, "", type=str)
+
+    def _saved_localization_location(self) -> str:
+        if self.settings is None:
+            return LOCALIZATION_LOCATION_AUTO
+        value = self.settings.value(
+            LOCALIZATION_LOCATION_SETTING,
+            LOCALIZATION_LOCATION_AUTO,
+            type=str,
+        )
+        return (
+            value
+            if value in LOCALIZATION_LOCATION_CHOICES
+            else LOCALIZATION_LOCATION_AUTO
+        )
+
+    def _save_localization_location(self, _index: int = -1) -> None:
+        value = str(self.localization_location_combo.currentData())
+        if self.settings is not None:
+            self.settings.setValue(LOCALIZATION_LOCATION_SETTING, value)
+            self.settings.sync()
+        self.localization_location_changed.emit(value)
 
     def _save_game_folder(self) -> None:
         value = self.game_folder_edit.text().strip()

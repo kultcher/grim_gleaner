@@ -47,11 +47,17 @@ Windows systems.
 ## Installing from Source
 
 I don't recommend doing this right now as I need to clean up some things. You can try:
+
 1. Clone the repo
 2. python -m pip install -e .
 3. run grim-gleaner-ui.exe
 
 but no guarantees it'll work properly this way. It *definitely* won't work properly if you don't use the -e flag.
+
+The clean-install export localization files are tracked under `game_data/*/text_en`
+and are used directly by development runs. The compiled runtime catalog is
+tracked under `artifacts/catalog`; rebuilding that catalog still requires your
+own locally extracted DBRs and full localization archives.
 
 ### Usage
 
@@ -71,7 +77,7 @@ There are three tabbed subsections:
 - Uniques will do the same for Epics, Uniques and Monster Infrequents. You can set a minimum grade you want to appear in each list.
 - Add-ons will show your the 5 highest-graded Components and Augments for each item slot and their sources. It also has an optional "Resistance Cap Mode" that lets you easily target specific resistances that you need to cap.
 4. **Export to in-game tags**\
-**Important**: Any time you want to export grades, make sure the game is closed! Also, if you replace or remove the files in your /Grim Dawn/settings/text_en folder, you need to run the export again.\
+**Important**: Any time you want to export grades, make sure the game is closed! Also, if you replace or remove the files in your localization folder, you need to run the export again.\
 Click over to the "Export Grades" sections from the sidebar, then click "Export Grades." This will automatically backup the files in your /Grim Dawn/settings/text_en folder, if they are there. (These files are used for things like Rainbow Filter/gdse). Grim Gleaner *should* be fully compatible and add it's tags while preserving any color/text changes from Rainbow Filter and similar mods. (**Note**: Since Grim Gleaner uses "S" in it's grading and Rainbow uses "S" for set items, Grim Gleaner will replace Rainbow's set notation with "$" for clarity.)
 
 Rainbow Filter or gdse are recommended but not required. Find them below:\

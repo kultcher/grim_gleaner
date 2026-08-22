@@ -5,6 +5,7 @@ from types import ModuleType, SimpleNamespace
 from pathlib import Path
 
 from gd_affix_relevance.runtime_paths import (
+    EXPORT_LOCALIZATION_SOURCES,
     resolve_export_sources,
     resolve_runtime_paths,
 )
@@ -21,7 +22,7 @@ def test_development_paths_are_project_relative(tmp_path: Path) -> None:
     assert paths.application_root == tmp_path.resolve()
     assert paths.project_root == tmp_path.resolve()
     assert paths.catalog_root == tmp_path.resolve() / "artifacts" / "catalog"
-    assert paths.tags_root == tmp_path.resolve() / "artifacts" / "text_en"
+    assert paths.tags_root == tmp_path.resolve() / "game_data"
     assert paths.staging_output_root == (
         tmp_path.resolve() / "artifacts" / "generated" / "text_en"
     )
@@ -146,3 +147,39 @@ def test_export_sources_prefer_installed_tags_with_bundled_fallback(
     assert selection.fallback_root == bundled.resolve()
     assert selection.game_files == ("tags_items.txt",)
     assert selection.uses_game_files
+
+
+def test_export_sources_map_centralized_game_data_to_flat_filenames(
+    tmp_path: Path,
+) -> None:
+    game_data = tmp_path / "game_data"
+    for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items():
+        source = game_data / relative_path
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text(f"{filename}=value\n", encoding="utf-8")
+
+    selection = resolve_export_sources(None, game_data)
+
+    assert selection.primary_root == game_data.resolve()
+    assert selection.fallback_root is None
+    assert selection.primary_files == tuple(
+        ((game_data / relative_path).resolve(), Path(filename))
+        for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items()
+    )
+
+
+def test_export_sources_reject_incomplete_centralized_game_data(
+    tmp_path: Path,
+) -> None:
+    game_data = tmp_path / "game_data"
+    first_relative = next(iter(EXPORT_LOCALIZATION_SOURCES.values()))
+    source = game_data / first_relative
+    source.parent.mkdir(parents=True)
+    source.write_text("tag=value\n", encoding="utf-8")
+
+    try:
+        resolve_export_sources(None, game_data)
+    except ValueError as error:
+        assert "centralized game-data localization is incomplete" in str(error)
+    else:
+        raise AssertionError("incomplete centralized game data was accepted")

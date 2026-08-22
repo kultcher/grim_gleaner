@@ -1193,3 +1193,6 @@ tagGDX3SuffixB301_Wpn=of Frostblood
 tagGDX3SuffixB302_Wpn=of Bloody Conflict
 tagGDX3SuffixB303_Wpn=of Untamed Fangs
 tagGDX3SuffixB304_Wpn=of Corrupted Peaks
+
+
+#Patch v1.3.1

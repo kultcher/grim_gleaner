@@ -20,10 +20,31 @@ artifacts/profiles/*
 !artifacts/profiles/examples/**
 !artifacts/catalog/
 !artifacts/catalog/**
-!artifacts/text_en/
-!artifacts/text_en/**
 !artifacts/mastery-trees/
 !artifacts/mastery-trees/**
 
-# Locally extracted proprietary Grim Dawn data.
-game_data/
+# Locally extracted proprietary Grim Dawn data. Only the complete localization
+# files needed for clean-install grade export are tracked; DBRs and all other
+# extracted game data remain local.
+game_data/*
+!game_data/base/
+game_data/base/*
+!game_data/base/text_en/
+game_data/base/text_en/*
+!game_data/base/text_en/tags_items.txt
+!game_data/gdx1/
+game_data/gdx1/*
+!game_data/gdx1/text_en/
+game_data/gdx1/text_en/*
+!game_data/gdx1/text_en/tagsgdx1_items.txt
+!game_data/gdx2/
+game_data/gdx2/*
+!game_data/gdx2/text_en/
+game_data/gdx2/text_en/*
+!game_data/gdx2/text_en/tagsgdx2_items.txt
+!game_data/gdx2/text_en/tagsgdx2_endlessdungeon.txt
+!game_data/gdx3/
+game_data/gdx3/*
+!game_data/gdx3/text_en/
+game_data/gdx3/text_en/*
+!game_data/gdx3/text_en/tagsgdx3_items.txt
