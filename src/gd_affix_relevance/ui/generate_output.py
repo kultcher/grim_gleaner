@@ -188,6 +188,11 @@ class GenerateOutputPage(QWidget):
     def restore_backup(self, _checked: bool = False) -> None:
         try:
             game_folder = self._configured_game_folder()
+            target = grim_dawn_text_root(
+                game_folder,
+                user_settings_root=self.user_settings_root,
+                location_preference=self._localization_location_preference(),
+            )
             if not backup_available(
                 game_folder,
                 self.backups_root,
@@ -204,7 +209,7 @@ class GenerateOutputPage(QWidget):
         choice = QMessageBox.question(
             self,
             "Restore Backup",
-            "Restoring Grim Dawn localization folder to original state.\n\n"
+            f"Restoring {target} to its original state.\n\n"
             "Proceed?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
             QMessageBox.StandardButton.Cancel,

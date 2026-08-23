@@ -111,7 +111,7 @@ def test_export_page_installs_grades_and_restores_original(
     page.restore_backup()
 
     assert questions[1].startswith(
-        "Restoring Grim Dawn/settings/text_en folder to original state."
+        f"Restoring {installed} to its original state."
     )
     assert (installed / "tags_items.txt").read_text(encoding="utf-8") == original
     assert not page.restore_button.isEnabled()

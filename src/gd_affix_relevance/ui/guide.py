@@ -77,8 +77,9 @@ class GuidePage(QWidget):
             content_layout,
             "Export and profiles",
             "Save and Load default to Grim Gleaner's Profiles folder. Export "
-            "uses will use existing Rainbow Filters/gdse item files when present "
-            "and clean localization files for anything missing. The first export preserves an "
+            "uses existing Rainbow Filters/gdse item files when present and "
+            "prepared clean localization files for anything missing. The first "
+            "export preserves an "
             "original-state backup; repeated exports do not overwrite it.",
             content,
         )
@@ -94,7 +95,6 @@ class GuidePage(QWidget):
             "affixes are listed separately.\n"
             "- Grim Gleaner does not compare against currently equipped gear or "
             "decide whether a complete dropped item is an upgrade.\n"
-            "- Localization output is currently English-only.\n"
             "- Game patches may require an updated Grim Gleaner catalog.",
             content,
         )

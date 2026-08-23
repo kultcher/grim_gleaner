@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import sys
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from PySide6.QtCore import QSettings, QTimer
@@ -13,6 +14,9 @@ from gd_affix_relevance.grade_export import detect_grim_dawn_user_settings_root
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
 from gd_affix_relevance.ui.main_window import MainWindow
 from gd_affix_relevance.ui.style import APP_STYLESHEET
+
+SETTINGS_ROOT_ENVIRONMENT_VARIABLE = "GRIM_GLEANER_SETTINGS_ROOT"
+DOCUMENTS_ROOT_ENVIRONMENT_VARIABLE = "GRIM_GLEANER_DOCUMENTS_ROOT"
 
 
 def create_application(argv: Sequence[str] | None = None) -> QApplication:
@@ -30,13 +34,52 @@ def create_application(argv: Sequence[str] | None = None) -> QApplication:
 def main(argv: Sequence[str] | None = None) -> int:
     application = create_application(argv)
     window = MainWindow(
-        settings=QSettings(),
+        settings=_application_settings(),
         runtime_paths=_entrypoint_runtime_paths(),
-        user_settings_root=detect_grim_dawn_user_settings_root(),
+        user_settings_root=_user_settings_root(),
     )
     window.show()
     QTimer.singleShot(0, window.show_startup_prompts)
     return application.exec()
+
+
+def _application_settings(
+    environment: Mapping[str, str] | None = None,
+) -> QSettings:
+    """Return normal settings or an isolated INI file for fresh-install tests.
+
+    ``GRIM_GLEANER_SETTINGS_ROOT`` lets a developer reproduce a first launch
+    without deleting or changing the real Grim Gleaner settings stored by Qt.
+    The override is intentionally environment-only and is not exposed in the
+    release UI.
+    """
+
+    environment = os.environ if environment is None else environment
+    configured_root = environment.get(
+        SETTINGS_ROOT_ENVIRONMENT_VARIABLE, ""
+    ).strip()
+    if not configured_root:
+        return QSettings()
+
+    root = Path(configured_root).expanduser().resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    return QSettings(
+        str(root / "grim-gleaner.ini"),
+        QSettings.Format.IniFormat,
+    )
+
+
+def _user_settings_root(
+    environment: Mapping[str, str] | None = None,
+) -> Path | None:
+    """Resolve Documents normally, with a safe override for test sandboxes."""
+
+    environment = os.environ if environment is None else environment
+    configured_root = environment.get(
+        DOCUMENTS_ROOT_ENVIRONMENT_VARIABLE, ""
+    ).strip()
+    documents_root = Path(configured_root) if configured_root else None
+    return detect_grim_dawn_user_settings_root(documents_root)
 
 
 def _entrypoint_runtime_paths(

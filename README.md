@@ -40,9 +40,8 @@ AI (Codex) was used for data analysis data and coding to build this program.
 4. Open the "Settings" section from the sidebar and set your Grim Dawn game location (you'll be prompted automatically the first time you open the program.)\
 (Steam default location: C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn)
 
-**NOTE**: This utility has only been tested using English localization on 64-bit
-Windows 11. No promises that it will work with other languages or on non-x64
-Windows systems.
+**NOTE**: This utility has only been tested on 64-bit Windows 11. No promises
+that it will work on other operating systems or non-x64 Windows systems.
 
 ## Installing from Source
 
@@ -58,6 +57,19 @@ The clean-install export localization files are tracked under `game_data/*/text_
 and are used directly by development runs. The compiled runtime catalog is
 tracked under `artifacts/catalog`; rebuilding that catalog still requires your
 own locally extracted DBRs and full localization archives.
+
+To reproduce a completely fresh first launch without reading or writing your
+normal Grim Gleaner settings or live Grim Dawn localization folders, run:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File .\scripts\test-clean-install.ps1
+```
+
+The script displays a fake Grim Dawn installation to select at the startup
+prompt. Catalog loading, export, backup, and restore then operate entirely under
+`build/clean-install-test`. Each run recreates that sandbox from scratch. Add
+`-PrepareOnly` to assemble and inspect it without launching the UI.
 
 ### Usage
 
@@ -78,7 +90,7 @@ There are three tabbed subsections:
 - Add-ons will show your the 5 highest-graded Components and Augments for each item slot and their sources. It also has an optional "Resistance Cap Mode" that lets you easily target specific resistances that you need to cap.
 4. **Export to in-game tags**\
 **Important**: Any time you want to export grades, make sure the game is closed! Also, if you replace or remove the files in your localization folder, you need to run the export again.\
-Click over to the "Export Grades" sections from the sidebar, then click "Export Grades." This will automatically backup the files in your /Grim Dawn/settings/text_en folder, if they are there. (These files are used for things like Rainbow Filter/gdse). Grim Gleaner *should* be fully compatible and add it's tags while preserving any color/text changes from Rainbow Filter and similar mods. (**Note**: Since Grim Gleaner uses "S" in it's grading and Rainbow uses "S" for set items, Grim Gleaner will replace Rainbow's set notation with "$" for clarity.)
+Click over to the "Export Grades" section from the sidebar, then click "Export Grades." Grim Gleaner uses the localization output location selected in Settings and automatically backs up any files already present there. (These files are used by tools such as Rainbow Filter and gdse.) Grim Gleaner *should* be fully compatible and add its tags while preserving any color/text changes from Rainbow Filter and similar mods. (**Note**: Since Grim Gleaner uses "S" in its grading and Rainbow uses "S" for set items, Grim Gleaner will replace Rainbow's set notation with "$" for clarity.)
 
 Rainbow Filter or gdse are recommended but not required. Find them below:\
 [Rainbow Filter](https://forums.crateentertainment.com/t/tool-rainbow-filter-item-highlighting/42765)\
