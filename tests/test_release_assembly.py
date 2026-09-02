@@ -229,6 +229,9 @@ def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
     )
     (output / "staging").mkdir()
     (output / "staging" / "keep.txt").write_text("keep", encoding="utf-8")
+    prepared_russian = output / "prepared-tags" / "ru" / "tags_items.txt"
+    prepared_russian.parent.mkdir(parents=True)
+    prepared_russian.write_text("tagExample=Russian\n", encoding="utf-8")
     _write_tag_sources(project / "game_data", value="Updated")
 
     assemble_release(project)
@@ -241,6 +244,7 @@ def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
         encoding="utf-8"
     )
     assert (output / "staging" / "keep.txt").read_text(encoding="utf-8") == "keep"
+    assert prepared_russian.read_text(encoding="utf-8") == "tagExample=Russian\n"
 
 
 def test_validation_failure_leaves_existing_release_untouched(tmp_path: Path) -> None:

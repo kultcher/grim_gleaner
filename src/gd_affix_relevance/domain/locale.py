@@ -31,18 +31,45 @@ RUSSIAN_LOCALE = LocaleSpec(
     catalog_filename="strings.ru.json",
     game_archive_filename="Text_RU.arc",
 )
-SUPPORTED_LOCALES = (ENGLISH_LOCALE, RUSSIAN_LOCALE)
-_LOCALES_BY_CODE = {locale.code: locale for locale in SUPPORTED_LOCALES}
+SUPPORTED_UI_LOCALES = (ENGLISH_LOCALE, RUSSIAN_LOCALE)
+SUPPORTED_GAME_LOCALES = (ENGLISH_LOCALE, RUSSIAN_LOCALE)
+# Backwards-compatible union for callers that only need locale lookup. Keeping
+# the two capability lists separate lets a future game-language export ship
+# without implying that Grim Gleaner's entire interface is translated too.
+SUPPORTED_LOCALES = tuple(
+    dict.fromkeys((*SUPPORTED_UI_LOCALES, *SUPPORTED_GAME_LOCALES))
+)
+
+
+def _locale_for_code(
+    code: str,
+    supported: tuple[LocaleSpec, ...],
+    *,
+    capability: str,
+) -> LocaleSpec:
+    normalized = str(code).strip().casefold()
+    locales_by_code = {locale.code: locale for locale in supported}
+    if normalized in locales_by_code:
+        return locales_by_code[normalized]
+    choices = ", ".join(locale.code for locale in supported)
+    raise ValueError(
+        f"Unsupported locale {code!r} for {capability}; expected one of: {choices}"
+    )
 
 
 def locale_for_code(code: str) -> LocaleSpec:
-    """Return a supported locale after normalizing a user-supplied code."""
+    """Return any supported locale after normalizing a user-supplied code."""
 
-    normalized = str(code).strip().casefold()
-    try:
-        return _LOCALES_BY_CODE[normalized]
-    except KeyError as error:
-        supported = ", ".join(locale.code for locale in SUPPORTED_LOCALES)
-        raise ValueError(
-            f"Unsupported locale {code!r}; expected one of: {supported}"
-        ) from error
+    return _locale_for_code(code, SUPPORTED_LOCALES, capability="application")
+
+
+def ui_locale_for_code(code: str) -> LocaleSpec:
+    """Return a locale with translated Grim Gleaner interface resources."""
+
+    return _locale_for_code(code, SUPPORTED_UI_LOCALES, capability="interface")
+
+
+def game_locale_for_code(code: str) -> LocaleSpec:
+    """Return a locale supported by game-data extraction and grade export."""
+
+    return _locale_for_code(code, SUPPORTED_GAME_LOCALES, capability="game")

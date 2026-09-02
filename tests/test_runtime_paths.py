@@ -67,7 +67,9 @@ def test_russian_runtime_paths_use_locale_specific_resources(tmp_path: Path) -> 
     assert development.staging_output_root == (
         tmp_path.resolve() / "artifacts" / "generated" / "text_ru"
     )
-    assert release.tags_root == (tmp_path / "release" / "tags" / "ru").resolve()
+    assert release.tags_root == (
+        tmp_path / "release" / "prepared-tags" / "ru"
+    ).resolve()
     assert release.staging_output_root == (
         tmp_path / "release" / "staging" / "text_ru"
     ).resolve()

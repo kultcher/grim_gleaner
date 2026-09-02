@@ -100,6 +100,14 @@ def prepare_game_item_tags(
     # move only the five validated outputs to the requested destination.
     temporary = Path(tempfile.mkdtemp(prefix="gg-localization-"))
     try:
+        staged_archives: dict[Path, Path] = {}
+        for index, archive in enumerate(dict.fromkeys(archives.values())):
+            archive_stage = temporary / "archives" / str(index)
+            archive_stage.mkdir(parents=True)
+            staged_archive = archive_stage / archive.name
+            shutil.copy2(archive, staged_archive)
+            staged_archives[archive] = staged_archive
+
         extracted = temporary / "extracted"
         extracted.mkdir()
         diagnostics: list[str] = []
@@ -109,7 +117,7 @@ def prepare_game_item_tags(
                 completed = subprocess.run(
                     [
                         str(archive_tool),
-                        str(archives[filename]),
+                        str(staged_archives[archives[filename]]),
                         "-extract",
                         str(extracted),
                         source.path_in_archive,

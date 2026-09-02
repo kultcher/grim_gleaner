@@ -15,7 +15,12 @@ from PySide6.QtWidgets import (
 )
 
 from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
-from gd_affix_relevance.domain import ENGLISH_LOCALE, BuildProfile, LocaleSpec
+from gd_affix_relevance.domain import (
+    ENGLISH_LOCALE,
+    BuildProfile,
+    LocaleSpec,
+    game_locale_for_code,
+)
 from gd_affix_relevance.game_localization import prepare_game_item_tags
 from gd_affix_relevance.grade_export import (
     GradeExportResult,
@@ -27,7 +32,10 @@ from gd_affix_relevance.grade_export import (
     restore_game_backup,
 )
 from gd_affix_relevance.output import build_affix_markers, build_unique_item_markers
-from gd_affix_relevance.runtime_paths import ITEM_TAG_FILENAMES
+from gd_affix_relevance.runtime_paths import (
+    ITEM_TAG_FILENAMES,
+    resolve_export_sources,
+)
 from gd_affix_relevance.ui.i18n import t
 from gd_affix_relevance.ui.settings import (
     GAME_FOLDER_SETTING,
@@ -35,6 +43,7 @@ from gd_affix_relevance.ui.settings import (
 )
 
 LAST_EXPORTED_PROFILE_SETTING = "export/last_profile_name"
+LAST_EXPORTED_LOCALE_SETTING = "export/last_locale"
 
 
 class GenerateOutputPage(QWidget):
@@ -206,22 +215,32 @@ class GenerateOutputPage(QWidget):
             )
         )
         exported_name = self.profile.name.strip() or t("export.unnamed_profile")
-        self.last_exported_profile.setText(exported_name)
+        self.last_exported_profile.setText(
+            self._format_last_export(exported_name, self.locale)
+        )
         if self.settings is not None:
             self.settings.setValue(LAST_EXPORTED_PROFILE_SETTING, exported_name)
+            self.settings.setValue(LAST_EXPORTED_LOCALE_SETTING, self.locale.code)
             self.settings.sync()
         self.refresh_game_location(update_status=False)
 
     def _prepare_missing_localization(self, game_folder: Path) -> None:
         """Extract the selected language on demand before its first export."""
 
-        if all(
-            any(
-                path.is_file()
-                for path in self.bundled_source_root.rglob(filename)
+        selection = resolve_export_sources(
+            None,
+            self.bundled_source_root,
+            locale=self.locale,
+        )
+        expected_files = (
+            tuple(source for source, _destination in selection.primary_files)
+            if selection.primary_files is not None
+            else tuple(
+                self.bundled_source_root / filename
+                for filename in ITEM_TAG_FILENAMES
             )
-            for filename in ITEM_TAG_FILENAMES
-        ):
+        )
+        if all(path.is_file() for path in expected_files):
             return
         prepare_game_item_tags(
             game_folder,
@@ -357,8 +376,24 @@ class GenerateOutputPage(QWidget):
         none_label = t("export.none")
         if self.settings is None:
             return none_label
-        return self.settings.value(
+        profile_name = self.settings.value(
             LAST_EXPORTED_PROFILE_SETTING,
             none_label,
             type=str,
         )
+        if profile_name == none_label:
+            return none_label
+        locale_code = self.settings.value(
+            LAST_EXPORTED_LOCALE_SETTING,
+            ENGLISH_LOCALE.code,
+            type=str,
+        )
+        try:
+            locale = game_locale_for_code(locale_code)
+        except ValueError:
+            locale = ENGLISH_LOCALE
+        return self._format_last_export(profile_name, locale)
+
+    @staticmethod
+    def _format_last_export(profile_name: str, locale: LocaleSpec) -> str:
+        return f"{profile_name} ({locale.display_name})"

@@ -20,9 +20,11 @@ from PySide6.QtWidgets import (
 
 from gd_affix_relevance.domain import (
     ENGLISH_LOCALE,
-    SUPPORTED_LOCALES,
+    SUPPORTED_GAME_LOCALES,
+    SUPPORTED_UI_LOCALES,
     LocaleSpec,
-    locale_for_code,
+    game_locale_for_code,
+    ui_locale_for_code,
 )
 from gd_affix_relevance.game_localization import prepare_game_item_tags
 from gd_affix_relevance.grade_export import (
@@ -93,7 +95,7 @@ class SettingsPage(QWidget):
         form.addRow(t("settings.game_folder_row"), path_row)
 
         self.ui_locale_combo = QComboBox(self)
-        for locale in SUPPORTED_LOCALES:
+        for locale in SUPPORTED_UI_LOCALES:
             self.ui_locale_combo.addItem(locale.display_name, locale.code)
         saved_ui_locale = self._saved_ui_locale()
         self.ui_locale_combo.setCurrentIndex(
@@ -103,7 +105,7 @@ class SettingsPage(QWidget):
         form.addRow(t("settings.ui_locale_row"), self.ui_locale_combo)
 
         self.game_locale_combo = QComboBox(self)
-        for locale in SUPPORTED_LOCALES:
+        for locale in SUPPORTED_GAME_LOCALES:
             self.game_locale_combo.addItem(locale.display_name, locale.code)
         saved_locale = self._saved_game_locale()
         self.game_locale_combo.setCurrentIndex(
@@ -187,12 +189,12 @@ class SettingsPage(QWidget):
             type=str,
         )
         try:
-            return locale_for_code(code)
+            return game_locale_for_code(code)
         except ValueError:
             return ENGLISH_LOCALE
 
     def selected_game_locale(self) -> LocaleSpec:
-        return locale_for_code(self.game_locale_combo.currentData())
+        return game_locale_for_code(self.game_locale_combo.currentData())
 
     def _saved_localization_location(self) -> str:
         if self.settings is None:
@@ -235,12 +237,12 @@ class SettingsPage(QWidget):
             type=str,
         )
         try:
-            return locale_for_code(code)
+            return ui_locale_for_code(code)
         except ValueError:
             return ENGLISH_LOCALE
 
     def selected_ui_locale(self) -> LocaleSpec:
-        return locale_for_code(self.ui_locale_combo.currentData())
+        return ui_locale_for_code(self.ui_locale_combo.currentData())
 
     def _save_ui_locale(self, _index: int = -1) -> None:
         locale = self.selected_ui_locale()
@@ -251,13 +253,6 @@ class SettingsPage(QWidget):
             t("settings.ui_locale_restart_notice", locale=locale.display_name)
         )
         self.ui_locale_changed.emit(locale.code)
-        # Convenience default: choosing a UI language also points the Grim
-        # Dawn item language at the same locale, since that is what most
-        # users mean by "switch to Russian". The two settings stay stored
-        # and editable independently; this only nudges the second combo.
-        game_index = self.game_locale_combo.findData(locale.code)
-        if game_index >= 0 and self.game_locale_combo.currentIndex() != game_index:
-            self.game_locale_combo.setCurrentIndex(game_index)
 
     def _prepare_game_localization(self) -> None:
         try:

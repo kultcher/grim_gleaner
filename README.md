@@ -53,9 +53,8 @@ settings, so either can remain in English if preferred.
 1. Close Grim Dawn before preparing files or exporting grades.
 2. In **Settings**, set **Interface language** to **Русский**. Restart Grim
    Gleaner to apply the translated interface.
-3. Set **Grim Dawn item language** to **Русский**. Selecting Russian for the
-   interface also selects Russian item names by default, but the item language
-   can be changed independently.
+3. Set **Grim Dawn item language** to **Русский**. Interface and item languages
+   are independent settings and both default to English on a fresh install.
 4. Confirm that the selected game folder contains `Grim Dawn.exe`.
 5. Create or load a profile, then open **Export Grades** and export it. Before
    the first Russian export, Grim Gleaner automatically reads the required item
@@ -73,8 +72,9 @@ refreshing so the catalog reloads the updated item names.
 Rainbow Filter and gdse are optional. If matching localization files are
 already installed, Grim Gleaner preserves their colors and text and adds grade
 markers on top. Clean item tags extracted from the user's own Grim Dawn
-installation fill any missing files. Grim Gleaner does not distribute extracted
-game localization.
+installation fill any missing non-English files; the release includes a clean
+English fallback. Grim Gleaner does not distribute extracted non-English game
+localization.
 
 The first export for each language preserves its original state in the
 `backups` folder beside the packaged application. Later exports do not overwrite

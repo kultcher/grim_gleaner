@@ -112,8 +112,11 @@ def test_export_page_installs_grades_and_restores_original(
     ).read_text(encoding="utf-8")
     assert page.restore_button.isEnabled()
     assert "Created the original-state backup" in page.status.text()
-    assert page.last_exported_profile.text() == "Health"
+    assert page.last_exported_profile.text() == "Health (English)"
     assert page.settings.value("export/last_profile_name") == "Health"
+    assert page.settings.value("export/last_locale") == "en"
+    reopened = _page(tmp_path, game, bundled)
+    assert reopened.last_exported_profile.text() == "Health (English)"
 
     page.restore_backup()
 
@@ -353,6 +356,37 @@ def test_export_page_prepares_missing_selected_language_automatically(
 
     assert prepared == [(game, bundled, "ru")]
     assert page.last_result is not None
+    assert page.last_exported_profile.text().endswith(
+        f"({RUSSIAN_LOCALE.display_name})"
+    )
     assert "(C1)Здоровый" in (
         game / "settings" / "text_ru" / "tags_items.txt"
     ).read_text(encoding="utf-8-sig")
+
+
+def test_nested_other_locale_files_do_not_satisfy_selected_locale(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    _application()
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    source_root = tmp_path / "app" / "tags"
+    nested_other_locale = source_root / "ru"
+    nested_other_locale.mkdir(parents=True)
+    _complete_bundled_tags(nested_other_locale)
+    page = _page(tmp_path, game, source_root)
+    prepared: list[tuple[Path, Path, str]] = []
+
+    def prepare(game_folder, destination_root, *, locale):
+        prepared.append((game_folder, destination_root, locale.code))
+
+    monkeypatch.setattr(
+        "gd_affix_relevance.ui.generate_output.prepare_game_item_tags",
+        prepare,
+    )
+
+    page._prepare_missing_localization(game)
+
+    assert prepared == [(game, source_root, "en")]

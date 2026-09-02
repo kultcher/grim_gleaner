@@ -34,10 +34,15 @@ def test_ui_locale_and_game_locale_are_stored_under_separate_keys(
     )
 
     assert settings.value(UI_LOCALE_SETTING) == "ru"
+    assert settings.value(GAME_LOCALE_SETTING) is None
+    assert page.selected_game_locale() is ENGLISH_LOCALE
+
+    # Changing the game-language combo must not move ui_locale.
+    page.game_locale_combo.setCurrentIndex(
+        page.game_locale_combo.findData(RUSSIAN_LOCALE.code)
+    )
     assert settings.value(GAME_LOCALE_SETTING) == "ru"
-    # Changing the game-language combo afterward must not move ui_locale:
-    # the two settings are independently editable, only linked by the
-    # convenience default applied when ui_locale changes.
+    assert settings.value(UI_LOCALE_SETTING) == "ru"
     page.game_locale_combo.setCurrentIndex(
         page.game_locale_combo.findData(ENGLISH_LOCALE.code)
     )
@@ -45,7 +50,7 @@ def test_ui_locale_and_game_locale_are_stored_under_separate_keys(
     assert settings.value(UI_LOCALE_SETTING) == "ru"
 
 
-def test_selecting_russian_ui_locale_cascades_game_locale_by_default(
+def test_selecting_russian_ui_locale_does_not_change_game_locale(
     tmp_path: Path,
 ) -> None:
     _application()
@@ -58,7 +63,7 @@ def test_selecting_russian_ui_locale_cascades_game_locale_by_default(
     )
 
     assert page.selected_ui_locale() is RUSSIAN_LOCALE
-    assert page.selected_game_locale() is RUSSIAN_LOCALE
+    assert page.selected_game_locale() is ENGLISH_LOCALE
     assert "restart" in page.ui_locale_status.text().casefold()
 
 

@@ -71,9 +71,9 @@ def assemble_release(
 
     Only paths listed in ``MANAGED_RELEASE_PATHS`` are replaced. In particular,
     a previously built executable, dependency directory, staging output, and
-    user backups are left untouched. Only the authored English/Russian UI
-    resource files are bundled here; official Grim Dawn game text is never
-    included because it must be obtained from the user's installed game.
+    user backups are left untouched. The authored English/Russian UI resources
+    and clean English fallback item tags are bundled here. Prepared non-English
+    item tags must be obtained from the user's installed game.
     """
 
     project = Path(project_root).expanduser().resolve()

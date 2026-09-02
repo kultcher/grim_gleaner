@@ -217,7 +217,7 @@ def resolve_runtime_paths(
             tags_root=(
                 root / "tags"
                 if locale.code == ENGLISH_LOCALE.code
-                else root / "tags" / locale.code
+                else root / "prepared-tags" / locale.code
             ),
             staging_output_root=root / "staging" / locale.game_text_directory,
             backups_root=root / "backups",

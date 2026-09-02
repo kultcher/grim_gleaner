@@ -27,7 +27,7 @@ from gd_affix_relevance.catalog import (
     load_catalog_locale_overlay,
     localize_catalog_bundle,
 )
-from gd_affix_relevance.domain import BuildProfile, locale_for_code
+from gd_affix_relevance.domain import BuildProfile, game_locale_for_code
 from gd_affix_relevance.profile_store import load_profile
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
             )
             try:
                 self.runtime_paths = self.runtime_paths.for_locale(
-                    locale_for_code(locale_code)
+                    game_locale_for_code(locale_code)
                 )
             except ValueError:
                 self.settings.remove(GAME_LOCALE_SETTING)
@@ -373,7 +373,7 @@ class MainWindow(QMainWindow):
         self._update_game_location_state()
 
     def _game_locale_changed(self, locale_code: str) -> None:
-        locale = locale_for_code(locale_code)
+        locale = game_locale_for_code(locale_code)
         self.runtime_paths = self.runtime_paths.for_locale(locale)
         self.generate_output_page.set_locale(
             locale,

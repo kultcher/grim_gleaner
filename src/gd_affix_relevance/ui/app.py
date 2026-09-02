@@ -10,7 +10,11 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtWidgets import QApplication
 
-from gd_affix_relevance.domain import ENGLISH_LOCALE, LocaleSpec, locale_for_code
+from gd_affix_relevance.domain import (
+    ENGLISH_LOCALE,
+    LocaleSpec,
+    ui_locale_for_code,
+)
 from gd_affix_relevance.grade_export import detect_grim_dawn_user_settings_root
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
 from gd_affix_relevance.ui import i18n
@@ -91,7 +95,7 @@ def _resolve_ui_locale(settings: QSettings) -> LocaleSpec:
 
     code = settings.value(UI_LOCALE_SETTING, ENGLISH_LOCALE.code, type=str)
     try:
-        return locale_for_code(code)
+        return ui_locale_for_code(code)
     except ValueError:
         return ENGLISH_LOCALE
 
