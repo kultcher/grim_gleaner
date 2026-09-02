@@ -118,7 +118,17 @@ def _write_tag_sources(data_root: Path, *, value: str = "Value") -> None:
     for filename, relative_path in TAG_SOURCES.items():
         path = data_root / relative_path
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(f"tag{filename}={value}\n", encoding="utf-8")
+        path.write_text(f"tag{path.parent.parent.name}={value}\n", encoding="utf-8")
+
+
+def _write_i18n_resources(root: Path) -> None:
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "en.json").write_text(
+        json.dumps({"nav.settings": "Settings"}), encoding="utf-8"
+    )
+    (root / "ru.json").write_text(
+        json.dumps({"nav.settings": "Настройки"}), encoding="utf-8"
+    )
 
 
 def _write_example_profiles(root: Path) -> None:
@@ -153,6 +163,7 @@ def _project_fixture(tmp_path: Path) -> tuple[Path, Path]:
     _write_minimal_catalog(project / "artifacts" / "catalog")
     _write_example_profiles(project / "artifacts" / "profiles" / "examples")
     _write_tag_sources(project / "game_data")
+    _write_i18n_resources(project / "resources" / "i18n")
     output = project / "dist" / "Grim Gleaner"
     output.mkdir(parents=True)
     return project, output
@@ -176,10 +187,15 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
     assert result.catalog_files == 11
     assert result.tag_files == 5
     assert result.tag_entries == 5
+    assert result.i18n_files == 2
     assert result.example_profiles == 1
     assert (output / "catalog" / "manifest.json").is_file()
     assert (output / "tags" / "tagsgdx3_items.txt").is_file()
     assert (output / "tags" / "tagsgdx2_endlessdungeon.txt").is_file()
+    assert (output / "resources" / "i18n" / "en.json").is_file()
+    assert (output / "resources" / "i18n" / "ru.json").read_text(
+        encoding="utf-8"
+    ) == json.dumps({"nav.settings": "Настройки"})
     assert (output / "README.txt").read_text(encoding="utf-8") == "# Test release\n"
     assert (output / "LICENSE.txt").read_text(encoding="utf-8") == "Test license\n"
     assert (output / "THIRD_PARTY_NOTICES.txt").read_text(
@@ -205,6 +221,9 @@ def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
     assemble_release(project)
     (output / "catalog" / "stale.json").write_text("stale", encoding="utf-8")
     (output / "tags" / "stale.txt").write_text("stale", encoding="utf-8")
+    (output / "resources" / "i18n" / "stale.json").write_text(
+        "stale", encoding="utf-8"
+    )
     (output / "Profiles" / "examples" / "stale.json").write_text(
         "stale", encoding="utf-8"
     )
@@ -216,6 +235,7 @@ def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
 
     assert not (output / "catalog" / "stale.json").exists()
     assert not (output / "tags" / "stale.txt").exists()
+    assert not (output / "resources" / "i18n" / "stale.json").exists()
     assert not (output / "Profiles" / "examples" / "stale.json").exists()
     assert "Updated" in (output / "tags" / "tags_items.txt").read_text(
         encoding="utf-8"
@@ -231,6 +251,21 @@ def test_validation_failure_leaves_existing_release_untouched(tmp_path: Path) ->
     (project / "game_data" / "gdx3" / "text_en" / "tagsgdx3_items.txt").unlink()
 
     with pytest.raises(FileNotFoundError, match="tagsgdx3_items.txt"):
+        assemble_release(project)
+
+    assert sentinel.read_text(encoding="utf-8") == "keep"
+
+
+def test_missing_i18n_resource_leaves_existing_release_untouched(
+    tmp_path: Path,
+) -> None:
+    project, output = _project_fixture(tmp_path)
+    sentinel = output / "resources" / "i18n" / "existing.json"
+    sentinel.parent.mkdir(parents=True)
+    sentinel.write_text("keep", encoding="utf-8")
+    (project / "resources" / "i18n" / "ru.json").unlink()
+
+    with pytest.raises(FileNotFoundError, match="ru.json"):
         assemble_release(project)
 
     assert sentinel.read_text(encoding="utf-8") == "keep"

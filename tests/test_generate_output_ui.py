@@ -12,10 +12,9 @@ from gd_affix_relevance.catalog import (
     AffixProperty,
     AffixVariantDefinition,
 )
-from gd_affix_relevance.domain import BuildProfile
-from gd_affix_relevance.grade_export import (
-    LOCALIZATION_LOCATION_INSTALLATION,
-)
+from gd_affix_relevance.domain import BuildProfile, RUSSIAN_LOCALE
+from gd_affix_relevance.grade_export import LOCALIZATION_LOCATION_INSTALLATION
+from gd_affix_relevance.runtime_paths import ITEM_TAG_FILENAMES
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.settings import LOCALIZATION_LOCATION_SETTING
 
@@ -45,6 +44,13 @@ def _catalog() -> AffixCatalog:
             ),
         )
     )
+
+
+def _complete_bundled_tags(root: Path, *, encoding: str = "utf-8") -> None:
+    for index, filename in enumerate(ITEM_TAG_FILENAMES):
+        path = root / filename
+        if not path.is_file():
+            path.write_text(f"tagUnused{index}=Unused\n", encoding=encoding)
 
 
 def _page(
@@ -80,6 +86,7 @@ def test_export_page_installs_grades_and_restores_original(
         "tagHealthy=Bundled Healthy\n",
         encoding="utf-8",
     )
+    _complete_bundled_tags(bundled)
     game = tmp_path / "Grim Dawn"
     installed = game / "settings" / "text_en"
     installed.mkdir(parents=True)
@@ -110,9 +117,7 @@ def test_export_page_installs_grades_and_restores_original(
 
     page.restore_backup()
 
-    assert questions[1].startswith(
-        f"Restoring {installed} to its original state."
-    )
+    assert questions[1].startswith(f"Restoring {installed} to its original state.")
     assert (installed / "tags_items.txt").read_text(encoding="utf-8") == original
     assert not page.restore_button.isEnabled()
 
@@ -128,6 +133,7 @@ def test_export_page_uses_bundled_tags_for_clean_install(
         "tagHealthy=Bundled Healthy\n",
         encoding="utf-8",
     )
+    _complete_bundled_tags(bundled)
     game = tmp_path / "Grim Dawn"
     game.mkdir()
     (game / "Grim Dawn.exe").touch()
@@ -151,26 +157,18 @@ def test_export_page_uses_bundled_tags_for_clean_install(
     assert "clean-install state" in page.status.text()
 
 
-def test_export_page_displays_and_uses_existing_user_localization(
-    tmp_path: Path,
-) -> None:
+def test_export_page_displays_existing_user_localization(tmp_path: Path) -> None:
     _application()
     bundled = tmp_path / "app" / "tags"
     bundled.mkdir(parents=True)
-    (bundled / "tags_items.txt").write_text(
-        "tagHealthy=Bundled Healthy\n",
-        encoding="utf-8",
-    )
+    (bundled / "tags_items.txt").write_text("tagHealthy=Bundled\n", encoding="utf-8")
     game = tmp_path / "Grim Dawn"
     game.mkdir()
     (game / "Grim Dawn.exe").touch()
     user_settings = tmp_path / "Documents" / "My Games" / "Grim Dawn" / "Settings"
     user_text = user_settings / "text_en"
     user_text.mkdir(parents=True)
-    (user_text / "tags_items.txt").write_text(
-        "tagHealthy={^G}User Healthy\n",
-        encoding="utf-8",
-    )
+    (user_text / "tags_items.txt").write_text("tagHealthy=User\n", encoding="utf-8")
 
     page = _page(
         tmp_path,
@@ -188,25 +186,16 @@ def test_export_page_requires_saved_choice_when_both_locations_have_files(
     _application()
     bundled = tmp_path / "app" / "tags"
     bundled.mkdir(parents=True)
-    (bundled / "tags_items.txt").write_text(
-        "tagHealthy=Bundled Healthy\n",
-        encoding="utf-8",
-    )
+    (bundled / "tags_items.txt").write_text("tagHealthy=Bundled\n", encoding="utf-8")
     game = tmp_path / "Grim Dawn"
     install_text = game / "settings" / "text_en"
     install_text.mkdir(parents=True)
     (game / "Grim Dawn.exe").touch()
-    (install_text / "tags_items.txt").write_text(
-        "tagHealthy=Install Healthy\n",
-        encoding="utf-8",
-    )
+    (install_text / "tags_items.txt").write_text("tagHealthy=Install\n", encoding="utf-8")
     user_settings = tmp_path / "Documents" / "My Games" / "Grim Dawn" / "Settings"
     user_text = user_settings / "text_en"
     user_text.mkdir(parents=True)
-    (user_text / "tags_items.txt").write_text(
-        "tagHealthy=User Healthy\n",
-        encoding="utf-8",
-    )
+    (user_text / "tags_items.txt").write_text("tagHealthy=User\n", encoding="utf-8")
     page = _page(
         tmp_path,
         game,
@@ -265,3 +254,105 @@ def test_export_page_rejects_existing_folder_without_executable(
 
     assert page.generate_button.isEnabled()
     assert str(game / "settings" / "text_en") in page.target_label.text()
+
+
+def test_export_page_can_target_russian_localization(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    _application()
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    bundled = tmp_path / "tags" / "ru"
+    bundled.mkdir(parents=True)
+    (bundled / "tags_items.txt").write_text(
+        "tagHealthy=Здоровый\n",
+        encoding="utf-8-sig",
+    )
+    _complete_bundled_tags(bundled, encoding="utf-8-sig")
+    settings = QSettings(
+        str(tmp_path / "settings.ini"),
+        QSettings.Format.IniFormat,
+    )
+    settings.setValue("paths/grim_dawn_folder", str(game))
+    page = GenerateOutputPage(
+        _catalog(),
+        BuildProfile("Здоровье", {"health": 4}),
+        source_root=bundled,
+        output_root=tmp_path / "staging" / "text_ru",
+        backups_root=tmp_path / "backups",
+        locale=RUSSIAN_LOCALE,
+        settings=settings,
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *_args: QMessageBox.StandardButton.Yes,
+    )
+
+    page.generate()
+
+    target = game / "settings" / "text_ru"
+    assert target.is_dir()
+    assert "text_ru" in page.target_label.text()
+    assert not (game / "settings" / "text_en").exists()
+
+
+def test_export_page_prepares_missing_selected_language_automatically(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    _application()
+    game = tmp_path / "Grim Dawn"
+    game.mkdir()
+    (game / "Grim Dawn.exe").touch()
+    bundled = tmp_path / "tags" / "ru"
+    settings = QSettings(
+        str(tmp_path / "settings.ini"),
+        QSettings.Format.IniFormat,
+    )
+    settings.setValue("paths/grim_dawn_folder", str(game))
+    page = GenerateOutputPage(
+        _catalog(),
+        BuildProfile("Здоровье", {"health": 4}),
+        source_root=bundled,
+        output_root=tmp_path / "staging" / "text_ru",
+        backups_root=tmp_path / "backups",
+        locale=RUSSIAN_LOCALE,
+        settings=settings,
+    )
+    prepared: list[tuple[Path, Path, str]] = []
+
+    def prepare(game_folder, destination_root, *, locale):
+        prepared.append((game_folder, destination_root, locale.code))
+        destination_root.mkdir(parents=True)
+        for filename in (
+            "tags_items.txt",
+            "tagsgdx1_items.txt",
+            "tagsgdx2_items.txt",
+            "tagsgdx2_endlessdungeon.txt",
+            "tagsgdx3_items.txt",
+        ):
+            (destination_root / filename).write_text(
+                "tagHealthy=Здоровый\n",
+                encoding="utf-8-sig",
+            )
+
+    monkeypatch.setattr(
+        "gd_affix_relevance.ui.generate_output.prepare_game_item_tags",
+        prepare,
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *_args: QMessageBox.StandardButton.Yes,
+    )
+
+    page.generate()
+
+    assert prepared == [(game, bundled, "ru")]
+    assert page.last_result is not None
+    assert "(C1)Здоровый" in (
+        game / "settings" / "text_ru" / "tags_items.txt"
+    ).read_text(encoding="utf-8-sig")

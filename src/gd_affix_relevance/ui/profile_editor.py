@@ -25,6 +25,7 @@ from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.level_bands import LEVEL_BANDS
 from gd_affix_relevance.profile_store import load_profile, save_profile
 from gd_affix_relevance.ui.catalog import PROFILE_TABS, TabDefinition
+from gd_affix_relevance.ui.i18n import t
 from gd_affix_relevance.ui.widgets import PackageAccordion
 from gd_affix_relevance.ui.skills_editor import SkillsEditor
 
@@ -62,47 +63,44 @@ class ProfileEditor(QWidget):
         layout.setSpacing(14)
 
         heading_row = QHBoxLayout()
-        heading = QLabel("Build Profile", self)
+        heading = QLabel(t("profile.title"), self)
         heading.setObjectName("pageTitle")
         heading_row.addWidget(heading)
         heading_row.addStretch()
-        legend = QLabel(
-            "☆ Ignored   ★ Incidental   ★★ Useful   ★★★ Emphasized   ★★★★ Core",
-            self,
-        )
+        legend = QLabel(t("profile.weight_legend"), self)
         legend.setObjectName("weightLegend")
         heading_row.addWidget(legend)
         layout.addLayout(heading_row)
 
         name_row = QHBoxLayout()
-        name_label = QLabel("Profile name", self)
+        name_label = QLabel(t("profile.name_label"), self)
         name_label.setObjectName("fieldLabel")
         name_row.addWidget(name_label)
         self.name_edit = QLineEdit(self.profile.name, self)
         self.name_edit.setObjectName("profileName")
         self.name_edit.textChanged.connect(self._name_changed)
         name_row.addWidget(self.name_edit, 1)
-        self.new_button = QPushButton("New Profile", self)
+        self.new_button = QPushButton(t("profile.new_button"), self)
         self.new_button.setObjectName("profileAction")
-        self.new_button.setToolTip("Start a blank build profile")
+        self.new_button.setToolTip(t("profile.new_button_tooltip"))
         self.new_button.clicked.connect(self.new_profile)
         name_row.addWidget(self.new_button)
-        self.load_button = QPushButton("Load...", self)
+        self.load_button = QPushButton(t("profile.load_button"), self)
         self.load_button.setObjectName("profileAction")
-        self.load_button.setToolTip("Load build profile from a JSON file")
+        self.load_button.setToolTip(t("profile.load_button_tooltip"))
         self.load_button.clicked.connect(self._choose_profile_to_load)
         name_row.addWidget(self.load_button)
-        self.save_button = QPushButton("Save...", self)
+        self.save_button = QPushButton(t("profile.save_button"), self)
         self.save_button.setObjectName("profileAction")
-        self.save_button.setToolTip("Save build profile to a JSON file")
+        self.save_button.setToolTip(t("profile.save_button_tooltip"))
         self.save_button.clicked.connect(self._choose_profile_to_save)
         name_row.addWidget(self.save_button)
         layout.addLayout(name_row)
 
         initial_status = (
-            f"Loaded: {self.current_profile_path.name}"
+            t("profile.loaded_status", name=self.current_profile_path.name)
             if self.current_profile_path is not None
-            else startup_notice or "Not saved"
+            else startup_notice or t("profile.not_saved")
         )
         self.file_status = QLabel(initial_status, self)
         self.file_status.setObjectName("profileFileStatus")
@@ -111,14 +109,12 @@ class ProfileEditor(QWidget):
         layout.addWidget(self.file_status)
 
         level_row = QHBoxLayout()
-        level_label = QLabel("Profile level", self)
+        level_label = QLabel(t("profile.level_label"), self)
         level_label.setObjectName("fieldLabel")
         level_row.addWidget(level_label)
         self.level_band_combo = QComboBox(self)
         self.level_band_combo.setObjectName("profileLevelBand")
-        self.level_band_combo.setToolTip(
-            "The character level range used when exporting grades"
-        )
+        self.level_band_combo.setToolTip(t("profile.level_tooltip"))
         for band in LEVEL_BANDS:
             self.level_band_combo.addItem(band.display_label, band.band_id)
         selected_level = self.level_band_combo.findData(
@@ -130,7 +126,7 @@ class ProfileEditor(QWidget):
         )
         level_row.addWidget(self.level_band_combo)
         level_row.addStretch(1)
-        self.view_matches_button = QPushButton("View Matches", self)
+        self.view_matches_button = QPushButton(t("profile.view_matches"), self)
         self.view_matches_button.setObjectName("primaryAction")
         self.view_matches_button.clicked.connect(self.view_matches_requested)
         level_row.addWidget(self.view_matches_button)
@@ -139,12 +135,15 @@ class ProfileEditor(QWidget):
         self.tabs = QTabWidget(self)
         self.tabs.setObjectName("profileTabs")
         for definition in PROFILE_TABS:
-            self.tabs.addTab(self._build_tab(definition), definition.label)
+            self.tabs.addTab(
+                self._build_tab(definition),
+                t(f"tab.{definition.tab_id}", default=definition.label),
+            )
         self.skills_editor = SkillsEditor(
             self.profile, skills or SkillCatalog(()), self
         )
         self.skills_editor.changed.connect(self._skills_changed)
-        self.tabs.addTab(self.skills_editor, "Skills")
+        self.tabs.addTab(self.skills_editor, t("profile.skills_tab"))
         layout.addWidget(self.tabs, 1)
 
     def _build_tab(self, definition: TabDefinition) -> QScrollArea:
@@ -212,7 +211,7 @@ class ProfileEditor(QWidget):
         destination = save_profile(self.profile, path)
         self.current_profile_path = destination
         self.is_dirty = False
-        self.file_status.setText(f"Saved: {destination.name}")
+        self.file_status.setText(t("profile.saved_status", name=destination.name))
         self.file_status.setToolTip(str(destination))
         self.profile_path_changed.emit(destination)
         return destination
@@ -255,7 +254,9 @@ class ProfileEditor(QWidget):
 
         self.current_profile_path = Path(path)
         self.is_dirty = False
-        self.file_status.setText(f"Loaded: {self.current_profile_path.name}")
+        self.file_status.setText(
+            t("profile.loaded_status", name=self.current_profile_path.name)
+        )
         self.file_status.setToolTip(str(self.current_profile_path))
         self.profile_path_changed.emit(self.current_profile_path)
         self.profile_metadata_changed.emit()
@@ -294,7 +295,7 @@ class ProfileEditor(QWidget):
         self.skills_editor.refresh_from_profile()
         self.current_profile_path = None
         self.is_dirty = False
-        self.file_status.setText("New profile — not saved")
+        self.file_status.setText(t("profile.new_profile_status"))
         self.file_status.setToolTip("")
         self.profile_path_changed.emit(None)
         self.profile_metadata_changed.emit()
@@ -314,19 +315,15 @@ class ProfileEditor(QWidget):
         return True
 
     def _prompt_unsaved_action(self) -> QMessageBox.StandardButton:
-        return self._prompt_unsaved(
-            "Save changes to the current profile before starting a new one?",
-        )
+        return self._prompt_unsaved(t("profile.confirm_save_before_new"))
 
     def _prompt_exit_unsaved_action(self) -> QMessageBox.StandardButton:
-        return self._prompt_unsaved(
-            "Save changes to the current profile before exiting?"
-        )
+        return self._prompt_unsaved(t("profile.confirm_save_before_exit"))
 
     def _prompt_unsaved(self, message: str) -> QMessageBox.StandardButton:
         return QMessageBox.warning(
             self,
-            "Unsaved Profile",
+            t("profile.unsaved_title"),
             message,
             QMessageBox.StandardButton.Save
             | QMessageBox.StandardButton.Discard
@@ -340,7 +337,7 @@ class ProfileEditor(QWidget):
         try:
             self.save_to_path(self.current_profile_path)
         except (OSError, ValueError, TypeError) as error:
-            QMessageBox.critical(self, "Could Not Save Profile", str(error))
+            QMessageBox.critical(self, t("profile.save_error_title"), str(error))
             return False
         return True
 
@@ -352,16 +349,16 @@ class ProfileEditor(QWidget):
         )
         selected, _ = QFileDialog.getSaveFileName(
             self,
-            "Save Build Profile",
+            t("profile.save_dialog_title"),
             suggested,
-            "Grim Gleaner Profiles (*.json);;All Files (*)",
+            t("profile.file_filter"),
         )
         if not selected:
             return False
         try:
             self.save_to_path(Path(selected))
         except (OSError, ValueError, TypeError) as error:
-            QMessageBox.critical(self, "Could Not Save Profile", str(error))
+            QMessageBox.critical(self, t("profile.save_error_title"), str(error))
             return False
         return True
 
@@ -369,27 +366,30 @@ class ProfileEditor(QWidget):
         starting_path = str(self.current_profile_path or self.profiles_root)
         selected, _ = QFileDialog.getOpenFileName(
             self,
-            "Load Build Profile",
+            t("profile.load_dialog_title"),
             starting_path,
-            "Grim Gleaner Profiles (*.json);;All Files (*)",
+            t("profile.file_filter"),
         )
         if not selected:
             return False
         try:
             self.load_from_path(Path(selected))
         except (OSError, ValueError, TypeError) as error:
-            QMessageBox.critical(self, "Could Not Load Profile", str(error))
+            QMessageBox.critical(self, t("profile.load_error_title"), str(error))
             return False
         return True
 
     def _mark_unsaved(self) -> None:
         self.is_dirty = True
         if self.current_profile_path is None:
-            self.file_status.setText("Not saved")
+            self.file_status.setText(t("profile.not_saved"))
             self.file_status.setToolTip("")
         else:
             self.file_status.setText(
-                f"Unsaved changes: {self.current_profile_path.name}"
+                t(
+                    "profile.unsaved_changes_status",
+                    name=self.current_profile_path.name,
+                )
             )
             self.file_status.setToolTip(str(self.current_profile_path))
 

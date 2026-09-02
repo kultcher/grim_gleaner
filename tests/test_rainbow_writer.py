@@ -14,7 +14,7 @@ from gd_affix_relevance.catalog import (
     ItemSkillModifier,
     ItemVariantDefinition,
 )
-from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.domain import BuildProfile, RUSSIAN_LOCALE
 from gd_affix_relevance.output import (
     build_affix_markers,
     build_unique_item_markers,
@@ -230,6 +230,66 @@ def test_writer_replaces_its_marker_and_is_idempotent(tmp_path: Path) -> None:
     text = (second_output / "tags_items.txt").read_text(encoding="utf-8")
     assert "(C1)(S++1)" not in text
     assert "tagAffix={^C}(C1){^G}Affix Name" in text
+
+
+def test_russian_writer_places_markers_inside_gender_variants(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "text_ru"
+    source.mkdir()
+    (source / "tags_items.txt").write_text(
+        "tagPrefix=[ms]{^G}разлагающий[fs]{^G}разлагающая"
+        "[ns]{^G}разлагающее[np]{^G}разлагающие\n"
+        "tagSuffix={^G}звериной ярости\n"
+        "tagUnique=[ms]{^L}наградной клинок Салазара\n",
+        encoding="utf-8-sig",
+    )
+    catalog = AffixCatalog(
+        (
+            _affix("tagPrefix", "Разлагающий", _variant()),
+            _affix("tagSuffix", "Звериной ярости", _variant(), kind="suffix"),
+        )
+    )
+    items = ItemCatalog(
+        (_unique_item("tagUnique", "Наградной клинок", ()),),
+        (),
+        (),
+        (),
+        (),
+        (),
+    )
+    output = tmp_path / "generated"
+
+    first = generate_rainbow_output(
+        source,
+        output,
+        catalog,
+        BuildProfile(),
+        items=items,
+        locale=RUSSIAN_LOCALE,
+    )
+    second_output = tmp_path / "second"
+    second = generate_rainbow_output(
+        output,
+        second_output,
+        catalog,
+        BuildProfile(),
+        items=items,
+        locale=RUSSIAN_LOCALE,
+    )
+
+    text = (output / "tags_items.txt").read_text(encoding="utf-8-sig")
+    assert "tagPrefix=[ms]{^C}(F0){^G}разлагающий" in text
+    assert "[fs]{^C}(F0){^G}разлагающая" in text
+    assert "[ns]{^C}(F0){^G}разлагающее" in text
+    assert "[np]{^C}(F0){^G}разлагающие" in text
+    assert "tagSuffix={^G}звериной ярости{^C}(F0)" in text
+    assert "tagUnique=[ms]{^C}(F0){^L}наградной клинок Салазара" in text
+    assert first.annotated_lines == 3
+    assert second.annotated_lines == 0
+    assert (output / "tags_items.txt").read_bytes() == (
+        second_output / "tags_items.txt"
+    ).read_bytes()
 
 
 def test_writer_rejects_overlapping_source_and_output(tmp_path: Path) -> None:

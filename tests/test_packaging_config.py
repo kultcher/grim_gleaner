@@ -59,6 +59,8 @@ def test_packaging_script_validates_release_before_archiving() -> None:
     assert "assemble-release" in script
     assert '"tags\\tagsgdx2_endlessdungeon.txt"' in script
     assert "release-manifest.json" in script
+    assert "resources\\i18n\\en.json" in script
+    assert "resources\\i18n\\ru.json" in script
     assert "Compress-Archive -LiteralPath $releaseRoot" in script
     assert 'Join-Path $releaseRoot "*"' not in script
     assert "C:\\Users\\" not in script

@@ -10,9 +10,12 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtWidgets import QApplication
 
+from gd_affix_relevance.domain import ENGLISH_LOCALE, LocaleSpec, locale_for_code
 from gd_affix_relevance.grade_export import detect_grim_dawn_user_settings_root
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
+from gd_affix_relevance.ui import i18n
 from gd_affix_relevance.ui.main_window import MainWindow
+from gd_affix_relevance.ui.settings import UI_LOCALE_SETTING
 from gd_affix_relevance.ui.style import APP_STYLESHEET
 
 SETTINGS_ROOT_ENVIRONMENT_VARIABLE = "GRIM_GLEANER_SETTINGS_ROOT"
@@ -33,9 +36,12 @@ def create_application(argv: Sequence[str] | None = None) -> QApplication:
 
 def main(argv: Sequence[str] | None = None) -> int:
     application = create_application(argv)
+    settings = _application_settings()
+    runtime_paths = _entrypoint_runtime_paths()
+    i18n.configure(runtime_paths.i18n_root, _resolve_ui_locale(settings))
     window = MainWindow(
-        settings=_application_settings(),
-        runtime_paths=_entrypoint_runtime_paths(),
+        settings=settings,
+        runtime_paths=runtime_paths,
         user_settings_root=_user_settings_root(),
     )
     window.show()
@@ -46,13 +52,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 def _application_settings(
     environment: Mapping[str, str] | None = None,
 ) -> QSettings:
-    """Return normal settings or an isolated INI file for fresh-install tests.
-
-    ``GRIM_GLEANER_SETTINGS_ROOT`` lets a developer reproduce a first launch
-    without deleting or changing the real Grim Gleaner settings stored by Qt.
-    The override is intentionally environment-only and is not exposed in the
-    release UI.
-    """
+    """Return normal settings or an isolated INI file for install tests."""
 
     environment = os.environ if environment is None else environment
     configured_root = environment.get(
@@ -72,7 +72,7 @@ def _application_settings(
 def _user_settings_root(
     environment: Mapping[str, str] | None = None,
 ) -> Path | None:
-    """Resolve Documents normally, with a safe override for test sandboxes."""
+    """Resolve Documents normally, with an isolated test override."""
 
     environment = os.environ if environment is None else environment
     configured_root = environment.get(
@@ -80,6 +80,20 @@ def _user_settings_root(
     ).strip()
     documents_root = Path(configured_root) if configured_root else None
     return detect_grim_dawn_user_settings_root(documents_root)
+
+
+def _resolve_ui_locale(settings: QSettings) -> LocaleSpec:
+    """Read the persisted interface language, defaulting safely to English.
+
+    The UI locale is chosen once at startup (see ``ui.i18n``): changing it
+    later in Settings takes effect on the next launch, not live.
+    """
+
+    code = settings.value(UI_LOCALE_SETTING, ENGLISH_LOCALE.code, type=str)
+    try:
+        return locale_for_code(code)
+    except ValueError:
+        return ENGLISH_LOCALE
 
 
 def _entrypoint_runtime_paths(

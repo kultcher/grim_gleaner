@@ -8,6 +8,8 @@ from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from gd_affix_relevance.domain import ENGLISH_LOCALE, LocaleSpec
+
 APP_ROOT_ENVIRONMENT_VARIABLE = "GRIM_GLEANER_APP_ROOT"
 EXPORT_LOCALIZATION_SOURCES = {
     "tags_items.txt": Path("base/text_en/tags_items.txt"),
@@ -35,12 +37,31 @@ class RuntimePaths:
     staging_output_root: Path
     backups_root: Path
     profiles_root: Path
+    i18n_root: Path
+    locale: LocaleSpec = ENGLISH_LOCALE
 
     def as_dict(self) -> dict[str, str | None]:
-        return {
+        payload = {
             key: str(value) if value is not None else None
             for key, value in asdict(self).items()
         }
+        payload["locale"] = self.locale.code
+        return payload
+
+    def for_locale(self, locale: LocaleSpec) -> RuntimePaths:
+        """Resolve the same application layout for another locale."""
+
+        if self.mode == "release":
+            return resolve_runtime_paths(
+                application_root=self.application_root,
+                locale=locale,
+            )
+        return resolve_runtime_paths(
+            project_root=self.project_root,
+            frozen=False,
+            environment={},
+            locale=locale,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,6 +84,7 @@ def resolve_export_sources(
     game_folder: Path | None,
     bundled_tags_root: Path,
     *,
+    locale: LocaleSpec = ENGLISH_LOCALE,
     installed_text_root: Path | None = None,
 ) -> ExportSourceSelection:
     """Prefer installed item tags and use bundled tags for missing files.
@@ -75,19 +97,25 @@ def resolve_export_sources(
     """
 
     bundled = Path(bundled_tags_root).expanduser().resolve()
-    bundled_files = _development_source_files(bundled)
+    bundled_files = _development_source_files(bundled, locale=locale)
     game_text_root: Path | None = None
     game_files: tuple[str, ...] = ()
     if installed_text_root is not None:
         game_text_root = Path(installed_text_root).expanduser().resolve()
-        game_files = tuple(
-            filename
-            for filename in ITEM_TAG_FILENAMES
-            if (game_text_root / filename).is_file()
+        game_files = (
+            tuple(
+                path.relative_to(game_text_root).as_posix()
+                for path in sorted(game_text_root.rglob("*"))
+                if path.is_file()
+            )
+            if game_text_root.is_dir()
+            else ()
         )
     elif game_folder is not None and str(game_folder).strip():
         game_text_root = (
-            Path(game_folder).expanduser().resolve() / "settings" / "text_en"
+            Path(game_folder).expanduser().resolve()
+            / "settings"
+            / locale.game_text_directory
         )
         game_files = tuple(
             filename
@@ -111,15 +139,20 @@ def resolve_export_sources(
     )
 
 
-def _development_source_files(root: Path) -> LocalizationSourceFiles | None:
-    """Map the extracted ``game_data`` tree to flat export filenames.
+def _development_source_files(
+    root: Path,
+    *,
+    locale: LocaleSpec,
+) -> LocalizationSourceFiles | None:
+    """Map the centralized English game-data tree to flat export names.
 
-    Packaged releases already have a flat ``tags`` directory and therefore
-    return ``None`` so every bundled file remains eligible. Development uses
-    the extracted source tree directly, with this allowlist preventing DBRs
-    and unrelated localization files from being copied into Grim Dawn.
+    Packaged releases and prepared Russian sources already use flat or
+    user-provided layouts. Only the authored development English source tree
+    needs an explicit allowlist mapping.
     """
 
+    if locale.code != ENGLISH_LOCALE.code:
+        return None
     expected = tuple(
         (root / relative_path, Path(filename))
         for filename, relative_path in EXPORT_LOCALIZATION_SOURCES.items()
@@ -127,7 +160,9 @@ def _development_source_files(root: Path) -> LocalizationSourceFiles | None:
     if not any(source_path.exists() for source_path, _ in expected):
         return None
     missing = tuple(
-        str(source_path) for source_path, _ in expected if not source_path.is_file()
+        str(source_path)
+        for source_path, _ in expected
+        if not source_path.is_file()
     )
     if missing:
         raise ValueError(
@@ -145,6 +180,7 @@ def resolve_runtime_paths(
     executable: Path | None = None,
     nuitka_application_root: Path | None = None,
     environment: Mapping[str, str] | None = None,
+    locale: LocaleSpec = ENGLISH_LOCALE,
 ) -> RuntimePaths:
     """Return stable paths without depending on the process working directory.
 
@@ -178,10 +214,16 @@ def resolve_runtime_paths(
             application_root=root,
             project_root=None,
             catalog_root=root / "catalog",
-            tags_root=root / "tags",
-            staging_output_root=root / "staging" / "text_en",
+            tags_root=(
+                root / "tags"
+                if locale.code == ENGLISH_LOCALE.code
+                else root / "tags" / locale.code
+            ),
+            staging_output_root=root / "staging" / locale.game_text_directory,
             backups_root=root / "backups",
             profiles_root=root / "Profiles",
+            i18n_root=root / "resources" / "i18n",
+            locale=locale,
         )
 
     root = (
@@ -194,10 +236,18 @@ def resolve_runtime_paths(
         application_root=root,
         project_root=root,
         catalog_root=root / "artifacts" / "catalog",
-        tags_root=root / "game_data",
-        staging_output_root=root / "artifacts" / "generated" / "text_en",
+        tags_root=(
+            root / "game_data"
+            if locale.code == ENGLISH_LOCALE.code
+            else root / "artifacts" / locale.game_text_directory
+        ),
+        staging_output_root=(
+            root / "artifacts" / "generated" / locale.game_text_directory
+        ),
         backups_root=root / "artifacts" / "backups",
         profiles_root=root / "artifacts" / "profiles",
+        i18n_root=root / "resources" / "i18n",
+        locale=locale,
     )
 
 

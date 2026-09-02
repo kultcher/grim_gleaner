@@ -25,6 +25,7 @@ from gd_affix_relevance.ui.widgets import StatRow
 
 from gd_affix_relevance.catalog import SkillCatalog, SkillDefinition
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.ui.i18n import t
 from gd_affix_relevance.ui.widgets import WeightControl
 
 
@@ -139,9 +140,9 @@ def _skill_label(skill: SkillDefinition) -> str:
 
 
 def _skill_tooltip(skill: SkillDefinition) -> str:
-    details = [f"Mastery tier {skill.skill_tier}"]
+    details = [t("skills.tier_tooltip", tier=skill.skill_tier)]
     if skill.max_level:
-        details.append(f"Max rank {skill.max_level}")
+        details.append(t("skills.max_rank_tooltip", max_level=skill.max_level))
     return "; ".join(details)
 
 
@@ -173,7 +174,7 @@ class SkillWeightRow(QFrame):
         )
         layout.addWidget(self.weight_control)
 
-        self.remove_button = QPushButton("Remove", self)
+        self.remove_button = QPushButton(t("skills.remove"), self)
         self.remove_button.setObjectName("skillRemove")
         self.remove_button.clicked.connect(
             lambda: self.remove_requested.emit(skill.skill_id)
@@ -200,7 +201,7 @@ class MasteryPanel(QFrame):
         outer.setSpacing(8)
 
         header = QHBoxLayout()
-        title = QLabel(f"Mastery {slot + 1}", self)
+        title = QLabel(t("skills.mastery_slot_title", slot=slot + 1), self)
         title.setObjectName("masteryTitle")
         header.addWidget(title)
         self.mastery_combo = QComboBox(self)
@@ -218,7 +219,7 @@ class MasteryPanel(QFrame):
         available_layout = QVBoxLayout(available)
         available_layout.setContentsMargins(0, 0, 6, 0)
         available_layout.setSpacing(6)
-        available_label = QLabel("Mastery Skills", available)
+        available_label = QLabel(t("skills.mastery_skills"), available)
         available_label.setObjectName("skillSectionTitle")
         available_layout.addWidget(available_label)
         self.available_list = QListWidget(available)
@@ -226,7 +227,7 @@ class MasteryPanel(QFrame):
         self.available_list.itemSelectionChanged.connect(self._selection_changed)
         self.available_list.itemDoubleClicked.connect(self._request_skill_add)
         available_layout.addWidget(self.available_list, 1)
-        self.add_button = QPushButton("Add", available)
+        self.add_button = QPushButton(t("skills.add"), available)
         self.add_button.setObjectName("skillAdd")
         self.add_button.setEnabled(False)
         self.add_button.clicked.connect(self._add_selected)
@@ -237,7 +238,7 @@ class MasteryPanel(QFrame):
         selected_layout = QVBoxLayout(selected)
         selected_layout.setContentsMargins(6, 0, 0, 0)
         selected_layout.setSpacing(6)
-        selected_label = QLabel("Build-Relevant Skills", selected)
+        selected_label = QLabel(t("skills.build_relevant_skills"), selected)
         selected_label.setObjectName("skillSectionTitle")
         selected_layout.addWidget(selected_label)
         self.selected_scroll = QScrollArea(selected)
@@ -262,7 +263,7 @@ class MasteryPanel(QFrame):
         self._updating = True
         blocker = QSignalBlocker(self.mastery_combo)
         self.mastery_combo.clear()
-        self.mastery_combo.addItem("Select a mastery...", "")
+        self.mastery_combo.addItem(t("skills.select_mastery"), "")
         for mastery in masteries:
             self.mastery_combo.addItem(mastery.display_name, mastery.mastery_id)
         index = self.mastery_combo.findData(current_mastery_id)
@@ -290,7 +291,7 @@ class MasteryPanel(QFrame):
                     & ~Qt.ItemFlag.ItemIsSelectable
                 )
                 item.setToolTip(
-                    f"{item.toolTip()}; already in Build-Relevant Skills"
+                    t("skills.already_selected_tooltip", tooltip=item.toolTip())
                 )
             self.available_list.addItem(item)
         self._selection_changed()
@@ -351,11 +352,7 @@ class SkillsEditor(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 12, 10, 12)
         layout.setSpacing(10)
-        hint = QLabel(
-            "Choose up to two different masteries, then add and weight the skills "
-            "whose bonus ranks matter to this build.",
-            self,
-        )
+        hint = QLabel(t("skills.hint"), self)
         hint.setObjectName("pageHint")
         hint.setWordWrap(True)
         layout.addWidget(hint)
@@ -363,7 +360,7 @@ class SkillsEditor(QWidget):
         all_skills_definition = stat_definition("all_skills_bonus")
         if all_skills_definition is None:
             raise ValueError("all_skills_bonus is missing from the stat registry")
-        global_label = QLabel("Global Skill Bonuses", self)
+        global_label = QLabel(t("skills.global_skill_bonuses"), self)
         global_label.setObjectName("sectionTitle")
         layout.addWidget(global_label)
         self.all_skills_row = StatRow(
@@ -375,9 +372,7 @@ class SkillsEditor(QWidget):
         layout.addWidget(self.all_skills_row)
 
         if not self.masteries:
-            unavailable = QLabel(
-                "No compiled player-skill catalog is available.", self
-            )
+            unavailable = QLabel(t("skills.no_catalog"), self)
             unavailable.setObjectName("pageHint")
             layout.addWidget(unavailable)
 
@@ -436,12 +431,14 @@ class SkillsEditor(QWidget):
     def _confirm_mastery_change(self) -> bool:
         message = QMessageBox(self)
         message.setIcon(QMessageBox.Icon.Warning)
-        message.setWindowTitle("Change Mastery?")
-        message.setText(
-            "Changing masteries will erase the build-relevant skills list and all weights."
+        message.setWindowTitle(t("skills.change_mastery_title"))
+        message.setText(t("skills.change_mastery_body"))
+        confirm = message.addButton(
+            t("common.confirm"), QMessageBox.ButtonRole.AcceptRole
         )
-        confirm = message.addButton("Confirm", QMessageBox.ButtonRole.AcceptRole)
-        cancel = message.addButton("Cancel", QMessageBox.ButtonRole.RejectRole)
+        cancel = message.addButton(
+            t("common.cancel"), QMessageBox.ButtonRole.RejectRole
+        )
         message.setDefaultButton(cancel)
         message.exec()
         return message.clickedButton() is confirm
