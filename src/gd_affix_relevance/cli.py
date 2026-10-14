@@ -305,6 +305,78 @@ def _run_assemble_release(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_live_check(args: argparse.Namespace) -> int:
+    from gd_affix_relevance.live.compatibility import check_game_dll, find_game_dll
+
+    game_dll = args.game_dll or find_game_dll(args.game_folder)
+    report = check_game_dll(game_dll)
+    print(f"Game.dll: {report.game_dll}")
+    for requirement, symbol in report.matched.items():
+        print(f"  ok       {requirement}  ({symbol})")
+    for requirement in report.missing:
+        print(f"  MISSING  {requirement}")
+    print("Compatible." if report.compatible else "NOT compatible: do not inject.")
+    return 0 if report.compatible else 1
+
+
+def _run_live_inject(args: argparse.Namespace) -> int:
+    from gd_affix_relevance.live.compatibility import check_game_dll, find_game_dll
+    from gd_affix_relevance.live.injector import (
+        InjectionError,
+        find_game_processes,
+        inject,
+        loaded_hook_modules,
+    )
+
+    try:
+        processes = find_game_processes()
+        if not processes:
+            print("Grim Dawn is not running.")
+            return 1
+        if len(processes) > 1:
+            print("More than one Grim Dawn process is running; close the extras.")
+            return 1
+        game = processes[0]
+        if not args.skip_check:
+            report = check_game_dll(find_game_dll(game.executable.parent))
+            if not report.compatible:
+                print(
+                    "Refusing to inject: Game.dll is missing "
+                    + ", ".join(report.missing)
+                    + ". This game version needs a hook update."
+                )
+                return 1
+        already = loaded_hook_modules(game.pid)
+        if already:
+            print(
+                f"A hook is already loaded ({', '.join(already)}). "
+                "Restart Grim Dawn to load a new build."
+            )
+            return 1
+        staged = inject(game.pid, args.dll)
+    except InjectionError as error:
+        print(f"Injection failed: {error}")
+        return 1
+    print(f"Injected {staged.name} into Grim Dawn (pid {game.pid}).")
+    print("Run `grim-gleaner live-listen` to see what it reports.")
+    return 0
+
+
+def _run_live_listen(args: argparse.Namespace) -> int:
+    from gd_affix_relevance.live.listener import RecordNames, listen
+
+    names = None
+    if not args.no_names:
+        catalog_root = args.catalog_root or resolve_runtime_paths().catalog_root
+        names = RecordNames.from_catalog(CatalogBundle.load(catalog_root))
+    print(f"Listening on 127.0.0.1:{args.port}. Hover items in Grim Dawn; Ctrl+C to stop.")
+    try:
+        listen(lambda line: print(line, flush=True), port=args.port, names=names)
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="grim-gleaner")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -465,6 +537,40 @@ def build_parser() -> argparse.ArgumentParser:
     release.add_argument("--data-root", type=Path)
     release.add_argument("--profiles-root", type=Path)
     release.set_defaults(handler=_run_assemble_release)
+
+    live_check = subparsers.add_parser(
+        "live-check",
+        help="check that an installed Game.dll exports what the in-game hook needs",
+    )
+    live_source = live_check.add_mutually_exclusive_group(required=True)
+    live_source.add_argument("--game-folder", type=Path)
+    live_source.add_argument("--game-dll", type=Path)
+    live_check.set_defaults(handler=_run_live_check)
+
+    live_inject = subparsers.add_parser(
+        "live-inject",
+        help="load the gg_hook DLL into the running Grim Dawn (Windows only)",
+    )
+    live_inject.add_argument("--dll", type=Path, required=True)
+    live_inject.add_argument(
+        "--skip-check",
+        action="store_true",
+        help="inject even if Game.dll lacks the expected exports (unsafe)",
+    )
+    live_inject.set_defaults(handler=_run_live_inject)
+
+    live_listen = subparsers.add_parser(
+        "live-listen",
+        help="print the items whose tooltips the in-game hook reports",
+    )
+    live_listen.add_argument("--port", type=int, default=47817)
+    live_listen.add_argument("--catalog-root", type=Path)
+    live_listen.add_argument(
+        "--no-names",
+        action="store_true",
+        help="print raw record paths instead of loading the catalog",
+    )
+    live_listen.set_defaults(handler=_run_live_listen)
     return parser
 
 

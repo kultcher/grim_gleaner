@@ -56,6 +56,9 @@ def test_every_cli_command_has_a_dispatch_handler() -> None:
             "ru",
         ),
         ("assemble-release",),
+        ("live-check", "--game-folder", "game"),
+        ("live-inject", "--dll", "gg_hook.dll"),
+        ("live-listen", "--no-names"),
     )
 
     for arguments in command_arguments:
