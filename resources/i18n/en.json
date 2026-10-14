@@ -44,7 +44,7 @@
   "export.backup_preserved": "Preserved the existing original-state backup.",
   "export.confirm_body": "About to apply grade tags to {affix_count} affix and {unique_count} unique item entries. Proceed?",
   "export.error_title": "Could Not Export Grades",
-  "export.explanation": "Export Grades applies the active profile's affix and unique-item grades directly to Grim Dawn's item names. Existing Rainbow item files are retained as the source, while prepared clean files for the selected game language supply anything missing. Before the first export, the current {directory} folder is backed up so it can be restored here.",
+  "export.explanation": "Export grades to one localization file in {directory}, preserving an existing Grim Raynbow setup. Clean text is read from your installed game each time. Close Grim Dawn before exporting; restart it afterward.",
   "export.game_folder_required": "A valid Grim Dawn folder is required.",
   "export.generate_button": "Export Grades",
   "export.last_exported_label": "Last Exported Profile:",
@@ -247,7 +247,7 @@
   "settings.localization_location_user": "Documents / My Games",
   "settings.prepare_localization_button": "Refresh game language files",
   "settings.prepare_localization_error_title": "Could Not Prepare Game Language",
-  "settings.prepare_localization_success": "Prepared {count} item-tag files at {output_root}. Restart Grim Gleaner to apply the item names to the catalog.",
+  "settings.prepare_localization_success": "Prepared {count} clean localization files at {output_root}. Restart Grim Gleaner to refresh displayed item names. Exports refresh these files automatically.",
   "settings.select_folder_dialog_title": "Select Grim Dawn Folder (contains Grim Dawn.exe)",
   "settings.title": "Settings",
   "settings.ui_locale_restart_notice": "Interface language set to {locale}. Restart Grim Gleaner to apply it.",
@@ -578,5 +578,6 @@
   "widgets.weight_accessible_name": "Weight {value} of {max}: {label}",
   "widgets.weight_decrease": "Decrease weight",
   "widgets.weight_increase": "Increase weight",
-  "widgets.weight_set_accessible_name": "Set weight to {index}: {label}"
+  "widgets.weight_set_accessible_name": "Set weight to {index}: {label}",
+  "export.legacy_conflicts": "Exported, but older or duplicate localization files may conflict. Keep {host} in the selected output folder and remove the following old filter files after checking whether another mod needs them. Grim Gleaner has left them untouched:\n{files}"
 }

@@ -214,11 +214,7 @@ def resolve_runtime_paths(
             application_root=root,
             project_root=None,
             catalog_root=root / "catalog",
-            tags_root=(
-                root / "tags"
-                if locale.code == ENGLISH_LOCALE.code
-                else root / "prepared-tags" / locale.code
-            ),
+            tags_root=root / "prepared-tags" / locale.code,
             staging_output_root=root / "staging" / locale.game_text_directory,
             backups_root=root / "backups",
             profiles_root=root / "Profiles",
@@ -236,11 +232,7 @@ def resolve_runtime_paths(
         application_root=root,
         project_root=root,
         catalog_root=root / "artifacts" / "catalog",
-        tags_root=(
-            root / "game_data"
-            if locale.code == ENGLISH_LOCALE.code
-            else root / "artifacts" / locale.game_text_directory
-        ),
+        tags_root=root / "artifacts" / "prepared-tags" / locale.code,
         staging_output_root=(
             root / "artifacts" / "generated" / locale.game_text_directory
         ),

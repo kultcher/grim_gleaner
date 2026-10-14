@@ -12,8 +12,9 @@ from pathlib import Path
 
 from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import ENGLISH_LOCALE, BuildProfile, LocaleSpec
-from gd_affix_relevance.output import RainbowGenerationResult, generate_rainbow_output
-from gd_affix_relevance.runtime_paths import resolve_export_sources
+from gd_affix_relevance.output import RainbowGenerationResult, generate_consolidated_output
+from gd_affix_relevance.runtime_paths import ITEM_TAG_FILENAMES
+from gd_affix_relevance.io_utils import atomic_replace_directory as _replace_directory
 
 BACKUP_SCHEMA_VERSION = 2
 LEGACY_BACKUP_SCHEMA_VERSION = 1
@@ -37,6 +38,7 @@ class GradeExportResult:
     backup_created: bool
     generation: RainbowGenerationResult
     locale: LocaleSpec
+    legacy_conflicts: tuple[Path, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -154,7 +156,7 @@ def detect_grim_dawn_user_settings_root(
 
 def export_grades_to_game(
     game_folder: Path,
-    bundled_tags_root: Path,
+    prepared_tags_root: Path,
     staging_root: Path,
     backups_root: Path,
     catalog: AffixCatalog,
@@ -173,31 +175,45 @@ def export_grades_to_game(
         user_settings_root=user_settings_root,
         location_preference=location_preference,
     )
-    selection = resolve_export_sources(
-        game_folder,
-        bundled_tags_root,
-        locale=locale,
-        installed_text_root=target,
-    )
+    # Local import keeps game-folder validation available to the extractor.
+    from gd_affix_relevance.game_localization import prepare_game_item_tags
+
     stage = Path(staging_root).expanduser().resolve()
-    if target.resolve() == stage or target.resolve().is_relative_to(stage):
+    clean = Path(prepared_tags_root).expanduser().resolve()
+    roots = (
+        target.resolve(), stage, clean,
+        Path(backups_root).expanduser().resolve(),
+    )
+    if any(
+        first == second or first.is_relative_to(second)
+        or second.is_relative_to(first)
+        for index, first in enumerate(roots)
+        for second in roots[index + 1:]
+    ):
         raise ValueError(
-            "staging and Grim Dawn localization paths must not overlap"
+            "prepared sources, staging, backups, and game localization paths must not overlap"
         )
 
+    prepared = prepare_game_item_tags(game_folder, clean, locale=locale)
+    conflicts = legacy_localization_conflicts(
+        game_folder,
+        prepared.host_relative_path,
+        locale=locale,
+        user_settings_root=user_settings_root,
+        target_root=target,
+    )
     stage.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix=".grade-export-", dir=stage.parent))
     try:
         generated = temporary / locale.game_text_directory
-        generation = generate_rainbow_output(
-            selection.primary_root,
+        generation = generate_consolidated_output(
+            clean,
             generated,
             catalog,
             profile,
             items=items,
-            fallback_source_root=selection.fallback_root,
-            source_files=selection.primary_files,
-            fallback_source_files=selection.fallback_files,
+            existing_root=target,
+            host_relative_path=prepared.host_relative_path,
             locale=locale,
         )
         _replace_directory(stage, generated)
@@ -209,14 +225,59 @@ def export_grades_to_game(
         backups_root,
         locale,
     )
-    _install_directory(stage, target, locale)
+    _install_generated_files(stage, target, locale)
     return GradeExportResult(
         target_root=target,
         backup_root=backup,
         backup_created=backup_created,
         generation=replace(generation, output_root=stage),
         locale=locale,
+        legacy_conflicts=conflicts,
     )
+
+
+def legacy_localization_conflicts(
+    game_folder: Path,
+    host_relative_path: Path,
+    *,
+    locale: LocaleSpec,
+    user_settings_root: Path | None = None,
+    target_root: Path | None = None,
+) -> tuple[Path, ...]:
+    """Report known old filter overrides in both supported Settings locations."""
+    names = set(ITEM_TAG_FILENAMES) | {
+        "tags_ui.txt", "tags_skills.txt", "tagsgdx1_storyelements.txt",
+        "tagsgdx1_skills.txt", "tagsgdx2_skills.txt", "tagsgdx3_skills.txt",
+        "tagsgdx1_achievements.txt", "tagsgdx2_ui.txt", "tagsgdx3_uimain.txt",
+    }
+    roots = [Path(game_folder).resolve() / "settings" / locale.game_text_directory]
+    if user_settings_root is not None:
+        roots.append(Path(user_settings_root).resolve() / locale.game_text_directory)
+    return tuple(sorted({
+        path for root in roots if root.is_dir() for path in root.rglob("*.txt")
+        if path.name.casefold() in names
+        and path != (target_root or roots[0]) / host_relative_path
+    }, key=str))
+
+
+def _install_generated_files(source: Path, target: Path, locale: LocaleSpec) -> None:
+    """Replace generated files while retaining legacy and unrelated overrides."""
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = Path(tempfile.mkdtemp(prefix=".grim-gleaner-install-", dir=target.parent))
+    try:
+        incoming = temporary / locale.game_text_directory
+        if target.is_dir():
+            shutil.copytree(target, incoming)
+        else:
+            incoming.mkdir()
+        for path in source.rglob("*"):
+            if path.is_file():
+                destination = incoming / path.relative_to(source)
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(path, destination)
+        _replace_directory(target, incoming)
+    finally:
+        shutil.rmtree(temporary, ignore_errors=True)
 
 
 def restore_game_backup(
@@ -364,26 +425,6 @@ def _install_directory(
         _replace_directory(target, incoming)
     finally:
         shutil.rmtree(temporary, ignore_errors=True)
-
-
-def _replace_directory(target: Path, incoming: Path) -> None:
-    target.parent.mkdir(parents=True, exist_ok=True)
-    previous = target.parent / f".{target.name}-grim-gleaner-previous"
-    if previous.exists():
-        raise ValueError(f"unfinished prior replacement exists: {previous}")
-    moved_previous = False
-    try:
-        if target.exists():
-            target.replace(previous)
-            moved_previous = True
-        incoming.replace(target)
-    except Exception:
-        if moved_previous and not target.exists():
-            previous.replace(target)
-        raise
-    else:
-        if moved_previous:
-            shutil.rmtree(previous)
 
 
 def _remove_directory_recoverably(target: Path) -> None:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import tempfile
@@ -10,7 +11,9 @@ from pathlib import Path
 
 from gd_affix_relevance.domain import LocaleSpec
 from gd_affix_relevance.grade_export import validate_grim_dawn_folder
-from gd_affix_relevance.runtime_paths import ITEM_TAG_FILENAMES
+from gd_affix_relevance.importers.localization_parser import parse_localization_file
+from gd_affix_relevance.output.consolidated_writer import PREPARED_MANIFEST
+from gd_affix_relevance.io_utils import atomic_replace_directory as _replace_directory
 
 ARCHIVE_TOOL_FILENAME = "ArchiveTool.exe"
 
@@ -58,6 +61,47 @@ class PreparedGameLocalization:
     archive_paths: tuple[Path, ...]
     output_root: Path
     files_written: tuple[str, ...]
+    host_relative_path: Path
+
+
+def _localization_layout(
+    game: Path, locale: LocaleSpec,
+) -> tuple[dict[str, ItemTagSource], Path]:
+    """Select only installed DLC and a host recognized by that installation."""
+    expansions = tuple(
+        name for name in ("gdx1", "gdx2", "gdx3") if (game / name).is_dir()
+    )
+    prefixes = {"gdx1": "aom", "gdx2": "fg", "gdx3": "foa"}
+    layout: dict[str, ItemTagSource] = {}
+    for filename, source in ITEM_TAG_SOURCES[locale.code].items():
+        expansion = next(
+            (name for name in prefixes if filename.startswith(f"tags{name}_")),
+            None,
+        )
+        if expansion is None or expansion in expansions:
+            layout[filename] = source
+    if locale.code == "ru":
+        host = (
+            Path("aom/tagsgdx1_achievements.txt")
+            if "gdx1" in expansions else Path("tags_ui.txt")
+        )
+        host_source = ItemTagSource("resources", host.as_posix())
+    else:
+        if "gdx3" in expansions:
+            host = Path("tagsgdx3_uimain.txt")
+            directory = "gdx3/resources"
+        elif "gdx2" in expansions:
+            host = Path("tagsgdx2_ui.txt")
+            directory = "gdx2/resources"
+        elif "gdx1" in expansions:
+            host = Path("tagsgdx1_achievements.txt")
+            directory = "gdx1/resources"
+        else:
+            host = Path("tags_ui.txt")
+            directory = "resources"
+        host_source = ItemTagSource(directory, host.as_posix())
+    layout[host.as_posix()] = host_source
+    return layout, host
 
 
 def prepare_game_item_tags(
@@ -66,7 +110,7 @@ def prepare_game_item_tags(
     *,
     locale: LocaleSpec,
 ) -> PreparedGameLocalization:
-    """Extract and atomically install only the item-tag files for *locale*."""
+    """Extract clean item tags and the complete consolidated host for *locale*."""
 
     game = validate_grim_dawn_folder(game_folder)
     archive_tool = game / ARCHIVE_TOOL_FILENAME
@@ -74,7 +118,7 @@ def prepare_game_item_tags(
         raise ValueError(f"Grim Dawn archive tool is missing: {archive_tool}")
 
     try:
-        layout = ITEM_TAG_SOURCES[locale.code]
+        layout, host = _localization_layout(game, locale)
     except KeyError as error:
         raise ValueError(
             f"No item-tag archive layout is known for locale: {locale.code}"
@@ -94,10 +138,15 @@ def prepare_game_item_tags(
         )
 
     destination = Path(destination_root).expanduser().resolve()
+    if (destination == game or destination.is_relative_to(game)
+            or game.is_relative_to(destination)):
+        raise ValueError(
+            "prepared localization and game installation paths must not overlap"
+        )
     destination.parent.mkdir(parents=True, exist_ok=True)
     # ArchiveTool is an old Win32 utility and can fail with INVALID_HANDLE_VALUE
     # when extraction paths become long. Keep its scratch directory short and
-    # move only the five validated outputs to the requested destination.
+    # move only validated text outputs to the requested destination.
     temporary = Path(tempfile.mkdtemp(prefix="gg-localization-"))
     try:
         staged_archives: dict[Path, Path] = {}
@@ -142,7 +191,14 @@ def prepare_game_item_tags(
                 for part in (completed.stdout, completed.stderr)
                 if part.strip()
             )
-        extracted_files, missing = _find_item_tag_files(extracted)
+        extracted_files: dict[str, Path] = {}
+        for filename, source in layout.items():
+            path = extracted / source.path_in_archive
+            if path.is_file() and parse_localization_file(path, encoding=locale.encoding):
+                extracted_files[filename] = path
+        missing = tuple(
+            filename for filename in layout if filename not in extracted_files
+        )
         if failed or missing:
             detail = "\n".join(diagnostics)
             missing_text = ", ".join(missing) if missing else "none"
@@ -155,7 +211,17 @@ def prepare_game_item_tags(
         prepared = temporary / "prepared"
         prepared.mkdir()
         for filename, source_path in extracted_files.items():
-            shutil.copy2(source_path, prepared / filename)
+            target = prepared / filename
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source_path, target)
+        (prepared / PREPARED_MANIFEST).write_text(
+            json.dumps({
+                "locale": locale.code,
+                "host_relative_path": host.as_posix(),
+                "files_written": list(layout),
+            }, indent=2) + "\n",
+            encoding="utf-8",
+        )
         _replace_directory(destination, prepared)
     finally:
         shutil.rmtree(temporary, ignore_errors=True)
@@ -164,41 +230,6 @@ def prepare_game_item_tags(
         locale=locale,
         archive_paths=tuple(dict.fromkeys(archives.values())),
         output_root=destination,
-        files_written=ITEM_TAG_FILENAMES,
+        files_written=tuple(layout),
+        host_relative_path=host,
     )
-
-
-def _find_item_tag_files(
-    extracted_root: Path,
-) -> tuple[dict[str, Path], tuple[str, ...]]:
-    sources: dict[str, Path] = {}
-    for filename in ITEM_TAG_FILENAMES:
-        candidates = sorted(
-            extracted_root.rglob(filename),
-            key=lambda path: (len(path.parts), str(path).casefold()),
-        )
-        if candidates:
-            sources[filename] = candidates[0]
-    missing = tuple(
-        filename for filename in ITEM_TAG_FILENAMES if filename not in sources
-    )
-    return sources, missing
-
-
-def _replace_directory(target: Path, incoming: Path) -> None:
-    previous = target.parent / f".{target.name}-grim-gleaner-previous"
-    if previous.exists():
-        raise ValueError(f"unfinished prior replacement exists: {previous}")
-    moved_previous = False
-    try:
-        if target.exists():
-            target.replace(previous)
-            moved_previous = True
-        incoming.replace(target)
-    except Exception:
-        if moved_previous and not target.exists():
-            previous.replace(target)
-        raise
-    else:
-        if moved_previous:
-            shutil.rmtree(previous)

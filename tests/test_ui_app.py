@@ -33,7 +33,7 @@ def test_compiled_entrypoint_explicitly_selects_packaged_resources(
     assert paths.mode == "release"
     assert paths.application_root == root.resolve()
     assert paths.catalog_root == root.resolve() / "catalog"
-    assert paths.tags_root == root.resolve() / "tags"
+    assert paths.tags_root == root.resolve() / "prepared-tags" / "en"
 
 
 def test_settings_root_override_isolates_fresh_install_state(tmp_path) -> None:

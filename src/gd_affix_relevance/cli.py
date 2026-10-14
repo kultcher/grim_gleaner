@@ -36,7 +36,7 @@ from gd_affix_relevance.normalization.affix_reachability import (
     write_affix_reference_report,
 )
 from gd_affix_relevance.profile_store import load_profile
-from gd_affix_relevance.output import generate_rainbow_output
+from gd_affix_relevance.output import generate_consolidated_output
 from gd_affix_relevance.release_assembly import assemble_release
 from gd_affix_relevance.runtime_paths import resolve_runtime_paths
 from gd_affix_relevance.scoring import (
@@ -181,13 +181,16 @@ def _run_compile_catalog(args: argparse.Namespace) -> int:
 def _run_generate_output(args: argparse.Namespace) -> int:
     bundle = CatalogBundle.load(args.catalog_root)
     profile = load_profile(args.profile_file)
-    result = generate_rainbow_output(
-        args.source_root,
+    result = generate_consolidated_output(
+        args.fallback_source_root or args.source_root,
         args.output_dir,
         bundle.affixes,
         profile,
         items=bundle.items,
-        fallback_source_root=args.fallback_source_root,
+        existing_root=(
+            args.existing_root
+            or (args.source_root if args.fallback_source_root else None)
+        ),
         locale=locale_for_code(args.locale),
     )
     _print_json_summary(
@@ -204,6 +207,7 @@ def _run_generate_output(args: argparse.Namespace) -> int:
             "missing_unique_tag_count": len(result.missing_unique_tags),
             "missing_unique_tags": result.missing_unique_tags,
             "output_dir": str(result.output_root),
+            "master_file": str(result.master_relative_path),
         }
     )
     return 0
@@ -369,15 +373,20 @@ def build_parser() -> argparse.ArgumentParser:
 
     generate = subparsers.add_parser(
         "generate-output",
-        help="clone item text files and add profile-grade affix and unique markers",
+        help="generate one consolidated item-name override file",
     )
     generate.add_argument("--catalog-root", type=Path, required=True)
     generate.add_argument("--profile-file", type=Path, required=True)
     generate.add_argument("--source-root", type=Path, required=True)
     generate.add_argument(
+        "--existing-root",
+        type=Path,
+        help="optional installed modern filter whose customizations are preserved",
+    )
+    generate.add_argument(
         "--fallback-source-root",
         type=Path,
-        help="optional bundled source used for files absent from source-root",
+        help="clean prepared localization; source-root then points to the existing modern filter",
     )
     generate.add_argument("--output-dir", type=Path, required=True)
     generate.add_argument("--locale", choices=("en", "ru"), default="en")
@@ -444,7 +453,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     prepare_localization = subparsers.add_parser(
         "prepare-game-localization",
-        help="extract required item-tag files from an installed Grim Dawn locale",
+        help="extract clean item tags and the consolidated host from installed Grim Dawn",
     )
     prepare_localization.add_argument("--game-folder", type=Path, required=True)
     prepare_localization.add_argument(

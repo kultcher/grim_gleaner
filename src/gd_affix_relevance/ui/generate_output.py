@@ -21,7 +21,6 @@ from gd_affix_relevance.domain import (
     LocaleSpec,
     game_locale_for_code,
 )
-from gd_affix_relevance.game_localization import prepare_game_item_tags
 from gd_affix_relevance.grade_export import (
     GradeExportResult,
     LOCALIZATION_LOCATION_AUTO,
@@ -32,10 +31,6 @@ from gd_affix_relevance.grade_export import (
     restore_game_backup,
 )
 from gd_affix_relevance.output import build_affix_markers, build_unique_item_markers
-from gd_affix_relevance.runtime_paths import (
-    ITEM_TAG_FILENAMES,
-    resolve_export_sources,
-)
 from gd_affix_relevance.ui.i18n import t
 from gd_affix_relevance.ui.settings import (
     GAME_FOLDER_SETTING,
@@ -68,7 +63,7 @@ class GenerateOutputPage(QWidget):
         self.profile = profile
         self.catalog_status = catalog_status
         self.settings = settings
-        self.bundled_source_root = Path(source_root)
+        self.clean_source_root = Path(source_root)
         self.staging_root = Path(output_root)
         self.backups_root = Path(backups_root)
         self.user_settings_root = (
@@ -146,7 +141,7 @@ class GenerateOutputPage(QWidget):
         """Switch export resources without changing the application UI locale."""
 
         self.locale = locale
-        self.bundled_source_root = Path(source_root)
+        self.clean_source_root = Path(source_root)
         self.staging_root = Path(output_root)
         self.last_result = None
         self.refresh_game_location(update_status=True)
@@ -183,10 +178,9 @@ class GenerateOutputPage(QWidget):
             return
 
         try:
-            self._prepare_missing_localization(game_folder)
             result = export_grades_to_game(
                 game_folder,
-                self.bundled_source_root,
+                self.clean_source_root,
                 self.staging_root,
                 self.backups_root,
                 self.catalog,
@@ -214,6 +208,12 @@ class GenerateOutputPage(QWidget):
                 annotated_lines=result.generation.annotated_lines,
             )
         )
+        if result.legacy_conflicts:
+            self.status.setText(self.status.text() + "\n\n" + t(
+                "export.legacy_conflicts",
+                host=result.generation.master_relative_path,
+                files="\n".join(str(path) for path in result.legacy_conflicts),
+            ))
         exported_name = self.profile.name.strip() or t("export.unnamed_profile")
         self.last_exported_profile.setText(
             self._format_last_export(exported_name, self.locale)
@@ -223,30 +223,6 @@ class GenerateOutputPage(QWidget):
             self.settings.setValue(LAST_EXPORTED_LOCALE_SETTING, self.locale.code)
             self.settings.sync()
         self.refresh_game_location(update_status=False)
-
-    def _prepare_missing_localization(self, game_folder: Path) -> None:
-        """Extract the selected language on demand before its first export."""
-
-        selection = resolve_export_sources(
-            None,
-            self.bundled_source_root,
-            locale=self.locale,
-        )
-        expected_files = (
-            tuple(source for source, _destination in selection.primary_files)
-            if selection.primary_files is not None
-            else tuple(
-                self.bundled_source_root / filename
-                for filename in ITEM_TAG_FILENAMES
-            )
-        )
-        if all(path.is_file() for path in expected_files):
-            return
-        prepare_game_item_tags(
-            game_folder,
-            self.bundled_source_root,
-            locale=self.locale,
-        )
 
     def restore_backup(self, _checked: bool = False) -> None:
         try:

@@ -61,6 +61,7 @@ class RainbowGenerationResult:
     missing_unique_tags: tuple[str, ...]
     changes: tuple[LocalizationChange, ...]
     fallback_source_root: Path | None = None
+    master_relative_path: Path | None = None
 
 
 def build_affix_markers(

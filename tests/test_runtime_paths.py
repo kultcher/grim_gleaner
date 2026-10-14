@@ -23,7 +23,7 @@ def test_development_paths_are_project_relative(tmp_path: Path) -> None:
     assert paths.application_root == tmp_path.resolve()
     assert paths.project_root == tmp_path.resolve()
     assert paths.catalog_root == tmp_path.resolve() / "artifacts" / "catalog"
-    assert paths.tags_root == tmp_path.resolve() / "game_data"
+    assert paths.tags_root == tmp_path.resolve() / "artifacts" / "prepared-tags" / "en"
     assert paths.staging_output_root == (
         tmp_path.resolve() / "artifacts" / "generated" / "text_en"
     )
@@ -42,7 +42,7 @@ def test_explicit_application_root_uses_release_layout(tmp_path: Path) -> None:
     assert paths.mode == "release"
     assert paths.project_root is None
     assert paths.catalog_root == root.resolve() / "catalog"
-    assert paths.tags_root == root.resolve() / "tags"
+    assert paths.tags_root == root.resolve() / "prepared-tags" / "en"
     assert paths.staging_output_root == root.resolve() / "staging" / "text_en"
     assert paths.backups_root == root.resolve() / "backups"
     assert paths.profiles_root == root.resolve() / "Profiles"
@@ -62,7 +62,7 @@ def test_russian_runtime_paths_use_locale_specific_resources(tmp_path: Path) -> 
         locale=RUSSIAN_LOCALE,
     )
 
-    assert development.tags_root == tmp_path.resolve() / "artifacts" / "text_ru"
+    assert development.tags_root == tmp_path.resolve() / "artifacts" / "prepared-tags" / "ru"
     assert development.locale is RUSSIAN_LOCALE
     assert development.staging_output_root == (
         tmp_path.resolve() / "artifacts" / "generated" / "text_ru"
