@@ -35,13 +35,19 @@ layout-compatible.
    ```powershell
    grim-gleaner live-check --game-folder "C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn"
    ```
+   The 64-bit Game.dll in the `x64` subfolder is used automatically.
+   ```
+   ```
 3. In one terminal: `grim-gleaner live-listen`
-4. In another: `grim-gleaner live-inject --dll build/gg_hook/Release/gg_hook.dll`
-   (refuses if Game.dll lacks the expected exports or a hook is already loaded).
+4. In another: `grim-gleaner live-inject`. With no `--dll` it loads
+   `build\gg_hook\Release\gg_hook.dll` from the project folder, whatever
+   folder you run the command from. It refuses if Game.dll lacks the
+   expected exports or a hook is already loaded.
 5. Hover items. Expected listener output:
    ```
    Hook connected (Grim Dawn pid 12345): hooked ItemEquipment::GetUIDisplayText (4-argument)
-   Got the info: Abyssal Mask [Epic] (seed 1234567) [tooltip builds so far: 3]
+   Got the info: Abyssal Mask [Epic] (seed 1234567)  [tooltip builds so far: 3]
+   Got the info: Leggings [Rare] (seed 1760317122) with Runecarved + of Blood  [tooltip builds so far: 4]
    ```
 
 The DLL logs to `%LOCALAPPDATA%\GrimGleaner\gg_hook.log`.
@@ -53,8 +59,9 @@ The DLL logs to `%LOCALAPPDATA%\GrimGleaner\gg_hook.log`.
   `%LOCALAPPDATA%\GrimGleaner\hook\gg_hook-<hash>.dll`, so rebuilding is never
   blocked by the copy the game has open.
 - **Repeat reports:** one message per item, repeated only after 2 s without
-  hovering it. `tooltip builds so far` is the raw call count, useful for
-  seeing how often the game rebuilds a tooltip.
+  hovering it. `tooltip builds so far` is the raw call count. In testing it
+  rises by about one per hover: the game builds a tooltip once when it opens,
+  not every frame.
 - **Safety:** if a game patch changes `ItemReplicaInfo` (the game writes past
   the guard area) or reading an item faults, the hook logs it, sends an
   error message and stops reporting, while the game carries on normally.

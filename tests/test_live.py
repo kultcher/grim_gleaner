@@ -75,7 +75,7 @@ def test_parse_rejects_malformed_messages(payload: bytes) -> None:
 def test_describe_item_resolves_names_from_catalog() -> None:
     names = RecordNames(
         items={"records/items/gearhead/d004_head.dbr": ("Abyssal Mask", "Epic")},
-        affixes={"records/items/lootaffixes/prefix/b_ar001.dbr": "Stalwart"},
+        affixes={"records/items/lootaffixes/prefix/b_ar001.dbr": ("Stalwart", "Magical")},
     )
     text = describe_item(parse_message(_item_line()), names)  # type: ignore[arg-type]
     assert text.startswith("Got the info: Abyssal Mask [Epic] (seed 123456) with Stalwart")
@@ -171,3 +171,20 @@ def test_sample_dll_is_detected_as_64_bit() -> None:
     from gd_affix_relevance.live.pe_exports import is_64_bit
 
     assert is_64_bit(SAMPLE_DLL)
+
+
+def test_common_base_takes_its_affixes_quality() -> None:
+    from gd_affix_relevance.live.listener import _item_quality
+
+    assert _item_quality("Common", ["Magical", "Rare"]) == "Rare"
+    assert _item_quality("Common", ["Magical"]) == "Magic"
+    assert _item_quality("Common", []) == "Common"
+    assert _item_quality("Epic", ["Rare"]) == "Epic"
+
+
+def test_default_hook_dll_points_at_the_cmake_release_build() -> None:
+    from gd_affix_relevance.live.injector import default_hook_dll
+
+    assert default_hook_dll() == (
+        PROJECT_ROOT / "build" / "gg_hook" / "Release" / "gg_hook.dll"
+    )

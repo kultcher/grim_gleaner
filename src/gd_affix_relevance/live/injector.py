@@ -31,6 +31,21 @@ class GameProcess:
     executable: Path
 
 
+def default_hook_dll() -> Path:
+    """Where the hook DLL is expected when ``--dll`` is not given.
+
+    Development: the CMake Release output under the project's ``build``
+    folder. Packaged release: ``gg_hook.dll`` beside the application.
+    """
+
+    from gd_affix_relevance.runtime_paths import resolve_runtime_paths
+
+    paths = resolve_runtime_paths()
+    if paths.project_root is not None:
+        return paths.project_root / "build" / "gg_hook" / "Release" / "gg_hook.dll"
+    return paths.application_root / "gg_hook.dll"
+
+
 def staged_dll_path(dll: Path, staging_root: Path | None = None) -> Path:
     """Content-addressed copy location, so each build gets its own file."""
 

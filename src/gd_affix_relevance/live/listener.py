@@ -26,7 +26,7 @@ class RecordNames:
     """Record path -> display name, built from the compiled catalog."""
 
     items: dict[str, tuple[str, str]] = field(default_factory=dict)
-    affixes: dict[str, str] = field(default_factory=dict)
+    affixes: dict[str, tuple[str, str]] = field(default_factory=dict)
 
     @classmethod
     def from_catalog(cls, bundle: object) -> RecordNames:
@@ -39,32 +39,51 @@ class RecordNames:
                 )
         for affix in bundle.affixes.affixes:  # type: ignore[attr-defined]
             for tier in affix.tiers:
-                names.affixes[_normalize_record(tier.record_path)] = affix.display_name
+                names.affixes[_normalize_record(tier.record_path)] = (
+                    affix.display_name,
+                    affix.rarity,
+                )
         return names
 
     def item(self, record: str) -> tuple[str, str] | None:
         return self.items.get(_normalize_record(record)) if record else None
 
-    def affix(self, record: str) -> str | None:
+    def affix(self, record: str) -> tuple[str, str] | None:
         return self.affixes.get(_normalize_record(record)) if record else None
+
+
+def _item_quality(base_rarity: str, affix_rarities: list[str]) -> str:
+    """The quality the game shows: a common base takes its affixes' quality."""
+
+    if base_rarity.casefold() not in {"", "common"}:
+        return base_rarity
+    if any(rarity.casefold() == "rare" for rarity in affix_rarities):
+        return "Rare"
+    if affix_rarities:
+        return "Magic"
+    return base_rarity
 
 
 def describe_item(item: HoveredItem, names: RecordNames | None = None) -> str:
     names = names or RecordNames()
+    affix_records = [record for record in (item.prefix_record, item.suffix_record) if record]
+    resolved_affixes = [names.affix(record) for record in affix_records]
+    affix_labels = [
+        resolved[0] if resolved else record
+        for record, resolved in zip(affix_records, resolved_affixes)
+    ]
+    affix_rarities = [resolved[1] for resolved in resolved_affixes if resolved]
+
     base = names.item(item.base_record)
     if base is None:
         title = item.base_record or "(no base record)"
     else:
         display_name, rarity = base
-        title = f"{display_name} [{rarity}]" if rarity else display_name
-    affixes = [
-        names.affix(record) or record
-        for record in (item.prefix_record, item.suffix_record)
-        if record
-    ]
+        quality = _item_quality(rarity, affix_rarities)
+        title = f"{display_name} [{quality}]" if quality else display_name
     text = f"Got the info: {title} (seed {item.seed})"
-    if affixes:
-        text += " with " + " + ".join(affixes)
+    if affix_labels:
+        text += " with " + " + ".join(affix_labels)
     return text + f"  [tooltip builds so far: {item.calls}]"
 
 

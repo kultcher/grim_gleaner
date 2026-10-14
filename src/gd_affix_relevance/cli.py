@@ -325,6 +325,7 @@ def _run_live_inject(args: argparse.Namespace) -> int:
     from gd_affix_relevance.live.compatibility import check_game_dll, find_game_dll
     from gd_affix_relevance.live.injector import (
         InjectionError,
+        default_hook_dll,
         find_game_processes,
         inject,
         loaded_hook_modules,
@@ -355,7 +356,7 @@ def _run_live_inject(args: argparse.Namespace) -> int:
                 "Restart Grim Dawn to load a new build."
             )
             return 1
-        staged = inject(game.pid, args.dll)
+        staged = inject(game.pid, args.dll or default_hook_dll())
     except InjectionError as error:
         print(f"Injection failed: {error}")
         return 1
@@ -553,7 +554,11 @@ def build_parser() -> argparse.ArgumentParser:
         "live-inject",
         help="load the gg_hook DLL into the running Grim Dawn (Windows only)",
     )
-    live_inject.add_argument("--dll", type=Path, required=True)
+    live_inject.add_argument(
+        "--dll",
+        type=Path,
+        help="hook DLL to load (default: build/gg_hook/Release/gg_hook.dll in the project)",
+    )
     live_inject.add_argument(
         "--skip-check",
         action="store_true",
