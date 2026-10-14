@@ -431,6 +431,7 @@ def test_compiler_applies_curated_mastery_relationships(
         output,
         source_names=("base",),
         mastery_tree_root=tree_root,
+        game_version="test",
     )
 
     skills = CatalogBundle.load(output).skills.by_id()
@@ -497,6 +498,7 @@ def test_compiler_preserves_max_skill_rank_for_collapsed_affix_layout(
         ),
         output,
         source_names=("base",),
+        game_version="test",
     )
 
     affix = CatalogBundle.load(output).affixes.affixes[0]
@@ -542,10 +544,12 @@ def test_catalog_output_is_deterministic(tmp_path: Path) -> None:
     second = tmp_path / "second"
 
     compile_catalog_bundle(
-        data_root, localization, first, source_names=("base",)
+        data_root, localization, first, source_names=("base",),
+        game_version="test",
     )
     compile_catalog_bundle(
-        data_root, localization, second, source_names=("base",)
+        data_root, localization, second, source_names=("base",),
+        game_version="test",
     )
 
     for filename in (
@@ -569,7 +573,8 @@ def test_loader_rejects_manifest_count_mismatch(tmp_path: Path) -> None:
     localization = parse_localization_text("")
     output = tmp_path / "catalog"
     compile_catalog_bundle(
-        data_root, localization, output, source_names=("base",)
+        data_root, localization, output, source_names=("base",),
+        game_version="test",
     )
     manifest_path = output / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -840,6 +845,7 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
         localization,
         tmp_path / "catalog",
         source_names=("base", "gdx2"),
+        game_version="test",
     )
     bundle = CatalogBundle.load(tmp_path / "catalog")
 
@@ -912,3 +918,17 @@ def test_compiler_splits_item_families_and_groups_leveled_variants(
     consumable = bundle.items.consumables[0].variants[0]
     assert consumable.effect_skill_name == "Consumable Ward"
     assert consumable.effect_properties[0].property_id == "fire_resistance"
+
+
+def test_magnitude_index_is_parsed_lazily(tmp_path: Path) -> None:
+    from gd_affix_relevance.catalog.models import LazyMagnitudeCatalog
+
+    bundle = CatalogBundle.load(Path("artifacts/catalog"))
+
+    assert isinstance(bundle.magnitude, LazyMagnitudeCatalog)
+    assert not bundle.magnitude.is_loaded
+    assert bundle.magnitude.bands
+    assert bundle.magnitude.is_loaded
+    assert len(bundle.magnitude.entries) == bundle.manifest.counts[
+        "magnitude_entries"
+    ]

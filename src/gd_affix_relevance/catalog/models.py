@@ -281,7 +281,7 @@ class CatalogBundle:
     skills: SkillCatalog
     affixes: AffixCatalog
     items: ItemCatalog
-    magnitude: MagnitudeCatalog = MagnitudeCatalog()
+    magnitude: MagnitudeCatalog | LazyMagnitudeCatalog = MagnitudeCatalog()
 
     @classmethod
     def load(cls, root: Path) -> CatalogBundle:
@@ -343,15 +343,24 @@ class CatalogBundle:
         }
         items = ItemCatalog(**item_families)
         magnitude_path = catalog_root / MAGNITUDE_CATALOG_FILE
-        magnitude = MagnitudeCatalog()
+        magnitude: MagnitudeCatalog | LazyMagnitudeCatalog = MagnitudeCatalog()
         if magnitude_path.is_file():
-            magnitude_payload = _load_json(magnitude_path)
-            _require_schema(
-                magnitude_payload,
-                MAGNITUDE_CATALOG_FILE,
-                expected=manifest_schema,
+            # The magnitude index is roughly half of the catalog on disk and is
+            # not used by runtime grading yet. Parse it on first access only.
+            magnitude = LazyMagnitudeCatalog(
+                magnitude_path,
+                expected_schema=manifest_schema,
+                expected_entries=(
+                    manifest.counts.get("magnitude_entries")
+                    if manifest_schema >= 8
+                    else None
+                ),
+                expected_properties=(
+                    manifest.counts.get("magnitude_properties")
+                    if manifest_schema >= 8
+                    else None
+                ),
             )
-            magnitude = _magnitude_catalog_from_dict(magnitude_payload)
         elif manifest_schema >= 8:
             raise ValueError(
                 f"schema-{manifest_schema} catalog is missing "
@@ -399,20 +408,89 @@ class CatalogBundle:
             raise ValueError("duplicate skill IDs in catalog")
         if len(self.items.by_id()) != len(self.items.all_items()):
             raise ValueError("duplicate item IDs in catalog")
-        if self.manifest.schema_version >= 8:
-            if len(self.magnitude.entries) != self.manifest.counts.get(
-                "magnitude_entries"
-            ):
-                raise ValueError("magnitude entry count does not match manifest")
-            magnitude_property_count = sum(
-                len(entry.properties) for entry in self.magnitude.entries
+        if self.manifest.schema_version >= 8 and not isinstance(
+            self.magnitude, LazyMagnitudeCatalog
+        ):
+            _validate_magnitude_counts(
+                self.magnitude,
+                self.manifest.counts.get("magnitude_entries"),
+                self.manifest.counts.get("magnitude_properties"),
             )
-            if magnitude_property_count != self.manifest.counts.get(
-                "magnitude_properties"
-            ):
-                raise ValueError(
-                    "magnitude property count does not match manifest"
+
+
+def _validate_magnitude_counts(
+    magnitude: MagnitudeCatalog,
+    expected_entries: int | None,
+    expected_properties: int | None,
+) -> None:
+    if len(magnitude.entries) != expected_entries:
+        raise ValueError("magnitude entry count does not match manifest")
+    property_count = sum(len(entry.properties) for entry in magnitude.entries)
+    if property_count != expected_properties:
+        raise ValueError("magnitude property count does not match manifest")
+
+
+class LazyMagnitudeCatalog:
+    """Defer parsing ``magnitude-index.json`` until something reads it.
+
+    Exposes the same read surface as :class:`MagnitudeCatalog`. Schema and
+    manifest-count validation run when the file is first loaded.
+    """
+
+    __slots__ = (
+        "path",
+        "_expected_schema",
+        "_expected_entries",
+        "_expected_properties",
+        "_loaded",
+    )
+
+    def __init__(
+        self,
+        path: Path,
+        *,
+        expected_schema: int,
+        expected_entries: int | None,
+        expected_properties: int | None,
+    ) -> None:
+        self.path = Path(path)
+        self._expected_schema = expected_schema
+        self._expected_entries = expected_entries
+        self._expected_properties = expected_properties
+        self._loaded: MagnitudeCatalog | None = None
+
+    @property
+    def is_loaded(self) -> bool:
+        return self._loaded is not None
+
+    def load(self) -> MagnitudeCatalog:
+        if self._loaded is None:
+            payload = _load_json(self.path)
+            _require_schema(
+                payload,
+                MAGNITUDE_CATALOG_FILE,
+                expected=self._expected_schema,
+            )
+            loaded = _magnitude_catalog_from_dict(payload)
+            if self._expected_schema >= 8:
+                _validate_magnitude_counts(
+                    loaded, self._expected_entries, self._expected_properties
                 )
+            self._loaded = loaded
+        return self._loaded
+
+    @property
+    def bands(self) -> tuple[MagnitudeBand, ...]:
+        return self.load().bands
+
+    @property
+    def entries(self) -> tuple[MagnitudeEntry, ...]:
+        return self.load().entries
+
+    def by_entity_and_band(
+        self,
+    ) -> dict[tuple[str, str, str], tuple[MagnitudeEntry, ...]]:
+        return self.load().by_entity_and_band()
 
 
 def _load_json(path: Path) -> dict[str, Any]:

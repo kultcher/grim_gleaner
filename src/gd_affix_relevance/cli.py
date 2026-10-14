@@ -355,7 +355,11 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     catalog.add_argument("--output-dir", type=Path, required=True)
-    catalog.add_argument("--game-version", default="unknown")
+    catalog.add_argument(
+        "--game-version",
+        required=True,
+        help="Grim Dawn version the extracted data came from, e.g. 1.3.1.0",
+    )
     catalog.add_argument(
         "--mastery-tree-root",
         type=Path,

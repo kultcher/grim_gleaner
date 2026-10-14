@@ -21,6 +21,8 @@ def test_every_cli_command_has_a_dispatch_handler() -> None:
             "text",
             "--output-dir",
             "out",
+            "--game-version",
+            "1.3.1.0",
         ),
         (
             "generate-output",
