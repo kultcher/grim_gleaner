@@ -6,7 +6,8 @@ from pathlib import Path
 import pytest
 
 from gd_affix_relevance.catalog import CATALOG_SCHEMA_VERSION
-from gd_affix_relevance.release_assembly import TAG_SOURCES, assemble_release
+from gd_affix_relevance.release_assembly import assemble_release
+from gd_affix_relevance.runtime_paths import EXPORT_LOCALIZATION_SOURCES as TAG_SOURCES
 
 
 CATALOG_DATA_FILES = (
@@ -185,13 +186,13 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
 
     assert result.output_root == output.resolve()
     assert result.catalog_files == 11
-    assert result.tag_files == 5
-    assert result.tag_entries == 5
+    assert result.tag_files == 0
+    assert result.tag_entries == 0
     assert result.i18n_files == 2
     assert result.example_profiles == 1
     assert (output / "catalog" / "manifest.json").is_file()
-    assert (output / "tags" / "tagsgdx3_items.txt").is_file()
-    assert (output / "tags" / "tagsgdx2_endlessdungeon.txt").is_file()
+    assert not (output / "tags" / "tagsgdx3_items.txt").exists()
+    assert not (output / "tags" / "tagsgdx2_endlessdungeon.txt").exists()
     assert (output / "resources" / "i18n" / "en.json").is_file()
     assert (output / "resources" / "i18n" / "ru.json").read_text(
         encoding="utf-8"
@@ -240,9 +241,7 @@ def test_reassembly_replaces_only_managed_contents(tmp_path: Path) -> None:
     assert not (output / "tags" / "stale.txt").exists()
     assert not (output / "resources" / "i18n" / "stale.json").exists()
     assert not (output / "Profiles" / "examples" / "stale.json").exists()
-    assert "Updated" in (output / "tags" / "tags_items.txt").read_text(
-        encoding="utf-8"
-    )
+    assert not any((output / "tags").iterdir())
     assert (output / "staging" / "keep.txt").read_text(encoding="utf-8") == "keep"
     assert prepared_russian.read_text(encoding="utf-8") == "tagExample=Russian\n"
 
@@ -252,9 +251,9 @@ def test_validation_failure_leaves_existing_release_untouched(tmp_path: Path) ->
     sentinel = output / "catalog" / "existing.txt"
     sentinel.parent.mkdir()
     sentinel.write_text("keep", encoding="utf-8")
-    (project / "game_data" / "gdx3" / "text_en" / "tagsgdx3_items.txt").unlink()
+    (project / "artifacts" / "catalog" / "skills.json").unlink()
 
-    with pytest.raises(FileNotFoundError, match="tagsgdx3_items.txt"):
+    with pytest.raises(FileNotFoundError, match="skills.json"):
         assemble_release(project)
 
     assert sentinel.read_text(encoding="utf-8") == "keep"

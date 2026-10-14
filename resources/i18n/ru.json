@@ -44,7 +44,7 @@
   "export.backup_preserved": "Сохранена уже существующая резервная копия исходного состояния.",
   "export.confirm_body": "Будут применены теги оценок к {affix_count} записям аффиксов и {unique_count} записям уникальных предметов. Продолжить?",
   "export.error_title": "Не удалось экспортировать оценки",
-  "export.explanation": "«Экспорт оценок» применяет оценки аффиксов и уникальных предметов активного профиля прямо к названиям предметов Grim Dawn. Уже установленные файлы Rainbow используются как источник, а подготовленные чистые файлы выбранного языка дополняют недостающее. Перед первым экспортом текущая папка {directory} сохраняется в резервную копию, чтобы её можно было восстановить здесь.",
+  "export.explanation": "Экспорт оценок в один файл локализации в {directory} с сохранением существующих настроек Grim Raynbow. При каждом экспорте исходный текст читается из установленной игры. Закройте Grim Dawn перед экспортом и перезапустите после него.",
   "export.game_folder_required": "Требуется корректная папка Grim Dawn.",
   "export.generate_button": "Экспортировать оценки",
   "export.last_exported_label": "Последний экспортированный профиль:",
@@ -243,7 +243,7 @@
   "settings.localization_location_user": "Документы / My Games",
   "settings.prepare_localization_button": "Обновить файлы языка игры",
   "settings.prepare_localization_error_title": "Не удалось подготовить язык игры",
-  "settings.prepare_localization_success": "Подготовлено файлов названий предметов: {count}, папка: {output_root}. Перезапустите Grim Gleaner, чтобы применить названия предметов к каталогу.",
+  "settings.prepare_localization_success": "Подготовлено чистых файлов локализации: {count}, папка: {output_root}. Перезапустите Grim Gleaner для обновления отображаемых названий. При экспорте эти файлы обновляются автоматически.",
   "settings.select_folder_dialog_title": "Выберите папку Grim Dawn (содержащую Grim Dawn.exe)",
   "settings.title": "Настройки",
   "settings.ui_locale_restart_notice": "Язык интерфейса установлен на «{locale}». Перезапустите Grim Gleaner, чтобы применить его.",
@@ -574,5 +574,6 @@
   "widgets.weight_accessible_name": "Вес {value} из {max}: {label}",
   "widgets.weight_decrease": "Уменьшить вес",
   "widgets.weight_increase": "Увеличить вес",
-  "widgets.weight_set_accessible_name": "Установить вес {index}: {label}"
+  "widgets.weight_set_accessible_name": "Установить вес {index}: {label}",
+  "export.legacy_conflicts": "Экспорт выполнен, но старые или дублирующие файлы локализации могут конфликтовать. Оставьте {host} в выбранной папке вывода и удалите следующие старые файлы фильтра, предварительно проверив, не нужны ли они другому моду. Grim Gleaner не изменил эти файлы:\n{files}"
 }

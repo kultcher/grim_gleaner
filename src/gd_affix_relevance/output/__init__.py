@@ -1,5 +1,7 @@
 """Safe generated-output helpers."""
 
+from gd_affix_relevance.output.consolidated_writer import generate_consolidated_output
+
 from gd_affix_relevance.output.rainbow_writer import (
     LocalizationChange,
     RainbowGenerationResult,
@@ -14,4 +16,5 @@ __all__ = [
     "build_affix_markers",
     "build_unique_item_markers",
     "generate_rainbow_output",
+    "generate_consolidated_output",
 ]

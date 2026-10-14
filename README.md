@@ -56,25 +56,31 @@ settings, so either can remain in English if preferred.
 3. Set **Grim Dawn item language** to **Русский**. Interface and item languages
    are independent settings and both default to English on a fresh install.
 4. Confirm that the selected game folder contains `Grim Dawn.exe`.
-5. Create or load a profile, then open **Export Grades** and export it. Before
-   the first Russian export, Grim Gleaner automatically reads the required item
-   tags from `Text_RU.arc` in the selected Grim Dawn installation.
+5. Create or load a profile, then open **Export Grades** and export it. Each
+   export reads fresh item tags and the native host file from `Text_RU.arc`
+   in the selected Grim Dawn installation.
 6. Start Grim Dawn with its language set to Russian. The generated files are
    written to the only location that already contains localization files:
    `Documents\My Games\Grim Dawn\Settings\text_ru` or the selected
    installation's `settings\text_ru` folder. If both locations contain files,
    choose the intended output location explicitly in **Settings**.
 
-Use **Refresh game language files** only after a Grim Dawn update or when you
-need to rebuild the prepared clean-language source. Restart Grim Gleaner after
-refreshing so the catalog reloads the updated item names.
+Use **Refresh game language files** to refresh localized names shown in the
+catalog, then restart Grim Gleaner. Export refreshes its sources automatically.
 
-Rainbow Filter and gdse are optional. If matching localization files are
-already installed, Grim Gleaner preserves their colors and text and adds grade
-markers on top. Clean item tags extracted from the user's own Grim Dawn
-installation fill any missing non-English files; the release includes a clean
-English fallback. Grim Gleaner does not distribute extracted non-English game
-localization.
+Grim Raynbow is optional. An existing modern single-file filter keeps its
+colors, custom text, comments, and intentionally hidden labels. Missing graded
+names are added from the installed game. Legacy multi-file Rainbow/Gleaner
+filters are not imported or deleted: export lists their exact paths for manual
+cleanup, including files in the other supported Settings directory. Export does
+not add the five legacy item files.
+
+English with FoA uses `tagsgdx3_uimain.txt`; English with FG uses
+`tagsgdx2_ui.txt`, and English with AoM uses `tagsgdx1_achievements.txt`.
+Russian with AoM uses `aom/tagsgdx1_achievements.txt`. Base-only installations
+use `tags_ui.txt`. Every native entry from the selected host is retained.
+Only installed expansions are extracted. Both languages use local game text;
+releases no longer package English localization files.
 
 The first export for each language preserves its original state in the
 `backups` folder beside the packaged application. Later exports do not overwrite
@@ -88,14 +94,16 @@ language, so English and Russian backups cannot be mixed accidentally.
    предметов Grim Dawn, затем перезапустите Grim Gleaner.
 3. Укажите папку игры, содержащую `Grim Dawn.exe`.
 4. Создайте или загрузите профиль и нажмите **Экспортировать оценки**. При
-   первом экспорте русские файлы будут подготовлены автоматически.
+   каждом экспорте исходные файлы читаются из установленной игры.
 5. Запустите Grim Dawn на русском языке и проверьте оценки в названиях
    предметов. Для отмены изменений используйте **Восстановить резервную
    копию**.
 
-Rainbow Filter устанавливать необязательно. Если он уже установлен, его цвета
-и оформление сохраняются. Кнопка **Обновить файлы языка игры** нужна после
-обновления Grim Dawn; после её использования перезапустите Grim Gleaner.
+Grim Raynbow устанавливать необязательно. Цвета и оформление современного
+однофайлового фильтра сохраняются. Старые файлы не удаляются автоматически:
+экспорт показывает список для ручной очистки. Кнопка **Обновить файлы языка
+игры** обновляет отображаемые названия; после её использования перезапустите
+Grim Gleaner. При экспорте исходные файлы обновляются автоматически.
 
 ## Installing from Source
 
@@ -107,8 +115,10 @@ I don't recommend doing this right now as I need to clean up some things. You ca
 
 but no guarantees it'll work properly this way. It *definitely* won't work properly if you don't use the -e flag.
 
-The clean-install export localization files are tracked under `game_data/*/text_en`
-and are used directly by development runs. The compiled runtime catalog is
+English source text used for catalog rebuilds remains tracked under
+`game_data/*/text_en`. Export always extracts fresh text into a separate
+locale-specific prepared directory, leaving that source tree untouched.
+The compiled runtime catalog is
 tracked under `artifacts/catalog`; rebuilding that catalog still requires your
 own locally extracted DBRs and full localization archives.
 
@@ -117,13 +127,26 @@ normal Grim Gleaner settings or live Grim Dawn localization folders, run:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File .\scripts\test-clean-install.ps1
+  -File .\scripts\test-clean-install.ps1 `
+  -GameFolder "C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn"
 ```
 
-The script displays a fake Grim Dawn installation to select at the startup
-prompt. Catalog loading, export, backup, and restore then operate entirely under
+The script copies only ArchiveTool, its DLLs, and localization archives into
+a fake Grim Dawn installation to select at the startup prompt. Catalog loading, export, backup, and restore then operate entirely under
 `build/clean-install-test`. Each run recreates that sandbox from scratch. Add
-`-PrepareOnly` to assemble and inspect it without launching the UI.
+`-PrepareOnly` to assemble and inspect it without launching the UI. Omit
+`-GameFolder` for a UI-only sandbox that cannot export.
+
+To test the real ArchiveTool extraction and consolidated generation without
+changing the installed game's Settings files, run:
+
+```powershell
+.\scripts\test-localization.ps1 -GameFolder "C:\Program Files (x86)\Steam\steamapps\common\Grim Dawn" -Locale en
+```
+
+Repeat with `-Locale ru` to check Russian. Outputs go under
+`build/localization-smoke`; this checks extraction and generation, not in-game
+load order.
 
 ### Usage
 
@@ -144,10 +167,10 @@ There are three tabbed subsections:
 - Add-ons will show your the 5 highest-graded Components and Augments for each item slot and their sources. It also has an optional "Resistance Cap Mode" that lets you easily target specific resistances that you need to cap.
 4. **Export to in-game tags**\
 **Important**: Any time you want to export grades, make sure the game is closed! Also, if you replace or remove the files in the selected `text_en` or `text_ru` folder, you need to run the export again.\
-Choose the item language and localization output location under "Settings," then open "Export Grades" from the sidebar and click "Export Grades." Missing clean-language files are prepared automatically from the selected Grim Dawn installation. The first export backs up the selected language folder if it already exists. These files may be used by Rainbow Filter or gdse; Grim Gleaner preserves their color/text changes while adding grades. (**Note**: Since Grim Gleaner uses "S" in its grading and Rainbow uses "S" for set items, Grim Gleaner replaces Rainbow's set notation with "$" for clarity.)
+Choose the item language and localization output location under "Settings," then open "Export Grades" from the sidebar and click "Export Grades." Each export extracts fresh clean-language files from the selected Grim Dawn installation. The first export backs up the selected language folder if it already exists. An existing modern Grim Raynbow master keeps its color/text changes while grades are added. Old multi-file filters remain untouched and are listed for manual cleanup. (**Note**: Since Grim Gleaner uses "S" in its grading and Rainbow uses "S" for set items, Grim Gleaner replaces Rainbow's set notation with "$" for clarity.)
 
 Rainbow Filter or gdse are recommended but not required. Find them below:\
-[Rainbow Filter](https://forums.crateentertainment.com/t/tool-rainbow-filter-item-highlighting/42765)\
+[Grim Raynbow](https://grimraynbow.com/)\
 [gdse](https://forums.crateentertainment.com/t/tool-gdse-a-light-weight-fully-automated-alternative-to-rainbow-filter/156183)
 
 See the "Guide" section in the UI for more information.

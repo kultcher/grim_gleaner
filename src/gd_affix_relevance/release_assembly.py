@@ -12,12 +12,9 @@ from pathlib import Path
 
 from gd_affix_relevance import __version__
 from gd_affix_relevance.catalog import CatalogBundle
-from gd_affix_relevance.importers.localization_parser import parse_localization_file
 from gd_affix_relevance.profile_store import load_profile
-from gd_affix_relevance.runtime_paths import EXPORT_LOCALIZATION_SOURCES
 from gd_affix_relevance.stats import registered_stat_definitions
 
-TAG_SOURCES = EXPORT_LOCALIZATION_SOURCES
 OPTIONAL_RELEASE_DOCUMENTS = ("LICENSE.txt", "THIRD_PARTY_NOTICES.txt")
 EXAMPLE_PROFILE_DIRECTORY = Path("Profiles/examples")
 I18N_RESOURCE_DIRECTORY = Path("resources/i18n")
@@ -67,13 +64,13 @@ def assemble_release(
     profiles_root: Path | None = None,
     i18n_root: Path | None = None,
 ) -> ReleaseAssemblyResult:
-    """Validate and stage packaged catalogs, raw tags, and release metadata.
+    """Validate and stage packaged catalogs, UI text, and release metadata.
 
     Only paths listed in ``MANAGED_RELEASE_PATHS`` are replaced. In particular,
     a previously built executable, dependency directory, staging output, and
     user backups are left untouched. The authored English/Russian UI resources
-    and clean English fallback item tags are bundled here. Prepared non-English
-    item tags must be obtained from the user's installed game.
+    are bundled here. Game text for every language is obtained from the user's
+    installed game, and is never bundled in a release.
     """
 
     project = Path(project_root).expanduser().resolve()
@@ -86,11 +83,6 @@ def assemble_release(
         Path(catalog_root).expanduser().resolve()
         if catalog_root is not None
         else project / "artifacts" / "catalog"
-    )
-    data_source = (
-        Path(data_root).expanduser().resolve()
-        if data_root is not None
-        else project / "game_data"
     )
     profile_source = (
         Path(profiles_root).expanduser().resolve()
@@ -117,18 +109,6 @@ def assemble_release(
     example_profile_sources = _validate_example_profiles(
         profile_source, bundle
     )
-
-    tag_sources: dict[str, Path] = {}
-    tag_entry_counts: dict[str, int] = {}
-    for filename, relative_path in TAG_SOURCES.items():
-        path = data_source / relative_path
-        if not path.is_file():
-            raise FileNotFoundError(f"required localization file is missing: {path}")
-        entry_count = len(parse_localization_file(path))
-        if not entry_count:
-            raise ValueError(f"localization file contains no tag definitions: {path}")
-        tag_sources[filename] = path
-        tag_entry_counts[filename] = entry_count
 
     i18n_sources: dict[str, Path] = {}
     for filename in I18N_RESOURCE_FILES:
@@ -166,12 +146,6 @@ def assemble_release(
             shutil.copy2(source, target)
             catalog_hashes[filename] = _sha256(target)
 
-        tag_hashes: dict[str, str] = {}
-        for filename, source in tag_sources.items():
-            target = staged_tags / filename
-            shutil.copy2(source, target)
-            tag_hashes[filename] = _sha256(target)
-
         i18n_hashes: dict[str, str] = {}
         for filename, source in i18n_sources.items():
             target = staged_i18n / filename
@@ -205,13 +179,8 @@ def assemble_release(
                 "locale": bundle.manifest.locale,
                 "files": catalog_hashes,
             },
-            "tags": {
-                filename: {
-                    "entries": tag_entry_counts[filename],
-                    "sha256": tag_hashes[filename],
-                }
-                for filename in TAG_SOURCES
-            },
+            "tags": {},
+            "localization": {"source": "installed_game", "format": "consolidated"},
             "i18n": i18n_hashes,
             "example_profiles": profile_hashes,
         }
@@ -229,8 +198,8 @@ def assemble_release(
     return ReleaseAssemblyResult(
         output_root=output,
         catalog_files=len(catalog_files),
-        tag_files=len(tag_sources),
-        tag_entries=sum(tag_entry_counts.values()),
+        tag_files=0,
+        tag_entries=0,
         i18n_files=len(i18n_sources),
         example_profiles=len(example_profile_sources),
         optional_documents_missing=tuple(optional_missing),

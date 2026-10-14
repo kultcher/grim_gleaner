@@ -3,6 +3,28 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
+
+
+def atomic_replace_directory(target: Path, incoming: Path) -> None:
+    """Replace an owned directory, restoring the previous tree on failure."""
+    target.parent.mkdir(parents=True, exist_ok=True)
+    previous = target.parent / f".{target.name}-grim-gleaner-previous"
+    if previous.exists():
+        raise ValueError(f"unfinished prior replacement exists: {previous}")
+    moved_previous = False
+    try:
+        if target.exists():
+            target.replace(previous)
+            moved_previous = True
+        incoming.replace(target)
+    except Exception:
+        if moved_previous and not target.exists():
+            previous.replace(target)
+        raise
+    else:
+        if moved_previous:
+            shutil.rmtree(previous)
 
 
 def atomic_write_text(

@@ -1,4 +1,7 @@
+import pytest
 import os
+
+pytestmark = pytest.mark.usefixtures("localization_archive_tool")
 from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -92,7 +95,7 @@ def test_export_page_installs_grades_and_restores_original(
     installed.mkdir(parents=True)
     (game / "Grim Dawn.exe").touch()
     original = "tagHealthy={^G}Rainbow Healthy\ntagOther=Keep Me\n"
-    (installed / "tags_items.txt").write_text(original, encoding="utf-8")
+    (installed / "tagsgdx3_uimain.txt").write_text(original, encoding="utf-8")
     page = _page(tmp_path, game, bundled)
     assert page.last_exported_profile.text() == "None"
     questions: list[str] = []
@@ -108,7 +111,7 @@ def test_export_page_installs_grades_and_restores_original(
     assert page.last_result is not None
     assert "About to apply grade tags to 1 affix and 0 unique item entries" in questions[0]
     assert "tagHealthy={^C}(C1){^G}Rainbow Healthy" in (
-        installed / "tags_items.txt"
+        installed / "tagsgdx3_uimain.txt"
     ).read_text(encoding="utf-8")
     assert page.restore_button.isEnabled()
     assert "Created the original-state backup" in page.status.text()
@@ -121,7 +124,7 @@ def test_export_page_installs_grades_and_restores_original(
     page.restore_backup()
 
     assert questions[1].startswith(f"Restoring {installed} to its original state.")
-    assert (installed / "tags_items.txt").read_text(encoding="utf-8") == original
+    assert (installed / "tagsgdx3_uimain.txt").read_text(encoding="utf-8") == original
     assert not page.restore_button.isEnabled()
 
 
@@ -151,7 +154,7 @@ def test_export_page_uses_bundled_tags_for_clean_install(
 
     installed = game / "settings" / "text_en"
     assert "tagHealthy=(C1)Bundled Healthy" in (
-        installed / "tags_items.txt"
+        installed / "tagsgdx3_uimain.txt"
     ).read_text(encoding="utf-8")
 
     page.restore_backup()
@@ -302,91 +305,52 @@ def test_export_page_can_target_russian_localization(
     assert not (game / "settings" / "text_en").exists()
 
 
-def test_export_page_prepares_missing_selected_language_automatically(
-    tmp_path: Path,
-    monkeypatch,
-) -> None:
+def test_export_page_refreshes_selected_language_every_export(tmp_path, monkeypatch, localization_archive_tool):
     _application()
     game = tmp_path / "Grim Dawn"
     game.mkdir()
     (game / "Grim Dawn.exe").touch()
-    bundled = tmp_path / "tags" / "ru"
-    settings = QSettings(
-        str(tmp_path / "settings.ini"),
-        QSettings.Format.IniFormat,
-    )
-    settings.setValue("paths/grim_dawn_folder", str(game))
-    page = GenerateOutputPage(
-        _catalog(),
-        BuildProfile("Здоровье", {"health": 4}),
-        source_root=bundled,
-        output_root=tmp_path / "staging" / "text_ru",
-        backups_root=tmp_path / "backups",
-        locale=RUSSIAN_LOCALE,
-        settings=settings,
-    )
-    prepared: list[tuple[Path, Path, str]] = []
-
-    def prepare(game_folder, destination_root, *, locale):
-        prepared.append((game_folder, destination_root, locale.code))
-        destination_root.mkdir(parents=True)
-        for filename in (
-            "tags_items.txt",
-            "tagsgdx1_items.txt",
-            "tagsgdx2_items.txt",
-            "tagsgdx2_endlessdungeon.txt",
-            "tagsgdx3_items.txt",
-        ):
-            (destination_root / filename).write_text(
-                "tagHealthy=Здоровый\n",
-                encoding="utf-8-sig",
-            )
-
-    monkeypatch.setattr(
-        "gd_affix_relevance.ui.generate_output.prepare_game_item_tags",
-        prepare,
-    )
-    monkeypatch.setattr(
-        QMessageBox,
-        "question",
-        lambda *_args: QMessageBox.StandardButton.Yes,
-    )
-
+    clean = tmp_path / "prepared" / "ru"
+    page = _page(tmp_path, game, clean)
+    page.set_locale(RUSSIAN_LOCALE, source_root=clean, output_root=tmp_path / "staging" / "text_ru")
+    monkeypatch.setattr(QMessageBox, "question", lambda *_: QMessageBox.StandardButton.Yes)
     page.generate()
-
-    assert prepared == [(game, bundled, "ru")]
     assert page.last_result is not None
-    assert page.last_exported_profile.text().endswith(
-        f"({RUSSIAN_LOCALE.display_name})"
-    )
-    assert "(C1)Здоровый" in (
-        game / "settings" / "text_ru" / "tags_items.txt"
-    ).read_text(encoding="utf-8-sig")
+    page.generate()
+    assert len(localization_archive_tool) == 2
+    master = game / "settings" / "text_ru" / "aom" / "tagsgdx1_achievements.txt"
+    assert "(C1)Здоровый" in master.read_text(encoding="utf-8-sig")
+    assert not (game / "settings" / "text_ru" / "tags_items.txt").exists()
 
 
-def test_nested_other_locale_files_do_not_satisfy_selected_locale(
-    tmp_path: Path,
-    monkeypatch,
-) -> None:
+def test_export_page_lists_legacy_paths_without_deleting_them(tmp_path, monkeypatch):
     _application()
-    game = tmp_path / "Grim Dawn"
+    game = tmp_path / 'Grim Dawn'
+    old = game / 'settings' / 'text_en' / 'tags_items.txt'
+    old.parent.mkdir(parents=True)
+    (game / 'Grim Dawn.exe').touch()
+    old.write_text('tagHealthy=Legacy\n', encoding='utf-8')
+    page = _page(tmp_path, game, tmp_path / 'prepared')
+    monkeypatch.setattr(QMessageBox, 'question', lambda *_: QMessageBox.StandardButton.Yes)
+    page.generate()
+    assert page.last_result is not None
+    assert str(old) in page.status.text()
+    assert 'left them untouched' in page.status.text()
+    assert old.read_text() == 'tagHealthy=Legacy\n'
+
+
+def test_nested_other_locale_files_are_replaced_by_fresh_selected_language(tmp_path, monkeypatch):
+    _application()
+    game = tmp_path / 'Grim Dawn'
     game.mkdir()
-    (game / "Grim Dawn.exe").touch()
-    source_root = tmp_path / "app" / "tags"
-    nested_other_locale = source_root / "ru"
-    nested_other_locale.mkdir(parents=True)
-    _complete_bundled_tags(nested_other_locale)
-    page = _page(tmp_path, game, source_root)
-    prepared: list[tuple[Path, Path, str]] = []
-
-    def prepare(game_folder, destination_root, *, locale):
-        prepared.append((game_folder, destination_root, locale.code))
-
-    monkeypatch.setattr(
-        "gd_affix_relevance.ui.generate_output.prepare_game_item_tags",
-        prepare,
-    )
-
-    page._prepare_missing_localization(game)
-
-    assert prepared == [(game, source_root, "en")]
+    (game / 'Grim Dawn.exe').touch()
+    clean = tmp_path / 'prepared'
+    stale = clean / 'ru' / 'unrelated.txt'
+    stale.parent.mkdir(parents=True)
+    stale.write_text('tagForeign=Русский\n', encoding='utf-8-sig')
+    page = _page(tmp_path, game, clean)
+    monkeypatch.setattr(QMessageBox, 'question', lambda *_: QMessageBox.StandardButton.Yes)
+    page.generate()
+    assert page.last_result is not None
+    assert not stale.exists()
+    assert 'Русский' not in (game / 'settings' / 'text_en' / 'tagsgdx3_uimain.txt').read_text(encoding='utf-8-sig')

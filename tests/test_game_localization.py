@@ -21,6 +21,8 @@ def _game(tmp_path: Path) -> Path:
     (game / "Grim Dawn.exe").touch()
     (game / "ArchiveTool.exe").touch()
     (game / "resources" / "Text_RU.arc").touch()
+    for dlc in ("gdx1", "gdx2", "gdx3"):
+        (game / dlc).mkdir()
     return game
 
 
@@ -76,21 +78,22 @@ def test_prepare_game_item_tags_copies_only_required_files_atomically(
         locale=RUSSIAN_LOCALE,
     )
 
-    assert result.files_written == ITEM_TAG_FILENAMES
+    assert result.files_written[:5] == ITEM_TAG_FILENAMES
+    assert len(result.files_written) == 6
     assert extracted_archive_paths == [
         "tags_items.txt",
         "aom/tagsgdx1_items.txt",
         "fg/tagsgdx2_items.txt",
         "fg/tagsgdx2_endlessdungeon.txt",
         "foa/tagsgdx3_items.txt",
+        "aom/tagsgdx1_achievements.txt",
     ]
     assert len(set(staged_archives)) == 1
     assert staged_archives[0].name == "Text_RU.arc"
     # Russian ships one combined archive: every item-tag file resolves to it.
     assert result.archive_paths == (game / "resources" / "Text_RU.arc",)
-    assert set(path.name for path in destination.iterdir()) == set(
-        ITEM_TAG_FILENAMES
-    )
+    assert all((destination / filename).is_file() for filename in result.files_written)
+    assert (destination / "localization-manifest.json").is_file()
     assert "Пример" in (destination / "tags_items.txt").read_text(
         encoding="utf-8-sig"
     )
@@ -128,7 +131,8 @@ def test_prepare_game_item_tags_extracts_english_dlc_from_separate_archives(
         locale=ENGLISH_LOCALE,
     )
 
-    assert result.files_written == ITEM_TAG_FILENAMES
+    assert result.files_written[:5] == ITEM_TAG_FILENAMES
+    assert len(result.files_written) == 6
     extracted_paths = [
         path_in_archive for _archive, path_in_archive in extracted_commands
     ]
@@ -138,6 +142,7 @@ def test_prepare_game_item_tags_extracts_english_dlc_from_separate_archives(
         "tagsgdx2_items.txt",
         "tagsgdx2_endlessdungeon.txt",
         "tagsgdx3_items.txt",
+        "tagsgdx3_uimain.txt",
     ]
     staged_paths = [Path(archive) for archive, _path in extracted_commands]
     assert [path.parent.name for path in staged_paths] == [
@@ -145,6 +150,7 @@ def test_prepare_game_item_tags_extracts_english_dlc_from_separate_archives(
         "1",
         "2",
         "2",
+        "3",
         "3",
     ]
     assert all(path.name == "Text_EN.arc" for path in staged_paths)
@@ -154,9 +160,8 @@ def test_prepare_game_item_tags_extracts_english_dlc_from_separate_archives(
         game / "gdx2" / "resources" / "Text_EN.arc",
         game / "gdx3" / "resources" / "Text_EN.arc",
     )
-    assert set(path.name for path in destination.iterdir()) == set(
-        ITEM_TAG_FILENAMES
-    )
+    assert all((destination / filename).is_file() for filename in result.files_written)
+    assert (destination / "localization-manifest.json").is_file()
 
 
 def test_prepare_game_item_tags_reports_missing_english_dlc_archive(
@@ -247,3 +252,51 @@ def test_prepare_game_item_tags_rejects_incomplete_extraction(
         )
 
     assert not (tmp_path / "text_ru").exists()
+
+
+@pytest.mark.parametrize('locale,expansions,expected', [
+    (ENGLISH_LOCALE, (), 'tags_ui.txt'),
+    (ENGLISH_LOCALE, ('gdx1',), 'tagsgdx1_achievements.txt'),
+    (ENGLISH_LOCALE, ('gdx1', 'gdx2'), 'tagsgdx2_ui.txt'),
+    (RUSSIAN_LOCALE, (), 'tags_ui.txt'),
+    (RUSSIAN_LOCALE, ('gdx1',), 'aom/tagsgdx1_achievements.txt'),
+])
+def test_extracts_only_installed_dlc_and_its_host(tmp_path, monkeypatch, locale, expansions, expected):
+    game = tmp_path / 'Grim Dawn'
+    (game / 'resources').mkdir(parents=True)
+    (game / 'Grim Dawn.exe').touch()
+    (game / 'ArchiveTool.exe').touch()
+    (game / 'resources' / locale.game_archive_filename).touch()
+    for dlc in expansions:
+        (game / dlc / 'resources').mkdir(parents=True)
+        if locale is ENGLISH_LOCALE:
+            (game / dlc / 'resources' / locale.game_archive_filename).touch()
+    commands = []
+    def extract(command, **kwargs):
+        commands.append(command)
+        target = Path(command[-2]) / command[-1]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('tagTest=Text\n', encoding='utf-8-sig')
+        return CompletedProcess(command, 0, stdout='', stderr='')
+    monkeypatch.setattr('gd_affix_relevance.game_localization.subprocess.run', extract)
+    result = prepare_game_item_tags(game, tmp_path / 'prepared', locale=locale)
+    assert result.host_relative_path == Path(expected)
+    assert (result.output_root / expected).is_file()
+    assert all('gdx3' not in command[-1] for command in commands)
+    assert len(result.files_written) == 2 + len(expansions) + ('gdx2' in expansions)
+
+
+def test_empty_extraction_does_not_replace_previous_clean_source(tmp_path, monkeypatch):
+    game = _game_en(tmp_path)
+    destination = tmp_path / 'prepared'
+    destination.mkdir()
+    (destination / 'sentinel.txt').write_text('keep', encoding='utf-8')
+    def extract(command, **kwargs):
+        target = Path(command[-2]) / command[-1]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('# no definitions\n', encoding='utf-8')
+        return CompletedProcess(command, 0, stdout='', stderr='')
+    monkeypatch.setattr('gd_affix_relevance.game_localization.subprocess.run', extract)
+    with pytest.raises(ValueError, match='Missing'):
+        prepare_game_item_tags(game, destination, locale=ENGLISH_LOCALE)
+    assert (destination / 'sentinel.txt').read_text() == 'keep'

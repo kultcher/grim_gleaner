@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$Python = "",
+    [string]$GameFolder = "",
     [switch]$PrepareOnly
 )
 
@@ -75,12 +76,26 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $catalogManifest = Join-Path $applicationRoot "catalog\manifest.json"
-$baseTags = Join-Path $applicationRoot "tags\tags_items.txt"
 if (-not (Test-Path -LiteralPath $catalogManifest -PathType Leaf)) {
     throw "Clean-install catalog is missing: $catalogManifest"
 }
-if (-not (Test-Path -LiteralPath $baseTags -PathType Leaf)) {
-    throw "Clean-install tags are missing: $baseTags"
+if ($GameFolder) {
+    $sourceGame = (Resolve-Path -LiteralPath $GameFolder).Path
+    if (-not (Test-Path -LiteralPath (Join-Path $sourceGame "ArchiveTool.exe") -PathType Leaf)) {
+        throw "ArchiveTool.exe is missing from $sourceGame"
+    }
+    Copy-Item -LiteralPath (Join-Path $sourceGame "ArchiveTool.exe") -Destination $fakeGameRoot
+    Get-ChildItem -LiteralPath $sourceGame -Filter "*.dll" -File | Copy-Item -Destination $fakeGameRoot
+    foreach ($directory in @("resources", "gdx1\resources", "gdx2\resources", "gdx3\resources")) {
+        $sourceDirectory = Join-Path $sourceGame $directory
+        if (Test-Path -LiteralPath $sourceDirectory -PathType Container) {
+            $targetDirectory = Join-Path $fakeGameRoot $directory
+            New-Item -ItemType Directory -Path $targetDirectory -Force | Out-Null
+            Get-ChildItem -LiteralPath $sourceDirectory -Filter "Text_*.arc" -File | Copy-Item -Destination $targetDirectory
+        }
+    }
+} else {
+    Write-Host "UI-only sandbox: pass -GameFolder with your real installation to test local extraction and export."
 }
 
 Write-Host "Fresh-install sandbox prepared at:"
