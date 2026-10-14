@@ -91,6 +91,29 @@ class RankedAffixVariant:
         return f"[{self.score.marker_body}{granted_flag}]"
 
 
+def is_resistance_penalty(property_: AffixProperty) -> bool:
+    """Identify negative resistance packages without rejecting useful debuffs.
+
+    Resistance reduction uses different property IDs and can legitimately have
+    negative values. Unknown expressions retain the existing presence behavior.
+    """
+
+    if not property_.property_id.endswith("_resistance"):
+        return False
+    values: list[float] = []
+    for role in ("percent", "percent_min", "percent_max"):
+        raw = property_.attributes.get(role, "")
+        if not raw:
+            continue
+        try:
+            values.extend(float(value) for value in raw.split(";"))
+        except ValueError:
+            return False
+    return bool(values) and all(value <= 0 for value in values) and any(
+        value < 0 for value in values
+    )
+
+
 def semantic_stat_id(property_: AffixProperty) -> str:
     """Translate a compiled property into the ID used by build profiles."""
 
@@ -158,6 +181,7 @@ def variant_semantic_stat_ids(
                 for property_ in variant.properties
                 if property_.property_id != "granted_item_skill"
                 and property_enabled_for_profile(property_, profile)
+                and not is_resistance_penalty(property_)
                 for stat_id in semantic_stat_ids(property_)
                 if stat_is_scoreable(stat_id)
             }

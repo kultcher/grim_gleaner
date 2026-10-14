@@ -59,6 +59,33 @@ def _item(name: str, *variants: ItemVariantDefinition) -> ItemDefinition:
     )
 
 
+def test_resistance_penalty_does_not_earn_credit_but_negative_enemy_debuff_does() -> None:
+    from gd_affix_relevance.scoring.catalog_scorer import score_semantic_stat_ids
+
+    profile = BuildProfile(weights={
+        "pet_maximum_all_resistance": 4,
+        "target_resistance_reduction_percent": 3,
+    })
+    penalty = ItemProperty(
+        "pet_maximum_all_resistance", "pet_maximum_all_resistance", {"percent": "-15"}
+    )
+    debuff = ItemProperty(
+        "target_resistance_reduction_percent",
+        "target_resistance_reduction_percent",
+        {"reduction_percent": "-25"},
+    )
+    variant = _variant(properties=(penalty, debuff))
+    stat_ids = item_semantic_stat_ids(variant, profile)
+    assert stat_ids == ("target_resistance_reduction_percent",)
+    score = score_semantic_stat_ids(stat_ids, profile)
+    assert score.weighted_match == 3
+
+    bonus = replace(penalty, attributes={"percent": "15"})
+    assert "pet_maximum_all_resistance" in item_semantic_stat_ids(
+        replace(variant, properties=(bonus,)), profile
+    )
+
+
 def test_unique_ranking_uses_highest_variant_and_flags_selected_skill_modifier() -> None:
     selected_skill_id = "records/skills/playerclass01/cadence1_buff.dbr"
     modifier_skill_id = "records/skills/playerclass01/cadence1.dbr"

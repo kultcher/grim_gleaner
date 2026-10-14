@@ -13,6 +13,28 @@ from gd_affix_relevance.records import RecordRepository
 from gd_affix_relevance.slots import SLOT_RING
 
 
+def test_pet_mind_control_resistance_compiles_to_a_weightable_stat(tmp_path: Path) -> None:
+    from gd_affix_relevance.catalog import ItemProperty
+    from gd_affix_relevance.scoring import semantic_stat_ids
+    from gd_affix_relevance.stats import stat_is_registered, stat_is_scoreable
+
+    pet_path = "records/skills/itemskills/beastmonger_pet.dbr"
+    _write_dbr(tmp_path / "base" / pet_path, [
+        ("Class", "Skill_BuffPassive"), ("defensiveConvert", "20"),
+    ])
+    properties = compile_record_properties(
+        parse_dbr_text(f"petBonusName,{pet_path},\n"),
+        resolver=RecordRepository(tmp_path, ("base",)),
+        localization_lookup={},
+    )
+    assert len(properties) == 1
+    property_ = ItemProperty(**properties[0])
+    assert semantic_stat_ids(property_) == ("pet_mind_control_resistance",)
+    assert property_.attributes["percent"] == "20"
+    assert stat_is_registered("pet_mind_control_resistance")
+    assert stat_is_scoreable("pet_mind_control_resistance")
+
+
 def _write_dbr(path: Path, fields: list[tuple[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(

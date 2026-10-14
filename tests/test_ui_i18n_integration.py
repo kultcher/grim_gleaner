@@ -159,6 +159,7 @@ def test_resistance_labels_match_official_grim_dawn_russian_terms() -> None:
             "Максимум сопротивления урону здоровью"
         ),
         "pet_aether_resistance": "Сопротивление питомца эфиру",
+        "pet_mind_control_resistance": "Сопротивление питомца контролю разума",
         "pet_elemental_resistance": (
             "Сопротивление питомца стихийному урону"
         ),

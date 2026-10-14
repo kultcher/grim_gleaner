@@ -24,7 +24,7 @@ from gd_affix_relevance.catalog import SkillCatalog
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.level_bands import LEVEL_BANDS
 from gd_affix_relevance.profile_store import load_profile, save_profile
-from gd_affix_relevance.ui.catalog import PROFILE_TABS, TabDefinition
+from gd_affix_relevance.ui.catalog import TabDefinition, profile_tabs_for_stat_ids
 from gd_affix_relevance.ui.i18n import t
 from gd_affix_relevance.ui.widgets import PackageAccordion
 from gd_affix_relevance.ui.skills_editor import SkillsEditor
@@ -45,6 +45,7 @@ class ProfileEditor(QWidget):
         profile_path: Path | None = None,
         profiles_root: Path | None = None,
         startup_notice: str = "",
+        available_stat_ids: frozenset[str] | None = None,
     ) -> None:
         super().__init__(parent)
         self.profile = profile or BuildProfile()
@@ -134,7 +135,7 @@ class ProfileEditor(QWidget):
 
         self.tabs = QTabWidget(self)
         self.tabs.setObjectName("profileTabs")
-        for definition in PROFILE_TABS:
+        for definition in profile_tabs_for_stat_ids(available_stat_ids):
             self.tabs.addTab(
                 self._build_tab(definition),
                 t(f"tab.{definition.tab_id}", default=definition.label),

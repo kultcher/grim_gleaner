@@ -154,6 +154,12 @@ See the "Guide" section in the UI for more information.
 
 #### Weighting Tips
 
+The profile editor shows stat categories present in the loaded gear catalog,
+including lower-level affix tiers, components, augments, and relics. After a
+catalog rebuild, categories no longer found on gear disappear from the editor;
+saved profile weights are retained. Negative resistance modifiers remain visible
+in item details but do not earn positive relevance credit.
+
 Assign stars to each stat modifier based on how important the stat is to your build. Use the following as a guideline:
 
 0 stars: Stats that are totally irrelevant to your build.

@@ -1,4 +1,5 @@
 import pytest
+from dataclasses import replace
 
 from gd_affix_relevance.catalog import (
     AffixCatalog,
@@ -20,6 +21,18 @@ from gd_affix_relevance.scoring import (
     semantic_stat_ids,
 )
 from gd_affix_relevance.slots import SLOT_RING
+
+
+def test_negative_pet_resistance_affix_is_not_a_beneficial_match() -> None:
+    profile = BuildProfile(weights={"pet_maximum_all_resistance": 4})
+    variant = replace(_variant(), properties=(AffixProperty(
+        "pet_maximum_all_resistance", "pet_maximum_all_resistance",
+        {"percent": "-15"},
+    ),))
+    score = score_affix_variant(variant, profile)
+    assert score.grade == "F"
+    assert score.matched_count == 0
+    assert score.total_category_count == 0
 
 
 def _variant(*property_ids: str, slot: str = "Ring") -> AffixVariantDefinition:

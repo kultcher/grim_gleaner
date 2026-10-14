@@ -624,6 +624,7 @@ PETS_TAB = TabDefinition(
                     ("pet_poison_acid_resistance", "Pet Poison & Acid Resistance"),
                     ("pet_vitality_resistance", "Pet Vitality Resistance"),
                     ("pet_stun_resistance", "Pet Stun Resistance"),
+                    ("pet_mind_control_resistance", "Pet Mind Control Resistance"),
                     ("pet_freeze_resistance", "Pet Freeze Resistance"),
                     ("pet_entrapment_resistance", "Pet Entrapment Resistance"),
                     ("pet_petrify_resistance", "Pet Petrify Resistance"),
@@ -693,6 +694,9 @@ EXTRA_WEIGHTABLE_STAT_DEFINITIONS = (
 )
 
 NON_SCOREABLE_STAT_DEFINITIONS = (
+    # Mind control affects pets, not the player; only its pet-prefixed form is
+    # offered as a weightable stat.
+    stat("mind_control_resistance", "Mind Control Resistance"),
     stat("base_attack_speed", "Base Weapon Attack Speed"),
     stat("base_shield_block_amount", "Base Shield Block Amount"),
     stat("base_shield_block_chance", "Base Shield Block Chance"),

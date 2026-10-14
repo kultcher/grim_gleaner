@@ -15,6 +15,25 @@ def _application() -> QApplication:
     return QApplication.instance() or QApplication([])
 
 
+def test_catalog_filter_hides_absent_rows_without_losing_profile_weights(tmp_path: Path) -> None:
+    _application()
+    profile = BuildProfile("Pets", {
+        "health": 2, "pet_aether_resistance": 3, "pet_mind_control_resistance": 4,
+    })
+    editor = ProfileEditor(
+        profile, profiles_root=tmp_path,
+        available_stat_ids=frozenset({"health", "pet_mind_control_resistance"}),
+    )
+    rows = {stat_id for accordion in editor.accordions.values() for stat_id in accordion.rows}
+    assert rows == {"health", "pet_mind_control_resistance"}
+    path = editor.save_to_path(tmp_path / "pets.json")
+    assert load_profile(path).weights == profile.weights
+    editor.load_from_path(path)
+    assert editor.profile.weight_for("pet_aether_resistance") == 3
+    assert "pets_damage" not in editor.accordions
+    editor.close()
+
+
 def test_editor_saves_and_loads_profile_into_existing_controls(
     tmp_path: Path,
 ) -> None:

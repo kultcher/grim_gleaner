@@ -481,6 +481,7 @@
   "stat.pet_poison_damage_percent": "Pet Poison Damage (+% DoT)",
   "stat.pet_retaliation_damage_percent": "Pet Retaliation Damage (+%)",
   "stat.pet_slow_resistance": "Pet Slow Resistance",
+  "stat.pet_mind_control_resistance": "Pet Mind Control Resistance",
   "stat.pet_stun_resistance": "Pet Stun Resistance",
   "stat.pet_total_damage_percent": "Pet Total Damage (+%)",
   "stat.pet_total_speed": "Pet Total Speed",

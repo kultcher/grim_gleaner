@@ -3,7 +3,46 @@ from gd_affix_relevance.ui.catalog import (
     PETS_TAB,
     PROFILE_TABS,
     all_stat_definitions,
+    gear_catalog_stat_ids,
+    profile_tabs_for_stat_ids,
 )
+
+
+def test_rebuilt_catalog_removes_absent_options_and_keeps_lower_tier_and_augment_stats() -> None:
+    from dataclasses import replace
+    from pathlib import Path
+
+    from gd_affix_relevance.catalog import (
+        AffixCatalog, AffixProperty, CatalogBundle, ItemCatalog, ItemProperty,
+    )
+
+    bundle = CatalogBundle.load(Path(__file__).parents[1] / "artifacts/catalog")
+    affix = next(affix for affix in bundle.affixes.affixes if affix.tiers)
+    health = AffixProperty("health", "health", {"flat": "100"})
+    pet_resist = AffixProperty(
+        "pet_aether_resistance", "pet_aether_resistance", {"percent": "10"}
+    )
+    affix = replace(affix,
+        variants=(replace(affix.variants[0], properties=(health,)),),
+        tiers=(replace(affix.tiers[0], level_requirement=1, properties=(pet_resist,)),),
+    )
+    augment = bundle.items.augments[0]
+    augment = replace(augment, variants=(replace(
+        augment.variants[0], properties=(ItemProperty(
+            "pet_mind_control_resistance", "pet_mind_control_resistance", {"percent": "20"}
+        ),),
+    ),))
+    items = ItemCatalog((), (), (augment,), (), (), ())
+    before = gear_catalog_stat_ids(AffixCatalog((affix,)), items)
+    assert {"health", "pet_aether_resistance", "pet_mind_control_resistance"} <= before
+
+    after = gear_catalog_stat_ids(AffixCatalog((replace(affix, tiers=()),)), items)
+    tabs = profile_tabs_for_stat_ids(after)
+    visible = {stat.stat_id for tab in tabs for package in tab.packages for stat in package.stats}
+    assert visible == {"health", "pet_mind_control_resistance"}
+    assert "pet_aether_resistance" not in visible
+    assert profile_tabs_for_stat_ids(None) == PROFILE_TABS
+    assert profile_tabs_for_stat_ids(frozenset()) == ()
 
 
 def test_catalog_ids_are_unique_and_default_packages_exist() -> None:

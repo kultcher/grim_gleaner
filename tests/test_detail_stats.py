@@ -10,6 +10,18 @@ def _property(property_id: str, **attributes: str) -> AffixProperty:
     return AffixProperty(property_id, property_id, attributes)
 
 
+def test_unscored_resistance_penalty_remains_visible_without_relevance_stars() -> None:
+    rows = build_detail_stat_rows(
+        (),
+        (_property("pet_maximum_all_resistance", percent="-15"),),
+        label_for=lambda _: "Pet Maximum All Resistances",
+        weight_for=lambda _: 4,
+    )
+    assert len(rows) == 1
+    assert rows[0].value == "-15%"
+    assert rows[0].weight == 0
+
+
 def test_nominal_values_format_common_and_compound_property_shapes() -> None:
     assert format_nominal_value(
         _property("lightning_damage_percent", damage_percent="71.000000")
