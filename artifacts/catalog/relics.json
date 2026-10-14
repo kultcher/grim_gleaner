@@ -446,14 +446,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/relics/petbonus_ancestor.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "24.000000"
               },
               "property_id": "total_damage_percent",
@@ -471,7 +463,6 @@
             "*Granted Skill: Ancestral Bond",
             "+[x]% Total Damage",
             "Bonus to All Pets: +[x]% Defensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage",
             "+1 to All Skills in Shaman"
           ],
@@ -789,14 +780,7 @@
             },
             {
               "attributes": {
-                "flat": "550.000000"
-              },
-              "property_id": "health",
-              "property_key": "health"
-            },
-            {
-              "attributes": {
-                "percent": "5.000000"
+                "percent": "4.000000"
               },
               "property_id": "physical_resistance",
               "property_key": "physical_resistance"
@@ -810,7 +794,6 @@
           "source": "gdx3",
           "stat_lines": [
             "+[x] All Skills",
-            "+[x] Health",
             "+[x] Energy Regeneration",
             "+[x]% Bleeding Resistance",
             "+[x]% Chaos Resistance",
@@ -6513,19 +6496,11 @@
             },
             {
               "attributes": {
-                "percent": "40.000000",
+                "percent": "6.000000",
                 "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_mogdrogenardor.dbr"
               },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "40.000000",
-                "record_reference": "records/skills/itemskillsgdx1/relics/petbonus_mogdrogenardor.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
+              "property_id": "pet_defensive_ability_percent",
+              "property_key": "pet_defensive_ability_percent"
             },
             {
               "attributes": {
@@ -6546,8 +6521,7 @@
             "+[x] All Skills",
             "+[x] Health",
             "*Granted Skill: Mogdrogen's Ardor",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
+            "Bonus to All Pets: +[x]% Defensive Ability",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "vendor_sources": []
@@ -8289,14 +8263,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/relics/petbonus_savagery.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "10.000000",
                 "record_reference": "records/skills/itemskills/relics/petbonus_savagery.dbr"
               },
@@ -8322,7 +8288,6 @@
             "+[x] Offensive Ability",
             "*Granted Skill: Summon Stormhound",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Elemental Damage",
             "Bonus to All Pets: +[x]% Total Damage"
           ],

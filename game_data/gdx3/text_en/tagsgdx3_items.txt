@@ -604,7 +604,7 @@ tagGDX3Blueprint_ArmorD303=Blueprint: Eyes of the Primordial Storm
 tagGDX3Blueprint_ArmorD304=Blueprint: Horns of Eternal Nightmare
 tagGDX3Blueprint_ArmorD305=Blueprint: Cowl of Fenris
 tagGDX3Blueprint_ArmorD306=Blueprint: Jarldin's Eye
-tagGDX3Blueprint_ArmorD307=Blueprint: Bloodlust Hood
+tagGDX3Blueprint_ArmorD307=Blueprint: Bloodlust Scars
 tagGDX3Blueprint_ArmorD308=Blueprint: Eldrun's Cursed Vision
 tagGDX3Blueprint_ArmorD309=Blueprint: Gaze of Fates Unwound
 tagGDX3Blueprint_ArmorD310=Blueprint: Gloom Knight's Helm
@@ -1196,3 +1196,40 @@ tagGDX3SuffixB304_Wpn=of Corrupted Peaks
 
 
 #Patch v1.3.1
+
+tagGDX3WeaponGun1hD305=Igirron's Sunderer
+tagGDX3WeaponGun1hD306=Igirron's Rupturer
+
+tagGDX3WeaponMelee2hD305=Branded Slayer
+
+tagGDX3HeadD320=Igirron's Visor
+tagGDX3HeadD321=Branded Visage
+
+tagGDX3ShoulderD319=Branded Guard
+
+tagGDX3TorsoD316=Branded Cage
+
+tagGDX3HandsD308=Gutwrencher Grips
+
+tagGDX3LegsD307=Gutwader Legwraps
+
+tagGDX3FeetD304=Gutstompers
+
+tagGDX3NecklaceD315=Gutwrencher's Effigy
+tagGDX3NecklaceD316=Igirron's Shards
+
+tagGDX3ItemSetD316Name=Igirron's Arsenal
+tagGDX3ItemSetD316Desc="Inquisitor Igirron took hold of forbidden relics in the pursuit of cleansing Erulan of the black arts, but ultimately his mission became warped by the very thing he detested."
+tagGDX3ItemSetD317Name=Obsidian Swordsman
+tagGDX3ItemSetD317Desc="Legends speak of a warrior that leapt into the jaws of the Great Annihilator in defense of his home, only to emerge a ghastly revenant fueled by his unquenchable rage."
+
+tagGDX3ItemAwakenedSetC004CName=Awakened Bloodreaper's Butchery
+tagGDX3ItemAwakenedSetC011BName=Awakened Desecrator Covenant
+
+tagGDX3UGDoor_BerserkerArmorEntrance=Ruins of Drak Kamur Entrance
+
+tagGDX3FrostveilShrineChest_01=Kurn Offerings
+tagGDX3BattlefieldChest_01=Abandoned Stash
+tagGDX3Breakable_ObsidianCairnStone=Corrupted Cairn
+
+tagGDX3ChestLocked_Kurn= {^R} ~ Sealed by the Kurn

@@ -1029,11 +1029,11 @@
             },
             {
               "attributes": {
-                "percent": "30.000000",
+                "percent": "15.000000",
                 "record_reference": "records/skills/itemskillsgdx2/pets/item_petbonus_enchant_b207.dbr"
               },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
+              "property_id": "pet_stun_resistance",
+              "property_key": "pet_stun_resistance"
             }
           ],
           "rarity": "Rare",
@@ -1046,7 +1046,7 @@
             "+[x]% Health",
             "+[x]% Armor",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Bleeding Resistance"
+            "Bonus to All Pets: +[x]% Stun Resistance"
           ],
           "vendor_sources": [
             {
@@ -1453,8 +1453,8 @@
                 "percent": "20.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_enchant_a313.dbr"
               },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
+              "property_id": "pet_mind_control_resistance",
+              "property_key": "pet_mind_control_resistance"
             },
             {
               "attributes": {
@@ -1473,7 +1473,7 @@
           "source": "gdx3",
           "stat_lines": [
             "+[x] Defensive Ability",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
+            "Bonus to All Pets: +[x]% Mind Control Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "vendor_sources": [
@@ -1536,14 +1536,6 @@
             },
             {
               "attributes": {
-                "percent": "30.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_enchant_b314.dbr"
-              },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "15.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_enchant_b314.dbr"
               },
@@ -1560,7 +1552,6 @@
           "stat_lines": [
             "+[x] Defensive Ability",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Stun Resistance"
           ],
           "vendor_sources": [
@@ -1609,19 +1600,19 @@
           "properties": [
             {
               "attributes": {
+                "percent": "10.000000",
+                "record_reference": "records/skills/itemskills/pets/item_petbonus_enchant_a045a.dbr"
+              },
+              "property_id": "pet_armor_percent",
+              "property_key": "pet_armor_percent"
+            },
+            {
+              "attributes": {
                 "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_enchant_a045a.dbr"
               },
               "property_id": "pet_health_percent",
               "property_key": "pet_health_percent"
-            },
-            {
-              "attributes": {
-                "percent": "15.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_enchant_a045a.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             }
           ],
           "rarity": "Magical",
@@ -1632,7 +1623,7 @@
           "source": "base",
           "stat_lines": [
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Armor"
           ],
           "vendor_sources": [
             {
@@ -6761,14 +6752,6 @@
             },
             {
               "attributes": {
-                "percent": "30.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_enchant_b313.dbr"
-              },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "15.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_enchant_b313.dbr"
               },
@@ -6784,7 +6767,6 @@
           "source": "gdx3",
           "stat_lines": [
             "+[x]% Health",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Slow Resistance",
             "Bonus to All Pets: +[x]% Chaos Damage"
           ],
@@ -7942,14 +7924,6 @@
             },
             {
               "attributes": {
-                "percent": "18.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_enchant_b063a.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "damage_percent": "30.000000"
               },
               "property_id": "vitality_damage_percent",
@@ -7965,7 +7939,6 @@
           "stat_lines": [
             "+[x]% Vitality Damage",
             "Bonus to All Pets: +[x]% Freeze Resistance",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Stun Resistance"
           ],
           "vendor_sources": [
@@ -10128,27 +10101,19 @@
           "properties": [
             {
               "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_enchant_a127.dbr"
-              },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_enchant_a127.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "10.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_enchant_a127.dbr"
               },
               "property_id": "pet_health_percent",
               "property_key": "pet_health_percent"
+            },
+            {
+              "attributes": {
+                "percent": "15.000000",
+                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_enchant_a127.dbr"
+              },
+              "property_id": "pet_petrify_resistance",
+              "property_key": "pet_petrify_resistance"
             }
           ],
           "rarity": "Magical",
@@ -10159,8 +10124,7 @@
           "source": "gdx1",
           "stat_lines": [
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Petrify Resistance"
           ],
           "vendor_sources": [
             {
@@ -12798,11 +12762,11 @@
             },
             {
               "attributes": {
-                "percent": "20.000000",
+                "percent": "15.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_enchant_a314.dbr"
               },
-              "property_id": "pet_poison_acid_resistance",
-              "property_key": "pet_poison_acid_resistance"
+              "property_id": "pet_entrapment_resistance",
+              "property_key": "pet_entrapment_resistance"
             },
             {
               "attributes": {
@@ -12821,7 +12785,7 @@
           "source": "gdx3",
           "stat_lines": [
             "+[x] Offensive Ability",
-            "Bonus to All Pets: +[x]% Poison & Acid Resistance",
+            "Bonus to All Pets: +[x]% Entrapment Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "vendor_sources": [
@@ -21062,19 +21026,11 @@
           "properties": [
             {
               "attributes": {
-                "percent": "8.000000",
+                "percent": "4.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_enchant_a040a.dbr"
               },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "15.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_enchant_a040a.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
+              "property_id": "pet_health_percent",
+              "property_key": "pet_health_percent"
             },
             {
               "attributes": {
@@ -21092,9 +21048,8 @@
           "skill_modifiers": [],
           "source": "base",
           "stat_lines": [
-            "Bonus to All Pets: +[x]% Total Speed",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
-            "Bonus to All Pets: +[x]% Elemental Resistance"
+            "Bonus to All Pets: +[x]% Health",
+            "Bonus to All Pets: +[x]% Total Speed"
           ],
           "vendor_sources": [
             {
@@ -24483,11 +24438,11 @@
             },
             {
               "attributes": {
-                "percent": "30.000000",
+                "percent": "15.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_enchant_b114.dbr"
               },
-              "property_id": "pet_poison_acid_resistance",
-              "property_key": "pet_poison_acid_resistance"
+              "property_id": "pet_slow_resistance",
+              "property_key": "pet_slow_resistance"
             },
             {
               "attributes": {
@@ -24507,7 +24462,7 @@
             "+[x]% Offensive Ability",
             "+[x]% Poison & Acid Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Poison & Acid Resistance"
+            "Bonus to All Pets: +[x]% Slow Resistance"
           ],
           "vendor_sources": [
             {

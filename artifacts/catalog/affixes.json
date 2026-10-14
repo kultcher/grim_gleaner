@@ -23661,7 +23661,7 @@
             },
             {
               "attributes": {
-                "percent": "9.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_dominator_03.dbr"
               },
               "property_id": "pet_health_percent",
@@ -23732,7 +23732,7 @@
             },
             {
               "attributes": {
-                "percent": "10.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_dominator_04.dbr"
               },
               "property_id": "pet_health_percent",
@@ -23803,7 +23803,7 @@
             },
             {
               "attributes": {
-                "percent": "12.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_dominator_05.dbr"
               },
               "property_id": "pet_health_percent",
@@ -23874,7 +23874,7 @@
             },
             {
               "attributes": {
-                "percent": "14.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_dominator_06.dbr"
               },
               "property_id": "pet_health_percent",
@@ -70102,14 +70102,6 @@
             },
             {
               "attributes": {
-                "percent": "10.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_01.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "flat": "12.000000"
               },
               "property_id": "spirit",
@@ -70122,7 +70114,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee1h_a.dbr"
@@ -70162,14 +70153,6 @@
             },
             {
               "attributes": {
-                "percent": "14.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_02.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "flat": "18.000000"
               },
               "property_id": "spirit",
@@ -70182,7 +70165,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee1h_b.dbr"
@@ -70222,14 +70204,6 @@
             },
             {
               "attributes": {
-                "percent": "18.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_03.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "flat": "24.000000"
               },
               "property_id": "spirit",
@@ -70242,7 +70216,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee1h_c.dbr"
@@ -70282,14 +70255,6 @@
             },
             {
               "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_04.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70312,7 +70277,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee1h_d.dbr"
@@ -70352,14 +70316,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70382,7 +70338,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee1h_e.dbr"
@@ -70422,14 +70377,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70452,7 +70399,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_wpn025_melee1h_f.dbr"
@@ -70492,14 +70438,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70522,7 +70460,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_wpn025_melee1h_g.dbr"
@@ -70561,14 +70498,6 @@
             },
             {
               "attributes": {
-                "percent": "10.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding2h_01.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "flat": "17.000000"
               },
               "property_id": "spirit",
@@ -70581,7 +70510,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee2h_a.dbr"
@@ -70620,14 +70548,6 @@
             },
             {
               "attributes": {
-                "percent": "14.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding2h_02.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "flat": "26.000000"
               },
               "property_id": "spirit",
@@ -70640,7 +70560,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee2h_b.dbr"
@@ -70679,14 +70598,6 @@
             },
             {
               "attributes": {
-                "percent": "18.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding2h_03.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "flat": "33.000000"
               },
               "property_id": "spirit",
@@ -70699,7 +70610,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee2h_c.dbr"
@@ -70738,14 +70648,6 @@
             },
             {
               "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding2h_04.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "6",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70768,7 +70670,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee2h_d.dbr"
@@ -70807,14 +70708,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding2h_05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "6",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70837,7 +70730,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_wpn025_melee2h_e.dbr"
@@ -70876,14 +70768,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "6",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70906,7 +70790,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_wpn025_melee2h_f.dbr"
@@ -70945,14 +70828,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "6",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -70975,7 +70850,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_wpn025_melee2h_g.dbr"
@@ -71017,13 +70891,6 @@
               "property_key": "pet_total_damage_percent"
             },
             {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_01.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
               "attributes": {},
               "property_id": "spirit",
               "property_key": "spirit"
@@ -71036,7 +70903,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -71077,13 +70943,6 @@
             },
             {
               "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_04.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -71105,7 +70964,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -71143,13 +71001,6 @@
               "property_key": "pet_total_damage_percent"
             },
             {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding2h_01.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
               "attributes": {},
               "property_id": "spirit",
               "property_key": "spirit"
@@ -71162,7 +71013,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -71200,13 +71050,6 @@
             },
             {
               "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding2h_04.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "6",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -71228,7 +71071,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -71266,13 +71108,6 @@
             },
             {
               "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_binding_05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Conjure Primal Spirit",
                 "skill_level": "6",
                 "skill_reference": "records/skills/playerclass06/summon_manticore1.dbr"
@@ -71294,7 +71129,6 @@
             "+[x] Spirit",
             "Bonus to All Pets: +[x]% Health",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         }
@@ -79126,14 +78960,6 @@
             },
             {
               "attributes": {
-                "percent": "10.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_01.dbr"
-              },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_01.dbr"
               },
@@ -79156,7 +78982,6 @@
             "+3 to Summon Blight Fiend",
             "+[x] Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar105_ar_a.dbr"
@@ -79189,14 +79014,6 @@
             },
             {
               "attributes": {
-                "percent": "18.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_02.dbr"
-              },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "20.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_02.dbr"
               },
@@ -79219,7 +79036,6 @@
             "+3 to Summon Blight Fiend",
             "+[x] Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar105_ar_b.dbr"
@@ -79252,14 +79068,6 @@
             },
             {
               "attributes": {
-                "percent": "25.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_03.dbr"
-              },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "30.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_03.dbr"
               },
@@ -79282,7 +79090,6 @@
             "+3 to Summon Blight Fiend",
             "+[x] Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar105_ar_c.dbr"
@@ -79315,14 +79122,6 @@
             },
             {
               "attributes": {
-                "percent": "32.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_04.dbr"
-              },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "40.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_04.dbr"
               },
@@ -79345,7 +79144,6 @@
             "+3 to Summon Blight Fiend",
             "+[x] Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar105_ar_d.dbr"
@@ -79378,14 +79176,6 @@
             },
             {
               "attributes": {
-                "percent": "35.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_05.dbr"
-              },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "60.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_05.dbr"
               },
@@ -79408,7 +79198,6 @@
             "+3 to Summon Blight Fiend",
             "+[x] Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar105_ar_e.dbr"
@@ -79441,14 +79230,6 @@
             },
             {
               "attributes": {
-                "percent": "38.000000",
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_06.dbr"
-              },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "80.000000",
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_06.dbr"
               },
@@ -79471,7 +79252,6 @@
             "+3 to Summon Blight Fiend",
             "+[x] Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar105_ar_f.dbr"
@@ -79511,13 +79291,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_01.dbr"
               },
-              "property_id": "pet_bleeding_resistance",
-              "property_key": "pet_bleeding_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskillsgdx1/pets/item_petbonus_cagedsoulsar_01.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             },
@@ -79538,7 +79311,6 @@
             "+3 to Summon Blight Fiend",
             "+[x] Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Bleeding Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         }
@@ -118255,14 +118027,6 @@
             },
             {
               "attributes": {
-                "percent": "6.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_01.dbr"
-              },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "12.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_01.dbr"
               },
@@ -118286,7 +118050,6 @@
             "+[x] Defensive Ability",
             "+[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx3:records/items/lootaffixes/suffix/b_ar303_ar_a.dbr"
@@ -118327,14 +118090,6 @@
             },
             {
               "attributes": {
-                "percent": "9.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_02.dbr"
-              },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "25.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_02.dbr"
               },
@@ -118358,7 +118113,6 @@
             "+[x] Defensive Ability",
             "+[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx3:records/items/lootaffixes/suffix/b_ar303_ar_b.dbr"
@@ -118399,14 +118153,6 @@
             },
             {
               "attributes": {
-                "percent": "12.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_03.dbr"
-              },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "35.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_03.dbr"
               },
@@ -118430,7 +118176,6 @@
             "+[x] Defensive Ability",
             "+[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx3:records/items/lootaffixes/suffix/b_ar303_ar_c.dbr"
@@ -118471,14 +118216,6 @@
             },
             {
               "attributes": {
-                "percent": "15.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_04.dbr"
-              },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "50.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_04.dbr"
               },
@@ -118502,7 +118239,6 @@
             "+[x] Defensive Ability",
             "+[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx3:records/items/lootaffixes/suffix/b_ar303_ar_d.dbr"
@@ -118543,14 +118279,6 @@
             },
             {
               "attributes": {
-                "percent": "17.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_05.dbr"
-              },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "70.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_05.dbr"
               },
@@ -118574,7 +118302,6 @@
             "+[x] Defensive Ability",
             "+[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx3:records/items/lootaffixes/suffix/b_ar303_ar_e.dbr"
@@ -118615,14 +118342,6 @@
             },
             {
               "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_06.dbr"
-              },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "90.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_06.dbr"
               },
@@ -118646,7 +118365,6 @@
             "+[x] Defensive Ability",
             "+[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx3:records/items/lootaffixes/suffix/b_ar303_ar_f.dbr"
@@ -118693,13 +118411,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_01.dbr"
               },
-              "property_id": "pet_pierce_resistance",
-              "property_key": "pet_pierce_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_naturebidding_01.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             },
@@ -118721,7 +118432,6 @@
             "+[x] Defensive Ability",
             "+[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Pierce Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         }
@@ -118958,7 +118668,7 @@
             },
             {
               "attributes": {
-                "percent": "9.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_fo_naturebidding_04.dbr"
               },
               "property_id": "pet_health_percent",
@@ -119025,7 +118735,7 @@
             },
             {
               "attributes": {
-                "percent": "11.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_fo_naturebidding_05.dbr"
               },
               "property_id": "pet_health_percent",
@@ -119092,7 +118802,7 @@
             },
             {
               "attributes": {
-                "percent": "13.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_fo_naturebidding_06.dbr"
               },
               "property_id": "pet_health_percent",
@@ -119159,7 +118869,7 @@
             },
             {
               "attributes": {
-                "percent": "15.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_fo_naturebidding_07.dbr"
               },
               "property_id": "pet_health_percent",
@@ -169981,14 +169691,6 @@
                 "percent": "10.000000",
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_01.dbr"
               },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "10.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_01.dbr"
-              },
               "property_id": "pet_freeze_resistance",
               "property_key": "pet_freeze_resistance"
             },
@@ -170030,7 +169732,6 @@
             "+3 to Conjure Primal Spirit",
             "+[x]% Physique",
             "+[x]% Vitality Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Freeze Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
@@ -170052,14 +169753,6 @@
           "gear_slot": "All armor; Rings, Amulets; Medal; Belt",
           "level_requirement": 30,
           "properties": [
-            {
-              "attributes": {
-                "percent": "16.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_02.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
             {
               "attributes": {
                 "percent": "16.000000",
@@ -170106,7 +169799,6 @@
             "+3 to Conjure Primal Spirit",
             "+[x]% Physique",
             "+[x]% Vitality Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Freeze Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
@@ -170128,14 +169820,6 @@
           "gear_slot": "All armor; Rings, Amulets; Medal; Belt",
           "level_requirement": 50,
           "properties": [
-            {
-              "attributes": {
-                "percent": "22.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_03.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
             {
               "attributes": {
                 "percent": "22.000000",
@@ -170182,7 +169866,6 @@
             "+3 to Conjure Primal Spirit",
             "+[x]% Physique",
             "+[x]% Vitality Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Freeze Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
@@ -170204,14 +169887,6 @@
           "gear_slot": "All armor; Rings, Amulets; Medal; Belt",
           "level_requirement": 68,
           "properties": [
-            {
-              "attributes": {
-                "percent": "30.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_04.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
             {
               "attributes": {
                 "percent": "30.000000",
@@ -170258,7 +169933,6 @@
             "+3 to Conjure Primal Spirit",
             "+[x]% Physique",
             "+[x]% Vitality Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Freeze Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
@@ -170280,14 +169954,6 @@
           "gear_slot": "All armor; Rings, Amulets; Medal; Belt",
           "level_requirement": 82,
           "properties": [
-            {
-              "attributes": {
-                "percent": "33.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_05.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
             {
               "attributes": {
                 "percent": "33.000000",
@@ -170334,7 +170000,6 @@
             "+3 to Conjure Primal Spirit",
             "+[x]% Physique",
             "+[x]% Vitality Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Freeze Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
@@ -170356,14 +170021,6 @@
           "gear_slot": "All armor; Rings, Amulets; Medal; Belt",
           "level_requirement": 92,
           "properties": [
-            {
-              "attributes": {
-                "percent": "35.000000",
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_06.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
             {
               "attributes": {
                 "percent": "35.000000",
@@ -170410,7 +170067,6 @@
             "+3 to Conjure Primal Spirit",
             "+[x]% Physique",
             "+[x]% Vitality Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Freeze Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
@@ -170441,13 +170097,6 @@
             92
           ],
           "properties": [
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_01.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
             {
               "attributes": {
                 "record_reference": "records/skills/itemskillsgdx3/pets/item_petbonus_suffix_ar_primalwill_01.dbr"
@@ -170489,7 +170138,6 @@
             "+3 to Conjure Primal Spirit",
             "+[x]% Physique",
             "+[x]% Vitality Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance",
             "Bonus to All Pets: +[x]% Freeze Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
@@ -175315,7 +174963,7 @@
             },
             {
               "attributes": {
-                "percent": "10.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_04.dbr"
               },
               "property_id": "pet_health_percent",
@@ -175393,7 +175041,7 @@
             },
             {
               "attributes": {
-                "percent": "12.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_05.dbr"
               },
               "property_id": "pet_health_percent",
@@ -175471,7 +175119,7 @@
             },
             {
               "attributes": {
-                "percent": "14.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_06.dbr"
               },
               "property_id": "pet_health_percent",
@@ -175651,14 +175299,6 @@
               },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
-            },
-            {
-              "attributes": {
-                "percent": "6.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar01.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             }
           ],
           "record_path": "records/items/lootaffixes/suffix/b_ar072_ar.dbr",
@@ -175668,8 +175308,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar072_ar.dbr"
         },
@@ -175721,14 +175360,6 @@
               },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
-            },
-            {
-              "attributes": {
-                "percent": "9.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar02.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             }
           ],
           "record_path": "records/items/lootaffixes/suffix/b_ar072_ar_b.dbr",
@@ -175738,8 +175369,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar072_ar_b.dbr"
         },
@@ -175794,14 +175424,6 @@
             },
             {
               "attributes": {
-                "percent": "12.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar03.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Lightning Strike",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass03/summon_raven4_petmodifier.dbr"
@@ -175818,8 +175440,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar072_ar_c.dbr"
         },
@@ -175858,7 +175479,7 @@
             },
             {
               "attributes": {
-                "percent": "10.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar04.dbr"
               },
               "property_id": "pet_health_percent",
@@ -175871,14 +175492,6 @@
               },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
-            },
-            {
-              "attributes": {
-                "percent": "15.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar04.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             },
             {
               "attributes": {
@@ -175898,8 +175511,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar072_ar_d.dbr"
         },
@@ -175938,7 +175550,7 @@
             },
             {
               "attributes": {
-                "percent": "12.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar05.dbr"
               },
               "property_id": "pet_health_percent",
@@ -175951,14 +175563,6 @@
               },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
-            },
-            {
-              "attributes": {
-                "percent": "17.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             },
             {
               "attributes": {
@@ -175978,8 +175582,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar072_ar_e.dbr"
         },
@@ -176018,7 +175621,7 @@
             },
             {
               "attributes": {
-                "percent": "14.000000",
+                "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar06.dbr"
               },
               "property_id": "pet_health_percent",
@@ -176031,14 +175634,6 @@
               },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
-            },
-            {
-              "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar06.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             },
             {
               "attributes": {
@@ -176058,8 +175653,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar072_ar_f.dbr"
         }
@@ -176107,13 +175701,6 @@
               },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar01.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             }
           ],
           "representative_source": "base:records/items/lootaffixes/suffix/b_ar072_ar.dbr",
@@ -176124,8 +175711,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         },
         {
@@ -176170,13 +175756,6 @@
               },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar02.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
             }
           ],
           "representative_source": "base:records/items/lootaffixes/suffix/b_ar072_ar_b.dbr",
@@ -176187,8 +175766,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         },
         {
@@ -176236,13 +175814,6 @@
             },
             {
               "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar03.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Lightning Strike",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass03/summon_raven4_petmodifier.dbr"
@@ -176260,8 +175831,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         },
         {
@@ -176309,13 +175879,6 @@
             },
             {
               "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar04.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Lightning Strike",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass03/summon_raven4_petmodifier.dbr"
@@ -176333,8 +175896,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         },
         {
@@ -176382,13 +175944,6 @@
             },
             {
               "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar05.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Lightning Strike",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass03/summon_raven4_petmodifier.dbr"
@@ -176406,8 +175961,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         },
         {
@@ -176455,13 +176009,6 @@
             },
             {
               "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_untamed_ar06.dbr"
-              },
-              "property_id": "pet_vitality_resistance",
-              "property_key": "pet_vitality_resistance"
-            },
-            {
-              "attributes": {
                 "display_name": "Lightning Strike",
                 "skill_level": "3",
                 "skill_reference": "records/skills/playerclass03/summon_raven4_petmodifier.dbr"
@@ -176479,8 +176026,7 @@
             "+[x] Offensive Ability",
             "+[x]% Aether Resistance",
             "Bonus to All Pets: +[x]% Health",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Vitality Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         }
       ]
@@ -179825,14 +179371,6 @@
             },
             {
               "attributes": {
-                "percent": "10.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar01.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "8.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar01.dbr"
               },
@@ -179846,7 +179384,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar071_ar.dbr"
@@ -179887,14 +179424,6 @@
             },
             {
               "attributes": {
-                "percent": "16.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar02.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "12.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar02.dbr"
               },
@@ -179908,7 +179437,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar071_ar_b.dbr"
@@ -179949,14 +179477,6 @@
             },
             {
               "attributes": {
-                "percent": "22.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar03.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "15.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar03.dbr"
               },
@@ -179980,7 +179500,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar071_ar_c.dbr"
@@ -180021,14 +179540,6 @@
             },
             {
               "attributes": {
-                "percent": "30.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar04.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "18.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar04.dbr"
               },
@@ -180052,7 +179563,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "base:records/items/lootaffixes/suffix/b_ar071_ar_d.dbr"
@@ -180093,14 +179603,6 @@
             },
             {
               "attributes": {
-                "percent": "33.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar05.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "21.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar05.dbr"
               },
@@ -180124,7 +179626,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar071_ar_e.dbr"
@@ -180165,14 +179666,6 @@
             },
             {
               "attributes": {
-                "percent": "35.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar06.dbr"
-              },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "24.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar06.dbr"
               },
@@ -180196,7 +179689,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/suffix/b_ar071_ar_f.dbr"
@@ -180238,13 +179730,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar01.dbr"
               },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar01.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             }
@@ -180256,7 +179741,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -180295,13 +179779,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar02.dbr"
               },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar02.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             }
@@ -180313,7 +179790,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -180352,13 +179828,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar03.dbr"
               },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar03.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             },
@@ -180380,7 +179849,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -180419,13 +179887,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar04.dbr"
               },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar04.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             },
@@ -180447,7 +179908,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -180486,13 +179946,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar05.dbr"
               },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar05.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             },
@@ -180514,7 +179967,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         },
@@ -180553,13 +180005,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar06.dbr"
               },
-              "property_id": "pet_elemental_resistance",
-              "property_key": "pet_elemental_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_wild_ar06.dbr"
-              },
               "property_id": "pet_total_damage_percent",
               "property_key": "pet_total_damage_percent"
             },
@@ -180581,7 +180026,6 @@
             "+[x] Defensive Ability",
             "+[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Attack Speed",
-            "Bonus to All Pets: +[x]% Elemental Resistance",
             "Bonus to All Pets: +[x]% Total Damage"
           ]
         }
@@ -214142,26 +213586,10 @@
             },
             {
               "attributes": {
-                "duration_seconds": "5.000000",
-                "effect_chance_percent": "10.000000",
-                "reduction_percent": "30.000000"
-              },
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000"
               },
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {
-                "global_chance_percent": "10.000000"
-              },
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "record_path": "records/items/lootaffixes/prefix/b_ar016_ar.dbr",
@@ -214171,9 +213599,7 @@
             "+[x]% Aether Resistance",
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar016_ar.dbr"
         },
@@ -214225,26 +213651,10 @@
             },
             {
               "attributes": {
-                "duration_seconds": "5.000000",
-                "effect_chance_percent": "12.000000",
-                "reduction_percent": "30.000000"
-              },
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000"
               },
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {
-                "global_chance_percent": "12.000000"
-              },
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "record_path": "records/items/lootaffixes/prefix/b_ar016_ar_b.dbr",
@@ -214254,9 +213664,7 @@
             "+[x]% Aether Resistance",
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar016_ar_b.dbr"
         },
@@ -214308,26 +213716,10 @@
             },
             {
               "attributes": {
-                "duration_seconds": "5.000000",
-                "effect_chance_percent": "15.000000",
-                "reduction_percent": "30.000000"
-              },
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000"
               },
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {
-                "global_chance_percent": "15.000000"
-              },
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "record_path": "records/items/lootaffixes/prefix/b_ar016_ar_c.dbr",
@@ -214337,9 +213729,7 @@
             "+[x]% Aether Resistance",
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar016_ar_c.dbr"
         },
@@ -214391,26 +213781,10 @@
             },
             {
               "attributes": {
-                "duration_seconds": "5.000000",
-                "effect_chance_percent": "18.000000",
-                "reduction_percent": "30.000000"
-              },
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000"
               },
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {
-                "global_chance_percent": "18.000000"
-              },
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "record_path": "records/items/lootaffixes/prefix/b_ar016_ar_d.dbr",
@@ -214420,9 +213794,7 @@
             "+[x]% Aether Resistance",
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar016_ar_d.dbr"
         },
@@ -214481,26 +213853,10 @@
             },
             {
               "attributes": {
-                "duration_seconds": "5.000000",
-                "effect_chance_percent": "18.000000",
-                "reduction_percent": "30.000000"
-              },
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {
                 "percent": "5.000000"
               },
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {
-                "global_chance_percent": "18.000000"
-              },
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "record_path": "records/items/lootaffixes/prefix/b_ar016_ar_e.dbr",
@@ -214511,9 +213867,7 @@
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
             "+[x]% Frostburn Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/prefix/b_ar016_ar_e.dbr"
         },
@@ -214572,26 +213926,10 @@
             },
             {
               "attributes": {
-                "duration_seconds": "5.000000",
-                "effect_chance_percent": "18.000000",
-                "reduction_percent": "30.000000"
-              },
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {
                 "percent": "5.000000"
               },
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {
-                "global_chance_percent": "18.000000"
-              },
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "record_path": "records/items/lootaffixes/prefix/b_ar016_ar_f.dbr",
@@ -214602,9 +213940,7 @@
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
             "+[x]% Frostburn Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/prefix/b_ar016_ar_f.dbr"
         }
@@ -214653,18 +213989,8 @@
             },
             {
               "attributes": {},
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {},
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {},
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "representative_source": "base:records/items/lootaffixes/prefix/b_ar016_ar.dbr",
@@ -214675,9 +214001,7 @@
             "+[x]% Aether Resistance",
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ]
         },
         {
@@ -214726,18 +214050,8 @@
             },
             {
               "attributes": {},
-              "property_id": "movement_speed_slow_retaliation",
-              "property_key": "movement_speed_slow_retaliation"
-            },
-            {
-              "attributes": {},
               "property_id": "physique_percent",
               "property_key": "physique_percent"
-            },
-            {
-              "attributes": {},
-              "property_id": "retaliation_effect_choice",
-              "property_key": "retaliation_effect_choice"
             }
           ],
           "representative_source": "gdx1:records/items/lootaffixes/prefix/b_ar016_ar_e.dbr",
@@ -214749,9 +214063,7 @@
             "+[x]% Freeze Resistance",
             "+[x]% Cold Damage",
             "+[x]% Frostburn Damage",
-            "[x]% Chance of One of the Following Retaliation Effects",
-            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds",
-            "[x]% Chance of [y]% Reduced Movement Speed Retaliation for [z] Seconds"
+            "[x]% Chance of [y]% Reduced Attack Speed Retaliation for [z] Seconds"
           ]
         }
       ]
@@ -236098,22 +235410,6 @@
             },
             {
               "attributes": {
-                "percent": "6.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_01.dbr"
-              },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "6.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_01.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_01.dbr"
               },
@@ -236136,9 +235432,7 @@
             "+3 to Mogdrogen's Pact",
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar034_ar.dbr"
         },
@@ -236170,22 +235464,6 @@
             },
             {
               "attributes": {
-                "percent": "9.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_02.dbr"
-              },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "9.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_02.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_02.dbr"
               },
@@ -236208,9 +235486,7 @@
             "+3 to Mogdrogen's Pact",
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar034_ar_b.dbr"
         },
@@ -236249,22 +235525,6 @@
             },
             {
               "attributes": {
-                "percent": "12.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_03.dbr"
-              },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "12.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_03.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_03.dbr"
               },
@@ -236288,9 +235548,7 @@
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
             "+[x]% Elemental Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar034_ar_c.dbr"
         },
@@ -236329,22 +235587,6 @@
             },
             {
               "attributes": {
-                "percent": "15.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_04.dbr"
-              },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "15.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_04.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_04.dbr"
               },
@@ -236368,9 +235610,7 @@
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
             "+[x]% Elemental Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "base:records/items/lootaffixes/prefix/b_ar034_ar_d.dbr"
         },
@@ -236409,22 +235649,6 @@
             },
             {
               "attributes": {
-                "percent": "18.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_05.dbr"
-              },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "18.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_05.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_05.dbr"
               },
@@ -236448,9 +235672,7 @@
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
             "+[x]% Elemental Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/prefix/b_ar034_ar_e.dbr"
         },
@@ -236489,22 +235711,6 @@
             },
             {
               "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_06.dbr"
-              },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "percent": "20.000000",
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_06.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
                 "percent": "4.000000",
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_06.dbr"
               },
@@ -236528,9 +235734,7 @@
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
             "+[x]% Elemental Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ],
           "tier_id": "gdx1:records/items/lootaffixes/prefix/b_ar034_ar_f.dbr"
         }
@@ -236565,20 +235769,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_01.dbr"
               },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_01.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_01.dbr"
-              },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
             },
@@ -236599,9 +235789,7 @@
             "+3 to Mogdrogen's Pact",
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         },
         {
@@ -236640,20 +235828,6 @@
               "attributes": {
                 "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_03.dbr"
               },
-              "property_id": "pet_aether_resistance",
-              "property_key": "pet_aether_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_03.dbr"
-              },
-              "property_id": "pet_chaos_resistance",
-              "property_key": "pet_chaos_resistance"
-            },
-            {
-              "attributes": {
-                "record_reference": "records/skills/itemskills/pets/item_petbonus_taskmaster_03.dbr"
-              },
               "property_id": "pet_offensive_ability_percent",
               "property_key": "pet_offensive_ability_percent"
             },
@@ -236675,9 +235849,7 @@
             "+[x]% Health",
             "+[x]% Bleeding Resistance",
             "+[x]% Elemental Resistance",
-            "Bonus to All Pets: +[x]% Offensive Ability",
-            "Bonus to All Pets: +[x]% Aether Resistance",
-            "Bonus to All Pets: +[x]% Chaos Resistance"
+            "Bonus to All Pets: +[x]% Offensive Ability"
           ]
         }
       ]
