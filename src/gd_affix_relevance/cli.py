@@ -311,6 +311,8 @@ def _run_live_check(args: argparse.Namespace) -> int:
     game_dll = args.game_dll or find_game_dll(args.game_folder)
     report = check_game_dll(game_dll)
     print(f"Game.dll: {report.game_dll}")
+    if not report.is_64_bit:
+        print("  This is the 32-bit Game.dll; the hook needs the 64-bit one (x64 folder).")
     for requirement, symbol in report.matched.items():
         print(f"  ok       {requirement}  ({symbol})")
     for requirement in report.missing:

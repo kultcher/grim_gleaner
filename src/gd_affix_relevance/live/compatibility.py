@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from gd_affix_relevance.live.pe_exports import read_export_names
+from gd_affix_relevance.live.pe_exports import is_64_bit, read_export_names
 
 # Each requirement is satisfied by any one of its candidate symbols.
 REQUIRED_EXPORTS: dict[str, tuple[str, ...]] = {
@@ -24,10 +24,11 @@ class CompatibilityReport:
     game_dll: Path
     matched: dict[str, str]
     missing: tuple[str, ...]
+    is_64_bit: bool = True
 
     @property
     def compatible(self) -> bool:
-        return not self.missing
+        return self.is_64_bit and not self.missing
 
 
 def check_game_dll(game_dll: Path) -> CompatibilityReport:
@@ -40,11 +41,20 @@ def check_game_dll(game_dll: Path) -> CompatibilityReport:
             missing.append(requirement)
         else:
             matched[requirement] = found
-    return CompatibilityReport(Path(game_dll), matched, tuple(missing))
+    return CompatibilityReport(
+        Path(game_dll), matched, tuple(missing), is_64_bit(game_dll)
+    )
 
 
 def find_game_dll(game_folder: Path) -> Path:
-    for candidate in (Path(game_folder) / "Game.dll", Path(game_folder) / "x64" / "Game.dll"):
+    """Locate the 64-bit Game.dll.
+
+    A Steam install keeps the 32-bit game in its root folder and the 64-bit
+    game in ``x64``. The running game's own folder (already ``x64``) also works.
+    """
+
+    folder = Path(game_folder)
+    for candidate in (folder / "x64" / "Game.dll", folder / "Game.dll"):
         if candidate.is_file():
             return candidate
     raise FileNotFoundError(f"Game.dll not found in {game_folder}")

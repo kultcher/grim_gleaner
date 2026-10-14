@@ -16,6 +16,17 @@ class PeFormatError(ValueError):
     pass
 
 
+def is_64_bit(path: Path) -> bool:
+    """Whether a PE file is a PE32+ (64-bit) image."""
+
+    data = Path(path).read_bytes()[:4096]
+    if data[:2] != b"MZ":
+        raise PeFormatError(f"{path} is not a PE file")
+    (pe_offset,) = struct.unpack_from("<I", data, 0x3C)
+    (magic,) = struct.unpack_from("<H", data, pe_offset + 24)
+    return magic == 0x20B
+
+
 def read_export_names(path: Path) -> frozenset[str]:
     data = Path(path).read_bytes()
     if data[:2] != b"MZ":

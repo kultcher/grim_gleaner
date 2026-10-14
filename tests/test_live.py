@@ -155,3 +155,19 @@ def test_staged_dll_path_changes_with_content(tmp_path: Path) -> None:
     second = staged_dll_path(dll, tmp_path / "stage")
     assert first != second
     assert first.name.startswith("gg_hook-") and first.suffix == ".dll"
+
+
+def test_find_game_dll_prefers_the_x64_folder(tmp_path: Path) -> None:
+    from gd_affix_relevance.live.compatibility import find_game_dll
+
+    (tmp_path / "x64").mkdir()
+    (tmp_path / "Game.dll").write_bytes(b"32-bit")
+    (tmp_path / "x64" / "Game.dll").write_bytes(b"64-bit")
+    assert find_game_dll(tmp_path) == tmp_path / "x64" / "Game.dll"
+    assert find_game_dll(tmp_path / "x64") == tmp_path / "x64" / "Game.dll"
+
+
+def test_sample_dll_is_detected_as_64_bit() -> None:
+    from gd_affix_relevance.live.pe_exports import is_64_bit
+
+    assert is_64_bit(SAMPLE_DLL)
