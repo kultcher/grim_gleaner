@@ -93,6 +93,15 @@ def _unique_item(
     )
 
 
+def test_export_does_not_award_a_grade_for_a_pet_resistance_penalty() -> None:
+    item = _unique_item("tagPenalty", "Fateweaver's Raiment", (ItemProperty(
+        "pet_maximum_all_resistance", "pet_maximum_all_resistance", {"percent": "-15"}
+    ),))
+    items = ItemCatalog((item,), (), (), (), (), ())
+    profile = BuildProfile(weights={"pet_maximum_all_resistance": 4})
+    assert build_unique_item_markers(items, profile)["tagPenalty"] == "(F0)"
+
+
 def test_writer_clones_complete_folder_and_changes_exact_affix_tags_only(
     tmp_path: Path,
 ) -> None:

@@ -481,6 +481,7 @@
   "stat.pet_poison_damage_percent": "Питомец: Урон от яда (+%, DoT)",
   "stat.pet_retaliation_damage_percent": "Урон питомца в ответ (+%)",
   "stat.pet_slow_resistance": "Сопротивление питомца замедлению",
+  "stat.pet_mind_control_resistance": "Сопротивление питомца контролю разума",
   "stat.pet_stun_resistance": "Сопротивление питомца оглушению",
   "stat.pet_total_damage_percent": "Весь урон питомца (+%)",
   "stat.pet_total_speed": "Общая скорость питомца",

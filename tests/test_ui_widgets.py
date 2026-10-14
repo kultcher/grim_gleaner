@@ -21,6 +21,32 @@ def _application() -> QApplication:
     return QApplication.instance() or QApplication([])
 
 
+def test_main_window_limits_profile_options_to_loaded_gear_catalog() -> None:
+    from dataclasses import replace
+
+    from gd_affix_relevance.catalog import AffixProperty, CatalogBundle
+
+    _application()
+    bundle = CatalogBundle.load(Path(__file__).parents[1] / "artifacts/catalog")
+    affix = bundle.affixes.affixes[0]
+    affix = replace(
+        affix,
+        variants=(replace(affix.variants[0], properties=(
+            AffixProperty("health", "health", {"flat": "100"}),
+        )),),
+        tiers=(),
+    )
+    window = MainWindow(catalog=AffixCatalog((affix,)))
+    rows = {
+        stat_id
+        for accordion in window.profile_editor.accordions.values()
+        for stat_id in accordion.rows
+    }
+    assert rows == {"health"}
+    assert window.profile_editor.tabs.count() == 2  # Core and Skills
+    window.close()
+
+
 def test_weight_control_restricts_value_and_supports_buttons() -> None:
     _application()
     control = WeightControl()

@@ -30,6 +30,7 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.domain import BuildProfile, game_locale_for_code
 from gd_affix_relevance.profile_store import load_profile
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
+from gd_affix_relevance.ui.catalog import gear_catalog_stat_ids
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.guide import GuidePage
 from gd_affix_relevance.ui.i18n import active_locale, t
@@ -165,6 +166,7 @@ class MainWindow(QMainWindow):
         catalog = catalog or AffixCatalog(())
         skills = skills or SkillCatalog(())
         items = items or ItemCatalog((), (), (), (), (), ())
+        has_gear_catalog = bool(catalog.affixes or items.all_items())
 
         self.profile_editor = ProfileEditor(
             profile,
@@ -173,6 +175,9 @@ class MainWindow(QMainWindow):
             profile_path=profile_path,
             profiles_root=self.runtime_paths.profiles_root,
             startup_notice=startup_notice,
+            available_stat_ids=(
+                gear_catalog_stat_ids(catalog, items) if has_gear_catalog else None
+            ),
         )
         self.profile_page_index = self.pages.addWidget(self.profile_editor)
         self.profile_navigation_row = self._add_navigation_item(

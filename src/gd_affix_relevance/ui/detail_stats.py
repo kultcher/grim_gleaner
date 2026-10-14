@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from html import escape
 
 from gd_affix_relevance.scoring import semantic_stat_ids
+from gd_affix_relevance.scoring.catalog_scorer import is_resistance_penalty
 from gd_affix_relevance.ui.i18n import t
 
 
@@ -37,7 +38,12 @@ def build_detail_stat_rows(
             grouped.setdefault(stat_id, []).append(property_)
 
     rows: list[DetailStatRow] = []
-    for stat_id in dict.fromkeys(stat_ids):
+    penalty_ids = {
+        stat_id
+        for stat_id, properties_for_stat in grouped.items()
+        if any(is_resistance_penalty(prop) for prop in properties_for_stat)
+    }
+    for stat_id in dict.fromkeys((*stat_ids, *sorted(penalty_ids))):
         values = tuple(
             dict.fromkeys(
                 value
@@ -63,7 +69,12 @@ def build_detail_stat_rows(
                 stat_id=stat_id,
                 label=label_for(stat_id),
                 value=value,
-                weight=max(0, min(4, int(weight_for(stat_id)))),
+                weight=(
+                    0
+                    if stat_id in penalty_ids
+                    and all(is_resistance_penalty(prop) for prop in grouped[stat_id])
+                    else max(0, min(4, int(weight_for(stat_id))))
+                ),
             )
         )
     return tuple(rows)

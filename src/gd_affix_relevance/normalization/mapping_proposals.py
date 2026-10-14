@@ -131,6 +131,7 @@ CHARACTER_RULES: dict[str, tuple[str, str, str]] = {
 }
 
 DEFENSIVE_RULES: dict[str, tuple[str, str]] = {
+    "defensiveConvert": ("mind_control_resistance", "Mind Control Resistance"),
     "defensiveAether": ("aether_resistance", "Aether Resistance"),
     "defensiveBleeding": ("bleeding_resistance", "Bleeding Resistance"),
     "defensiveChaos": ("chaos_resistance", "Chaos Resistance"),
