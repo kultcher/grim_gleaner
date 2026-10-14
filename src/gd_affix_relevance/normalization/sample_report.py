@@ -25,7 +25,7 @@ from gd_affix_relevance.records import (
 from gd_affix_relevance.stats import RACE_DISPLAY_NAMES
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
 from gd_affix_relevance.normalization.field_policy import fields_for_semantic_analysis
-from gd_affix_relevance.normalization.mapping_proposals import (
+from gd_affix_relevance.stats.field_mappings import (
     FieldMappingProposal,
     chance_damage_bundle_keys,
     contextualize_damage_chance,

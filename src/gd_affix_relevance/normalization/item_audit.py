@@ -13,7 +13,7 @@ from gd_affix_relevance.importers.localization_parser import (
     plain_display_name,
 )
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
-from gd_affix_relevance.normalization.mapping_proposals import propose_field_mapping
+from gd_affix_relevance.stats.field_mappings import propose_field_mapping
 from gd_affix_relevance.normalization.sample_report import (
     normalize_record_stat_lines,
 )

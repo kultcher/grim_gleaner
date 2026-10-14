@@ -18,7 +18,7 @@ from gd_affix_relevance.importers.localization_parser import (
 from gd_affix_relevance.normalization.field_policy import (
     fields_for_semantic_analysis,
 )
-from gd_affix_relevance.normalization.mapping_proposals import (
+from gd_affix_relevance.stats.field_mappings import (
     FieldMappingProposal,
     propose_field_mapping,
 )

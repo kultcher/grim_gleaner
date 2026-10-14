@@ -1,4 +1,4 @@
-from gd_affix_relevance.normalization.mapping_proposals import (
+from gd_affix_relevance.stats.field_mappings import (
     chance_damage_bundle_keys,
     contextualize_damage_chance,
     propose_field_mapping,
