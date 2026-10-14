@@ -19,7 +19,6 @@ from gd_affix_relevance.scoring.catalog_scorer import (
     score_semantic_stat_ids,
     semantic_stat_ids,
     property_enabled_for_profile,
-    is_resistance_penalty,
 )
 from gd_affix_relevance.stats import stat_is_scoreable
 from gd_affix_relevance.slots import (
@@ -101,7 +100,6 @@ def item_semantic_stat_ids(
         for property_ in variant.properties
         if property_.property_id not in {"base_attack_speed", "granted_item_skill"}
         and property_enabled_for_profile(property_, profile)
-        and not is_resistance_penalty(property_)
         for stat_id in semantic_stat_ids(property_)
         if stat_is_scoreable(stat_id)
     }

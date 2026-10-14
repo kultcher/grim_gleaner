@@ -76,9 +76,14 @@ def test_resistance_penalty_does_not_earn_credit_but_negative_enemy_debuff_does(
     )
     variant = _variant(properties=(penalty, debuff))
     stat_ids = item_semantic_stat_ids(variant, profile)
-    assert stat_ids == ("target_resistance_reduction_percent",)
+    # The penalty is kept as an unweighted stat so it dilutes coverage.
+    assert stat_ids == (
+        "penalty:pet_maximum_all_resistance",
+        "target_resistance_reduction_percent",
+    )
     score = score_semantic_stat_ids(stat_ids, profile)
     assert score.weighted_match == 3
+    assert score.matched_stat_ids == ("target_resistance_reduction_percent",)
 
     bonus = replace(penalty, attributes={"percent": "15"})
     assert "pet_maximum_all_resistance" in item_semantic_stat_ids(

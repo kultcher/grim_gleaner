@@ -32,7 +32,8 @@ def test_negative_pet_resistance_affix_is_not_a_beneficial_match() -> None:
     score = score_affix_variant(variant, profile)
     assert score.grade == "F"
     assert score.matched_count == 0
-    assert score.total_category_count == 0
+    # Counted as a carried (unweighted) stat, so it lowers coverage.
+    assert score.total_category_count == 1
 
 
 def _variant(*property_ids: str, slot: str = "Ring") -> AffixVariantDefinition:

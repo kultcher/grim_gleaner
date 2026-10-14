@@ -157,8 +157,9 @@ See the "Guide" section in the UI for more information.
 The profile editor shows stat categories present in the loaded gear catalog,
 including lower-level affix tiers, components, augments, and relics. After a
 catalog rebuild, categories no longer found on gear disappear from the editor;
-saved profile weights are retained. Negative resistance modifiers remain visible
-in item details but do not earn positive relevance credit.
+saved profile weights are retained. Modifiers with a detrimental value (for
+example a negative pet resistance) are shown as penalties in item details; they
+never earn relevance credit and count as an unweighted stat when grading.
 
 Assign stars to each stat modifier based on how important the stat is to your build. Use the following as a guideline:
 
