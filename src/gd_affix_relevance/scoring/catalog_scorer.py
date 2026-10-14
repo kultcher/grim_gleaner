@@ -18,9 +18,36 @@ from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.level_bands import level_is_eligible
 from gd_affix_relevance.slots import slot_ids_from_legacy_label
 from gd_affix_relevance.stats import (
+    POLARITY_HIGHER,
+    POLARITY_LOWER,
     RACE_STAT_SUFFIXES,
+    penalty_stat_id,
     stat_is_registered,
     stat_is_scoreable,
+    stat_polarity,
+)
+
+# Attribute roles that carry a property's headline magnitude, in the order
+# they are consulted for its sign. Chances, durations of secondary effects and
+# reference/metadata roles are deliberately excluded.
+SIGNED_VALUE_ROLES = (
+    "skill_level",
+    "damage_percent",
+    "percent",
+    "flat",
+    "value",
+    "damage_min",
+    "damage_max",
+    "reduction_percent",
+    "reduction_flat",
+    "percent_min",
+    "percent_max",
+    "fumble_percent",
+    "duration_percent",
+    "seconds",
+)
+UNSIGNED_PROPERTY_IDS = frozenset(
+    {"damage_conversion", "pet_damage_conversion", "granted_item_skill"}
 )
 
 
@@ -148,9 +175,54 @@ def semantic_stat_id(property_: AffixProperty) -> str:
     return property_.property_id
 
 
-def semantic_stat_ids(property_: AffixProperty) -> tuple[str, ...]:
-    """Expand one compiled property into profile-weightable semantic IDs."""
+def property_signed_value(property_: AffixProperty) -> float | None:
+    """Return the headline numeric value of a property, sign included."""
 
+    if property_.property_id in UNSIGNED_PROPERTY_IDS:
+        return None
+    attributes = property_.attributes
+    for role in SIGNED_VALUE_ROLES:
+        raw = attributes.get(role)
+        if raw is None:
+            continue
+        try:
+            value = float(str(raw).strip())
+        except ValueError:
+            continue
+        if value != 0:
+            return value
+    return None
+
+
+def property_is_detrimental(property_: AffixProperty, stat_id: str) -> bool:
+    """Whether a property's sign works against the player for *stat_id*."""
+
+    value = property_signed_value(property_)
+    if value is None:
+        return False
+    polarity = stat_polarity(stat_id)
+    return (value < 0 and polarity == POLARITY_HIGHER) or (
+        value > 0 and polarity == POLARITY_LOWER
+    )
+
+
+def semantic_stat_ids(property_: AffixProperty) -> tuple[str, ...]:
+    """Expand one compiled property into profile-weightable semantic IDs.
+
+    A property whose sign is detrimental for its stat (for example ``-15%``
+    pet maximum resistances) maps to ``penalty:<stat_id>`` so it can never be
+    credited as a weighted match.
+    """
+
+    return tuple(
+        penalty_stat_id(stat_id)
+        if property_is_detrimental(property_, stat_id)
+        else stat_id
+        for stat_id in _unsigned_semantic_stat_ids(property_)
+    )
+
+
+def _unsigned_semantic_stat_ids(property_: AffixProperty) -> tuple[str, ...]:
     if property_.property_id in {
         "racial_damage_bonus",
         "racial_defense_bonus",

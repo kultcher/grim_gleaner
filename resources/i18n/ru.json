@@ -119,6 +119,7 @@
   "matches.label_mastery_bonus_novalue": "Все умения в",
   "matches.label_mastery_bonus_ranked": "+{rank} ко всем умениям в",
   "matches.label_skill_bonus": "+ранги к",
+  "matches.label_penalty": "{label} (штраф)",
   "matches.label_skill_bonus_novalue": "Ранги к",
   "matches.label_skill_bonus_ranked": "+{rank} к",
   "matches.label_skill_modifier": "Модификатор умения",

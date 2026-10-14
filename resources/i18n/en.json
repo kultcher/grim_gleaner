@@ -119,6 +119,7 @@
   "matches.label_mastery_bonus_novalue": "All Skills in",
   "matches.label_mastery_bonus_ranked": "+{rank} to All Skills in",
   "matches.label_skill_bonus": "+Ranks to",
+  "matches.label_penalty": "{label} (penalty)",
   "matches.label_skill_bonus_novalue": "Ranks to",
   "matches.label_skill_bonus_ranked": "+{rank} to",
   "matches.label_skill_modifier": "Skill modifier for",

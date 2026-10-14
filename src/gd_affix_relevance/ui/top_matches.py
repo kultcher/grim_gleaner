@@ -66,7 +66,11 @@ from gd_affix_relevance.ui.detail_stats import (
     build_detail_stat_rows,
     stat_table_html,
 )
-from gd_affix_relevance.stats import registered_stat_definitions
+from gd_affix_relevance.stats import (
+    base_stat_id,
+    is_penalty_stat_id,
+    registered_stat_definitions,
+)
 from gd_affix_relevance.ui.i18n import stat_label, t
 from gd_affix_relevance.ui.widgets import StatRow
 
@@ -138,6 +142,7 @@ MATCHED_STAT_COLOR = "#82d99b"
 UNMATCHED_STAT_COLOR = "#b7bec9"
 SKILL_RANK_STAT_COLOR = "#8bded7"
 SKILL_MODIFIER_STAT_COLOR = "#66cdaa"
+PENALTY_STAT_COLOR = "#e0827a"
 STAT_CATEGORY_COLORS = {
     "elemental": "#f2d64b",
     "fire": "#ef922f",
@@ -283,6 +288,8 @@ def _html_line(text: str, *, color: str = "", bold: bool = False) -> str:
 def _semantic_stat_color(stat_id: str, *, matched: bool) -> str:
     """Return a Rainbow-inspired color without changing semantic scoring data."""
 
+    if is_penalty_stat_id(stat_id):
+        return PENALTY_STAT_COLOR
     if stat_id.startswith("skill_modifier:"):
         return SKILL_MODIFIER_STAT_COLOR
     if stat_id.startswith(("skill_bonus:", "mastery_bonus:")):
@@ -1762,6 +1769,11 @@ class TopMatchesPage(QWidget):
         *,
         include_value: bool = True,
     ) -> str:
+        if is_penalty_stat_id(stat_id):
+            base_label = self._label_for(
+                base_stat_id(stat_id), properties, include_value=include_value
+            )
+            return t("matches.label_penalty", label=base_label)
         rank = _skill_rank_for_stat(properties, stat_id)
         property_display_name = _property_display_name_for_stat(
             properties, stat_id
