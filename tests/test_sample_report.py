@@ -8,7 +8,7 @@ from gd_affix_relevance.normalization.sample_report import (
     build_sample_candidates,
     format_gear_slots,
 )
-from gd_affix_relevance.normalization.mapping_proposals import propose_field_mapping
+from gd_affix_relevance.stats.field_mappings import propose_field_mapping
 from gd_affix_relevance.slots import (
     ARMOR_SLOTS,
     SLOT_AMULET,

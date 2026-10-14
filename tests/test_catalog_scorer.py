@@ -32,7 +32,8 @@ def test_negative_pet_resistance_affix_is_not_a_beneficial_match() -> None:
     score = score_affix_variant(variant, profile)
     assert score.grade == "F"
     assert score.matched_count == 0
-    assert score.total_category_count == 0
+    # Counted as a carried (unweighted) stat, so it lowers coverage.
+    assert score.total_category_count == 1
 
 
 def _variant(*property_ids: str, slot: str = "Ring") -> AffixVariantDefinition:
@@ -454,3 +455,78 @@ def test_affix_above_profile_band_is_excluded() -> None:
         slot_id=SLOT_RING,
         kind="prefix",
     )
+
+
+def _signed_property(property_id: str, **attributes: str) -> AffixProperty:
+    return AffixProperty(property_id, property_id, dict(attributes))
+
+
+def test_detrimental_sign_maps_to_penalty_and_never_matches() -> None:
+    bonus = _signed_property("pet_maximum_all_resistance", percent="15.000000")
+    penalty = _signed_property("pet_maximum_all_resistance", percent="-15.000000")
+    profile = BuildProfile(weights={"pet_maximum_all_resistance": 4})
+
+    assert semantic_stat_ids(bonus) == ("pet_maximum_all_resistance",)
+    assert semantic_stat_ids(penalty) == ("penalty:pet_maximum_all_resistance",)
+
+    bonus_score = score_semantic_stat_ids(semantic_stat_ids(bonus), profile)
+    penalty_score = score_semantic_stat_ids(semantic_stat_ids(penalty), profile)
+    assert bonus_score.matched_count == 1
+    assert penalty_score.matched_count == 0
+    assert penalty_score.weighted_match == 0
+    # The penalty is still a stat the item carries, so it dilutes coverage.
+    assert penalty_score.total_category_count == 1
+
+
+def test_penalty_lowers_coverage_of_an_otherwise_matching_item() -> None:
+    profile = BuildProfile(weights={"pet_total_damage_percent": 4})
+    clean = (_signed_property("pet_total_damage_percent", percent="20"),)
+    with_penalty = (
+        *clean,
+        _signed_property("pet_maximum_all_resistance", percent="-15"),
+    )
+
+    def score(properties: tuple[AffixProperty, ...]):
+        return score_semantic_stat_ids(
+            tuple(
+                stat_id
+                for property_ in properties
+                for stat_id in semantic_stat_ids(property_)
+            ),
+            profile,
+        )
+
+    assert score(with_penalty).effective_score < score(clean).effective_score
+
+
+def test_lower_polarity_stats_treat_negative_values_as_beneficial(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from gd_affix_relevance.scoring import catalog_scorer
+
+    monkeypatch.setattr(
+        catalog_scorer,
+        "stat_polarity",
+        lambda stat_id: "lower" if stat_id == "skill_cooldown_reduction" else "higher",
+    )
+    good = _signed_property("skill_cooldown_reduction", percent="-10")
+    bad = _signed_property("skill_cooldown_reduction", percent="10")
+
+    assert semantic_stat_ids(good) == ("skill_cooldown_reduction",)
+    assert semantic_stat_ids(bad) == ("penalty:skill_cooldown_reduction",)
+
+
+def test_conversions_and_unsigned_properties_are_never_penalties() -> None:
+    conversion = AffixProperty(
+        "damage_conversion",
+        "damage_conversion:1",
+        {
+            "source_damage_type": "Fire",
+            "destination_damage_type": "Chaos",
+            "percent": "-30",
+        },
+    )
+    no_value = _signed_property("health")
+
+    assert semantic_stat_ids(conversion) == ("damage_conversion_to_chaos",)
+    assert semantic_stat_ids(no_value) == ("health",)

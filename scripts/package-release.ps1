@@ -26,7 +26,16 @@ $standaloneOutput = Join-Path $deployOutput "grim_gleaner.dist"
 $generatedSpec = Join-Path $buildWorkspace "pysidedeploy.spec"
 $specTemplate = Join-Path $projectRoot "packaging\pysidedeploy.spec.template"
 $iconPath = Join-Path $projectRoot "packaging\gg_icon.ico"
-$archivePath = Join-Path $distRoot "Grim-Gleaner-0.9.2-beta-win64.zip"
+$versionSource = Join-Path $projectRoot "src\gd_affix_relevance\__init__.py"
+$versionMatch = [regex]::Match(
+    (Get-Content -Raw -LiteralPath $versionSource),
+    '(?m)^__version__\s*=\s*"([^"]+)"'
+)
+if (-not $versionMatch.Success) {
+    throw "Could not read __version__ from $versionSource"
+}
+$appVersion = $versionMatch.Groups[1].Value
+$archivePath = Join-Path $distRoot "Grim-Gleaner-$appVersion-win64.zip"
 $temporaryRoot = [System.IO.Path]::GetFullPath(
     [System.IO.Path]::GetTempPath()
 )

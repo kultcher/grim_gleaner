@@ -29,10 +29,12 @@ from gd_affix_relevance.scoring.item_scorer import (
     RankedItemVariant,
     UNIQUE_ITEM_TYPES,
     UNIQUE_TYPE_LABELS,
+    is_awakened_variant,
     item_variant_is_eligible,
     item_semantic_stat_ids,
     rank_addons_for_slot,
     rank_unique_items_for_slot,
+    select_tag_variant,
     unique_item_type,
 )
 
@@ -68,4 +70,6 @@ __all__ = [
     "ADDON_TYPE_LABELS",
     "ADDON_TYPES",
     "item_variant_is_eligible",
+    "is_awakened_variant",
+    "select_tag_variant",
 ]

@@ -26,7 +26,7 @@ if str(SRC) not in sys.path:
 from gd_affix_relevance.importers.affix_discovery import supported_affix_kind
 from gd_affix_relevance.normalization.field_inventory import active_value_kind
 from gd_affix_relevance.normalization.field_policy import fields_for_semantic_analysis
-from gd_affix_relevance.normalization.mapping_proposals import (
+from gd_affix_relevance.stats.field_mappings import (
     chance_damage_bundle_keys,
     contextualize_damage_chance,
     propose_field_mapping,

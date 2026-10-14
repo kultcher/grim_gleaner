@@ -37,6 +37,7 @@ def test_profile_file_round_trip_is_versioned_and_deterministic(
         "masteries": ["", ""],
         "name": "Bleed Werewolf",
         "level_band": "65-79",
+        "prefer_awakened_grades": False,
         "resistance_cap_enabled": True,
         "resistance_cap_weights": {"fire_resistance": 0},
         "skill_weights": {},

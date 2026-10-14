@@ -19,7 +19,6 @@ from gd_affix_relevance.scoring.catalog_scorer import (
     score_semantic_stat_ids,
     semantic_stat_ids,
     property_enabled_for_profile,
-    is_resistance_penalty,
 )
 from gd_affix_relevance.stats import stat_is_scoreable
 from gd_affix_relevance.slots import (
@@ -60,6 +59,10 @@ class RankedItemVariant:
     has_selected_skill_modifier: bool
 
     @property
+    def is_awakened(self) -> bool:
+        return is_awakened_variant(self.variant)
+
+    @property
     def marker(self) -> str:
         flags = ""
         if self.variant.granted_skill_reference or self.variant.granted_skill_name:
@@ -97,7 +100,6 @@ def item_semantic_stat_ids(
         for property_ in variant.properties
         if property_.property_id not in {"base_attack_speed", "granted_item_skill"}
         and property_enabled_for_profile(property_, profile)
-        and not is_resistance_penalty(property_)
         for stat_id in semantic_stat_ids(property_)
         if stat_is_scoreable(stat_id)
     }
@@ -145,6 +147,79 @@ def item_variant_is_eligible(
     return level_is_eligible(variant.level_requirement, profile.level_band)
 
 
+def is_awakened_variant(variant: ItemVariantDefinition) -> bool:
+    """Whether a record is an Awakened Legendary crafted from an Epic.
+
+    Awakened records share their Epic's name tag and level requirement, so the
+    catalog groups them as variants of the same item. They are identified by
+    their ``records/items/awakened/`` record path.
+    """
+
+    return "/awakened/" in variant.record_path.replace("\\", "/").casefold()
+
+
+def _best_variant(
+    candidates: tuple[ItemVariantDefinition, ...],
+    profile: BuildProfile,
+) -> ItemVariantDefinition:
+    """Pick the highest-level eligible record, then the best-scoring one."""
+
+    return max(
+        candidates,
+        key=lambda candidate: (
+            candidate.level_requirement,
+            candidate.item_level,
+            score_semantic_stat_ids(
+                item_semantic_stat_ids(candidate, profile), profile
+            ).rank_key,
+            candidate.record_path,
+        ),
+    )
+
+
+def select_tag_variant(
+    item: ItemDefinition,
+    profile: BuildProfile,
+) -> ItemVariantDefinition | None:
+    """Choose the one record whose grade an item's shared name tag receives.
+
+    Standard records are preferred so the in-game grade describes the item as
+    it drops. With ``profile.prefer_awakened_grades`` the Awakened version is
+    used whenever one is eligible at the selected level. An item that only
+    exists in Awakened form is always graded by it.
+    """
+
+    all_candidates = tuple(
+        variant for variant in item.variants if unique_item_type(variant)
+    )
+    if not all_candidates:
+        return None
+    eligible = tuple(
+        variant
+        for variant in all_candidates
+        if item_variant_is_eligible(variant, profile)
+    )
+    if not eligible:
+        lowest = min(variant.level_requirement for variant in all_candidates)
+        eligible = tuple(
+            variant
+            for variant in all_candidates
+            if variant.level_requirement == lowest
+        )
+    awakened = tuple(variant for variant in eligible if is_awakened_variant(variant))
+    standard = tuple(
+        variant for variant in eligible if not is_awakened_variant(variant)
+    )
+    if profile.prefer_awakened_grades and awakened:
+        best_standard_level = max(
+            (variant.level_requirement for variant in standard), default=-1
+        )
+        best_awakened = _best_variant(awakened, profile)
+        if best_awakened.level_requirement >= best_standard_level:
+            return best_awakened
+    return _best_variant(standard or awakened, profile)
+
+
 def rank_unique_items_for_slot(
     catalog: ItemCatalog,
     profile: BuildProfile,
@@ -153,13 +228,20 @@ def rank_unique_items_for_slot(
     enabled_types: frozenset[str] = frozenset(UNIQUE_ITEM_TYPES),
     minimum_grade: str = "B",
 ) -> tuple[RankedItemVariant, ...]:
-    """Return unique items meeting the requested grade for one atomic slot."""
+    """Return unique items meeting the requested grade for one atomic slot.
+
+    An Epic and the Awakened Legendary made from it are listed as separate
+    entries because their stats, and therefore grades, usually differ.
+    """
 
     minimum_score = minimum_score_for_grade(minimum_grade)
+    selected_skills = {
+        canonical_skill_reference(skill_id) for skill_id in profile.skill_weights
+    }
     ranked: list[RankedItemVariant] = []
     for item in catalog.equipment:
         candidates = tuple(
-            (variant, unique_item_type(variant))
+            variant
             for variant in item.variants
             if equipment_class_slot_id(variant.item_class) == slot_id
             and unique_item_type(variant) in enabled_types
@@ -167,39 +249,33 @@ def rank_unique_items_for_slot(
         )
         if not candidates:
             continue
-        variant, item_type = max(
-            candidates,
-            key=lambda candidate: (
-                candidate[0].level_requirement,
-                candidate[0].item_level,
-                score_semantic_stat_ids(
-                    item_semantic_stat_ids(candidate[0], profile), profile
-                ).rank_key,
-                candidate[0].record_path,
-            ),
+        families = (
+            tuple(v for v in candidates if not is_awakened_variant(v)),
+            tuple(v for v in candidates if is_awakened_variant(v)),
         )
-        semantic_ids = item_semantic_stat_ids(variant, profile)
-        score = score_semantic_stat_ids(semantic_ids, profile)
-        if score.effective_score < minimum_score:
-            continue
-        selected_skills = {
-            canonical_skill_reference(skill_id) for skill_id in profile.skill_weights
-        }
-        has_selected_modifier = any(
-            canonical_skill_reference(modifier.modified_skill_reference)
-            in selected_skills
-            for modifier in variant.skill_modifiers
-        )
-        ranked.append(
-            RankedItemVariant(
-                item=item,
-                variant=variant,
-                item_type=item_type,
-                semantic_stat_ids=semantic_ids,
-                score=score,
-                has_selected_skill_modifier=has_selected_modifier,
+        for family in families:
+            if not family:
+                continue
+            variant = _best_variant(family, profile)
+            semantic_ids = item_semantic_stat_ids(variant, profile)
+            score = score_semantic_stat_ids(semantic_ids, profile)
+            if score.effective_score < minimum_score:
+                continue
+            has_selected_modifier = any(
+                canonical_skill_reference(modifier.modified_skill_reference)
+                in selected_skills
+                for modifier in variant.skill_modifiers
             )
-        )
+            ranked.append(
+                RankedItemVariant(
+                    item=item,
+                    variant=variant,
+                    item_type=unique_item_type(variant),
+                    semantic_stat_ids=semantic_ids,
+                    score=score,
+                    has_selected_skill_modifier=has_selected_modifier,
+                )
+            )
     ranked.sort(
         key=lambda match: (
             -match.score.effective_score,
@@ -209,6 +285,7 @@ def rank_unique_items_for_slot(
             -match.score.coverage_ratio,
             -match.variant.level_requirement,
             match.item.display_name.casefold(),
+            match.is_awakened,
             match.variant.record_path,
         )
     )

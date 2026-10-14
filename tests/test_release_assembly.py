@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from gd_affix_relevance import __version__
 from gd_affix_relevance.catalog import CATALOG_SCHEMA_VERSION
 from gd_affix_relevance.release_assembly import TAG_SOURCES, assemble_release
 
@@ -212,7 +213,7 @@ def test_assembly_installs_resources_and_preserves_unmanaged_files(
     manifest = json.loads(
         (output / "release-manifest.json").read_text(encoding="utf-8")
     )
-    assert manifest["application_version"] == "0.9.2-beta"
+    assert manifest["application_version"] == __version__
     assert set(manifest["example_profiles"]) == {"Starter.json"}
 
 

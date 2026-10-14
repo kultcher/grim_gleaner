@@ -240,6 +240,7 @@ class ProfileEditor(QWidget):
         for stat_id, weight in loaded.resistance_cap_weights.items():
             self.profile.set_resistance_cap_weight(stat_id, weight)
         self.profile.set_level_band(loaded.level_band)
+        self.profile.prefer_awakened_grades = loaded.prefer_awakened_grades
 
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
@@ -283,6 +284,7 @@ class ProfileEditor(QWidget):
         self.profile.resistance_cap_enabled = baseline.resistance_cap_enabled
         self.profile.resistance_cap_weights.clear()
         self.profile.set_level_band(baseline.level_band)
+        self.profile.prefer_awakened_grades = baseline.prefer_awakened_grades
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
         del blocker

@@ -22,11 +22,33 @@ RACE_DISPLAY_NAMES = {
 }
 DYNAMIC_STAT_PREFIXES = ("skill_bonus:", "skill_modifier:", "mastery_bonus:")
 
+# Which direction of a stat's authored value benefits the player. Almost every
+# Grim Dawn stat is authored as a positive bonus, so "higher" is the default.
+# Use "lower" for a stat whose beneficial values are authored as negative
+# numbers, and "neutral" for a stat whose sign carries no benefit meaning.
+POLARITY_HIGHER = "higher"
+POLARITY_LOWER = "lower"
+POLARITY_NEUTRAL = "neutral"
+POLARITIES = (POLARITY_HIGHER, POLARITY_LOWER, POLARITY_NEUTRAL)
+
+# A stat that appears with a detrimental sign (e.g. -15% pet maximum
+# resistances) is scored under ``penalty:<stat_id>``. Penalties count as
+# stats the item carries, so they lower coverage, but they are never weighted
+# and therefore can never count as a match.
+PENALTY_STAT_PREFIX = "penalty:"
+
 
 @dataclass(frozen=True, slots=True)
 class StatDefinition:
     stat_id: str
     label: str
+    polarity: str = POLARITY_HIGHER
+
+    def __post_init__(self) -> None:
+        if self.polarity not in POLARITIES:
+            raise ValueError(
+                f"unknown polarity {self.polarity!r} for stat {self.stat_id!r}"
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,8 +66,10 @@ class TabDefinition:
     packages: tuple[PackageDefinition, ...]
 
 
-def stat(stat_id: str, label: str) -> StatDefinition:
-    return StatDefinition(stat_id, label)
+def stat(
+    stat_id: str, label: str, *, polarity: str = POLARITY_HIGHER
+) -> StatDefinition:
+    return StatDefinition(stat_id, label, polarity)
 
 
 def conversion_stat(destination: str, label: str) -> StatDefinition:
@@ -740,8 +764,36 @@ def stat_definition(stat_id: str) -> StatDefinition | None:
     )
 
 
+def penalty_stat_id(stat_id: str) -> str:
+    """Return the scoring ID for a stat that appears with a detrimental sign."""
+
+    if stat_id.startswith(PENALTY_STAT_PREFIX):
+        return stat_id
+    return f"{PENALTY_STAT_PREFIX}{stat_id}"
+
+
+def is_penalty_stat_id(stat_id: str) -> bool:
+    return stat_id.startswith(PENALTY_STAT_PREFIX)
+
+
+def base_stat_id(stat_id: str) -> str:
+    """Strip the penalty marker, if any, from a scoring stat ID."""
+
+    return stat_id.removeprefix(PENALTY_STAT_PREFIX)
+
+
+@cache
+def stat_polarity(stat_id: str) -> str:
+    """Return which sign of *stat_id* benefits the player."""
+
+    definition = stat_definition(base_stat_id(stat_id))
+    return definition.polarity if definition is not None else POLARITY_HIGHER
+
+
 @cache
 def stat_is_scoreable(stat_id: str) -> bool:
+    if stat_id.startswith(PENALTY_STAT_PREFIX):
+        return stat_is_scoreable(base_stat_id(stat_id))
     if stat_id.startswith(DYNAMIC_STAT_PREFIXES):
         return True
     definition = stat_definition(stat_id)
@@ -753,6 +805,8 @@ def stat_is_scoreable(stat_id: str) -> bool:
 
 @cache
 def stat_is_registered(stat_id: str) -> bool:
+    if stat_id.startswith(PENALTY_STAT_PREFIX):
+        return stat_is_registered(base_stat_id(stat_id))
     if stat_id.startswith(DYNAMIC_STAT_PREFIXES):
         return True
     return stat_definition(stat_id) is not None

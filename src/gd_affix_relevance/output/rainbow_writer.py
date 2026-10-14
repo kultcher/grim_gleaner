@@ -13,10 +13,9 @@ from gd_affix_relevance.io_utils import atomic_write_bytes
 from gd_affix_relevance.scoring import (
     affix_variants_for_profile,
     canonical_skill_reference,
-    item_variant_is_eligible,
     item_semantic_stat_ids,
     score_semantic_stat_ids,
-    unique_item_type,
+    select_tag_variant,
     variant_semantic_stat_ids,
 )
 
@@ -130,35 +129,9 @@ def _build_unique_instructions(
     }
     instructions: dict[str, _MarkerInstruction] = {}
     for item in catalog.equipment:
-        all_candidates = tuple(
-            variant
-            for variant in item.variants
-            if unique_item_type(variant)
-        )
-        if not all_candidates:
+        variant = select_tag_variant(item, profile)
+        if variant is None:
             continue
-        eligible_candidates = tuple(
-            variant
-            for variant in all_candidates
-            if item_variant_is_eligible(variant, profile)
-        )
-        candidates = eligible_candidates or tuple(
-            variant
-            for variant in all_candidates
-            if variant.level_requirement
-            == min(value.level_requirement for value in all_candidates)
-        )
-        variant = max(
-            candidates,
-            key=lambda candidate: (
-                candidate.level_requirement,
-                candidate.item_level,
-                score_semantic_stat_ids(
-                    item_semantic_stat_ids(candidate, profile), profile
-                ).rank_key,
-                candidate.record_path,
-            ),
-        )
         score = score_semantic_stat_ids(
             item_semantic_stat_ids(variant, profile), profile
         )

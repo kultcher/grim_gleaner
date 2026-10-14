@@ -44,6 +44,11 @@ class BuildProfile:
     resistance_cap_enabled: bool = False
     resistance_cap_weights: dict[str, int] = field(default_factory=dict)
     level_band: str = DEFAULT_LEVEL_BAND_ID
+    # Epics and the Awakened Legendaries crafted from them share one in-game
+    # name tag, so exported grades can describe only one of the two. Off
+    # grades the tag by the item as it drops; on grades it by its Awakened
+    # version, for players hunting Epics to awaken.
+    prefer_awakened_grades: bool = False
 
     def __post_init__(self) -> None:
         supplied_weights = dict(self.weights)
@@ -75,6 +80,8 @@ class BuildProfile:
         for stat_id, weight in supplied_cap_weights.items():
             self.set_resistance_cap_weight(stat_id, weight)
         self.set_level_band(self.level_band)
+        if not isinstance(self.prefer_awakened_grades, bool):
+            raise TypeError("prefer awakened grades must be a boolean")
 
     def set_level_band(self, band_id: str) -> None:
         self.level_band = validate_level_band_id(band_id)
@@ -209,6 +216,7 @@ class BuildProfile:
         return {
             "name": self.name,
             "level_band": self.level_band,
+            "prefer_awakened_grades": self.prefer_awakened_grades,
             "masteries": list(self.masteries),
             "skill_weights": dict(sorted(self.skill_weights.items())),
             "weights": dict(sorted(self.weights.items())),
@@ -240,6 +248,7 @@ class BuildProfile:
             "resistance_cap_weights", {}
         )
         raw_level_band = payload.get("level_band", DEFAULT_LEVEL_BAND_ID)
+        raw_prefer_awakened = payload.get("prefer_awakened_grades", False)
         if not isinstance(name, str):
             raise TypeError("profile name must be a string")
         if not isinstance(raw_weights, dict):
@@ -256,12 +265,15 @@ class BuildProfile:
             raise TypeError("profile resistance cap enabled state must be boolean")
         if not isinstance(raw_resistance_cap_weights, dict):
             raise TypeError("profile resistance cap weights must be an object")
+        if not isinstance(raw_prefer_awakened, bool):
+            raise TypeError("profile prefer awakened grades must be boolean")
 
         profile = cls(
             name=name,
             masteries=tuple(raw_masteries),
             resistance_cap_enabled=raw_resistance_cap_enabled,
             level_band=raw_level_band,
+            prefer_awakened_grades=raw_prefer_awakened,
         )
         for stat_id, weight in raw_weights.items():
             if not isinstance(stat_id, str):
