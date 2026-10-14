@@ -1021,3 +1021,34 @@ def test_affix_detail_uses_values_from_the_profile_eligible_tier() -> None:
     high_details = window.top_matches_page.details.toPlainText()
     assert "Health (Flat)\n250\n★★★★" in high_details
     assert "Offensive Ability (Flat)\n50\n★★★★" in high_details
+
+
+def test_awakened_legendary_is_listed_separately_and_toggle_updates_profile() -> None:
+    _application()
+    epic = _item("Alchemist Hood", category="", rarity="Epic", source="Random Drop")
+    awakened_variant = replace(
+        epic.variants[0],
+        record_path="records/items/awakened/gearhead/alchemist hood.dbr",
+        rarity="Legendary",
+        acquisition_source="Crafted",
+    )
+    item = replace(epic, variants=(epic.variants[0], awakened_variant))
+    profile = BuildProfile(
+        weights={"health": 4, "offensive_ability": 4, "defensive_ability": 4}
+    )
+    window = MainWindow(
+        profile,
+        catalog=AffixCatalog(()),
+        items=ItemCatalog((item,), (), (), (), (), ()),
+    )
+    page = window.top_matches_page
+    table = page.unique_tables["head"]
+
+    names = sorted(table.item(row, 1).text() for row in range(table.rowCount()))
+    assert names == ["Alchemist Hood", "Alchemist Hood (Awakened)"]
+    assert not page.prefer_awakened_toggle.isChecked()
+
+    page.prefer_awakened_toggle.setChecked(True)
+    assert profile.prefer_awakened_grades is True
+    # The list itself does not change; only exported grades depend on it.
+    assert table.rowCount() == 2

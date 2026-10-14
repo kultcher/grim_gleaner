@@ -557,3 +557,84 @@ def test_items_and_addons_above_profile_band_are_excluded() -> None:
         slot_id=SLOT_HEAD,
         addon_type=ADDON_COMPONENT,
     )
+
+
+def _awakening_pair() -> ItemCatalog:
+    epic = _variant(
+        record_path="records/items/upgraded/gearhead/c027_head.dbr",
+        category="",
+        rarity="Epic",
+        item_level=94,
+        level_requirement=94,
+        properties=(ItemProperty("health", "health", {}),),
+    )
+    awakened = _variant(
+        record_path="records/items/awakened/gearhead/c027_head.dbr",
+        category="",
+        rarity="Legendary",
+        item_level=94,
+        level_requirement=94,
+        properties=(
+            ItemProperty("health", "health", {}),
+            ItemProperty("fire_resistance", "fire_resistance", {}),
+            ItemProperty("cold_resistance", "cold_resistance", {}),
+        ),
+    )
+    return ItemCatalog((_item("Alchemist Hood", epic, awakened),), (), (), (), (), ())
+
+
+def test_epic_and_awakened_legendary_are_ranked_as_separate_entries() -> None:
+    from gd_affix_relevance.scoring import UNIQUE_ITEM_TYPES
+
+    profile = BuildProfile(
+        weights={"health": 3, "fire_resistance": 4, "cold_resistance": 4}
+    )
+
+    matches = rank_unique_items_for_slot(
+        _awakening_pair(),
+        profile,
+        slot_id=SLOT_HEAD,
+        enabled_types=frozenset(UNIQUE_ITEM_TYPES),
+        minimum_grade="D",
+    )
+
+    assert [(match.item_type, match.is_awakened) for match in matches] == [
+        ("legendary", True),
+        ("epic", False),
+    ]
+    assert matches[0].score.effective_score > matches[1].score.effective_score
+
+    epic_only = rank_unique_items_for_slot(
+        _awakening_pair(),
+        profile,
+        slot_id=SLOT_HEAD,
+        enabled_types=frozenset({"epic"}),
+        minimum_grade="D",
+    )
+    assert [match.is_awakened for match in epic_only] == [False]
+
+
+def test_shared_tag_is_graded_by_the_epic_unless_awakened_is_preferred() -> None:
+    from gd_affix_relevance.output.rainbow_writer import build_unique_item_markers
+
+    weights = {"health": 3, "fire_resistance": 4, "cold_resistance": 4}
+    as_dropped = build_unique_item_markers(
+        _awakening_pair(), BuildProfile(weights=dict(weights))
+    )
+    for_awakening = build_unique_item_markers(
+        _awakening_pair(),
+        BuildProfile(weights=dict(weights), prefer_awakened_grades=True),
+    )
+
+    assert as_dropped["tagAlchemist Hood"].endswith("1)")
+    assert for_awakening["tagAlchemist Hood"].endswith("3)")
+    assert as_dropped != for_awakening
+
+
+def test_awakened_only_items_are_still_graded() -> None:
+    from gd_affix_relevance.scoring import select_tag_variant
+
+    awakened = _awakening_pair().equipment[0].variants[1]
+    item = _item("Lone Awakened", awakened)
+
+    assert select_tag_variant(item, BuildProfile()) is awakened

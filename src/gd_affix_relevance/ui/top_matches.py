@@ -118,6 +118,14 @@ def _unique_type_label(type_id: str) -> str:
     return t(f"unique_type.{type_id}", default=UNIQUE_TYPE_LABELS[type_id])
 
 
+def _unique_display_name(match: RankedItemVariant) -> str:
+    """Name an entry, distinguishing an Awakened Legendary from its Epic."""
+
+    if match.is_awakened:
+        return t("matches.awakened_name", name=match.item.display_name)
+    return match.item.display_name
+
+
 def _addon_type_label(addon_type: str) -> str:
     return t(f"addon_type.{addon_type}", default=ADDON_TYPE_LABELS[addon_type])
 
@@ -656,7 +664,7 @@ class UniqueSlotTable(QTableWidget):
             )
             values = (
                 match.marker,
-                match.item.display_name,
+                _unique_display_name(match),
                 _unique_type_label(match.item_type),
                 _item_source_label(match.variant),
                 _format_score(score.effective_score),
@@ -888,6 +896,21 @@ class TopMatchesPage(QWidget):
             self._minimum_grade_changed
         )
         type_layout.addWidget(self.minimum_grade)
+        type_layout.addSpacing(14)
+        self.prefer_awakened_toggle = QCheckBox(
+            t("matches.prefer_awakened"), type_frame
+        )
+        self.prefer_awakened_toggle.setObjectName("preferAwakenedToggle")
+        self.prefer_awakened_toggle.setToolTip(
+            t("matches.prefer_awakened_tooltip")
+        )
+        self.prefer_awakened_toggle.setChecked(
+            self.profile.prefer_awakened_grades
+        )
+        self.prefer_awakened_toggle.toggled.connect(
+            self._prefer_awakened_toggled
+        )
+        type_layout.addWidget(self.prefer_awakened_toggle)
         type_layout.addStretch()
         upper_layout.addWidget(type_frame)
 
@@ -1096,6 +1119,21 @@ class TopMatchesPage(QWidget):
         self._select_first_visible_addon()
         self.profile_state_changed.emit()
 
+    def _prefer_awakened_toggled(self, enabled: bool) -> None:
+        # Only exported in-game grades depend on this choice: the Uniques tab
+        # always lists Epics and their Awakened versions separately.
+        if self.profile.prefer_awakened_grades == enabled:
+            return
+        self.profile.prefer_awakened_grades = enabled
+        self.profile_state_changed.emit()
+
+    def _sync_prefer_awakened_from_profile(self) -> None:
+        blocker = QSignalBlocker(self.prefer_awakened_toggle)
+        self.prefer_awakened_toggle.setChecked(
+            self.profile.prefer_awakened_grades
+        )
+        del blocker
+
     def _resistance_cap_weight_changed(
         self, stat_id: str, weight: int
     ) -> None:
@@ -1128,6 +1166,7 @@ class TopMatchesPage(QWidget):
 
     def refresh(self, _value: int | bool = False) -> None:
         self._sync_resistance_cap_from_profile()
+        self._sync_prefer_awakened_from_profile()
         self.affix_detail_pane.clear()
         self.unique_detail_pane.clear()
         self.addon_detail_pane.clear()
@@ -1469,7 +1508,7 @@ class TopMatchesPage(QWidget):
             self._selected_unique_table = table
         score = match.score
         self.unique_detail_pane.set_title(
-            f"{match.marker}{match.item.display_name} · {_slot_label(slot_id)} · "
+            f"{match.marker}{_unique_display_name(match)} · {_slot_label(slot_id)} · "
             f"{_unique_type_label(match.item_type)}",
             DETAIL_TITLE_COLORS[match.item_type],
         )
