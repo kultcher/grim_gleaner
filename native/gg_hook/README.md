@@ -1,7 +1,8 @@
 # gg_hook: Grim Gleaner's in-game hook (phase 1)
 
 Injected into a running Grim Dawn. When the game builds an equipment tooltip,
-the DLL reads that item's records and seed and sends them over loopback UDP
+the DLL reads that item's records and seed, plus the tooltip text the game
+just built (with the rolled values), and sends them over loopback UDP
 (127.0.0.1:47817) to `grim-gleaner live-listen`, which prints
 `Got the info: <item> (seed …)`. Nothing is graded yet, and nothing in the
 game is changed except that one function being observed.
@@ -48,6 +49,9 @@ layout-compatible.
    Hook connected (Grim Dawn pid 12345): hooked ItemEquipment::GetUIDisplayText (4-argument)
    Got the info: Abyssal Mask [Epic] (seed 1234567)  [tooltip builds so far: 3]
    Got the info: Leggings [Rare] (seed 1760317122) with Runecarved + of Blood  [tooltip builds so far: 4]
+         base stats | 205 Armor
+            bonuses | +38% Lightning Damage
+            ...
    ```
 
 The DLL logs to `%LOCALAPPDATA%\GrimGleaner\gg_hook.log`.
@@ -62,6 +66,10 @@ The DLL logs to `%LOCALAPPDATA%\GrimGleaner\gg_hook.log`.
   hovering it. `tooltip builds so far` is the raw call count. In testing it
   rises by about one per hover: the game builds a tooltip once when it opens,
   not every frame.
+- **Tooltip text:** read straight from the line list the game just filled,
+  with colour codes stripped in the listener. If that list does not look like
+  the expected layout, the hook stops sending text but keeps reporting
+  records and seeds.
 - **Safety:** if a game patch changes `ItemReplicaInfo` (the game writes past
   the guard area) or reading an item faults, the hook logs it, sends an
   error message and stops reporting, while the game carries on normally.

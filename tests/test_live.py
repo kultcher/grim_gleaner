@@ -28,7 +28,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_DLL = Path(__file__).parent / "fixtures" / "pe" / "exports_sample.dll"
 
 
-def _item_line(**overrides: str) -> bytes:
+def _item_line(*tooltip: str, **overrides: str) -> bytes:
     fields = {
         "calls": "42",
         "seed": "123456",
@@ -39,6 +39,7 @@ def _item_line(**overrides: str) -> bytes:
     fields.update(overrides)
     values = [fields["calls"], fields["seed"], fields["base"], fields["prefix"], fields["suffix"]]
     values += [""] * 7
+    values += list(tooltip)
     return ("GG1\titem\t" + "\t".join(values) + "\n").encode()
 
 
@@ -188,3 +189,30 @@ def test_default_hook_dll_points_at_the_cmake_release_build() -> None:
     assert default_hook_dll() == (
         PROJECT_ROOT / "build" / "gg_hook" / "Release" / "gg_hook.dll"
     )
+
+
+def test_item_message_carries_tooltip_lines() -> None:
+    message = parse_message(
+        _item_line("4:{^Y}Runecarved Leggings", "17:205 Armor", "18:+38% Lightning Damage: 12:30")
+    )
+    assert isinstance(message, HoveredItem)
+    assert [(line.text_class, line.text) for line in message.lines] == [
+        (4, "{^Y}Runecarved Leggings"),
+        (17, "205 Armor"),
+        (18, "+38% Lightning Damage: 12:30"),
+    ]
+    text = describe_item(message)
+    assert "base stats | 205 Armor" in text
+    assert "bonuses | +38% Lightning Damage: 12:30" in text
+    assert "Runecarved Leggings" not in text.splitlines()[1:].__str__()
+
+
+def test_tooltip_line_without_class_is_rejected() -> None:
+    with pytest.raises(ProtocolError):
+        parse_message(_item_line("no class here"))
+
+
+def test_plain_text_strips_colour_codes() -> None:
+    from gd_affix_relevance.live.listener import plain_text
+
+    assert plain_text("{^E}+12% {^Y}Fire{^E} Damage ") == "+12% Fire Damage"

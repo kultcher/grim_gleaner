@@ -18,6 +18,8 @@
 namespace gg {
 namespace {
 
+using game::GameTextLine;
+using game::GameTextLineVector;
 using game::ItemReplicaInfo;
 
 // x64 has a single calling convention; `this` arrives first.
@@ -33,6 +35,16 @@ GetItemReplicaInfoFn g_getReplica = nullptr;
 
 std::atomic<std::uint64_t> g_calls{0};
 std::atomic<bool> g_reportingDisabled{false};
+// Tooltip text is optional extra: if its layout looks wrong, keep reporting
+// records and seeds but stop reading lines.
+std::atomic<bool> g_linesDisabled{false};
+constexpr std::size_t kMaxLines = 128;
+
+struct RawLine {
+    int textClass;
+    const wchar_t* text;
+    std::size_t length;
+};
 
 // The same tooltip is rebuilt repeatedly while it is shown. Report an item
 // once, then again only after it has gone unreported for a while.
@@ -63,6 +75,58 @@ bool CallGetReplicaGuarded(const void* item, ItemReplicaInfo* out) {
 #endif
 }
 
+// Copies pointers to the game's tooltip lines without touching their memory
+// management. Returns the number of lines, or -1 if the vector does not look
+// like a vector of GameTextLine (or reading it faulted).
+int SnapshotLinesGuarded(const void* lines, RawLine* out) {
+#if defined(_MSC_VER)
+    __try {
+#endif
+        const auto* vector = static_cast<const GameTextLineVector*>(lines);
+        if (vector->first == nullptr) {
+            return 0;
+        }
+        const auto bytes = reinterpret_cast<const char*>(vector->last) -
+                           reinterpret_cast<const char*>(vector->first);
+        if (bytes < 0 || bytes % sizeof(GameTextLine) != 0 ||
+            vector->end < vector->last) {
+            return -1;
+        }
+        std::size_t count = static_cast<std::size_t>(bytes) / sizeof(GameTextLine);
+        if (count > kMaxLines) {
+            count = kMaxLines;
+        }
+        for (std::size_t index = 0; index < count; ++index) {
+            const GameTextLine& line = vector->first[index];
+            if (line.textClass < 0 || line.textClass > game::kMaxGameTextClass ||
+                line.text.size() > 4096) {
+                return -1;
+            }
+            out[index] = RawLine{line.textClass, line.text.data(), line.text.size()};
+        }
+        return static_cast<int>(count);
+#if defined(_MSC_VER)
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return -1;
+    }
+#endif
+}
+
+std::string ToUtf8(const wchar_t* text, std::size_t length) {
+    if (length == 0) {
+        return {};
+    }
+    const int size = WideCharToMultiByte(CP_UTF8, 0, text, static_cast<int>(length),
+                                         nullptr, 0, nullptr, nullptr);
+    if (size <= 0) {
+        return {};
+    }
+    std::string result(static_cast<std::size_t>(size), '\0');
+    WideCharToMultiByte(CP_UTF8, 0, text, static_cast<int>(length), result.data(),
+                        size, nullptr, nullptr);
+    return result;
+}
+
 std::string Clean(const std::string& value) {
     std::string result = value;
     for (char& character : result) {
@@ -73,7 +137,26 @@ std::string Clean(const std::string& value) {
     return result;
 }
 
-void ReportItem(const void* item, std::uint64_t calls) {
+// Appends "\t<class>:<text>" for each tooltip line.
+void AppendLines(const void* lines, std::string* message) {
+    if (lines == nullptr || g_linesDisabled.load()) {
+        return;
+    }
+    RawLine raw[kMaxLines];
+    const int count = SnapshotLinesGuarded(lines, raw);
+    if (count < 0) {
+        g_linesDisabled.store(true);
+        Log("tooltip: text lines do not match the expected layout; no longer reading them");
+        Report("GG1\terror\ttooltip text layout not recognised; reporting records only");
+        return;
+    }
+    for (int index = 0; index < count; ++index) {
+        *message += "\t" + std::to_string(raw[index].textClass) + ":" +
+                    Clean(ToUtf8(raw[index].text, raw[index].length));
+    }
+}
+
+void ReportItem(const void* item, const void* lines, std::uint64_t calls) {
     alignas(ItemReplicaInfo) unsigned char storage[sizeof(ItemReplicaInfo) + kGuardBytes];
     std::memset(storage + sizeof(ItemReplicaInfo), kGuardFill, kGuardBytes);
     auto* info = new (storage) ItemReplicaInfo();
@@ -106,10 +189,11 @@ void ReportItem(const void* item, std::uint64_t calls) {
                        "\t" + Clean(info->transmuteRecord) + "\t" + Clean(info->ascendant1) +
                        "\t" + Clean(info->ascendant2);
     info->~ItemReplicaInfo();
+    AppendLines(lines, &line);
     Report(std::move(line));
 }
 
-void OnTooltipBuilt(const void* item) {
+void OnTooltipBuilt(const void* item, const void* lines) {
     const std::uint64_t calls = ++g_calls;
     if (item == nullptr || g_reportingDisabled.load()) {
         return;
@@ -125,7 +209,7 @@ void OnTooltipBuilt(const void* item) {
         g_lastReportTick = now;
     }
     try {
-        ReportItem(item, calls);
+        ReportItem(item, lines, calls);
     } catch (...) {
         // With /EHa this also catches access violations. Never let our code
         // take the game down.
@@ -137,12 +221,12 @@ void OnTooltipBuilt(const void* item) {
 void HookedGetUIDisplayText4(const void* self, const void* character, void* lines,
                              bool includeSetBonusDetails) {
     g_original4(self, character, lines, includeSetBonusDetails);
-    OnTooltipBuilt(self);
+    OnTooltipBuilt(self, lines);
 }
 
 void HookedGetUIDisplayText3(const void* self, const void* character, void* lines) {
     g_original3(self, character, lines);
-    OnTooltipBuilt(self);
+    OnTooltipBuilt(self, lines);
 }
 
 // Detours must be told about every thread that might be executing the bytes

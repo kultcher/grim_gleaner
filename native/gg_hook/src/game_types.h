@@ -43,7 +43,29 @@ struct ItemReplicaInfo {
     unsigned int unknownFoaField2;
 };
 
+// One line of a tooltip as the game builds it (also from IA's GrimTypes.h).
+// `text` may still contain colour codes such as {^E}.
+struct GameTextLine {
+    int textClass;  // GAME::GameTextClass; 0x11 base stats, 0x12 bonuses, ...
+    std::wstring text;
+    bool needsProcessing;
+    void* leadingIcon;
+    float iconScale;
+};
+
+// mem::vector<T> is laid out as three pointers, like MSVC's std::vector.
+struct GameTextLineVector {
+    GameTextLine* first;
+    GameTextLine* last;
+    GameTextLine* end;
+};
+
+// Highest GameTextClass value known (GameTextClass_GrayStats3). Used as a
+// sanity check that the vector really holds GameTextLines.
+inline constexpr int kMaxGameTextClass = 0x50;
+
 #if defined(_MSC_VER) && !defined(__clang__)
+static_assert(sizeof(GameTextLine) == 0x40, "unexpected GameTextLine size");
 // Retail Grim Dawn 1.3 (Fangs of Asterkarn). Only meaningful for an MSVC build;
 // other compilers lay out std::string differently.
 static_assert(sizeof(ItemReplicaInfo) == 0x190,

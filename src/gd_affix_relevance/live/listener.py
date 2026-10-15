@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import socket
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -15,6 +16,17 @@ from gd_affix_relevance.live.protocol import (
     ProtocolError,
     parse_message,
 )
+
+
+COLOR_CODE = re.compile(r"\{\^.\}")
+# Lines that carry no stat information.
+SKIPPED_TEXT_CLASSES = frozenset({0x01, 0x02, 0x03, 0x04, 0x05, 0x06})
+
+
+def plain_text(text: str) -> str:
+    """Strip Grim Dawn colour codes such as {^E}."""
+
+    return COLOR_CODE.sub("", text).strip()
 
 
 def _normalize_record(path: str) -> str:
@@ -84,7 +96,13 @@ def describe_item(item: HoveredItem, names: RecordNames | None = None) -> str:
     text = f"Got the info: {title} (seed {item.seed})"
     if affix_labels:
         text += " with " + " + ".join(affix_labels)
-    return text + f"  [tooltip builds so far: {item.calls}]"
+    text += f"  [tooltip builds so far: {item.calls}]"
+    stat_lines = [
+        f"    {line.class_name:>13} | {plain}"
+        for line in item.lines
+        if line.text_class not in SKIPPED_TEXT_CLASSES and (plain := plain_text(line.text))
+    ]
+    return "\n".join([text, *stat_lines])
 
 
 class ListenerState:

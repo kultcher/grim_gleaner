@@ -43,6 +43,39 @@ class HookError:
     detail: str
 
 
+# GAME::GameTextClass values worth naming; others are shown by number.
+TEXT_CLASS_NAMES = {
+    0x01: "banner",
+    0x02: "name",
+    0x03: "name",
+    0x04: "name",
+    0x05: "name",
+    0x06: "name",
+    0x10: "description",
+    0x11: "base stats",
+    0x12: "bonuses",
+    0x13: "requirements",
+    0x14: "set name",
+    0x19: "set bonuses",
+    0x22: "skill heading",
+    0x23: "skill name",
+    0x25: "skill description",
+    0x27: "skill stats",
+    0x44: "pet bonus heading",
+    0x45: "pet bonus",
+}
+
+
+@dataclass(frozen=True, slots=True)
+class TooltipLine:
+    text_class: int
+    text: str
+
+    @property
+    def class_name(self) -> str:
+        return TEXT_CLASS_NAMES.get(self.text_class, f"class {self.text_class}")
+
+
 @dataclass(frozen=True, slots=True)
 class HoveredItem:
     """The records and seed of an item whose tooltip the game just built."""
@@ -59,6 +92,8 @@ class HoveredItem:
     transmute_record: str = ""
     ascendant_1: str = ""
     ascendant_2: str = ""
+    # The tooltip text the game just built, with the rolled values.
+    lines: tuple[TooltipLine, ...] = ()
 
 
 HookMessage = HookStatus | HookError | HoveredItem
@@ -87,14 +122,17 @@ def parse_message(payload: bytes) -> HookMessage:
         if kind == "error":
             return HookError("\t".join(values))
         if kind == "item":
-            if len(values) != len(ITEM_FIELDS):
+            if len(values) < len(ITEM_FIELDS):
                 raise ProtocolError(
-                    f"item expects {len(ITEM_FIELDS)} fields, got {len(values)}"
+                    f"item expects at least {len(ITEM_FIELDS)} fields, got {len(values)}"
                 )
             raw = dict(zip(ITEM_FIELDS, values))
             return HoveredItem(
                 calls=int(raw.pop("calls")),
                 seed=int(raw.pop("seed")),
+                lines=tuple(
+                    _parse_line(value) for value in values[len(ITEM_FIELDS) :]
+                ),
                 **{key: value.strip() for key, value in raw.items()},
             )
     except ValueError as error:
@@ -102,3 +140,10 @@ def parse_message(payload: bytes) -> HookMessage:
             raise
         raise ProtocolError(f"malformed {kind} message: {error}") from error
     raise ProtocolError(f"unknown message kind: {kind!r}")
+
+
+def _parse_line(value: str) -> TooltipLine:
+    text_class, separator, text = value.partition(":")
+    if not separator:
+        raise ProtocolError(f"tooltip line has no class: {value!r}")
+    return TooltipLine(int(text_class), text)
