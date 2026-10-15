@@ -30,6 +30,10 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.domain import BuildProfile, game_locale_for_code
 from gd_affix_relevance.profile_store import load_profile
 from gd_affix_relevance.runtime_paths import RuntimePaths, resolve_runtime_paths
+from gd_affix_relevance.scoring.magnitude import (
+    MagnitudeModel,
+    set_active_magnitude_model,
+)
 from gd_affix_relevance.ui.catalog import gear_catalog_stat_ids
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
 from gd_affix_relevance.ui.guide import GuidePage
@@ -160,6 +164,9 @@ class MainWindow(QMainWindow):
                 catalog = bundle.affixes
                 skills = bundle.skills
                 items = bundle.items
+                # Built lazily on first use; only profiles with magnitude
+                # influence enabled ever touch the magnitude index.
+                set_active_magnitude_model(MagnitudeModel.from_bundle(bundle))
                 catalog_for_export = catalog
             elif self.runtime_paths.mode == "release":
                 self.catalog_load_error = catalog_status

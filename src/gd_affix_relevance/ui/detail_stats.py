@@ -6,6 +6,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from html import escape
 
+from gd_affix_relevance.catalog.named_item_scaling import scale_attributes
 from gd_affix_relevance.scoring import semantic_stat_ids
 from gd_affix_relevance.stats import is_penalty_stat_id
 from gd_affix_relevance.ui.i18n import t
@@ -300,40 +301,4 @@ def _scaled_offensive_attributes(
 ) -> dict[str, str]:
     """Apply Grim Dawn's named-item attribute scale to confirmed roles only."""
 
-    if not scale_percent or property_key.endswith(":base_weapon"):
-        return attributes
-
-    scaled_roles: frozenset[str]
-    if property_id == "total_damage_percent":
-        scaled_roles = frozenset({"percent"})
-    elif property_id == "stun_duration":
-        scaled_roles = frozenset({"percent"})
-    elif (
-        property_id.endswith("_damage_percent")
-        and not property_id.startswith("pet_")
-        and property_id
-        not in {"retaliation_damage_percent", "weapon_damage_percent"}
-    ):
-        scaled_roles = frozenset({"damage_percent", "duration_percent"})
-    elif (
-        property_id.startswith("flat_")
-        or property_id.startswith("chance_flat_")
-    ) and property_id.endswith("_damage"):
-        scaled_roles = frozenset({"damage_min", "damage_max"})
-    else:
-        return attributes
-
-    scaled = dict(attributes)
-    multiplier = 1.0 + float(scale_percent) / 100.0
-    for role in scaled_roles:
-        if role not in scaled:
-            continue
-        try:
-            raw_value = float(scaled[role])
-        except (TypeError, ValueError):
-            continue
-        # The game truncates the scaled authored value before applying its
-        # separate display-roll range. We intentionally show that nominal
-        # center value and continue to omit jitter.
-        scaled[role] = str(int(raw_value * multiplier))
-    return scaled
+    return scale_attributes(property_id, property_key, attributes, scale_percent)

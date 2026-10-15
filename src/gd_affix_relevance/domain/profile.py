@@ -26,6 +26,9 @@ WEIGHT_LABELS = (
 )
 
 
+MAGNITUDE_INFLUENCE_LEVELS = ("off", "low", "normal", "high")
+
+
 @dataclass(slots=True)
 class BuildProfile:
     """A named set of semantic-stat weights.
@@ -49,6 +52,9 @@ class BuildProfile:
     # grades the tag by the item as it drops; on grades it by its Awakened
     # version, for players hunting Epics to awaken.
     prefer_awakened_grades: bool = False
+    # Optional magnitude influence on relevance: off, low, normal or high
+    # (see scoring/magnitude.py). Off reproduces plain relevance exactly.
+    magnitude_influence: str = "off"
 
     def __post_init__(self) -> None:
         supplied_weights = dict(self.weights)
@@ -82,6 +88,12 @@ class BuildProfile:
         self.set_level_band(self.level_band)
         if not isinstance(self.prefer_awakened_grades, bool):
             raise TypeError("prefer awakened grades must be a boolean")
+        self.set_magnitude_influence(self.magnitude_influence)
+
+    def set_magnitude_influence(self, level: str) -> None:
+        if level not in MAGNITUDE_INFLUENCE_LEVELS:
+            raise ValueError(f"unknown magnitude influence: {level!r}")
+        self.magnitude_influence = level
 
     def set_level_band(self, band_id: str) -> None:
         self.level_band = validate_level_band_id(band_id)
@@ -217,6 +229,7 @@ class BuildProfile:
             "name": self.name,
             "level_band": self.level_band,
             "prefer_awakened_grades": self.prefer_awakened_grades,
+            "magnitude_influence": self.magnitude_influence,
             "masteries": list(self.masteries),
             "skill_weights": dict(sorted(self.skill_weights.items())),
             "weights": dict(sorted(self.weights.items())),
@@ -249,6 +262,7 @@ class BuildProfile:
         )
         raw_level_band = payload.get("level_band", DEFAULT_LEVEL_BAND_ID)
         raw_prefer_awakened = payload.get("prefer_awakened_grades", False)
+        raw_magnitude = payload.get("magnitude_influence", "off")
         if not isinstance(name, str):
             raise TypeError("profile name must be a string")
         if not isinstance(raw_weights, dict):
@@ -274,6 +288,7 @@ class BuildProfile:
             resistance_cap_enabled=raw_resistance_cap_enabled,
             level_band=raw_level_band,
             prefer_awakened_grades=raw_prefer_awakened,
+            magnitude_influence=raw_magnitude,
         )
         for stat_id, weight in raw_weights.items():
             if not isinstance(stat_id, str):

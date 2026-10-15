@@ -39,6 +39,10 @@ from gd_affix_relevance.profile_store import load_profile
 from gd_affix_relevance.output import generate_rainbow_output
 from gd_affix_relevance.release_assembly import assemble_release
 from gd_affix_relevance.runtime_paths import resolve_runtime_paths
+from gd_affix_relevance.scoring.magnitude import (
+    MagnitudeModel,
+    set_active_magnitude_model,
+)
 from gd_affix_relevance.scoring import (
     format_ranked_catalog_report,
     rank_affix_catalog,
@@ -134,6 +138,7 @@ def _run_sample(args: argparse.Namespace) -> int:
 
 def _run_rank(args: argparse.Namespace) -> int:
     bundle = CatalogBundle.load(args.catalog_root)
+    set_active_magnitude_model(MagnitudeModel.from_bundle(bundle))
     profile = load_profile(args.profile_file)
     matches = rank_affix_catalog(bundle.affixes, profile, limit=args.limit)
     candidate_pool_size = sum(

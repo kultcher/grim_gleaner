@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 
 from gd_affix_relevance.catalog import SkillCatalog
 from gd_affix_relevance.domain import BuildProfile
+from gd_affix_relevance.domain.profile import MAGNITUDE_INFLUENCE_LEVELS
 from gd_affix_relevance.level_bands import LEVEL_BANDS
 from gd_affix_relevance.profile_store import load_profile, save_profile
 from gd_affix_relevance.ui.catalog import TabDefinition, profile_tabs_for_stat_ids
@@ -126,6 +127,20 @@ class ProfileEditor(QWidget):
             self._level_band_changed
         )
         level_row.addWidget(self.level_band_combo)
+        level_row.addSpacing(16)
+        magnitude_label = QLabel(t("profile.magnitude_label"), self)
+        magnitude_label.setObjectName("fieldLabel")
+        level_row.addWidget(magnitude_label)
+        self.magnitude_combo = QComboBox(self)
+        self.magnitude_combo.setObjectName("profileMagnitude")
+        self.magnitude_combo.setToolTip(t("profile.magnitude_tooltip"))
+        for level in MAGNITUDE_INFLUENCE_LEVELS:
+            self.magnitude_combo.addItem(t(f"profile.magnitude_{level}"), level)
+        self.magnitude_combo.setCurrentIndex(
+            max(0, self.magnitude_combo.findData(self.profile.magnitude_influence))
+        )
+        self.magnitude_combo.currentIndexChanged.connect(self._magnitude_changed)
+        level_row.addWidget(self.magnitude_combo)
         level_row.addStretch(1)
         self.view_matches_button = QPushButton(t("profile.view_matches"), self)
         self.view_matches_button.setObjectName("primaryAction")
@@ -192,6 +207,21 @@ class ProfileEditor(QWidget):
         self.profile_metadata_changed.emit()
         self.profile_changed.emit()
 
+    def _magnitude_changed(self, _index: int) -> None:
+        level = self.magnitude_combo.currentData()
+        if not isinstance(level, str):
+            return
+        self.profile.set_magnitude_influence(level)
+        self._mark_unsaved()
+        self.profile_changed.emit()
+
+    def _sync_magnitude_combo(self) -> None:
+        blocker = QSignalBlocker(self.magnitude_combo)
+        self.magnitude_combo.setCurrentIndex(
+            max(0, self.magnitude_combo.findData(self.profile.magnitude_influence))
+        )
+        del blocker
+
     def _weights_changed(self, _stat_id: str, _weight: int) -> None:
         self._mark_unsaved()
         self.profile_changed.emit()
@@ -241,6 +271,7 @@ class ProfileEditor(QWidget):
             self.profile.set_resistance_cap_weight(stat_id, weight)
         self.profile.set_level_band(loaded.level_band)
         self.profile.prefer_awakened_grades = loaded.prefer_awakened_grades
+        self.profile.set_magnitude_influence(loaded.magnitude_influence)
 
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
@@ -250,6 +281,7 @@ class ProfileEditor(QWidget):
             self.level_band_combo.findData(self.profile.level_band)
         )
         del blocker
+        self._sync_magnitude_combo()
         for accordion in self.accordions.values():
             accordion.refresh_from_profile()
         self.skills_editor.refresh_from_profile()
@@ -285,6 +317,7 @@ class ProfileEditor(QWidget):
         self.profile.resistance_cap_weights.clear()
         self.profile.set_level_band(baseline.level_band)
         self.profile.prefer_awakened_grades = baseline.prefer_awakened_grades
+        self.profile.set_magnitude_influence(baseline.magnitude_influence)
         blocker = QSignalBlocker(self.name_edit)
         self.name_edit.setText(self.profile.name)
         del blocker
@@ -293,6 +326,7 @@ class ProfileEditor(QWidget):
             self.level_band_combo.findData(self.profile.level_band)
         )
         del blocker
+        self._sync_magnitude_combo()
         for accordion in self.accordions.values():
             accordion.refresh_from_profile()
         self.skills_editor.refresh_from_profile()

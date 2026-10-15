@@ -10,6 +10,7 @@ from pathlib import Path
 from gd_affix_relevance.catalog import AffixCatalog, ItemCatalog
 from gd_affix_relevance.domain import ENGLISH_LOCALE, BuildProfile, LocaleSpec
 from gd_affix_relevance.io_utils import atomic_write_bytes
+from gd_affix_relevance.scoring.magnitude import profile_multipliers
 from gd_affix_relevance.scoring import (
     affix_variants_for_profile,
     canonical_skill_reference,
@@ -93,7 +94,20 @@ def _build_affix_instructions(
             for _, variant in tagged_variants
         ]
         common_stat_ids = tuple(sorted(set.intersection(*variant_sets)))
-        score = score_semantic_stat_ids(common_stat_ids, profile)
+        variant_multipliers = [
+            profile_multipliers(profile, (variant.representative_source,))
+            for _, variant in tagged_variants
+        ]
+        multipliers = None
+        if any(value is not None for value in variant_multipliers):
+            # One tag covers several tiers/slots; credit only the weakest.
+            multipliers = {
+                stat_id: min((value or {}).get(stat_id, 1.0) for value in variant_multipliers)
+                for stat_id in common_stat_ids
+            }
+        score = score_semantic_stat_ids(
+            common_stat_ids, profile, multipliers=multipliers
+        )
         has_granted_skill = any(
             property_.property_id == "granted_item_skill"
             for _, variant in tagged_variants
@@ -133,7 +147,9 @@ def _build_unique_instructions(
         if variant is None:
             continue
         score = score_semantic_stat_ids(
-            item_semantic_stat_ids(variant, profile), profile
+            item_semantic_stat_ids(variant, profile),
+            profile,
+            multipliers=profile_multipliers(profile, (variant.record_path,)),
         )
         flags = ""
         if variant.granted_skill_reference or variant.granted_skill_name:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 
 from gd_affix_relevance.catalog import (
@@ -16,6 +16,7 @@ from gd_affix_relevance.catalog import (
 from gd_affix_relevance.conversions import canonical_damage_type
 from gd_affix_relevance.domain import BuildProfile
 from gd_affix_relevance.level_bands import level_is_eligible
+from gd_affix_relevance.scoring.magnitude import profile_multipliers
 from gd_affix_relevance.slots import slot_ids_from_legacy_label
 from gd_affix_relevance.stats import (
     POLARITY_HIGHER,
@@ -434,7 +435,14 @@ def score_semantic_stat_ids(
     profile: BuildProfile,
     *,
     weight_for: Callable[[str], int] | None = None,
+    multipliers: Mapping[str, float] | None = None,
 ) -> RelevanceScore:
+    """Score a set of stats against *profile*.
+
+    *multipliers* optionally scales individual stats' relevance points (the
+    optional magnitude influence); absent stats use 1.0, so None or an empty
+    mapping reproduces the plain score exactly.
+    """
     stat_ids = tuple(
         stat_id for stat_id in stat_ids if stat_is_scoreable(stat_id)
     )
@@ -464,6 +472,7 @@ def score_semantic_stat_ids(
     )
     relevance_points = sum(
         _points_for_weight(resolve_weight(stat_id))
+        * (multipliers.get(stat_id, 1.0) if multipliers else 1.0)
         for stat_id in matched
     )
     coverage_multiplier = 0.70 + 0.30 * coverage_ratio
@@ -548,7 +557,13 @@ def rank_affixes_for_slot(
             ),
         )
         semantic_ids = variant_semantic_stat_ids(selected, profile)
-        score = score_semantic_stat_ids(semantic_ids, profile)
+        score = score_semantic_stat_ids(
+            semantic_ids,
+            profile,
+            multipliers=profile_multipliers(
+                profile, (selected.representative_source,)
+            ),
+        )
         if score.weighted_match == 0:
             continue
         ranked.append(

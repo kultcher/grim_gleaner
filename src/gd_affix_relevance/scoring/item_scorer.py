@@ -20,6 +20,7 @@ from gd_affix_relevance.scoring.catalog_scorer import (
     semantic_stat_ids,
     property_enabled_for_profile,
 )
+from gd_affix_relevance.scoring.magnitude import profile_multipliers
 from gd_affix_relevance.stats import stat_is_scoreable
 from gd_affix_relevance.slots import (
     WEAPON_SLOTS,
@@ -258,7 +259,11 @@ def rank_unique_items_for_slot(
                 continue
             variant = _best_variant(family, profile)
             semantic_ids = item_semantic_stat_ids(variant, profile)
-            score = score_semantic_stat_ids(semantic_ids, profile)
+            score = score_semantic_stat_ids(
+                semantic_ids,
+                profile,
+                multipliers=profile_multipliers(profile, (variant.record_path,)),
+            )
             if score.effective_score < minimum_score:
                 continue
             has_selected_modifier = any(
@@ -345,7 +350,10 @@ def rank_addons_for_slot(
         )
         semantic_ids = item_semantic_stat_ids(variant, profile)
         score = score_semantic_stat_ids(
-            semantic_ids, profile, weight_for=addon_weight
+            semantic_ids,
+            profile,
+            weight_for=addon_weight,
+            multipliers=profile_multipliers(profile, (variant.record_path,)),
         )
         if score.weighted_match == 0:
             continue
