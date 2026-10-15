@@ -60,9 +60,11 @@ struct GameTextLineVector {
     GameTextLine* end;
 };
 
-// Highest GameTextClass value known (GameTextClass_GrayStats3). Used as a
-// sanity check that the vector really holds GameTextLines.
-inline constexpr int kMaxGameTextClass = 0x50;
+// Upper bound for a plausible GameTextClass, used only as a sanity check that
+// the vector really holds GameTextLines. The enum has grown since IA's copy
+// (1.3.1 uses at least 0x42 for the item-type line and shifts IA's values by
+// one), so this is deliberately loose.
+inline constexpr int kMaxGameTextClass = 0xFF;
 
 #if defined(_MSC_VER) && !defined(__clang__)
 static_assert(sizeof(GameTextLine) == 0x40, "unexpected GameTextLine size");

@@ -193,13 +193,13 @@ def test_default_hook_dll_points_at_the_cmake_release_build() -> None:
 
 def test_item_message_carries_tooltip_lines() -> None:
     message = parse_message(
-        _item_line("4:{^Y}Runecarved Leggings", "17:205 Armor", "18:+38% Lightning Damage: 12:30")
+        _item_line("5:{^Y}Runecarved Leggings", "18:205 Armor", "19:+38% ^ELightning Damage: 12:30")
     )
     assert isinstance(message, HoveredItem)
     assert [(line.text_class, line.text) for line in message.lines] == [
-        (4, "{^Y}Runecarved Leggings"),
-        (17, "205 Armor"),
-        (18, "+38% Lightning Damage: 12:30"),
+        (5, "{^Y}Runecarved Leggings"),
+        (18, "205 Armor"),
+        (19, "+38% ^ELightning Damage: 12:30"),
     ]
     text = describe_item(message)
     assert "base stats | 205 Armor" in text
@@ -216,3 +216,5 @@ def test_plain_text_strips_colour_codes() -> None:
     from gd_affix_relevance.live.listener import plain_text
 
     assert plain_text("{^E}+12% {^Y}Fire{^E} Damage ") == "+12% Fire Damage"
+    assert plain_text("+39% ^EElemental Damage") == "+39% Elemental Damage"
+    assert plain_text("^O[Hold Ctrl to Show Details]") == "[Hold Ctrl to Show Details]"

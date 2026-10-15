@@ -15,7 +15,7 @@
 
 namespace {
 
-constexpr unsigned int kHookVersion = 3;
+constexpr unsigned int kHookVersion = 4;
 
 void PinSelf(HMODULE module) {
     HMODULE pinned = nullptr;

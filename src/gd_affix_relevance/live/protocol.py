@@ -43,26 +43,16 @@ class HookError:
     detail: str
 
 
-# GAME::GameTextClass values worth naming; others are shown by number.
+# GAME::GameTextClass values observed in Grim Dawn 1.3.1. They are IA's
+# documented values shifted up by one, plus new ones (0x42 = item type line).
+# Unknown classes are shown by number.
+ITEM_NAME_TEXT_CLASSES = frozenset(range(0x02, 0x08))
 TEXT_CLASS_NAMES = {
-    0x01: "banner",
-    0x02: "name",
-    0x03: "name",
-    0x04: "name",
-    0x05: "name",
-    0x06: "name",
-    0x10: "description",
-    0x11: "base stats",
-    0x12: "bonuses",
-    0x13: "requirements",
-    0x14: "set name",
-    0x19: "set bonuses",
-    0x22: "skill heading",
-    0x23: "skill name",
-    0x25: "skill description",
-    0x27: "skill stats",
-    0x44: "pet bonus heading",
-    0x45: "pet bonus",
+    **{text_class: "name" for text_class in ITEM_NAME_TEXT_CLASSES},
+    0x12: "base stats",
+    0x13: "bonuses",
+    0x14: "requirements",
+    0x42: "item type",
 }
 
 

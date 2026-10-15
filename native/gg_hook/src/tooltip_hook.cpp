@@ -84,7 +84,7 @@ const char* VerdictName(LinesVerdict verdict) {
         case LinesVerdict::Ok: return "ok";
         case LinesVerdict::NullVector: return "null vector";
         case LinesVerdict::BadSize: return "byte span is not a whole number of GameTextLine";
-        case LinesVerdict::BadClass: return "text class out of known range";
+        case LinesVerdict::BadClass: return "text class outside 0..255";
         case LinesVerdict::TooLong: return "string length implausible";
         case LinesVerdict::Fault: return "access violation while reading";
     }

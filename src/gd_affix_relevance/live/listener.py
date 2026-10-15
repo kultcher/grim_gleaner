@@ -13,14 +13,17 @@ from gd_affix_relevance.live.protocol import (
     HookMessage,
     HookStatus,
     HoveredItem,
+    ITEM_NAME_TEXT_CLASSES,
     ProtocolError,
     parse_message,
 )
 
 
-COLOR_CODE = re.compile(r"\{\^.\}")
-# Lines that carry no stat information.
-SKIPPED_TEXT_CLASSES = frozenset({0x01, 0x02, 0x03, 0x04, 0x05, 0x06})
+# Colour codes appear as {^E} in localization files and as a bare ^E in
+# tooltip text.
+COLOR_CODE = re.compile(r"\{\^.\}|\^[A-Za-z]")
+# The item name is already in the header line.
+SKIPPED_TEXT_CLASSES = ITEM_NAME_TEXT_CLASSES
 
 
 def plain_text(text: str) -> str:
