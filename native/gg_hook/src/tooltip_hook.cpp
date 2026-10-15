@@ -47,11 +47,13 @@ struct RawLine {
     std::size_t length;
 };
 
-// The same tooltip is rebuilt repeatedly while it is shown. Report an item
-// once, then again only after it has gone unreported for a while.
-constexpr ULONGLONG kRepeatAfterMs = 2000;
+// The game builds a tooltip once per hover (and again when Ctrl toggles the
+// detailed view), so most builds are worth reporting. Only an identical
+// message within a short window is dropped, in case some screen rebuilds a
+// tooltip every frame.
+constexpr ULONGLONG kDuplicateWindowMs = 250;
 std::mutex g_dedupeMutex;
-const void* g_lastItem = nullptr;
+std::string g_lastBody;
 ULONGLONG g_lastReportTick = 0;
 
 // Room for the game to write past our idea of the struct after a patch. The
@@ -287,32 +289,31 @@ void ReportItem(const void* item, const void* lines, std::uint64_t calls) {
         return;
     }
 
-    std::string line = "GG1\titem\t" + std::to_string(calls) + "\t" +
-                       std::to_string(info->seed) + "\t" + Clean(info->baseRecord) +
+    std::string body = std::to_string(info->seed) + "\t" + Clean(info->baseRecord) +
                        "\t" + Clean(info->prefixRecord) + "\t" + Clean(info->suffixRecord) +
                        "\t" + Clean(info->modifierRecord) + "\t" + Clean(info->materiaRecord) +
                        "\t" + Clean(info->relicBonus) + "\t" + Clean(info->enchantmentRecord) +
                        "\t" + Clean(info->transmuteRecord) + "\t" + Clean(info->ascendant1) +
                        "\t" + Clean(info->ascendant2);
     info->~ItemReplicaInfo();
-    AppendLines(lines, &line);
-    Report(std::move(line));
+    AppendLines(lines, &body);
+
+    const ULONGLONG now = GetTickCount64();
+    {
+        std::lock_guard<std::mutex> lock(g_dedupeMutex);
+        if (body == g_lastBody && now - g_lastReportTick < kDuplicateWindowMs) {
+            return;
+        }
+        g_lastBody = body;
+        g_lastReportTick = now;
+    }
+    Report("GG1\titem\t" + std::to_string(calls) + "\t" + body);
 }
 
 void OnTooltipBuilt(const void* item, const void* lines) {
     const std::uint64_t calls = ++g_calls;
     if (item == nullptr || g_reportingDisabled.load()) {
         return;
-    }
-    const ULONGLONG now = GetTickCount64();
-    {
-        std::lock_guard<std::mutex> lock(g_dedupeMutex);
-        if (item == g_lastItem && now - g_lastReportTick < kRepeatAfterMs) {
-            g_lastReportTick = now;
-            return;
-        }
-        g_lastItem = item;
-        g_lastReportTick = now;
     }
     try {
         ReportItem(item, lines, calls);

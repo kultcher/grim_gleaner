@@ -62,10 +62,11 @@ The DLL logs to `%LOCALAPPDATA%\GrimGleaner\gg_hook.log`.
   to load a new build. The injector copies each build to
   `%LOCALAPPDATA%\GrimGleaner\hook\gg_hook-<hash>.dll`, so rebuilding is never
   blocked by the copy the game has open.
-- **Repeat reports:** one message per item, repeated only after 2 s without
-  hovering it. `tooltip builds so far` is the raw call count. In testing it
-  rises by about one per hover: the game builds a tooltip once when it opens,
-  not every frame.
+- **Repeat reports:** every tooltip build is reported, except an identical
+  one within 250 ms. The game builds a tooltip once per hover, and again when
+  Ctrl toggles the detailed view (which adds the roll ranges, e.g.
+  `+39% Elemental Damage [29-40]`). Inventory hovers also build the tooltip
+  of the equipped item being compared against.
 - **Tooltip text:** read straight from the line list the game just filled,
   with colour codes stripped in the listener. If that list does not look like
   the expected layout, the hook stops sending text but keeps reporting
