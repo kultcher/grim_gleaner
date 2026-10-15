@@ -36,6 +36,7 @@ from gd_affix_relevance.scoring.magnitude import (
 )
 from gd_affix_relevance.ui.catalog import gear_catalog_stat_ids
 from gd_affix_relevance.ui.generate_output import GenerateOutputPage
+from gd_affix_relevance.ui.live_page import LivePage
 from gd_affix_relevance.ui.guide import GuidePage
 from gd_affix_relevance.ui.i18n import active_locale, t
 from gd_affix_relevance.ui.profile_editor import ProfileEditor
@@ -158,6 +159,7 @@ class MainWindow(QMainWindow):
 
         catalog_status = ""
         catalog_for_export = catalog
+        bundle = None
         if catalog is None and skills is None and items is None:
             bundle, catalog_status = _load_runtime_catalog(self.runtime_paths)
             if bundle is not None:
@@ -243,6 +245,20 @@ class MainWindow(QMainWindow):
             self.export_grades_page_index,
         )
 
+        self.live_page = LivePage(
+            bundle,
+            self.profile_editor.profile,
+            self.settings,
+            self.runtime_paths,
+            self.pages,
+        )
+        self.live_page_index = self.pages.addWidget(self.live_page)
+        self.live_navigation_row = self._add_navigation_item(
+            t("nav.live"),
+            t("nav.live_tooltip"),
+            self.live_page_index,
+        )
+
         self.settings_page = SettingsPage(
             self.settings,
             self.pages,
@@ -269,6 +285,10 @@ class MainWindow(QMainWindow):
         )
 
         self.profile_editor.profile_changed.connect(self.top_matches_page.refresh)
+        self.profile_editor.profile_changed.connect(self.live_page.schedule_table_update)
+        self.top_matches_page.profile_state_changed.connect(
+            self.live_page.schedule_table_update
+        )
         self.profile_editor.profile_metadata_changed.connect(
             self._update_profile_summary
         )
