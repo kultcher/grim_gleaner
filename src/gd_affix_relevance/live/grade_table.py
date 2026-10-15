@@ -16,7 +16,7 @@ profile or filter in the app takes effect in game within a couple of seconds.
     end
 
 Record paths are lower-case with forward slashes. Multipliers (optional
-magnitude) are omitted when 1. Everything here comes from live/scoring.py,
+magnitude) are present only for stats with magnitude data. Everything here comes from live/scoring.py,
 which is the reference for the DLL's arithmetic.
 """
 
@@ -75,9 +75,11 @@ def build_grade_table(
         cells = []
         for stat_id in info.stat_ids:
             cell = str(index_of(stat_id))
-            multiplier = multipliers.get(stat_id, 1.0)
-            if multiplier != 1.0:
-                cell += "*" + _format_float(multiplier)
+            # Written whenever magnitude data exists for the stat (even at
+            # exactly 1.0): the union takes the strongest *available*
+            # multiplier, and a record without data must not count as 1.0.
+            if stat_id in multipliers:
+                cell += "*" + _format_float(multipliers[stat_id])
             cells.append(cell)
         record_lines.append(f"rec\t{path}\t{info.rarity_class}\t{','.join(cells)}")
 
