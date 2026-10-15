@@ -322,6 +322,8 @@ def _run_live_check(args: argparse.Namespace) -> int:
         print(f"  ok       {requirement}  ({symbol})")
     for requirement in report.missing:
         print(f"  MISSING  {requirement}")
+    for feature in report.optional_missing:
+        print(f"  missing  {feature}  (optional; that feature will be off)")
     print("Compatible." if report.compatible else "NOT compatible: do not inject.")
     return 0 if report.compatible else 1
 
@@ -371,19 +373,82 @@ def _run_live_inject(args: argparse.Namespace) -> int:
 
 
 def _run_live_listen(args: argparse.Namespace) -> int:
-    from gd_affix_relevance.live.listener import RecordNames, listen
+    from gd_affix_relevance.live.listener import ListenerState, RecordNames, listen
 
     names = None
-    if not args.no_names:
+    state = None
+    if not args.no_names or args.profile_file:
         catalog_root = args.catalog_root or resolve_runtime_paths().catalog_root
-        names = RecordNames.from_catalog(CatalogBundle.load(catalog_root))
+        bundle = CatalogBundle.load(catalog_root)
+        names = RecordNames.from_catalog(bundle)
+        if args.profile_file:
+            evaluator, recorder = _live_evaluator(args, bundle)
+            if evaluator is None:
+                return 1
+            state = ListenerState(names, evaluator, recorder)
     print(f"Listening on 127.0.0.1:{args.port}. Hover items in Grim Dawn; Ctrl+C to stop.")
     try:
-        listen(lambda line: print(line, flush=True), port=args.port, names=names)
+        listen(
+            lambda line: print(line, flush=True),
+            port=args.port,
+            names=names,
+            state=state,
+        )
     except KeyboardInterrupt:
         pass
     return 0
 
+
+def _live_evaluator(args: argparse.Namespace, bundle: CatalogBundle):
+    from gd_affix_relevance.domain import ENGLISH_LOCALE
+    from gd_affix_relevance.live.evaluator import EvaluationRecorder, LiveEvaluator
+    from gd_affix_relevance.live.grade_table import write_grade_table
+    from gd_affix_relevance.live.resources import find_ui_templates
+    from gd_affix_relevance.live.scoring import RARITY_CLASSES, LootFilterSettings
+    from gd_affix_relevance.live.stat_lines import StatLineIndex
+
+    set_active_magnitude_model(MagnitudeModel.from_bundle(bundle))
+    profile = load_profile(args.profile_file)
+    templates = args.ui_templates or find_ui_templates(
+        resolve_runtime_paths(), ENGLISH_LOCALE, game_folder=args.game_folder
+    )
+    if templates is None:
+        print(
+            "Could not find tags_ui.txt. Pass --ui-templates or --game-folder "
+            "(it is extracted from the game once)."
+        )
+        return None, None
+    thresholds: dict[str, str | None] = {}
+    for item in args.hide or ():
+        rarity, _, grade = item.partition("=")
+        if rarity not in RARITY_CLASSES or not grade:
+            print(f"Ignoring --hide {item!r}: expected <rarity>=<grade>")
+            continue
+        thresholds[rarity] = grade
+    filter_settings = LootFilterSettings(bool(thresholds), thresholds)
+    evaluator = LiveEvaluator(
+        bundle, profile, StatLineIndex.from_tags_file(templates), filter_settings
+    )
+    table = evaluator.refresh()
+    if args.no_inject or args.no_detail:
+        from gd_affix_relevance.live.grade_table import build_grade_table
+
+        table = build_grade_table(
+            evaluator.catalog,
+            profile,
+            evaluator.line_index,
+            filter_settings,
+            inject_label=not args.no_inject,
+            detail_pass=not args.no_detail,
+        )
+        evaluator.table = table
+    path = write_grade_table(table)
+    print(
+        f"Wrote grade table {table.table_id} for '{profile.name}' to {path} "
+        f"({table.record_count} records, filter {'on' if filter_settings.enabled else 'off'})."
+    )
+    recorder = EvaluationRecorder(args.record) if args.record else None
+    return evaluator, recorder
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="grim-gleaner")
@@ -582,6 +647,24 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="print raw record paths instead of loading the catalog",
     )
+    live_listen.add_argument(
+        "--profile-file",
+        type=Path,
+        help="grade items for this profile and write the hook's grade table",
+    )
+    live_listen.add_argument("--ui-templates", type=Path, help="path to tags_ui.txt")
+    live_listen.add_argument(
+        "--game-folder", type=Path, help="extract tags_ui.txt from this Grim Dawn install"
+    )
+    live_listen.add_argument(
+        "--hide",
+        action="append",
+        metavar="RARITY=GRADE",
+        help="loot filter: hide <rarity> items below <grade>, e.g. magic=B (repeatable)",
+    )
+    live_listen.add_argument("--no-inject", action="store_true", help="do not add the grade line to tooltips")
+    live_listen.add_argument("--no-detail", action="store_true", help="do not read roll ranges")
+    live_listen.add_argument("--record", type=Path, help="append evaluations to this JSON-lines file")
     live_listen.set_defaults(handler=_run_live_listen)
     return parser
 

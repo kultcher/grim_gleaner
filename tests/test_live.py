@@ -142,8 +142,10 @@ def test_compatibility_check_reports_missing_exports() -> None:
 
 
 def test_required_exports_match_native_symbols() -> None:
+    from gd_affix_relevance.live.compatibility import OPTIONAL_EXPORTS
+
     header = (PROJECT_ROOT / "native" / "gg_hook" / "src" / "game_types.h").read_text()
-    for candidates in REQUIRED_EXPORTS.values():
+    for candidates in (*REQUIRED_EXPORTS.values(), *OPTIONAL_EXPORTS.values()):
         for symbol in candidates:
             assert f'"{symbol}"' in header
 

@@ -10,12 +10,14 @@
 #include <string>
 
 #include "hook_log.h"
+#include "live_table.h"
+#include "loot_filter_hook.h"
 #include "reporter.h"
 #include "tooltip_hook.h"
 
 namespace {
 
-constexpr unsigned int kHookVersion = 5;
+constexpr unsigned int kHookVersion = 6;
 
 void PinSelf(HMODULE module) {
     HMODULE pinned = nullptr;
@@ -35,9 +37,21 @@ DWORD WINAPI InitThread(LPVOID) {
         Sleep(500);
     }
 
+    // The grade table first, so the first tooltips can already be graded.
+    gg::StartTableWatcher();
+
     std::string detail;
     const bool ok = gg::InstallTooltipHook(&detail);
     gg::Log(std::string(ok ? "install ok: " : "install failed: ") + detail);
+
+    // Optional; a missing export only disables the loot filter.
+    std::string filterDetail;
+    const bool filterOk = ok && gg::InstallLootFilterHook(&filterDetail);
+    if (ok) {
+        gg::Log(std::string(filterOk ? "install ok: " : "loot filter unavailable: ") +
+                filterDetail);
+        detail += filterOk ? "; " + filterDetail : "; loot filter unavailable (" + filterDetail + ")";
+    }
     const std::string pid = std::to_string(GetCurrentProcessId());
     gg::Report("GG1\thello\t" + pid + "\t" + (ok ? "ok" : "error") + "\t" + detail);
 

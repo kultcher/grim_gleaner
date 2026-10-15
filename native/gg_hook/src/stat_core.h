@@ -59,6 +59,8 @@ public:
     bool loaded() const { return loaded_; }
     const std::string& id() const { return id_; }
     bool filterEnabled() const { return filterEnabled_; }
+    bool injectLabel() const { return injectLabel_; }
+    bool detailPass() const { return detailPass_; }
 
     Relevance Score(const std::vector<std::string>& records) const;
     RollQualityResult RollQuality(const std::vector<TooltipLine>& lines) const;
@@ -90,6 +92,8 @@ private:
     double adjustment_ = 1.0;
     std::vector<std::pair<std::string, double>> grades_;  // highest first
     bool filterEnabled_ = false;
+    bool injectLabel_ = false;
+    bool detailPass_ = false;
     std::unordered_map<std::string, std::string> hideBelow_;
     std::vector<Stat> stats_;
     std::unordered_map<std::string, Record> records_;

@@ -211,3 +211,32 @@ def test_protocol_attributes_and_filter_messages() -> None:
     assert [line.text for line in message.lines] == ["+5% Fire Damage"]
     decision = parse_message(b"GG1\tfilter\t9\trecords/a.dbr\t\t\tD\tmagic\t1\tabc")
     assert decision == FilterDecision(9, "records/a.dbr", "", "", "D", "magic", True, "abc")
+
+
+def test_listener_reports_app_and_dll_verdicts(bundle: CatalogBundle, index: StatLineIndex) -> None:
+    from gd_affix_relevance.live.listener import ListenerState, RecordNames
+    from gd_affix_relevance.live.protocol import FilterDecision, TableStatus
+
+    profile = BuildProfile(weights={"bleeding_damage_percent": 4, "health": 2})
+    evaluator = LiveEvaluator(bundle, profile, index, LootFilterSettings(True, {"magic": "S++"}))
+    table = evaluator.refresh()
+    base = "records/items/gearlegs/a02_legs01.dbr"
+    suffix = "records/items/lootaffixes/suffix/a035e_off_dmg%bleed_06_ar.dbr"
+    expected = evaluator.evaluate(HoveredItem(calls=1, seed=7, base_record=base, suffix_record=suffix))
+    score = expected.relevance.score
+    rq = expected.quality
+    fields = ["1", "7", base, "", suffix] + [""] * 7
+    fields += [
+        f"@grade={score.grade}", f"@score={score.effective_score:.6f}",
+        f"@matched={score.matched_count}", f"@total={score.total_category_count}",
+        f"@rarity={expected.relevance.rarity_class}", "@rq=-", f"@label={score.grade}",
+        f"@table={table.table_id}", "@detail=1", "@injected=1",
+        "19:+61% ^EBleeding Damage",
+    ]
+    state = ListenerState(RecordNames.from_catalog(bundle), evaluator)
+    text = state.handle(parse_message(("GG1\titem\t" + "\t".join(fields)).encode()))
+    assert "app: " in text and "dll agrees" in text and "label injected" in text
+    assert "filter would hide" in text
+    hidden = state.handle(FilterDecision(7, base, "", suffix, "D", "magic", True, table.table_id))
+    assert hidden.startswith("Loot filter hid: Leggings")
+    assert "loaded grade table abc" in state.handle(TableStatus("abc", True, "filter=1"))

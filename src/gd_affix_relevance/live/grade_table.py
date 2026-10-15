@@ -9,6 +9,8 @@ profile or filter in the app takes effect in game within a couple of seconds.
     grade   <grade> <minimum effective score>      (highest first)
     filter  <0|1>
     hide    <rarity class>  <minimum grade>        (classes with a threshold)
+    inject  <0|1>   add the "A 87%" line to tooltips (spare capacity only)
+    detail  <0|1>   read roll ranges via a second, detailed tooltip build
     stat    <index> <relevance points> <weight>
     rec     <record path>   <rarity class>  <index>[*<multiplier>],...
     line    <tooltip line key>      <index>
@@ -59,6 +61,9 @@ def build_grade_table(
     profile: BuildProfile,
     line_index: StatLineIndex,
     filter_settings: LootFilterSettings,
+    *,
+    inject_label: bool = True,
+    detail_pass: bool = True,
 ) -> GradeTable:
     stat_ids: list[str] = []
     stat_index: dict[str, int] = {}
@@ -94,6 +99,8 @@ def build_grade_table(
         f"adjust\t{_format_float(profile_score_adjustment(profile))}",
         *(f"grade\t{grade}\t{_format_float(threshold)}" for grade, threshold in GRADE_THRESHOLDS.items()),
         f"filter\t{1 if filter_settings.enabled else 0}",
+        f"inject\t{1 if inject_label else 0}",
+        f"detail\t{1 if detail_pass else 0}",
         *(
             f"hide\t{rarity}\t{grade}"
             for rarity, grade in sorted(filter_settings.thresholds.items())

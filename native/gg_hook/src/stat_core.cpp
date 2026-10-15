@@ -208,6 +208,10 @@ bool GradeTable::Load(std::string_view text, std::string* error) {
             grades_.emplace_back(fields[1], minimum);
         } else if (kind == "filter" && fields.size() == 2) {
             filterEnabled_ = fields[1] == "1";
+        } else if (kind == "inject" && fields.size() == 2) {
+            injectLabel_ = fields[1] == "1";
+        } else if (kind == "detail" && fields.size() == 2) {
+            detailPass_ = fields[1] == "1";
         } else if (kind == "hide" && fields.size() == 3) {
             hideBelow_[fields[1]] = fields[2];
         } else if (kind == "stat" && fields.size() == 4) {

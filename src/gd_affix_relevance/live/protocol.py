@@ -114,7 +114,16 @@ class FilterDecision:
     table_id: str
 
 
-HookMessage = HookStatus | HookError | HoveredItem | FilterDecision
+@dataclass(frozen=True, slots=True)
+class TableStatus:
+    """The DLL (re)loaded the grade table, or rejected it."""
+
+    table_id: str
+    ok: bool
+    detail: str
+
+
+HookMessage = HookStatus | HookError | HoveredItem | FilterDecision | TableStatus
 
 
 class ProtocolError(ValueError):
@@ -158,6 +167,10 @@ def parse_message(payload: bytes) -> HookMessage:
                 attributes=attributes,
                 **{key: value.strip() for key, value in raw.items()},
             )
+        if kind == "table":
+            if len(values) != 3:
+                raise ProtocolError(f"table expects 3 fields, got {len(values)}")
+            return TableStatus(values[0], values[1] == "ok", values[2])
         if kind == "filter":
             if len(values) != 8:
                 raise ProtocolError(f"filter expects 8 fields, got {len(values)}")

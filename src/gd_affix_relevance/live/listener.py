@@ -9,10 +9,12 @@ from dataclasses import dataclass, field
 
 from gd_affix_relevance.live.protocol import (
     DEFAULT_PORT,
+    FilterDecision,
     HookError,
     HookMessage,
     HookStatus,
     HoveredItem,
+    TableStatus,
     ITEM_NAME_TEXT_CLASSES,
     ProtocolError,
     parse_message,
@@ -108,16 +110,75 @@ def describe_item(item: HoveredItem, names: RecordNames | None = None) -> str:
     return "\n".join([text, *stat_lines])
 
 
-class ListenerState:
-    """Turns hook messages into console lines, suppressing repeat heartbeats."""
+def describe_evaluation(evaluation: object) -> str:
+    """One summary line comparing the app's and the DLL's verdicts."""
 
-    def __init__(self, names: RecordNames | None = None) -> None:
+    relevance = evaluation.relevance  # type: ignore[attr-defined]
+    quality = evaluation.quality  # type: ignore[attr-defined]
+    score = relevance.score
+    rq = "-" if quality.value is None else f"{quality.value:.0%}"
+    text = (
+        f"    app: {score.grade} ({score.effective_score:.2f}, "
+        f"{score.matched_count}/{score.total_category_count}) {relevance.rarity_class}, "
+        f"roll {rq}, label '{evaluation.label}'"  # type: ignore[attr-defined]
+    )
+    if evaluation.hidden_by_filter:  # type: ignore[attr-defined]
+        text += ", filter would hide"
+    dll = evaluation.item.attributes  # type: ignore[attr-defined]
+    if dll:
+        verdict = "agrees" if not evaluation.mismatches else "DIFFERS: " + "; ".join(  # type: ignore[attr-defined]
+            evaluation.mismatches  # type: ignore[attr-defined]
+        )
+        extras = []
+        if dll.get("detail") == "1":
+            extras.append("ranges read")
+        if dll.get("injected") == "1":
+            extras.append("label injected")
+        text += f" | dll {verdict}" + (f" ({', '.join(extras)})" if extras else "")
+    if quality.unmatched_lines:
+        text += f" | unmatched rolled lines: {list(quality.unmatched_lines)}"
+    return text
+
+
+class ListenerState:
+    """Turns hook messages into console lines, suppressing repeat heartbeats.
+
+    With an evaluator (live/evaluator.py) each item is also graded by the app
+    and compared with the DLL; with a recorder each evaluation is logged.
+    """
+
+    def __init__(
+        self,
+        names: RecordNames | None = None,
+        evaluator: object | None = None,
+        recorder: object | None = None,
+    ) -> None:
         self.names = names
+        self.evaluator = evaluator
+        self.recorder = recorder
         self.connected_pid: int | None = None
 
     def handle(self, message: HookMessage) -> str | None:
         if isinstance(message, HoveredItem):
-            return describe_item(message, self.names)
+            text = describe_item(message, self.names)
+            if self.evaluator is not None:
+                evaluation = self.evaluator.evaluate(message)  # type: ignore[attr-defined]
+                if self.recorder is not None:
+                    self.recorder.record(evaluation)  # type: ignore[attr-defined]
+                text = text.split("\n", 1)
+                text = "\n".join([text[0], describe_evaluation(evaluation), *text[1:]])
+            return text
+        if isinstance(message, FilterDecision):
+            if not message.hidden:
+                return None
+            name = message.base_record
+            if self.names is not None and (base := self.names.item(message.base_record)):
+                name = base[0]
+            return f"Loot filter hid: {name} ({message.grade}, {message.rarity_class})"
+        if isinstance(message, TableStatus):
+            if message.ok:
+                return f"Hook loaded grade table {message.table_id} ({message.detail})"
+            return f"Hook rejected the grade table: {message.detail}"
         if isinstance(message, HookError):
             return f"Hook error: {message.detail}"
         if isinstance(message, HookStatus):
@@ -139,8 +200,9 @@ def listen(
     port: int = DEFAULT_PORT,
     names: RecordNames | None = None,
     should_stop: Callable[[], bool] = lambda: False,
+    state: ListenerState | None = None,
 ) -> None:
-    state = ListenerState(names)
+    state = state or ListenerState(names)
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         sock.bind(("127.0.0.1", port))
         sock.settimeout(0.5)

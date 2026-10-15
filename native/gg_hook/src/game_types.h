@@ -83,5 +83,8 @@ inline constexpr const char* kItemEquipmentGetUIDisplayText3 =
     "?GetUIDisplayText@ItemEquipment@GAME@@UEBAXPEBVCharacter@2@AEAV?$vector@UGameTextLine@GAME@@@mem@@@Z";
 inline constexpr const char* kItemGetItemReplicaInfo =
     "?GetItemReplicaInfo@Item@GAME@@UEBAXAEAUItemReplicaInfo@2@@Z";
+// bool Item::PassLootFilter(InGameUIActorCapture::ItemIgnore) const
+inline constexpr const char* kItemPassLootFilter =
+    "?PassLootFilter@Item@GAME@@QEBA_NW4ItemIgnore@InGameUIActorCapture@2@@Z";
 
 }  // namespace gg::game

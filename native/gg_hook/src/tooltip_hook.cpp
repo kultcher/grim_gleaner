@@ -1,302 +1,150 @@
 #include "tooltip_hook.h"
 
 #include <windows.h>
-#include <tlhelp32.h>
-
-#include <detours.h>
 
 #include <atomic>
 #include <cstdio>
-#include <cstring>
 #include <mutex>
-#include <new>
 #include <vector>
 
+#include "game_access.h"
 #include "game_types.h"
 #include "hook_log.h"
+#include "hook_util.h"
+#include "live_table.h"
 #include "reporter.h"
+#include "stat_core.h"
 
 namespace gg {
 namespace {
 
-using game::GameTextLine;
-using game::GameTextLineVector;
-using game::ItemReplicaInfo;
-
 // x64 has a single calling convention; `this` arrives first.
 using GetUIDisplayText4Fn = void (*)(const void* self, const void* character,
-                                     void* lines, bool includeSetBonusDetails);
+                                     void* lines, bool detailed);
 using GetUIDisplayText3Fn = void (*)(const void* self, const void* character,
                                      void* lines);
-using GetItemReplicaInfoFn = void (*)(const void* self, ItemReplicaInfo* out);
 
 GetUIDisplayText4Fn g_original4 = nullptr;
 GetUIDisplayText3Fn g_original3 = nullptr;
-GetItemReplicaInfoFn g_getReplica = nullptr;
 
 std::atomic<std::uint64_t> g_calls{0};
+// Each optional behaviour switches itself off independently on any sign of
+// trouble, leaving the game untouched.
 std::atomic<bool> g_reportingDisabled{false};
-// Tooltip text is optional extra: if its layout looks wrong, keep reporting
-// records and seeds but stop reading lines.
 std::atomic<bool> g_linesDisabled{false};
-constexpr std::size_t kMaxLines = 128;
+std::atomic<bool> g_detailDisabled{false};
 
-struct RawLine {
-    int textClass;
-    const wchar_t* text;
-    std::size_t length;
-};
+// Text class for the injected "A 87%" line: the class 1.3.1 uses for item
+// bonus lines, so it renders like them.
+constexpr int kLabelTextClass = 0x13;
 
-// The game builds a tooltip once per hover (and again when Ctrl toggles the
-// detailed view), so most builds are worth reporting. Only an identical
-// message within a short window is dropped, in case some screen rebuilds a
-// tooltip every frame.
+// Drop only a byte-identical report within this window.
 constexpr ULONGLONG kDuplicateWindowMs = 250;
 std::mutex g_dedupeMutex;
 std::string g_lastBody;
 ULONGLONG g_lastReportTick = 0;
 
-// Room for the game to write past our idea of the struct after a patch. The
-// guard is checked after every call; if it changed, the layout is stale and
-// reporting is switched off rather than trusting the data.
-constexpr std::size_t kGuardBytes = 0x100;
-constexpr unsigned char kGuardFill = 0xA5;
-
-bool CallGetReplicaGuarded(const void* item, ItemReplicaInfo* out) {
-    // No C++ objects with destructors may live in this function: MSVC's
-    // structured exception handling cannot unwind them.
-#if defined(_MSC_VER)
-    __try {
-        g_getReplica(item, out);
-        return true;
-    } __except (EXCEPTION_EXECUTE_HANDLER) {
-        return false;
-    }
-#else
-    g_getReplica(item, out);
-    return true;
-#endif
-}
-
-// Why a tooltip-line vector was rejected (for the one-time diagnostic).
-enum class LinesVerdict { Ok, NullVector, BadSize, BadClass, TooLong, Fault };
-
-const char* VerdictName(LinesVerdict verdict) {
-    switch (verdict) {
-        case LinesVerdict::Ok: return "ok";
-        case LinesVerdict::NullVector: return "null vector";
-        case LinesVerdict::BadSize: return "byte span is not a whole number of GameTextLine";
-        case LinesVerdict::BadClass: return "text class outside 0..255";
-        case LinesVerdict::TooLong: return "string length implausible";
-        case LinesVerdict::Fault: return "access violation while reading";
-    }
-    return "?";
-}
-
-// Copies pointers to the game's tooltip lines without touching their memory
-// management. On success *count holds the number of lines.
-LinesVerdict SnapshotLinesGuarded(const void* lines, RawLine* out, int* count) {
-#if defined(_MSC_VER)
-    __try {
-#endif
-        *count = 0;
-        const auto* vector = static_cast<const GameTextLineVector*>(lines);
-        if (vector->first == nullptr) {
-            return LinesVerdict::Ok;
-        }
-        const auto bytes = reinterpret_cast<const char*>(vector->last) -
-                           reinterpret_cast<const char*>(vector->first);
-        if (bytes < 0 || bytes % sizeof(GameTextLine) != 0 ||
-            vector->end < vector->last) {
-            return LinesVerdict::BadSize;
-        }
-        std::size_t total = static_cast<std::size_t>(bytes) / sizeof(GameTextLine);
-        if (total > kMaxLines) {
-            total = kMaxLines;
-        }
-        for (std::size_t index = 0; index < total; ++index) {
-            const GameTextLine& line = vector->first[index];
-            if (line.textClass < 0 || line.textClass > game::kMaxGameTextClass) {
-                return LinesVerdict::BadClass;
-            }
-            if (line.text.size() > 4096) {
-                return LinesVerdict::TooLong;
-            }
-            out[index] = RawLine{line.textClass, line.text.data(), line.text.size()};
-        }
-        *count = static_cast<int>(total);
-        return LinesVerdict::Ok;
-#if defined(_MSC_VER)
-    } __except (EXCEPTION_EXECUTE_HANDLER) {
-        return LinesVerdict::Fault;
-    }
-#endif
-}
-
-// Copy up to `size` bytes from an address that may not be readable.
-bool SafeCopy(void* destination, const void* source, std::size_t size) {
-#if defined(_MSC_VER)
-    __try {
-        std::memcpy(destination, source, size);
-        return true;
-    } __except (EXCEPTION_EXECUTE_HANDLER) {
-        return false;
-    }
-#else
-    std::memcpy(destination, source, size);
-    return true;
-#endif
-}
-
-std::string Hex(const unsigned char* data, std::size_t size) {
-    static const char digits[] = "0123456789abcdef";
-    std::string result;
-    for (std::size_t index = 0; index < size; ++index) {
-        if (index % 16 == 0) {
-            char offset[16];
-            std::snprintf(offset, sizeof(offset), "\n  +%03zx ", index);
-            result += offset;
-        }
-        result += digits[data[index] >> 4];
-        result += digits[data[index] & 0xF];
-        result += ' ';
-    }
-    return result;
-}
-
-// Logs everything needed to work out the real layout: the vector header,
-// the first bytes of its storage, and any wide strings reachable from
-// pointer-sized fields of the first element.
-void LogLinesDiagnostic(const void* lines, LinesVerdict verdict) {
-    std::string report = std::string("tooltip lines rejected: ") + VerdictName(verdict) +
-                         "; expected sizeof(GameTextLine)=" +
-                         std::to_string(sizeof(GameTextLine));
-    unsigned char header[48] = {};
-    if (!SafeCopy(header, lines, sizeof(header))) {
-        Log(report + "; vector header unreadable");
-        return;
-    }
-    report += "\nvector header (48 bytes):" + Hex(header, sizeof(header));
-
-    const void* first = nullptr;
-    std::memcpy(&first, header, sizeof(first));
-    unsigned char element[0x100] = {};
-    if (first != nullptr && SafeCopy(element, first, sizeof(element))) {
-        report += "\nfirst 0x100 bytes at first pointer:" + Hex(element, sizeof(element));
-        for (std::size_t offset = 0; offset + 8 <= 0x80; offset += 8) {
-            const void* candidate = nullptr;
-            std::memcpy(&candidate, element + offset, sizeof(candidate));
-            wchar_t text[48] = {};
-            if (candidate == nullptr || !SafeCopy(text, candidate, sizeof(text) - 2)) {
-                continue;
-            }
-            std::string printable;
-            for (wchar_t character : text) {
-                if (character == 0) break;
-                printable += (character >= 32 && character < 127) ? static_cast<char>(character) : '.';
-            }
-            if (printable.size() >= 3) {
-                report += "\n  pointer at +" + std::to_string(offset) + " -> \"" + printable + "\"";
-            }
-        }
-        // Inline (small-string) text directly inside the element.
-        for (std::size_t offset = 0; offset + 16 <= 0x80; offset += 8) {
-            std::string printable;
-            for (std::size_t index = 0; index < 8; ++index) {
-                wchar_t character;
-                std::memcpy(&character, element + offset + index * 2, 2);
-                if (character == 0) break;
-                printable += (character >= 32 && character < 127) ? static_cast<char>(character) : '.';
-            }
-            if (printable.size() >= 3) {
-                report += "\n  inline text at +" + std::to_string(offset) + ": \"" + printable + "\"";
-            }
-        }
-    } else {
-        report += "\nfirst pointer unreadable";
-    }
-    Log(report);
-}
-
-std::string ToUtf8(const wchar_t* text, std::size_t length) {
-    if (length == 0) {
-        return {};
-    }
-    const int size = WideCharToMultiByte(CP_UTF8, 0, text, static_cast<int>(length),
-                                         nullptr, 0, nullptr, nullptr);
-    if (size <= 0) {
-        return {};
-    }
-    std::string result(static_cast<std::size_t>(size), '\0');
-    WideCharToMultiByte(CP_UTF8, 0, text, static_cast<int>(length), result.data(),
-                        size, nullptr, nullptr);
-    return result;
-}
-
-std::string Clean(const std::string& value) {
-    std::string result = value;
-    for (char& character : result) {
+std::string Clean(std::string value) {
+    for (char& character : value) {
         if (character == '\t' || character == '\r' || character == '\n') {
             character = ' ';
         }
     }
-    return result;
+    return value;
 }
 
-// Appends "\t<class>:<text>" for each tooltip line.
-void AppendLines(const void* lines, std::string* message) {
-    if (lines == nullptr || g_linesDisabled.load()) {
-        return;
-    }
-    RawLine raw[kMaxLines];
-    int count = 0;
-    const LinesVerdict verdict = SnapshotLinesGuarded(lines, raw, &count);
-    if (verdict != LinesVerdict::Ok) {
-        g_linesDisabled.store(true);
-        LogLinesDiagnostic(lines, verdict);
-        Report(std::string("GG1\terror\ttooltip text layout not recognised (") +
-               VerdictName(verdict) + "); reporting records only. Details in gg_hook.log");
-        return;
-    }
-    for (int index = 0; index < count; ++index) {
-        *message += "\t" + std::to_string(raw[index].textClass) + ":" +
-                    Clean(ToUtf8(raw[index].text, raw[index].length));
+std::string Format(double value) {
+    char buffer[64];
+    std::snprintf(buffer, sizeof(buffer), "%.6f", value);
+    return buffer;
+}
+
+void DisableWith(std::atomic<bool>& flag, const std::string& message) {
+    if (!flag.exchange(true)) {
+        Log("tooltip: " + message);
+        Report("GG1\terror\t" + message);
     }
 }
 
-void ReportItem(const void* item, const void* lines, std::uint64_t calls) {
-    alignas(ItemReplicaInfo) unsigned char storage[sizeof(ItemReplicaInfo) + kGuardBytes];
-    std::memset(storage + sizeof(ItemReplicaInfo), kGuardFill, kGuardBytes);
-    auto* info = new (storage) ItemReplicaInfo();
+void OnTooltipBuilt(const void* item, const void* character, void* lines,
+                    bool detailedAlready, bool canBuildDetailed) {
+    const std::uint64_t calls = ++g_calls;
+    if (item == nullptr || g_reportingDisabled.load()) {
+        return;
+    }
 
-    bool ok = CallGetReplicaGuarded(item, info);
-    bool guardIntact = true;
-    for (std::size_t index = 0; index < kGuardBytes; ++index) {
-        if (storage[sizeof(ItemReplicaInfo) + index] != kGuardFill) {
-            guardIntact = false;
+    game_access::ItemSnapshot snapshot;
+    switch (game_access::ReadItem(item, &snapshot)) {
+        case game_access::ReadResult::Ok:
             break;
+        case game_access::ReadResult::Fault:
+            DisableWith(g_reportingDisabled, "GetItemReplicaInfo raised an exception; reporting disabled");
+            return;
+        case game_access::ReadResult::LayoutChanged:
+            DisableWith(g_reportingDisabled,
+                        "Game.dll wrote past ItemReplicaInfo: layout changed in this game version");
+            return;
+    }
+
+    std::vector<core::TooltipLine> displayed;
+    if (!g_linesDisabled.load()) {
+        const auto verdict = game_access::ReadLines(lines, &displayed);
+        if (verdict != game_access::LinesVerdict::Ok) {
+            game_access::LogLinesDiagnostic(lines, verdict);
+            DisableWith(g_linesDisabled, std::string("tooltip text layout not recognised (") +
+                                             game_access::VerdictName(verdict) +
+                                             "); reporting records only");
+            displayed.clear();
         }
     }
 
-    if (!ok || !guardIntact) {
-        g_reportingDisabled.store(true);
-        const char* reason = !ok
-            ? "GetItemReplicaInfo raised an exception"
-            : "Game.dll wrote past ItemReplicaInfo: layout changed in this game version";
-        Log(std::string("tooltip: reporting disabled: ") + reason);
-        Report(std::string("GG1\terror\t") + reason);
-        // Leak rather than destroy: after a fault the strings may be garbage.
-        return;
+    const auto table = CurrentTable();
+    std::vector<core::TooltipLine> evaluated = displayed;
+    bool detailUsed = detailedAlready;
+    if (table && table->detailPass() && canBuildDetailed && !detailedAlready &&
+        !g_detailDisabled.load() && !g_linesDisabled.load()) {
+        std::vector<core::TooltipLine> detailed;
+        const auto result = game_access::ReadDetailedLines(
+            reinterpret_cast<game_access::BuildTooltipFn>(g_original4), item, character,
+            &detailed);
+        if (result == game_access::DetailResult::Ok) {
+            evaluated = std::move(detailed);
+            detailUsed = true;
+        } else if (result == game_access::DetailResult::Failed) {
+            DisableWith(g_detailDisabled, "detailed tooltip pass failed; roll ranges disabled");
+        }
     }
 
-    std::string body = std::to_string(info->seed) + "\t" + Clean(info->baseRecord) +
-                       "\t" + Clean(info->prefixRecord) + "\t" + Clean(info->suffixRecord) +
-                       "\t" + Clean(info->modifierRecord) + "\t" + Clean(info->materiaRecord) +
-                       "\t" + Clean(info->relicBonus) + "\t" + Clean(info->enchantmentRecord) +
-                       "\t" + Clean(info->transmuteRecord) + "\t" + Clean(info->ascendant1) +
-                       "\t" + Clean(info->ascendant2);
-    info->~ItemReplicaInfo();
-    AppendLines(lines, &body);
+    std::string attributes;
+    if (table) {
+        const core::Relevance relevance = table->Score(
+            {snapshot.baseRecord, snapshot.prefixRecord, snapshot.suffixRecord});
+        const core::RollQualityResult quality = table->RollQuality(evaluated);
+        const std::string label = core::GradeTable::Label(relevance.grade, quality);
+        const bool injected =
+            table->injectLabel() &&
+            game_access::AppendShortLine(lines, kLabelTextClass, label);
+        attributes = "\t@grade=" + relevance.grade + "\t@score=" + Format(relevance.score) +
+                     "\t@matched=" + std::to_string(relevance.matched) +
+                     "\t@total=" + std::to_string(relevance.total) +
+                     "\t@rarity=" + relevance.rarity +
+                     "\t@rq=" + (quality.hasValue ? Format(quality.value) : std::string("-")) +
+                     "\t@label=" + label + "\t@table=" + table->id() +
+                     "\t@detail=" + (detailUsed ? "1" : "0") +
+                     "\t@injected=" + (injected ? "1" : "0");
+    }
+
+    std::string body = std::to_string(snapshot.seed) + "\t" + Clean(snapshot.baseRecord) +
+                       "\t" + Clean(snapshot.prefixRecord) + "\t" +
+                       Clean(snapshot.suffixRecord) + "\t" + Clean(snapshot.modifierRecord) +
+                       "\t" + Clean(snapshot.materiaRecord) + "\t" +
+                       Clean(snapshot.relicBonus) + "\t" + Clean(snapshot.enchantmentRecord) +
+                       "\t" + Clean(snapshot.transmuteRecord) + "\t" +
+                       Clean(snapshot.ascendant1) + "\t" + Clean(snapshot.ascendant2) +
+                       attributes;
+    for (const core::TooltipLine& line : evaluated) {
+        body += "\t" + std::to_string(line.textClass) + ":" + Clean(line.text);
+    }
 
     const ULONGLONG now = GetTickCount64();
     {
@@ -310,76 +158,35 @@ void ReportItem(const void* item, const void* lines, std::uint64_t calls) {
     Report("GG1\titem\t" + std::to_string(calls) + "\t" + body);
 }
 
-void OnTooltipBuilt(const void* item, const void* lines) {
-    const std::uint64_t calls = ++g_calls;
-    if (item == nullptr || g_reportingDisabled.load()) {
-        return;
-    }
+void SafeOnTooltipBuilt(const void* item, const void* character, void* lines,
+                        bool detailedAlready, bool canBuildDetailed) {
     try {
-        ReportItem(item, lines, calls);
+        OnTooltipBuilt(item, character, lines, detailedAlready, canBuildDetailed);
     } catch (...) {
         // With /EHa this also catches access violations. Never let our code
         // take the game down.
-        g_reportingDisabled.store(true);
-        Log("tooltip: unexpected exception while reading item; reporting disabled");
+        DisableWith(g_reportingDisabled, "unexpected exception in tooltip hook; reporting disabled");
     }
 }
 
 void HookedGetUIDisplayText4(const void* self, const void* character, void* lines,
-                             bool includeSetBonusDetails) {
-    g_original4(self, character, lines, includeSetBonusDetails);
-    OnTooltipBuilt(self, lines);
+                             bool detailed) {
+    g_original4(self, character, lines, detailed);
+    SafeOnTooltipBuilt(self, character, lines, detailed, true);
 }
 
 void HookedGetUIDisplayText3(const void* self, const void* character, void* lines) {
     g_original3(self, character, lines);
-    OnTooltipBuilt(self, lines);
-}
-
-// Detours must be told about every thread that might be executing the bytes
-// it is about to patch.
-std::vector<HANDLE> UpdateAllOtherThreads() {
-    std::vector<HANDLE> handles;
-    const DWORD process = GetCurrentProcessId();
-    const DWORD self = GetCurrentThreadId();
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
-    if (snapshot == INVALID_HANDLE_VALUE) {
-        return handles;
-    }
-    THREADENTRY32 entry{};
-    entry.dwSize = sizeof(entry);
-    for (BOOL more = Thread32First(snapshot, &entry); more;
-         more = Thread32Next(snapshot, &entry)) {
-        if (entry.th32OwnerProcessID != process || entry.th32ThreadID == self) {
-            continue;
-        }
-        HANDLE thread = OpenThread(
-            THREAD_SUSPEND_RESUME | THREAD_GET_CONTEXT | THREAD_SET_CONTEXT, FALSE,
-            entry.th32ThreadID);
-        if (thread != nullptr) {
-            DetourUpdateThread(thread);
-            handles.push_back(thread);
-        }
-    }
-    CloseHandle(snapshot);
-    return handles;
+    SafeOnTooltipBuilt(self, character, lines, false, false);
 }
 
 }  // namespace
 
 bool InstallTooltipHook(std::string* detail) {
+    if (!game_access::Initialize(detail)) {
+        return false;
+    }
     HMODULE gameDll = GetModuleHandleW(L"Game.dll");
-    if (gameDll == nullptr) {
-        *detail = "Game.dll is not loaded";
-        return false;
-    }
-    g_getReplica = reinterpret_cast<GetItemReplicaInfoFn>(
-        GetProcAddress(gameDll, game::kItemGetItemReplicaInfo));
-    if (g_getReplica == nullptr) {
-        *detail = "Game.dll has no Item::GetItemReplicaInfo export";
-        return false;
-    }
-
     void* target = reinterpret_cast<void*>(
         GetProcAddress(gameDll, game::kItemEquipmentGetUIDisplayText4));
     void** original = reinterpret_cast<void**>(&g_original4);
@@ -397,24 +204,10 @@ bool InstallTooltipHook(std::string* detail) {
         return false;
     }
     *original = target;
-
-    LONG result = DetourTransactionBegin();
-    std::vector<HANDLE> threads;
-    if (result == NO_ERROR) {
-        threads = UpdateAllOtherThreads();
-        result = DetourAttach(original, replacement);
-        if (result == NO_ERROR) {
-            result = DetourTransactionCommit();
-        } else {
-            DetourTransactionAbort();
-        }
-    }
-    for (HANDLE thread : threads) {
-        CloseHandle(thread);
-    }
-    if (result != NO_ERROR) {
+    std::string error;
+    if (!AttachHook(original, replacement, &error)) {
         *original = nullptr;
-        *detail = "Detours failed to attach (error " + std::to_string(result) + ")";
+        *detail = error;
         return false;
     }
     *detail = std::string("hooked ItemEquipment::GetUIDisplayText (") + variant + ")";

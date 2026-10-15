@@ -19,12 +19,21 @@ REQUIRED_EXPORTS: dict[str, tuple[str, ...]] = {
 }
 
 
+# Nice to have: their absence disables one feature, not the hook.
+OPTIONAL_EXPORTS: dict[str, tuple[str, ...]] = {
+    "Item::PassLootFilter (loot filter)": (
+        "?PassLootFilter@Item@GAME@@QEBA_NW4ItemIgnore@InGameUIActorCapture@2@@Z",
+    ),
+}
+
+
 @dataclass(frozen=True, slots=True)
 class CompatibilityReport:
     game_dll: Path
     matched: dict[str, str]
     missing: tuple[str, ...]
     is_64_bit: bool = True
+    optional_missing: tuple[str, ...] = ()
 
     @property
     def compatible(self) -> bool:
@@ -41,8 +50,19 @@ def check_game_dll(game_dll: Path) -> CompatibilityReport:
             missing.append(requirement)
         else:
             matched[requirement] = found
+    optional_missing: list[str] = []
+    for feature, candidates in OPTIONAL_EXPORTS.items():
+        found = next((name for name in candidates if name in exports), None)
+        if found is None:
+            optional_missing.append(feature)
+        else:
+            matched[feature] = found
     return CompatibilityReport(
-        Path(game_dll), matched, tuple(missing), is_64_bit(game_dll)
+        Path(game_dll),
+        matched,
+        tuple(missing),
+        is_64_bit(game_dll),
+        tuple(optional_missing),
     )
 
 

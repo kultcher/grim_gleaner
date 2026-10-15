@@ -40,11 +40,21 @@ target_compile_definitions(detours PRIVATE WIN32_LEAN_AND_MEAN _WIN32_WINNT=0x06
 
 add_library(gg_hook SHARED
   src/dllmain.cpp
+  src/game_access.cpp
+  src/game_access.h
   src/game_types.h
   src/hook_log.cpp
   src/hook_log.h
+  src/hook_util.cpp
+  src/hook_util.h
+  src/live_table.cpp
+  src/live_table.h
+  src/loot_filter_hook.cpp
+  src/loot_filter_hook.h
   src/reporter.cpp
   src/reporter.h
+  src/stat_core.cpp
+  src/stat_core.h
   src/tooltip_hook.cpp
   src/tooltip_hook.h
 )
