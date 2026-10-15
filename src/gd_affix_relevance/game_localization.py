@@ -60,6 +60,16 @@ class PreparedGameLocalization:
     files_written: tuple[str, ...]
 
 
+# The stat-line templates the live tooltip reader matches against
+# (live/stat_lines.py). Both locales keep tags_ui.txt at the root of the base
+# game's text archive.
+UI_TEMPLATE_FILENAME = "tags_ui.txt"
+UI_TEMPLATE_SOURCES: dict[str, dict[str, ItemTagSource]] = {
+    code: {UI_TEMPLATE_FILENAME: ItemTagSource("resources", UI_TEMPLATE_FILENAME)}
+    for code in ("en", "ru")
+}
+
+
 def prepare_game_item_tags(
     game_folder: Path,
     destination_root: Path,
@@ -68,17 +78,43 @@ def prepare_game_item_tags(
 ) -> PreparedGameLocalization:
     """Extract and atomically install only the item-tag files for *locale*."""
 
-    game = validate_grim_dawn_folder(game_folder)
-    archive_tool = game / ARCHIVE_TOOL_FILENAME
-    if not archive_tool.is_file():
-        raise ValueError(f"Grim Dawn archive tool is missing: {archive_tool}")
-
     try:
         layout = ITEM_TAG_SOURCES[locale.code]
     except KeyError as error:
         raise ValueError(
             f"No item-tag archive layout is known for locale: {locale.code}"
         ) from error
+    return _prepare_files(game_folder, destination_root, locale, layout)
+
+
+def prepare_ui_templates(
+    game_folder: Path,
+    destination_root: Path,
+    *,
+    locale: LocaleSpec,
+) -> PreparedGameLocalization:
+    """Extract tags_ui.txt (stat-line templates) for *locale*."""
+
+    try:
+        layout = UI_TEMPLATE_SOURCES[locale.code]
+    except KeyError as error:
+        raise ValueError(
+            f"No UI template archive layout is known for locale: {locale.code}"
+        ) from error
+    return _prepare_files(game_folder, destination_root, locale, layout)
+
+
+def _prepare_files(
+    game_folder: Path,
+    destination_root: Path,
+    locale: LocaleSpec,
+    layout: dict[str, ItemTagSource],
+) -> PreparedGameLocalization:
+    game = validate_grim_dawn_folder(game_folder)
+    archive_tool = game / ARCHIVE_TOOL_FILENAME
+    if not archive_tool.is_file():
+        raise ValueError(f"Grim Dawn archive tool is missing: {archive_tool}")
+    filenames = tuple(layout)
 
     archives: dict[str, Path] = {
         filename: game / source.archive_directory / locale.game_archive_filename
@@ -142,7 +178,7 @@ def prepare_game_item_tags(
                 for part in (completed.stdout, completed.stderr)
                 if part.strip()
             )
-        extracted_files, missing = _find_item_tag_files(extracted)
+        extracted_files, missing = _find_item_tag_files(extracted, filenames)
         if failed or missing:
             detail = "\n".join(diagnostics)
             missing_text = ", ".join(missing) if missing else "none"
@@ -164,15 +200,16 @@ def prepare_game_item_tags(
         locale=locale,
         archive_paths=tuple(dict.fromkeys(archives.values())),
         output_root=destination,
-        files_written=ITEM_TAG_FILENAMES,
+        files_written=filenames,
     )
 
 
 def _find_item_tag_files(
     extracted_root: Path,
+    filenames: tuple[str, ...] = ITEM_TAG_FILENAMES,
 ) -> tuple[dict[str, Path], tuple[str, ...]]:
     sources: dict[str, Path] = {}
-    for filename in ITEM_TAG_FILENAMES:
+    for filename in filenames:
         candidates = sorted(
             extracted_root.rglob(filename),
             key=lambda path: (len(path.parts), str(path).casefold()),
@@ -180,7 +217,7 @@ def _find_item_tag_files(
         if candidates:
             sources[filename] = candidates[0]
     missing = tuple(
-        filename for filename in ITEM_TAG_FILENAMES if filename not in sources
+        filename for filename in filenames if filename not in sources
     )
     return sources, missing
 

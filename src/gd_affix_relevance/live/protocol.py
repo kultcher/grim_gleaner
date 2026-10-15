@@ -7,7 +7,7 @@ tooltip_hook.cpp).
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 PROTOCOL_TAG = "GG1"
 DEFAULT_PORT = 47817  # reporter.h: kReporterPort
@@ -90,9 +90,31 @@ class HoveredItem:
     ascendant_2: str = ""
     # The tooltip text the game just built, with the rolled values.
     lines: tuple[TooltipLine, ...] = ()
+    # The DLL's own evaluation, sent as "@key=value" fields: grade, score,
+    # matched, total, rq ("-" when none), label, rarity, table (grade table
+    # id), detail (1 if lines came from the detailed pass), injected.
+    attributes: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def records(self) -> tuple[str, str, str]:
+        return (self.base_record, self.prefix_record, self.suffix_record)
 
 
-HookMessage = HookStatus | HookError | HoveredItem
+@dataclass(frozen=True, slots=True)
+class FilterDecision:
+    """The loot filter hid (or let through) a ground item."""
+
+    seed: int
+    base_record: str
+    prefix_record: str
+    suffix_record: str
+    grade: str
+    rarity_class: str
+    hidden: bool
+    table_id: str
+
+
+HookMessage = HookStatus | HookError | HoveredItem | FilterDecision
 
 
 class ProtocolError(ValueError):
@@ -123,13 +145,31 @@ def parse_message(payload: bytes) -> HookMessage:
                     f"item expects at least {len(ITEM_FIELDS)} fields, got {len(values)}"
                 )
             raw = dict(zip(ITEM_FIELDS, values))
+            extras = values[len(ITEM_FIELDS) :]
+            attributes = dict(
+                value[1:].partition("=")[::2] for value in extras if value.startswith("@")
+            )
             return HoveredItem(
                 calls=int(raw.pop("calls")),
                 seed=int(raw.pop("seed")),
                 lines=tuple(
-                    _parse_line(value) for value in values[len(ITEM_FIELDS) :]
+                    _parse_line(value) for value in extras if not value.startswith("@")
                 ),
+                attributes=attributes,
                 **{key: value.strip() for key, value in raw.items()},
+            )
+        if kind == "filter":
+            if len(values) != 8:
+                raise ProtocolError(f"filter expects 8 fields, got {len(values)}")
+            return FilterDecision(
+                seed=int(values[0]),
+                base_record=values[1],
+                prefix_record=values[2],
+                suffix_record=values[3],
+                grade=values[4],
+                rarity_class=values[5],
+                hidden=values[6] == "1",
+                table_id=values[7],
             )
     except ValueError as error:
         if isinstance(error, ProtocolError):

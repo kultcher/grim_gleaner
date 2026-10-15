@@ -22,14 +22,21 @@ from pathlib import Path
 
 from gd_affix_relevance.stats import stat_is_registered
 
-_COLOR_CODE = re.compile(r"\{\^.\}|\^[A-Za-z]")
-_PLACEHOLDER = re.compile(r"\{%[^}]*\}")
-_RANGE_SUFFIX = re.compile(r"\[\s*(-?\d+(?:\.\d+)?)\s*(?:-\s*(-?\d+(?:\.\d+)?)\s*)?\]\s*$")
-_NUMBER = re.compile(r"\d+(?:\.\d+)?")
-_SIGNED_HASH = re.compile(r"[+-]\s*#")
-_HASH_RANGE = re.compile(r"#\s*-\s*#")
-_DURATION_SUFFIX = re.compile(r"\s+(?:over|for)\s+#\s+seconds?$")
-_SPACES = re.compile(r"\s+")
+# All patterns are ASCII-only so stat_core.cpp can mirror them exactly.
+_A = re.ASCII
+_COLOR_CODE = re.compile(r"\{\^.\}|\^[A-Za-z]", _A)
+_PLACEHOLDER = re.compile(r"\{%[^}]*\}", _A)
+_RANGE_SUFFIX = re.compile(
+    r"\[ *([0-9]+(?:\.[0-9]+)?) *(?:- *([0-9]+(?:\.[0-9]+)?) *)?\] *$", _A
+)
+_NUMBER = re.compile(r"[0-9]+(?:\.[0-9]+)?", _A)
+_SIGNED_HASH = re.compile(r"[+-] *#", _A)
+_HASH_RANGE = re.compile(r"# *- *#", _A)
+_DURATION_SUFFIX = re.compile(r" (?:over|for) # seconds?$", _A)
+_SPACES = re.compile(r"\s+", _A)
+_ASCII_LOWER = str.maketrans(
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"
+)
 
 
 def strip_color_codes(text: str) -> str:
@@ -37,12 +44,17 @@ def strip_color_codes(text: str) -> str:
 
 
 def _finish_key(text: str) -> str:
-    """Shared tail of the normalisation. Mirrored in stat_core.cpp."""
+    """Shared tail of the normalisation. Mirrored step by step in
+    stat_core.cpp (FinishKey)."""
 
     text = text.replace("(", "").replace(")", "")
-    text = _HASH_RANGE.sub("#", text)
+    text = _SPACES.sub(" ", text).strip()
+    previous = None
+    while previous != text:
+        previous = text
+        text = _HASH_RANGE.sub("#", text)
     text = _SIGNED_HASH.sub("#", text)
-    text = _SPACES.sub(" ", text).strip().casefold()
+    text = text.translate(_ASCII_LOWER)
     return _DURATION_SUFFIX.sub("", text)
 
 
@@ -337,7 +349,15 @@ def read_templates(path: Path) -> dict[str, str]:
     return templates
 
 
-PET_HEADING = re.compile(r"\bpets?\b", re.IGNORECASE)
+PET_HEADING_WORDS = frozenset({"pet", "pets"})
+_WORD = re.compile(r"[a-z]+", re.ASCII)
+
+
+def is_pet_heading(key: str) -> bool:
+    """A number-free line naming pets ("Bonus to All Pets:") starts the pet
+    section. Mirrored in stat_core.cpp."""
+
+    return "#" not in key and any(word in PET_HEADING_WORDS for word in _WORD.findall(key))
 
 
 def match_tooltip_stats(
@@ -352,7 +372,7 @@ def match_tooltip_stats(
     for text_class, text in lines:
         parsed = parse_line(text)
         stat_id = index.stats_by_key.get(parsed.key)
-        if stat_id is None and not parsed.values and PET_HEADING.search(parsed.text):
+        if stat_id is None and is_pet_heading(parsed.key):
             pet_class = -1  # the next class seen is the pet section
             results.append((parsed, None))
             continue

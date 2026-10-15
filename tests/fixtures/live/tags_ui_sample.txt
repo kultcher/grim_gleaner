@@ -1,0 +1,14 @@
+# Minimal stand-in for Grim Dawn's tags_ui.txt (format templates only).
+tagCharAttribute02Modifier={%+.0f0}% {^E}Physique
+tagCharAttribute04={%+.0f0} {^E}Health
+tagCharAttribute04R=+{%.0f0}-{%.0f1} {^E}Health
+tagCharOffensiveAbility={%+.0f0} {^E}Offensive Ability
+DamageModifierElemental={%+.0f0}% {^E}Elemental Damage
+DamageModifierFire={%+.0f0}% {^E}Fire Damage
+DamageDurationModifierFire={%+.0f0}% {^E}Burn Damage
+DamageDurationModifierBleeding={%+.0f0}% {^E}Bleeding Damage
+DamageFire={%t0} {^E}Fire Damage
+DefenseElementalResistance={%.0f0}% {^E}Elemental Resistance
+DefenseBleeding={%.0f0}% {^E}Bleeding Resistance
+DefenseAbsorptionProtection={%.0f0} Armor
+DamageRangeFormatAppend= {^H}[{%t0}-{%t1}]
