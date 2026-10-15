@@ -6,6 +6,7 @@
 #include <detours.h>
 
 #include <atomic>
+#include <cstdio>
 #include <cstring>
 #include <mutex>
 #include <new>
@@ -75,41 +76,144 @@ bool CallGetReplicaGuarded(const void* item, ItemReplicaInfo* out) {
 #endif
 }
 
+// Why a tooltip-line vector was rejected (for the one-time diagnostic).
+enum class LinesVerdict { Ok, NullVector, BadSize, BadClass, TooLong, Fault };
+
+const char* VerdictName(LinesVerdict verdict) {
+    switch (verdict) {
+        case LinesVerdict::Ok: return "ok";
+        case LinesVerdict::NullVector: return "null vector";
+        case LinesVerdict::BadSize: return "byte span is not a whole number of GameTextLine";
+        case LinesVerdict::BadClass: return "text class out of known range";
+        case LinesVerdict::TooLong: return "string length implausible";
+        case LinesVerdict::Fault: return "access violation while reading";
+    }
+    return "?";
+}
+
 // Copies pointers to the game's tooltip lines without touching their memory
-// management. Returns the number of lines, or -1 if the vector does not look
-// like a vector of GameTextLine (or reading it faulted).
-int SnapshotLinesGuarded(const void* lines, RawLine* out) {
+// management. On success *count holds the number of lines.
+LinesVerdict SnapshotLinesGuarded(const void* lines, RawLine* out, int* count) {
 #if defined(_MSC_VER)
     __try {
 #endif
+        *count = 0;
         const auto* vector = static_cast<const GameTextLineVector*>(lines);
         if (vector->first == nullptr) {
-            return 0;
+            return LinesVerdict::Ok;
         }
         const auto bytes = reinterpret_cast<const char*>(vector->last) -
                            reinterpret_cast<const char*>(vector->first);
         if (bytes < 0 || bytes % sizeof(GameTextLine) != 0 ||
             vector->end < vector->last) {
-            return -1;
+            return LinesVerdict::BadSize;
         }
-        std::size_t count = static_cast<std::size_t>(bytes) / sizeof(GameTextLine);
-        if (count > kMaxLines) {
-            count = kMaxLines;
+        std::size_t total = static_cast<std::size_t>(bytes) / sizeof(GameTextLine);
+        if (total > kMaxLines) {
+            total = kMaxLines;
         }
-        for (std::size_t index = 0; index < count; ++index) {
+        for (std::size_t index = 0; index < total; ++index) {
             const GameTextLine& line = vector->first[index];
-            if (line.textClass < 0 || line.textClass > game::kMaxGameTextClass ||
-                line.text.size() > 4096) {
-                return -1;
+            if (line.textClass < 0 || line.textClass > game::kMaxGameTextClass) {
+                return LinesVerdict::BadClass;
+            }
+            if (line.text.size() > 4096) {
+                return LinesVerdict::TooLong;
             }
             out[index] = RawLine{line.textClass, line.text.data(), line.text.size()};
         }
-        return static_cast<int>(count);
+        *count = static_cast<int>(total);
+        return LinesVerdict::Ok;
 #if defined(_MSC_VER)
     } __except (EXCEPTION_EXECUTE_HANDLER) {
-        return -1;
+        return LinesVerdict::Fault;
     }
 #endif
+}
+
+// Copy up to `size` bytes from an address that may not be readable.
+bool SafeCopy(void* destination, const void* source, std::size_t size) {
+#if defined(_MSC_VER)
+    __try {
+        std::memcpy(destination, source, size);
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
+#else
+    std::memcpy(destination, source, size);
+    return true;
+#endif
+}
+
+std::string Hex(const unsigned char* data, std::size_t size) {
+    static const char digits[] = "0123456789abcdef";
+    std::string result;
+    for (std::size_t index = 0; index < size; ++index) {
+        if (index % 16 == 0) {
+            char offset[16];
+            std::snprintf(offset, sizeof(offset), "\n  +%03zx ", index);
+            result += offset;
+        }
+        result += digits[data[index] >> 4];
+        result += digits[data[index] & 0xF];
+        result += ' ';
+    }
+    return result;
+}
+
+// Logs everything needed to work out the real layout: the vector header,
+// the first bytes of its storage, and any wide strings reachable from
+// pointer-sized fields of the first element.
+void LogLinesDiagnostic(const void* lines, LinesVerdict verdict) {
+    std::string report = std::string("tooltip lines rejected: ") + VerdictName(verdict) +
+                         "; expected sizeof(GameTextLine)=" +
+                         std::to_string(sizeof(GameTextLine));
+    unsigned char header[48] = {};
+    if (!SafeCopy(header, lines, sizeof(header))) {
+        Log(report + "; vector header unreadable");
+        return;
+    }
+    report += "\nvector header (48 bytes):" + Hex(header, sizeof(header));
+
+    const void* first = nullptr;
+    std::memcpy(&first, header, sizeof(first));
+    unsigned char element[0x100] = {};
+    if (first != nullptr && SafeCopy(element, first, sizeof(element))) {
+        report += "\nfirst 0x100 bytes at first pointer:" + Hex(element, sizeof(element));
+        for (std::size_t offset = 0; offset + 8 <= 0x80; offset += 8) {
+            const void* candidate = nullptr;
+            std::memcpy(&candidate, element + offset, sizeof(candidate));
+            wchar_t text[48] = {};
+            if (candidate == nullptr || !SafeCopy(text, candidate, sizeof(text) - 2)) {
+                continue;
+            }
+            std::string printable;
+            for (wchar_t character : text) {
+                if (character == 0) break;
+                printable += (character >= 32 && character < 127) ? static_cast<char>(character) : '.';
+            }
+            if (printable.size() >= 3) {
+                report += "\n  pointer at +" + std::to_string(offset) + " -> \"" + printable + "\"";
+            }
+        }
+        // Inline (small-string) text directly inside the element.
+        for (std::size_t offset = 0; offset + 16 <= 0x80; offset += 8) {
+            std::string printable;
+            for (std::size_t index = 0; index < 8; ++index) {
+                wchar_t character;
+                std::memcpy(&character, element + offset + index * 2, 2);
+                if (character == 0) break;
+                printable += (character >= 32 && character < 127) ? static_cast<char>(character) : '.';
+            }
+            if (printable.size() >= 3) {
+                report += "\n  inline text at +" + std::to_string(offset) + ": \"" + printable + "\"";
+            }
+        }
+    } else {
+        report += "\nfirst pointer unreadable";
+    }
+    Log(report);
 }
 
 std::string ToUtf8(const wchar_t* text, std::size_t length) {
@@ -143,11 +247,13 @@ void AppendLines(const void* lines, std::string* message) {
         return;
     }
     RawLine raw[kMaxLines];
-    const int count = SnapshotLinesGuarded(lines, raw);
-    if (count < 0) {
+    int count = 0;
+    const LinesVerdict verdict = SnapshotLinesGuarded(lines, raw, &count);
+    if (verdict != LinesVerdict::Ok) {
         g_linesDisabled.store(true);
-        Log("tooltip: text lines do not match the expected layout; no longer reading them");
-        Report("GG1\terror\ttooltip text layout not recognised; reporting records only");
+        LogLinesDiagnostic(lines, verdict);
+        Report(std::string("GG1\terror\ttooltip text layout not recognised (") +
+               VerdictName(verdict) + "); reporting records only. Details in gg_hook.log");
         return;
     }
     for (int index = 0; index < count; ++index) {
