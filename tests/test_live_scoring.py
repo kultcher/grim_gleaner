@@ -224,7 +224,6 @@ def test_listener_reports_app_and_dll_verdicts(bundle: CatalogBundle, index: Sta
     suffix = "records/items/lootaffixes/suffix/a035e_off_dmg%bleed_06_ar.dbr"
     expected = evaluator.evaluate(HoveredItem(calls=1, seed=7, base_record=base, suffix_record=suffix))
     score = expected.relevance.score
-    rq = expected.quality
     fields = ["1", "7", base, "", suffix] + [""] * 7
     fields += [
         f"@grade={score.grade}", f"@score={score.effective_score:.6f}",
